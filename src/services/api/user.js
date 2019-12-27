@@ -1,4 +1,5 @@
 import userModel from '@src/models/user';
+import Profile from '@src/models/profile';
 import http from '../http';
 
 // export const subscribeEmail = email => http.post('/auth/subscribe', {
@@ -16,3 +17,6 @@ export const getToken = (deviceId, deviceFirebaseToken) => {
   return http.post('/auth/new-token', { DeviceID: deviceId, DeviceToken:deviceFirebaseToken })
     .then(userModel.parseTokenData);
 };
+
+export const getUserProfile = () => http.get('/auth/profile')
+  .then(res => new Profile(res));
