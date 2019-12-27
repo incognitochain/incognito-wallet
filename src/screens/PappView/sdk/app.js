@@ -58,6 +58,17 @@ class SDK {
     const script = `${SDK_MODULE}._setData("${DATA_NAMES.LIST_TOKEN}", ${JSON.stringify(data)});`;
     this.sendScript(script);
   }
+
+  /**
+   * 
+   * @param {object} data 
+   * userId
+   */
+  sendExtraInfo(data) {
+    if (!(data instanceof Object)) throw new Error('extra data must be an object');
+    const script = `${SDK_MODULE}._setData("${DATA_NAMES.EXTRA_DATA}", ${JSON.stringify(data)});`;
+    this.sendScript(script);
+  }
 }
 
 export default SDK;

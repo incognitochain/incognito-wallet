@@ -16,7 +16,7 @@ const updateDataToPapp = (data) => {
   if (!sdk) return;
 
   try {
-    const { selectedPrivacy, listSupportedToken } = data;
+    const { selectedPrivacy, listSupportedToken, userProfile } = data;
     const balance = selectedPrivacy?.amount && convertUtil.toHumanAmount(selectedPrivacy?.amount, selectedPrivacy.pDecimals);
     const paymentAddress = selectedPrivacy?.paymentAddress;
   
@@ -30,6 +30,7 @@ const updateDataToPapp = (data) => {
       pDecimals: selectedPrivacy?.pDecimals
     });
     listSupportedToken && sdk.sendListToken(listSupportedToken);
+    userProfile?.id && sdk.sendExtraInfo({ userId: userProfile.id });
   } catch (e) {
     new ExHandler(e).showErrorToast();
   }  
@@ -66,11 +67,11 @@ class PappView extends PureComponent {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const { selectedPrivacy, supportTokenIds, tokens } = nextProps;
+    const { selectedPrivacy, supportTokenIds, tokens, userProfile } = nextProps;
     const { isLoaded } = prevState;
 
     const listSupportedToken = getListSupportedToken(supportTokenIds, tokens);
-    isLoaded && updateDataToPapp({ selectedPrivacy, listSupportedToken });
+    isLoaded && updateDataToPapp({ selectedPrivacy, listSupportedToken, userProfile });
 
     return null;
   }

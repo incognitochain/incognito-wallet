@@ -9,6 +9,7 @@ import LoadingTx from '@src/components/LoadingTx';
 import SimpleInfo from '@src/components/SimpleInfo';
 import SelectToken from '@src/components/HeaderRight/SelectToken';
 import { CONSTANT_COMMONS } from '@src/constants';
+import { getUserProfile } from '@src/services/api/user';
 import LoadingContainer from '@src/components/LoadingContainer';
 import { COLORS } from '@src/styles';
 import { ExHandler, CustomError, ErrorCode } from '@src/services/exception';
@@ -24,7 +25,8 @@ class PappViewContainer extends PureComponent {
     this.state = {
       selectedPrivacy: null,
       supportTokenIds: [CONSTANT_COMMONS.PRV_TOKEN_ID],
-      url: props.navigation.getParam('url')
+      url: props.navigation.getParam('url'),
+      userProfile: null
     };
 
     this.reloadBalanceTimeout = null;
@@ -52,6 +54,7 @@ class PappViewContainer extends PureComponent {
 
   componentDidMount() {
     const { supportTokenIds } = this.state;
+    this.getUserProfile();
     this.handleSelectPrivacyToken(CONSTANT_COMMONS.PRV_TOKEN_ID);
     this.setHeaderTitle();
     this.setHeaderData({ onSelectToken: this.handleSelectPrivacyToken, supportTokenIds });
@@ -124,6 +127,16 @@ class PappViewContainer extends PureComponent {
     }
   }
 
+  getUserProfile = async () => {
+    try {
+      const userProfile = await getUserProfile();
+      this.setState({ userProfile });
+      return userProfile;
+    } catch (e) {
+      new ExHandler(e);
+    }
+  }
+
   getPrivacyToken = tokenID => {
     const { selectPrivacyByTokenID } = this.props;
     const selectedPrivacy = selectPrivacyByTokenID(tokenID);
@@ -147,7 +160,7 @@ class PappViewContainer extends PureComponent {
   }
 
   render() {
-    const { isSending, selectedPrivacy, supportTokenIds, url } = this.state;
+    const { isSending, selectedPrivacy, supportTokenIds, url, userProfile } = this.state;
     if (!url) {
       return (
         <SimpleInfo
@@ -168,6 +181,7 @@ class PappViewContainer extends PureComponent {
           url={url}
           selectedPrivacy={selectedPrivacy}
           supportTokenIds={supportTokenIds}
+          userProfile={userProfile}
           onSelectPrivacyToken={this.handleSelectPrivacyToken}
           onSetListSupportTokenById={this.handleSetListSupportTokenById}
         />
