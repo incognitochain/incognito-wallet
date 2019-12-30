@@ -32,7 +32,7 @@ class Papps extends PureComponent {
   constructor() {
     super();
     this.state = {
-      url: '',
+      url: 'http://192.168.1.180:3000',
     };
   }
 

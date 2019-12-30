@@ -4,7 +4,7 @@ import {
 import _ from 'lodash';
 import tokenModel from '@src/models/token';
 import storage from '@src/services/storage';
-import { CONSTANT_KEYS } from '@src/constants';
+import { CONSTANT_KEYS, CONSTANT_COMMONS } from '@src/constants';
 import { getChainTokenList } from '@services/api/token';
 import {PRIORITY_LIST} from '@screens/Dex/constants';
 import { saveWallet, updateStatusHistory } from './WalletService';
@@ -93,11 +93,11 @@ export default class Token {
     await Wallet.resetProgressTx();
     console.log('SEND PRIVACY CUSTOM TOKEN!!!!!!!');
 
-    const { TokenSymbol, TokenName, TokenAmount } = submitParam;
+    const { TokenSymbol, TokenName, TokenAmount, TokenTxType } = submitParam;
 
     if (typeof TokenSymbol !== 'string' || TokenSymbol.trim() === '') throw new Error('TokenSymbol is invalid');
     if (typeof TokenName !== 'string' || TokenName.trim() === '') throw new Error('TokenName is invalid');
-    if (typeof TokenAmount !== 'number' ||  TokenAmount <= 0 ) throw new Error('TokenAmount is invalid');
+    if (TokenTxType === CONSTANT_COMMONS.TOKEN_TX_TYPE.INIT && (typeof TokenAmount !== 'number' ||  TokenAmount <= 0 )) throw new Error('TokenAmount is invalid');
 
     // get index account by name
     const indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);

@@ -51,12 +51,22 @@ export const requestSendTxStyle = {
   },
   cancelBtn: {
     marginHorizontal: 10,
-    width: 150,
+    minWidth: 100,
+    maxWidth: 150,
     backgroundColor: COLORS.lightGrey3
   },
   submitBtn: {
     marginHorizontal: 10,
     width: 150,
+  },
+  receiverContainer: {
+    marginVertical: 2
+  },
+  receiverAddress: {
+    fontSize: 14
+  },
+  receiverAmount: {
+    fontSize: 14
   }
 };
 

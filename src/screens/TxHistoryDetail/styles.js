@@ -38,6 +38,10 @@ export default StyleSheet.create({
     fontSize: 15,
     marginVertical: 2,
   },
+  multipleAddress: {
+    flex: 3,
+    marginVertical: 2,
+  },
   txButton: {
     flex: 3,
     paddingVertical: 3,

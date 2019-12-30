@@ -86,19 +86,17 @@ class PappView extends PureComponent {
     this.setState({ modalData: null });
   }
 
-  onRequestSendTx = ({ toAddress, amount, pendingTxId, info } = {}) => {
-    new Validator('onRequestSendTx toAddress', toAddress).required().paymentAddress();
-    new Validator('onRequestSendTx amount', amount).required().amount();
+  onRequestSendTx = ({ pendingTxId, info, receivers } = {}) => {
     new Validator('onRequestSendTx pendingTxId', pendingTxId).required().string();
     new Validator('onRequestSendTx info', info).string();
+    new Validator('onRequestSendTx receivers', receivers).required().receivers();
 
     const { selectedPrivacy, url } = this.props;
     this.setState({
       modalData: (
         <RequestSendTx
           url={url}
-          toAddress={toAddress}
-          amount={amount}
+          receivers={receivers}
           info={info}
           pendingTxId={pendingTxId}
           selectedPrivacy={selectedPrivacy}

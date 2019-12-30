@@ -89,6 +89,21 @@ class Validator {
   amount(message = 'Invalid amount') {
     return this._onCondition(() => this.intergerNumber(), message);
   }
+
+  receivers(message = 'Invalid receivers, must be array of receiver [receiverAddress, receiverAmount] (max 30 receivers)') {
+    return this._onCondition(() => {
+      if (!(this.value instanceof Array) || this.value.length === 0 || this.length > 30) return false;
+      return this.value.every(receiver => {
+        new Validator('receiver', receiver).required().array();
+
+        const [paymentAddress, amount] = receiver;
+
+        new Validator('receiver paymentAddress', paymentAddress).required().paymentAddress();
+        new Validator('receiver amount', amount).required().amount();
+        return true;
+      });
+    }, message);
+  }
 }
 
 module.exports = Validator;

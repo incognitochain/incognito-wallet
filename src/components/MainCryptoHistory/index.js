@@ -16,7 +16,7 @@ const normalizeData = (histories, decimals, pDecimals) =>
     incognitoTxID: h?.txID,
     time: h?.time,
     type: h?.isIn ? CONSTANT_COMMONS.HISTORY.TYPE.RECEIVE : CONSTANT_COMMONS.HISTORY.TYPE.SEND,
-    toAddress: h?.receivers?.length && h?.receivers[0],
+    toAddress: h?.receivers,
     amount: h?.amountNativeToken,
     symbol: CONSTANT_COMMONS.CRYPTO_SYMBOL.PRV,
     status: h?.status,

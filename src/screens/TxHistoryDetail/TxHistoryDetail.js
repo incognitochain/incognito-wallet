@@ -114,7 +114,23 @@ export default class TxHistoryDetail extends Component {
           {!!history?.incognitoTxID && this.renderRow({ label: 'TxID', valueComponent: this.renderTxId(`${CONSTANT_CONFIGS.EXPLORER_CONSTANT_CHAIN_URL}/tx/${history.incognitoTxID}`) })}
           {!!history?.inchainTx && this.renderRow({ label: 'Inchain TxID', valueComponent: this.renderTxId(history?.inchainTx) })}
           {!!history?.outchainTx && this.renderRow({ label: 'Outchain TxID', valueComponent: this.renderTxId(history?.outchainTx) })}
-          {!!history?.toAddress && this.renderRow({ label: 'To address', valueText: history?.toAddress, valueTextProps: { ellipsizeMode: 'middle' }, copyable: true })}
+          {!!history?.toAddress
+            && this.renderRow({
+              label: 'To address',
+              ...history?.toAddress instanceof Array ? {
+                valueComponent: (
+                  <View style={styleSheet.multipleAddress}>
+                    {
+                      history?.toAddress?.map(address => this.renderText({ text: address, style: [styleSheet.valueText], copyable: true, label: address }))
+                    }
+                  </View>
+                )
+              } : {},
+              ...typeof history?.toAddress === 'string' ? { valueText: history?.toAddress } : {},
+              valueTextProps: { ellipsizeMode: 'middle' },
+              copyable: true
+            })
+          }
           {!!history?.depositAddress && (
             <View style={styleSheet.depositAddressContainer}>
               <Text>Deposit address</Text>

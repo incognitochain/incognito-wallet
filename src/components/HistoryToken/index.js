@@ -51,7 +51,7 @@ const combineHistory = (histories, historiesFromApi, symbol, externalSymbol, dec
       incognitoTxID: h?.txID,
       time: h?.time,
       type: h?.isIn ?  CONSTANT_COMMONS.HISTORY.TYPE.RECEIVE : CONSTANT_COMMONS.HISTORY.TYPE.SEND,
-      toAddress: h?.receivers?.length && h?.receivers[0],
+      toAddress: h?.receivers,
       amount: h?.amountPToken,
       symbol: h?.tokenSymbol,
       decimals,

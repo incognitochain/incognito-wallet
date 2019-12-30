@@ -21,17 +21,16 @@ class RequestSendTx extends Component {
     };
   }
 
-  _handleSendNativeToken = async ({ toAddress, nanoAmount, fee, info }) => {
-    const { account, wallet } = this.props;
-    fee = fee || DEFAULT_FEE;
-    const originalAmount = nanoAmount;
-    const originalFee = Number(fee);
-
-    const paymentInfos = [{
-      paymentAddressStr: toAddress, amount: originalAmount
-    }];
-
+  _handleSendNativeToken = async ({ fee, info, receivers }) => {
     try {
+      const { account, wallet } = this.props;
+      fee = fee || DEFAULT_FEE;
+      const originalFee = Number(fee);
+
+      // payment info for PRV
+      const paymentInfos = receivers.map(([paymentAddressStr, amount]) => ({ paymentAddressStr, amount }));
+
+      
       this.setState({
         isSending: true
       });
@@ -49,29 +48,24 @@ class RequestSendTx extends Component {
     }
   }
 
-  _handleSendToken = async ({ toAddress, nanoAmount, feeUnit, fee, info }) => {
-    const { selectedPrivacy, account, wallet } = this.props;
-    feeUnit = feeUnit || selectedPrivacy?.symbol;
-    fee = fee || DEFAULT_FEE;
-
-    const type = CONSTANT_COMMONS.TOKEN_TX_TYPE.SEND;
-    const originalFee = Number(fee);
-    const isUseTokenFee = false; //feeUnit !== CONSTANT_COMMONS.CRYPTO_SYMBOL.PRV;
-    const originalAmount = nanoAmount;
-    const tokenObject = {
-      Privacy : true,
-      TokenID: selectedPrivacy?.tokenId,
-      TokenName: selectedPrivacy?.name,
-      TokenSymbol: selectedPrivacy?.symbol,
-      TokenTxType: type,
-      TokenAmount: originalAmount,
-      TokenReceivers: [{
-        PaymentAddress: toAddress,
-        Amount: originalAmount
-      }]
-    };
-
+  _handleSendToken = async ({ receivers, fee, info }) => {
     try {
+      const { selectedPrivacy, account, wallet } = this.props;
+      fee = fee || DEFAULT_FEE;
+
+      const type = CONSTANT_COMMONS.TOKEN_TX_TYPE.SEND;
+      const originalFee = Number(fee);
+      const isUseTokenFee = false; //feeUnit !== CONSTANT_COMMONS.CRYPTO_SYMBOL.PRV;
+      const tokenObject = {
+        Privacy : true,
+        TokenID: selectedPrivacy?.tokenId,
+        TokenName: selectedPrivacy?.name,
+        TokenSymbol: selectedPrivacy?.symbol,
+        TokenTxType: type,
+        TokenAmount: 0,
+        TokenReceivers: receivers.map(([PaymentAddress, Amount]) => ({ PaymentAddress, Amount }))
+      };
+      
       this.setState({ isSending: true });
       const res = await tokenService.createSendPToken(
         tokenObject,
@@ -97,12 +91,12 @@ class RequestSendTx extends Component {
 
   handleSendTx = async () => {
     try {
-      const { selectedPrivacy, toAddress, amount, info, pendingTxId, onSendSuccess } = this.props;
+      const { selectedPrivacy, receivers, info, onSendSuccess } = this.props;
       let sendFn;
       if (selectedPrivacy?.isToken) sendFn = this._handleSendToken;
       if (selectedPrivacy?.isMainCrypto) sendFn = this._handleSendNativeToken;
 
-      const res = await sendFn({ toAddress, nanoAmount: amount, pendingTxId, info });
+      const res = await sendFn({ info, receivers });
       onSendSuccess(res);
     } catch (e) {
       const { onSendFailed } = this.props;
@@ -115,22 +109,34 @@ class RequestSendTx extends Component {
     return (
       <View style={requestSendTxStyle.infoContainer}>
         <Text style={requestSendTxStyle.infoLabel}>{label}</Text>
-        <Text style={requestSendTxStyle.infoValue}>{value}</Text>
+        {
+          React.isValidElement(value)
+            ? value
+            : <Text style={requestSendTxStyle.infoValue}>{value}</Text>
+        }
       </View>
     );
   }
 
   render() {
     const { isSending } = this.state;
-    const { onCancel, selectedPrivacy, toAddress, amount, url } = this.props;
+    const { onCancel, selectedPrivacy, receivers, url } = this.props;
     const fee = DEFAULT_FEE; // default in PRV
 
     return (
       <Container style={requestSendTxStyle.container}>
         <Text style={requestSendTxStyle.title}> REQUEST SEND TX </Text>
         {this.renderData('PAPP URL', url)}
-        {this.renderData('To address', toAddress)}
-        {this.renderData('Amount', `${formatUtil.amount(amount, selectedPrivacy?.pDecimals)} ${selectedPrivacy?.symbol}`)}
+        {this.renderData('To address', (
+          <View>
+            { receivers?.map(([address, nanoAmount]) => (
+              <View style={requestSendTxStyle.receiverContainer}>
+                <Text numberOfLines={1} ellipsizeMode='middle' style={requestSendTxStyle.receiverAddress}>{address}</Text>
+                <Text numberOfLines={1} ellipsizeMode='middle' style={requestSendTxStyle.receiverAmount}>{formatUtil.amount(nanoAmount, selectedPrivacy?.pDecimals)} {selectedPrivacy?.symbol}</Text>
+              </View>
+            ))}
+          </View>
+        ))}
         {this.renderData('Fee', `${formatUtil.amount(fee, CONSTANT_COMMONS.DECIMALS.MAIN_CRYPTO_CURRENCY)} ${CONSTANT_COMMONS.CRYPTO_SYMBOL.PRV}`)}
 
         <View style={requestSendTxStyle.groupBtn}>
@@ -154,7 +160,7 @@ const mapDispatch = {
 };
 
 RequestSendTx.defaultProps = {
-  info: null
+  info: null,
 };
 
 RequestSendTx.propTypes = {
@@ -168,7 +174,7 @@ RequestSendTx.propTypes = {
   amount: PropTypes.number.isRequired,
   info: PropTypes.string,
   url: PropTypes.string.isRequired,
-  pendingTxId: PropTypes.number.isRequired,
+  receivers: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default connect(mapState, mapDispatch)(RequestSendTx);

@@ -66,8 +66,6 @@ export default class Account {
     // console.log('Wallet.ProgressTx: ', Wallet.ProgressTx);
     const indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
 
-    console.log('Account', account);
-
     // create and send constant
     let result;
     try {
