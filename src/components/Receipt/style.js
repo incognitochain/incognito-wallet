@@ -1,9 +1,9 @@
-import { StyleSheet } from 'react-native';
-import { COLORS, SPACING, FONT } from '@src/styles';
+import {StyleSheet} from 'react-native';
+import {COLORS, SPACING, FONT} from '@src/styles';
 
 export default StyleSheet.create({
   container: {
-    backgroundColor: COLORS.white
+    backgroundColor: COLORS.white,
   },
   content: {
     flex: 1,
@@ -16,20 +16,21 @@ export default StyleSheet.create({
     fontSize: 20,
     color: COLORS.dark1,
     marginTop: 40,
-    ...FONT.STYLE.medium
+    ...FONT.STYLE.medium,
   },
   divider: {
     marginVertical: 30,
   },
   backButton: {
     marginTop: 0,
+    width: '100%',
   },
   infoContainer: {
     width: '100%',
-    marginTop: 10
+    marginTop: 10,
   },
   modalContainer: {
-    backgroundColor: COLORS.primary
+    backgroundColor: COLORS.primary,
   },
   rowText: {
     display: 'flex',
@@ -41,12 +42,20 @@ export default StyleSheet.create({
     color: COLORS.lightGrey1,
     fontSize: 15,
     marginVertical: 2,
-    textAlign: 'right'
+    textAlign: 'right',
   },
   valueText: {
     flex: 1,
     color: COLORS.dark1,
     fontSize: 15,
     marginVertical: 2,
-  }
+  },
+  btnSaveReceivers: {
+    backgroundColor: '#F3F5F5',
+    marginTop: 20,
+    width: '100%',
+  },
+  titleReceivers: {
+    color: '#000',
+  },
 });
