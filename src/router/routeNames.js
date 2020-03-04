@@ -44,4 +44,6 @@ export default {
   Community: 'Community',
   Shield: 'Shield',
   WhyShield: 'WhyShield',
+  SendInFrequentReceivers: 'SendInFrequentReceivers',
+  SendInFrequentReceiversModal: 'SendInFrequentReceiversModal',
 };

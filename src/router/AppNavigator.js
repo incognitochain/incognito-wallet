@@ -22,6 +22,7 @@ import WhyShield from '@src/screens/WhyShield';
 import {navigationOptionsHandler} from '@src/utils/router';
 import Dex from '@screens/Dex';
 import Shield from '@screens/Shield';
+import SendInFrequentReceivers, {SendInFrequentReceiversModal} from '@src/screens/SendCrypto/SendInFrequentReceivers';
 import ROUTE_NAMES from './routeNames';
 import TabNavigator from './TabNavigator';
 
@@ -38,9 +39,15 @@ const AppNavigator = createStackNavigator(
       title: 'Import Account',
     }),
     [ROUTE_NAMES.ExportAccount]: navigationOptionsHandler(ExportAccount),
-    [ROUTE_NAMES.FollowToken]: navigationOptionsHandler(FollowToken, { header: () => null }),
-    [ROUTE_NAMES.CreateToken]: navigationOptionsHandler(CreateToken, { title: 'Issue your own privacy coin' }),
-    [ROUTE_NAMES.AddToken]: navigationOptionsHandler(AddToken, { title: 'Add manually' }),
+    [ROUTE_NAMES.FollowToken]: navigationOptionsHandler(FollowToken, {
+      header: () => null,
+    }),
+    [ROUTE_NAMES.CreateToken]: navigationOptionsHandler(CreateToken, {
+      title: 'Issue your own privacy coin',
+    }),
+    [ROUTE_NAMES.AddToken]: navigationOptionsHandler(AddToken, {
+      title: 'Add manually',
+    }),
     [ROUTE_NAMES.WalletDetail]: navigationOptionsHandler(WalletDetail),
     [ROUTE_NAMES.ReceiveCoin]: navigationOptionsHandler(ReceiveCoin, {
       title: 'Receive privacy coins',
@@ -48,16 +55,45 @@ const AppNavigator = createStackNavigator(
     [ROUTE_NAMES.SendCrypto]: navigationOptionsHandler(SendCrypto, {
       title: 'Send',
     }),
-    [ROUTE_NAMES.Shield]: navigationOptionsHandler(Shield, { title: 'Shield Your Crypto' }),
-    [ROUTE_NAMES.TxHistoryDetail]: navigationOptionsHandler(TxHistoryDetail, { title: 'History Detail' }),
-    [ROUTE_NAMES.Setting]: navigationOptionsHandler(Setting, { title: 'You' }),
-    [ROUTE_NAMES.DexHistory]: navigationOptionsHandler(DexHistory, { header: () => null }),
-    [ROUTE_NAMES.DexHistoryDetail]: navigationOptionsHandler(DexHistoryDetail, { header: () => null }),
+    [ROUTE_NAMES.Shield]: navigationOptionsHandler(Shield, {
+      title: 'Shield Your Crypto',
+    }),
+    [ROUTE_NAMES.TxHistoryDetail]: navigationOptionsHandler(TxHistoryDetail, {
+      title: 'History Detail',
+    }),
+    [ROUTE_NAMES.Setting]: navigationOptionsHandler(Setting, {title: 'You'}),
+    [ROUTE_NAMES.DexHistory]: navigationOptionsHandler(DexHistory, {
+      header: () => null,
+    }),
+    [ROUTE_NAMES.DexHistoryDetail]: navigationOptionsHandler(DexHistoryDetail, {
+      header: () => null,
+    }),
     [ROUTE_NAMES.pApp]: navigationOptionsHandler(pApp),
-    [ROUTE_NAMES.AddPin]: navigationOptionsHandler(AddPIN, { header: () => null }),
-    [ROUTE_NAMES.BackupKeys]: navigationOptionsHandler(BackupKeys, { title: 'Back up private keys' }),
-    [ROUTE_NAMES.Dex]: navigationOptionsHandler(Dex, { title: 'pDex', header: () => null }),
-    [ROUTE_NAMES.WhyShield]: navigationOptionsHandler(WhyShield, { title: 'Why Shield?' }),
+    [ROUTE_NAMES.AddPin]: navigationOptionsHandler(AddPIN, {
+      header: () => null,
+    }),
+    [ROUTE_NAMES.BackupKeys]: navigationOptionsHandler(BackupKeys, {
+      title: 'Back up private keys',
+    }),
+    [ROUTE_NAMES.Dex]: navigationOptionsHandler(Dex, {
+      title: 'pDex',
+      header: () => null,
+    }),
+    [ROUTE_NAMES.WhyShield]: navigationOptionsHandler(WhyShield, {
+      title: 'Why Shield?',
+    }),
+    [ROUTE_NAMES.SendInFrequentReceivers]: navigationOptionsHandler(
+      SendInFrequentReceivers,
+      {
+        title: 'Frequent receivers',
+      },
+    ),
+    [ROUTE_NAMES.SendInFrequentReceiversModal]: navigationOptionsHandler(
+      SendInFrequentReceiversModal,
+      {
+        title: 'Frequent receivers',
+      },
+    ),
   },
   {
     initialRouteName: ROUTE_NAMES.RootTab,
