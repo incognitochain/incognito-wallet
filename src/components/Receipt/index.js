@@ -1,15 +1,40 @@
-import React, { Component } from 'react';
-import { withNavigation, NavigationActions } from 'react-navigation';
-import { Modal } from '@src/components/core';
+import React, {Component} from 'react';
+import {withNavigation, NavigationActions} from 'react-navigation';
+import {Modal} from '@src/components/core';
 import routeNames from '@src/router/routeNames';
+import {ExHandler} from '@src/services/exception';
 import Receipt from './Receipt';
 import styleSheet from './style';
 
 let ExportCom = null;
 
-const openReceipt = ({ txId, toAddress, fromAddress, amount, amountUnit, time, fee, feeUnit, decimals, pDecimals, title } = {}) => {
+const openReceipt = ({
+  txId,
+  toAddress,
+  fromAddress,
+  amount,
+  amountUnit,
+  time,
+  fee,
+  feeUnit,
+  decimals,
+  pDecimals,
+  title,
+} = {}) => {
   if (typeof ExportCom?.openReceipt === 'function') {
-    ExportCom.openReceipt({ txId, toAddress, fromAddress, amount, amountUnit, time, fee, feeUnit, decimals, pDecimals, title });
+    ExportCom.openReceipt({
+      txId,
+      toAddress,
+      fromAddress,
+      amount,
+      amountUnit,
+      time,
+      fee,
+      feeUnit,
+      decimals,
+      pDecimals,
+      title,
+    });
   }
 };
 
@@ -24,7 +49,7 @@ class ReceiptModal extends Component {
     super();
     this.state = {
       open: false,
-      info: {}
+      info: {},
     };
   }
 
@@ -32,37 +57,54 @@ class ReceiptModal extends Component {
     ExportCom = this;
   }
 
-  openReceipt = (info) => {
-    this.setState({ open: true, info });
-  }
+  openReceipt = info => {
+    this.setState({open: true, info});
+  };
 
   closeReceipt = () => {
-    this.setState({ open: false, info: {} });
-  }
+    this.setState({open: false, info: {}});
+  };
 
   goBackToWallet = () => {
-    const { navigation } = this.props;
+    const {navigation} = this.props;
     this.closeReceipt();
-    navigation.reset([NavigationActions.navigate({ routeName: routeNames.RootTab })], 0);
-  }
+    navigation.reset(
+      [NavigationActions.navigate({routeName: routeNames.RootTab})],
+      0,
+    );
+  };
+
+  onSaveReceivers = () => {
+    try {
+      const {navigation} = this.props;
+      const {info} = this.state;
+      navigation.navigate(routeNames.SendInFrequentReceivers, {
+        info,
+      });
+      this.closeReceipt();
+    } catch (error) {
+      new ExHandler(error).showErrorToast();
+    }
+  };
 
   render() {
-    const { open, info } = this.state;
+    const {open, info} = this.state;
     return (
       <Modal
         visible={open}
-        presentationStyle='fullScreen'
+        presentationStyle="fullScreen"
         containerStyle={styleSheet.modalContainer}
         isShowHeader={false}
-      > 
-        <Receipt info={info} onBack={this.goBackToWallet} />
+      >
+        <Receipt
+          info={info}
+          onBack={this.goBackToWallet}
+          onSaveReceivers={this.onSaveReceivers}
+        />
       </Modal>
     );
   }
 }
 
 export default withNavigation(ReceiptModal);
-export {
-  closeReceipt,
-  openReceipt
-};
+export {closeReceipt, openReceipt};
