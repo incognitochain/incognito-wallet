@@ -75,7 +75,7 @@
     "punycode": "^1.4.1",
     "querystring-es3": "^0.2.1",
     "random-bytes": "^1.0.0",
-    "react": "^16.13.0",
+    "react": "16.10.2",
     "react-content-loader": "^4.3.0",
     "react-devtools": "^3.6.3",
     "react-native": "0.61.2",
