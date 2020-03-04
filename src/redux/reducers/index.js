@@ -1,6 +1,7 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
 import reduceReducers from 'reduce-reducers';
-import { reducer as formReducer } from 'redux-form';
+import {reducer as formReducer} from 'redux-form';
+import {modalReducer} from '@src/components/Modal';
 import wallet from './wallet';
 import account from './account';
 import server from './server';
@@ -21,9 +22,10 @@ const rootReducer = reduceReducers(
     app,
     dex,
     pin,
-    form: formReducer
+    form: formReducer,
+    modal: modalReducer,
   }),
-  globalReducer
+  globalReducer,
 );
 
 export default rootReducer;

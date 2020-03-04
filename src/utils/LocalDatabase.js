@@ -1,18 +1,19 @@
 import User from '@models/user';
 import AsyncStorage from '@react-native-community/async-storage';
-import { CONSTANT_KEYS } from '@src/constants';
+import {CONSTANT_KEYS} from '@src/constants';
 import _ from 'lodash';
 
 const TAG = 'LocalDatabase';
 export const KEY_SAVE = {
   USER: CONSTANT_KEYS.USER,
-  LIST_DEVICE:CONSTANT_KEYS.LIST_DEVICE,
-  LIST_TOKEN:CONSTANT_KEYS.LIST_TOKEN,
+  LIST_DEVICE: CONSTANT_KEYS.LIST_DEVICE,
+  LIST_TOKEN: CONSTANT_KEYS.LIST_TOKEN,
   DEX: CONSTANT_KEYS.DEX,
   DEX_HISTORY: CONSTANT_KEYS.DEX_HISTORY,
   SEEN_DEPOSIT_GUIDE: CONSTANT_KEYS.SEEN_DEPOSIT_GUIDE,
   PIN: CONSTANT_KEYS.PIN,
   DECIMAL_SEPARATOR: '$decimal_separator',
+  FREQUENT_RECEIVERS: CONSTANT_KEYS.FREQUENT_RECEIVERS,
   VERIFY_CODE: '$verify_code',
 };
 export default class LocalDatabase {
@@ -34,7 +35,7 @@ export default class LocalDatabase {
       console.log(TAG, ' getListDevices error ');
     }
     return Promise.resolve(
-      !_.isEmpty(listDevice) ? JSON.parse(listDevice) : []
+      !_.isEmpty(listDevice) ? JSON.parse(listDevice) : [],
     );
   };
 
@@ -44,27 +45,27 @@ export default class LocalDatabase {
     return list;
   };
 
-  static updateDevice = async (deviceJson)=>{
+  static updateDevice = async deviceJson => {
     let list = await LocalDatabase.getListDevices();
-    const index = _.findIndex(list,['product_id',deviceJson.product_id]);
-    if(index >=0){
+    const index = _.findIndex(list, ['product_id', deviceJson.product_id]);
+    if (index >= 0) {
       list[index] = {
         ...list[index],
-        ...deviceJson
+        ...deviceJson,
       };
-    }else{
+    } else {
       list.push(deviceJson);
     }
     await LocalDatabase.saveListDevices(list);
-  }
+  };
   /**
    * return {JSON} : deviceInfo
    */
-  static getDevice = async (product_id)=>{
-    if(_.isEmpty(product_id)) throw new Error('product_id is empty');
+  static getDevice = async product_id => {
+    if (_.isEmpty(product_id)) throw new Error('product_id is empty');
 
     let list = await LocalDatabase.getListDevices();
-    const index = _.findIndex(list,['product_id',product_id]);
+    const index = _.findIndex(list, ['product_id', product_id]);
     return list[index];
   };
   static saveListDevices = async (jsonListDevice: []) => {
@@ -75,45 +76,62 @@ export default class LocalDatabase {
     let list = await LocalDatabase.getValue(KEY_SAVE.LIST_TOKEN);
     return JSON.parse(list || '[]');
   };
-  static saveListToken = (listToken) => {
-    return LocalDatabase.saveValue(KEY_SAVE.LIST_TOKEN, JSON.stringify(listToken));
+  static saveListToken = listToken => {
+    return LocalDatabase.saveValue(
+      KEY_SAVE.LIST_TOKEN,
+      JSON.stringify(listToken),
+    );
   };
-  static saveDeviceKeyInfo = async (product_id,keyInfo) => {
-    if(!_.isEmpty(product_id) && !_.isEmpty(keyInfo)){
-      const deviceJSON = await LocalDatabase.getDevice(product_id).catch(e=>throw new Error('device not found in local'))??undefined;
-      if(deviceJSON){
+  static saveDeviceKeyInfo = async (product_id, keyInfo) => {
+    if (!_.isEmpty(product_id) && !_.isEmpty(keyInfo)) {
+      const deviceJSON =
+        (await LocalDatabase.getDevice(product_id).catch(
+          e => throw new Error('device not found in local'),
+        )) ?? undefined;
+      if (deviceJSON) {
         deviceJSON['keyInfo'] = {
           ...deviceJSON['keyInfo'],
-          ...keyInfo
+          ...keyInfo,
         };
         await LocalDatabase.updateDevice(deviceJSON);
-        console.log(TAG, ' saveDeviceKeyInfo end success deviceJSON=',deviceJSON);
+        console.log(
+          TAG,
+          ' saveDeviceKeyInfo end success deviceJSON=',
+          deviceJSON,
+        );
       }
     }
   };
-  static saveUpdatingFirware = async (product_id,isUpdating) => {
-    if(!_.isEmpty(product_id)){
-      const deviceJSON = await LocalDatabase.getDevice(product_id).catch(e=>throw new Error('device not found in local'))??undefined;
-      if(deviceJSON){
+  static saveUpdatingFirware = async (product_id, isUpdating) => {
+    if (!_.isEmpty(product_id)) {
+      const deviceJSON =
+        (await LocalDatabase.getDevice(product_id).catch(
+          e => throw new Error('device not found in local'),
+        )) ?? undefined;
+      if (deviceJSON) {
         deviceJSON['minerInfo'] = {
           ...deviceJSON['minerInfo'],
-          isUpdating:isUpdating
+          isUpdating: isUpdating,
         };
         await LocalDatabase.updateDevice(deviceJSON);
-        console.log(TAG, ' saveUpdatingFirware end success deviceJSON=',deviceJSON);
+        console.log(
+          TAG,
+          ' saveUpdatingFirware end success deviceJSON=',
+          deviceJSON,
+        );
       }
     }
   };
   static async logout() {
     return await AsyncStorage.multiRemove([
       KEY_SAVE.USER,
-      KEY_SAVE.LIST_DEVICE
+      KEY_SAVE.LIST_DEVICE,
     ]);
   }
   static async saveUserInfo(jsonUser: String) {
     const oldUser = await LocalDatabase.getValue(KEY_SAVE.USER);
     if (jsonUser !== oldUser) {
-      const data = { ...JSON.parse(oldUser), ...JSON.parse(jsonUser) };
+      const data = {...JSON.parse(oldUser), ...JSON.parse(jsonUser)};
       await LocalDatabase.saveValue(KEY_SAVE.USER, JSON.stringify(data));
     }
   }
@@ -132,20 +150,28 @@ export default class LocalDatabase {
   }
 
   static async saveDexHistory(swapHistory) {
-    await LocalDatabase.saveValue(KEY_SAVE.DEX_HISTORY, JSON.stringify(swapHistory));
+    await LocalDatabase.saveValue(
+      KEY_SAVE.DEX_HISTORY,
+      JSON.stringify(swapHistory),
+    );
   }
 
   static async getDexHistory() {
-    const swapHistory = (await LocalDatabase.getValue(KEY_SAVE.DEX_HISTORY)) || '';
+    const swapHistory =
+      (await LocalDatabase.getValue(KEY_SAVE.DEX_HISTORY)) || '';
     return _.isEmpty(swapHistory) ? [] : JSON.parse(swapHistory);
   }
 
   static async saveSeenDepositGuide(firstTime) {
-    await LocalDatabase.saveValue(KEY_SAVE.SEEN_DEPOSIT_GUIDE, JSON.stringify(firstTime));
+    await LocalDatabase.saveValue(
+      KEY_SAVE.SEEN_DEPOSIT_GUIDE,
+      JSON.stringify(firstTime),
+    );
   }
 
   static async getSeenDepositGuide() {
-    const seenDepositGuide = (await LocalDatabase.getValue(KEY_SAVE.SEEN_DEPOSIT_GUIDE)) || '';
+    const seenDepositGuide =
+      (await LocalDatabase.getValue(KEY_SAVE.SEEN_DEPOSIT_GUIDE)) || '';
     return _.isEmpty(seenDepositGuide) ? false : JSON.parse(seenDepositGuide);
   }
 
@@ -165,6 +191,26 @@ export default class LocalDatabase {
 
   static getDecimalSeparator() {
     return LocalDatabase.getValue(KEY_SAVE.DECIMAL_SEPARATOR);
+  }
+
+  static async getFrequentReceivers() {
+    const receivers = JSON.parse(
+      await LocalDatabase.getValue(KEY_SAVE.FREQUENT_RECEIVERS),
+    );
+    return _.isEmpty(receivers) ? [] : receivers;
+  }
+
+  static async setFrequentReceivers(receiver = {name: '', address: ''}) {
+    const oldReceivers = await this.getFrequentReceivers();
+    const {name, address} = receiver;
+    const isReceiverExist = oldReceivers.some(
+      item => item?.address === address || item?.name === name,
+    );
+    if (isReceiverExist) {
+      throw Error('User exist!');
+    }
+    const newReceivers = JSON.stringify([...oldReceivers, receiver]);
+    return LocalDatabase.saveValue(KEY_SAVE.FREQUENT_RECEIVERS, newReceivers);
   }
 
   static saveVerifyCode(verifyCode) {
