@@ -73,6 +73,8 @@
 	<string>${PRODUCT_NAME} Sỉri Usage</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Recognize speech</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Enabling Face ID allows you quick and secure access to your account.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Roboto_bold.ttf</string>

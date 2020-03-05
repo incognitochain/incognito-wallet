@@ -39,7 +39,7 @@ class AddPIN extends React.Component {
       pin1: '',
       pin2: '',
       nextPin: false,
-      touchSupported: false,
+      bioSupportedType: null,
       action,
     };
     this.animatedValue = new Animated.Value(0);
@@ -67,11 +67,9 @@ class AddPIN extends React.Component {
     const { action } = this.state;
     if (action === 'login' || action === 'remove') {
       TouchID.isSupported(optionalConfigObject)
-        .then(biometryType => {
-          if (biometryType !== 'FaceID') {
-            this.setState({touchSupported: true});
-            this.handleTouch();
-          }
+        .then((biometryType) => {
+          this.setState({bioSupportedType: biometryType});
+          this.handleBioAuth();
         })
         .catch(() => null);
     }
@@ -160,7 +158,7 @@ class AddPIN extends React.Component {
     this.updatePin('');
   };
 
-  handleTouch = () => {
+  handleBioAuth = () => {
     TouchID.authenticate('', optionalConfigObject)
       .then(() => {
         const { action } = this.state;
@@ -190,21 +188,24 @@ class AddPIN extends React.Component {
   }
 
   render() {
-    const { pin1, action, nextPin, pin2, touchSupported } = this.state;
+    const { pin1, action, nextPin, pin2, bioSupportedType } = this.state;
     const { navigation } = this.props;
     const userPin = nextPin ? pin2 : pin1;
 
     return (
       <View style={styles.container}>
-        { (action === 'login' || action === 'remove') && touchSupported && (
-          <TouchableOpacity style={styles.fingerprint} onPress={this.handleTouch} activeOpacity={opacity}>
-            <Icon containerStyle={styles.icon} type='material' name="fingerprint" size={50} />
+        { (action === 'login' || action === 'remove') && bioSupportedType && (
+          <TouchableOpacity style={styles.fingerprint} onPress={this.handleBioAuth} activeOpacity={opacity}>
+            {
+              bioSupportedType === 'FaceID' ? <Icon containerStyle={styles.icon} type='material-community' name='face-recognition' size={50} />
+                :  <Icon containerStyle={styles.icon} type='material' name='fingerprint' size={50} />
+            }
           </TouchableOpacity>
         )}
         {this.renderTitle()}
         <View style={styles.input}>
           {pinLength.map(item =>
-            <View style={[styles.dot, userPin.length >= item && styles.active]} />
+            <View key={item} style={[styles.dot, userPin.length >= item && styles.active]} />
           )}
         </View>
         <Animated.View style={{
@@ -218,7 +219,7 @@ class AddPIN extends React.Component {
         >
           <View style={styles.keyboard}>
             {keys.map(key => (
-              <TouchableOpacity id={key} style={styles.key} onPress={() => this.handleInput(key)} activeOpacity={opacity}>
+              <TouchableOpacity key={key} id={key} style={styles.key} onPress={() => this.handleInput(key)} activeOpacity={opacity}>
                 <Text style={styles.keyText}>{key}</Text>
               </TouchableOpacity>
             ))}
