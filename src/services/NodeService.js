@@ -10,7 +10,6 @@ import ZMQService from 'react-native-zmq-service';
 import { CustomError, ExHandler } from './exception';
 import knownCode from './exception/customError/code/knownCode';
 import FirebaseService, { DEVICE_CHANNEL_FORMAT, FIREBASE_PASS, MAIL_UID_FORMAT, PHONE_CHANNEL_FORMAT } from './FirebaseService';
-import SSHService from './SSHService';
 
 const TAG = 'NodeService';
 const password = `${FIREBASE_PASS}`;
@@ -307,20 +306,6 @@ export default class NodeService {
     }
     return '';
   };
-
-  static cleanOldDataForSetup = async ()=>{
-    try {
-      const pathData = '/home/nuc/aos/data';
-      const rmConfigFile = `sudo rm ${pathData}/os_config.json ${pathData}/product_key.json ${pathData}/user.json ${pathData}/product_id.json`;
-      const result = await SSHService.run('10.42.0.1',`sudo rm -r /home/nuc/aos/inco-data/;sudo rm -r /home/nuc/aos/inco-eth-kovan-data/;sudo docker rm -f inc_miner;sudo docker rm -f inc_kovan;${rmConfigFile}`);
-      console.log(TAG,'cleanOldDataForSetup data = ',result);
-      DeviceLog.logInfo('cleanOldDataForSetup result = ' + _.toString(result));
-      return true ;
-    } catch (error) {
-      return false;
-    }
-
-  }
 
   static getBLSKey = async (device:Device, chain = 'incognito') => {
     try {

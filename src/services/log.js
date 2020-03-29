@@ -19,9 +19,9 @@ class Log {
    * This log only will appear in DEV
    */
   logDev() {
-    if (__DEV__) {
-      console.debug.apply(null, arguments);
-    }
+    // if (__DEV__) {
+    //   console.debug.apply(null, arguments);
+    // }
 
     return this;
   }

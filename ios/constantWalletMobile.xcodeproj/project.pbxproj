@@ -12,7 +12,6 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1EBA2F750D7D4CEC919D9242 /* libRNSSH.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97C3A54F4B934DA1A6004B78 /* libRNSSH.a */; };
 		20B559AF22C393B10079FC06 /* Gomobile.m in Sources */ = {isa = PBXBuildFile; fileRef = 20B559AE22C393B10079FC06 /* Gomobile.m */; };
 		227D14BDEE8B5572A5757F41 /* libPods-constantWalletMobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EFC1329943BE2D10F4F58719 /* libPods-constantWalletMobile.a */; };
 		36F7D5CE970D4799A075B466 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F36E2A27EA945A6BA652F08 /* libRNSVG.a */; };
@@ -20,7 +19,7 @@
 		3EF0EC91E7FE4B16A434459C /* libRNZmqService.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DE70DDA39F794DA9B6544C35 /* libRNZmqService.a */; };
 		7179093823F1542200699569 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7179093723F1542200699569 /* AdSupport.framework */; };
 		7179093A23F1543500699569 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7179093923F1543500699569 /* iAd.framework */; };
-		71E27E7123FFCA8C00364AD5 /* Gomobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71E27E7023FFCA8C00364AD5 /* Gomobile.framework */; };
+		71B67CD3242F5569003108D1 /* Gomobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71B67CD2242F5569003108D1 /* Gomobile.framework */; };
 		7951D9F679874B4EA8E3CFEE /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27AAED89E8AD4248BBC41F79 /* libRNFirebase.a */; };
 		82E467C899D04A02A0589EB9 /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FB08C251E22B438096EA6169 /* libRNGestureHandler.a */; };
 		86ED14E621B04B6EAF5271CA /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1B5521124109464CB94BB248 /* Fontisto.ttf */; };
@@ -48,8 +47,6 @@
 		FEEBD6C02355AD57006EFECD /* AutonomousZMQ.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FE52DCEE22DC685E003203EF /* AutonomousZMQ.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FEEBD6D72355CA35006EFECD /* libreact-native-randombytes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEBD6D62355CA35006EFECD /* libreact-native-randombytes.a */; };
 		FEEBD6DB2355CA94006EFECD /* libRNPermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEBD6DA2355CA94006EFECD /* libRNPermissions.a */; };
-		FEEBD6DD2355CA94006EFECD /* libRNSensors.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEBD6DC2355CA94006EFECD /* libRNSensors.a */; };
-		FEEBD6DF2355CA94006EFECD /* libRNSound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEBD6DE2355CA94006EFECD /* libRNSound.a */; };
 		FEEBD6E32355CBB3006EFECD /* libreact-native-camera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEBD6E22355CBB3006EFECD /* libreact-native-camera.a */; };
 		FEEBD6E72355CC2A006EFECD /* libreact-native-iot-wifi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEBD6E62355CC2A006EFECD /* libreact-native-iot-wifi.a */; };
 /* End PBXBuildFile section */
@@ -61,13 +58,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNZmqService;
-		};
-		FEEBD6EC2355CCB8006EFECD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FEEBD6E82355CCB8006EFECD /* RNSSH.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = RNSSH;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -125,7 +115,7 @@
 		7139BB1E57B94AE2A6C8F4AF /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		7179093723F1542200699569 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		7179093923F1543500699569 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
-		71E27E7023FFCA8C00364AD5 /* Gomobile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Gomobile.framework; sourceTree = "<group>"; };
+		71B67CD2242F5569003108D1 /* Gomobile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Gomobile.framework; sourceTree = "<group>"; };
 		77EBA14081508832CECFA40E /* libPods-constantWalletMobileTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-constantWalletMobileTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B1D10FDD4BB4B9780BB82C4 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		803049AD3941440A9310525A /* libRNDeviceInfo-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNDeviceInfo-tvOS.a"; sourceTree = "<group>"; };
@@ -179,7 +169,6 @@
 		FEEBD6DE2355CA94006EFECD /* libRNSound.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNSound.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEEBD6E22355CBB3006EFECD /* libreact-native-camera.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libreact-native-camera.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEEBD6E62355CC2A006EFECD /* libreact-native-iot-wifi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libreact-native-iot-wifi.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		FEEBD6E82355CCB8006EFECD /* RNSSH.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSSH.xcodeproj; path = "../node_modules/react-native-ssh/ios/RNSSH.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,8 +180,6 @@
 				FEEBD6E72355CC2A006EFECD /* libreact-native-iot-wifi.a in Frameworks */,
 				FEEBD6E32355CBB3006EFECD /* libreact-native-camera.a in Frameworks */,
 				FEEBD6DB2355CA94006EFECD /* libRNPermissions.a in Frameworks */,
-				FEEBD6DD2355CA94006EFECD /* libRNSensors.a in Frameworks */,
-				FEEBD6DF2355CA94006EFECD /* libRNSound.a in Frameworks */,
 				FEEBD6D72355CA35006EFECD /* libreact-native-randombytes.a in Frameworks */,
 				FE86096522D747230050666A /* libFirebaseCore.a in Frameworks */,
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
@@ -209,9 +196,8 @@
 				C2E73AA50DDC4747BAD7CC54 /* libRNOS.a in Frameworks */,
 				D7BDB11DB76A47B9A686E426 /* libTcpSockets.a in Frameworks */,
 				3EF0EC91E7FE4B16A434459C /* libRNZmqService.a in Frameworks */,
-				1EBA2F750D7D4CEC919D9242 /* libRNSSH.a in Frameworks */,
 				7179093A23F1543500699569 /* iAd.framework in Frameworks */,
-				71E27E7123FFCA8C00364AD5 /* Gomobile.framework in Frameworks */,
+				71B67CD3242F5569003108D1 /* Gomobile.framework in Frameworks */,
 				AE8298EED2198D3E9F15B11C /* libPods-constantWalletMobile.a in Frameworks */,
 				227D14BDEE8B5572A5757F41 /* libPods-constantWalletMobile.a in Frameworks */,
 			);
@@ -326,7 +312,6 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				FEEBD6E82355CCB8006EFECD /* RNSSH.xcodeproj */,
 				FEEBD6CD2355C724006EFECD /* RNZmqService.xcodeproj */,
 			);
 			name = Libraries;
@@ -335,7 +320,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				71E27E7023FFCA8C00364AD5 /* Gomobile.framework */,
+				71B67CD2242F5569003108D1 /* Gomobile.framework */,
 				A7ED6691231E7AA600632177 /* game.mp3 */,
 				FE52DCEE22DC685E003203EF /* AutonomousZMQ.framework */,
 				FE6F885F22DC3B0E0009C5AA /* ZMQ */,
@@ -419,14 +404,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		FEEBD6E92355CCB8006EFECD /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				FEEBD6ED2355CCB8006EFECD /* libRNSSH.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -497,10 +474,6 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = FEEBD6E92355CCB8006EFECD /* Products */;
-					ProjectRef = FEEBD6E82355CCB8006EFECD /* RNSSH.xcodeproj */;
-				},
-				{
 					ProductGroup = FEEBD6CE2355C724006EFECD /* Products */;
 					ProjectRef = FEEBD6CD2355C724006EFECD /* RNZmqService.xcodeproj */;
 				},
@@ -518,13 +491,6 @@
 			fileType = archive.ar;
 			path = libRNZmqService.a;
 			remoteRef = FEEBD6D32355C724006EFECD /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		FEEBD6ED2355CCB8006EFECD /* libRNSSH.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNSSH.a;
-			remoteRef = FEEBD6EC2355CCB8006EFECD /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

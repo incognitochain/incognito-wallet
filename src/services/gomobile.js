@@ -17,6 +17,7 @@ const requiredTimeMethods = [
 ];
 
 const log = (...args) => console.log('GOMODULE', ...args);
+
 try {
   const asyncMethods = [
     'deriveSerialNumber',
@@ -35,6 +36,10 @@ try {
     'hybridDecryptionASM',
     'hybridEncryptionASM',
     'stopAutoStaking',
+    'generateIncognitoContractAddress',
+    'withdrawSmartContractBalance',
+    'sign0x',
+    'signKyber',
   ];
   const syncMethods = [
     'scalarMultBase',
@@ -54,8 +59,7 @@ try {
                 reject(error);
               }
 
-              console.debug(methodName, time);
-              log(`${methodName} called successfully with result`, time);
+              // log(`${methodName} called successfully with result`, time);
               return resolve(result);
             });
           } else {
@@ -78,10 +82,10 @@ try {
 
   syncMethods.forEach(methodName => {
     global[methodName] = (input) => {
-      log(`${methodName} called with params`, input);
+      // log(`${methodName} called with params`, input);
 
       const rs = PrivacyGo[methodName](input);
-      log(`${methodName} called successfully with result`, rs);
+      // log(`${methodName} called successfully with result`, rs);
 
       if (rs === null) {
         throw new Error(`${methodName} go module called with error`);
@@ -94,3 +98,14 @@ try {
 } catch {
   console.error('GO modules can not loaded');
 }
+
+function generateIncognitoContractAddress(privateKey) {
+  return global.generateIncognitoContractAddress(JSON.stringify({
+    privateKey,
+  }));
+}
+
+export default {
+  generateIncognitoContractAddress,
+};
+

@@ -28,16 +28,18 @@ const amountCreator = (maxDigits) => (amount, decimals) => {
 
     let _maxDigits = maxDigits;
 
-    const _amount = convertUtil.toHumanAmount(amount, decimals);
-    if (!Number.isFinite(_amount)) throw new Error('Can not format invalid amount');
+    const _amount = BigNumber(convertUtil.toHumanAmount(amount, decimals));
+
+    if (!_amount.isFinite(_amount)) throw new Error('Can not format invalid amount');
 
     // if amount is too small, do not round it
-    if (_amount > 0 && _amount < 1) {
+    if (_amount.isGreaterThan(0) && _amount.isLessThan( 1)) {
       _maxDigits = undefined;
     }
 
-    return _amount ? removeTrailingZeroes(new BigNumber(_amount).toFormat(_maxDigits, BigNumber.ROUND_DOWN, fmt)) : 0;
-  } catch {
+    return _amount ? removeTrailingZeroes(_amount.toFormat(_maxDigits, BigNumber.ROUND_DOWN, fmt)) : 0;
+  } catch (e) {
+    console.debug('FORMAT ERROR', e);
     return amount;
   }
 };

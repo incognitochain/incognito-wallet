@@ -181,6 +181,50 @@ RCT_EXPORT_METHOD(withdrawDexTx:(NSString *)data time:(NSInteger)time callback:(
   }
 }
 
+//exports a method generateIncognitoContractAddress to javascript
+RCT_EXPORT_METHOD(generateIncognitoContractAddress:(NSString *)data callback:(RCTResponseSenderBlock)callback){
+  @try{
+    NSString *rs = GomobileGenerateContractAddress(data, nil);
+    callback(@[[NSNull null], rs]);
+  }
+  @catch(NSException *exception){
+    callback(@[exception.reason, [NSNull null]]);
+  }
+}
+
+//exports a method sign0x to javascript
+RCT_EXPORT_METHOD(sign0x:(NSString *)data callback:(RCTResponseSenderBlock)callback){
+  @try{
+    NSString *rs = GomobileSign0x(data, nil);
+    callback(@[[NSNull null], rs]);
+  }
+  @catch(NSException *exception){
+    callback(@[exception.reason, [NSNull null]]);
+  }
+}
+
+//exports a method signKyber to javascript
+RCT_EXPORT_METHOD(signKyber:(NSString *)data callback:(RCTResponseSenderBlock)callback){
+  @try{
+    NSString *rs = GomobileSignKyber(data, nil);
+    callback(@[[NSNull null], rs]);
+  }
+  @catch(NSException *exception){
+    callback(@[exception.reason, [NSNull null]]);
+  }
+}
+
+//exports a method signKyber to javascript
+RCT_EXPORT_METHOD(withdrawSmartContractBalance:(NSString *)data callback:(RCTResponseSenderBlock)callback){
+  @try{
+    NSString *rs = GomobileWithdrawSmartContractBalance(data, nil);
+    callback(@[[NSNull null], rs]);
+  }
+  @catch(NSException *exception){
+    callback(@[exception.reason, [NSNull null]]);
+  }
+}
+
 //exports a method scalarMultBase to javascript
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(
   scalarMultBase:(NSString *)data

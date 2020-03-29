@@ -1,11 +1,12 @@
 import _ from 'lodash';
 import {getDecimalSeparator} from '@src/resources/separator';
+import BigNumber from 'bignumber.js';
 
 const checkAmount = (amount) => {
   if (!Number.isFinite(amount)) throw new Error('Can not format invalid amount');
 };
 
-const toNumber = (text, autoCorrect = false) => {
+const toNumber = (text, autoCorrect = false, bigNum = false) => {
   if (typeof text !== 'string') {
     return text;
   }
@@ -20,6 +21,11 @@ const toNumber = (text, autoCorrect = false) => {
     text = text.replace(/,/g, '');
   }
 
+
+  if (bigNum) {
+    return BigNumber(text);
+  }
+
   return _.toNumber(text);
 };
 
@@ -30,9 +36,14 @@ export default {
    * @param {number} decimals
    * Convert original amount (usualy get from backend) to humain readable amount or display on frontend
    */
-  toHumanAmount(originAmount, decimals) {
+  toHumanAmount(originAmount, decimals, bigNum = false) {
     try {
-      const amount = toNumber(originAmount);
+      const amount = toNumber(originAmount, false, bigNum);
+
+      if (bigNum) {
+        return amount.dividedBy(BigNumber(10).pow(decimals));
+      }
+
       checkAmount(amount);
 
       const decision_rate = Number(decimals) ? 10 ** (Number(decimals)) : 1;
@@ -76,5 +87,21 @@ export default {
       hash |= 0; // Convert to 32bit integer
     }
     return hash.toString();
-  }
+  },
+
+  toPDecimals(number, token) {
+    return BigNumber(number)
+      .dividedBy(BigNumber(10).pow(token.decimals))
+      .multipliedBy(BigNumber(10).pow(token.pDecimals))
+      .dividedToIntegerBy(1)
+      .toNumber();
+  },
+
+  toDecimals(number, token) {
+    return BigNumber(number)
+      .dividedBy(BigNumber(10).pow(token.pDecimals))
+      .multipliedBy(BigNumber(10).pow(token.decimals))
+      .dividedToIntegerBy(1)
+      .toString();
+  },
 };

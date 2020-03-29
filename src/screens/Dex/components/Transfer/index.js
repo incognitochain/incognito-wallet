@@ -427,8 +427,6 @@ class Transfer extends React.PureComponent {
       error = null;
     }
 
-    console.debug('SELECT FEE', estimateFeeData);
-
     this.updateTransfer({
       fee,
       feeUnit,

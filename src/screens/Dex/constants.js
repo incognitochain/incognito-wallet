@@ -87,6 +87,7 @@ export const MESSAGES = {
   DEPOSIT: 'deposit',
   WITHDRAW: 'withdraw',
   TRADE: 'trade',
+  WITHDRAW_SC: 'withdrawSC',
   ADD_LIQUIDITY: 'add liquidity',
   REMOVE_LIQUIDITY: 'remove liquidity',
   RETRY_WITHDRAW: 'Withdraw unsuccessful. Please go into withdraw detail in history to retry.',

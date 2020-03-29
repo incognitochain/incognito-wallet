@@ -18,4 +18,15 @@ export default {
   WITHDRAW_PDEX : 'withdraw_pdex',
   WITHDRAW_PDEX_SUCCESS : 'withdraw_pdex_success',
   WITHDRAW_PDEX_FAILED : 'withdraw_pdex_failed',
+
+  DEPOSIT_UNISWAP : 'deposit_uniswap',
+  DEPOSIT_UNISWAP_SUCCESS : 'deposit_uniswap_success',
+  DEPOSIT_UNISWAP_FAILED : 'deposit_uniswap_failed',
+  VIEW_UNISWAP: 'view_uniswap',
+  TRADE_UNISWAP : 'trade_uniswap',
+  TRADE_UNISWAP_SUCCESS : 'trade_uniswap_success',
+  TRADE_UNISWAP_FAILED : 'trade_uniswap_failed',
+  WITHDRAW_UNISWAP : 'withdraw_uniswap',
+  WITHDRAW_UNISWAP_SUCCESS : 'withdraw_uniswap_success',
+  WITHDRAW_UNISWAP_FAILED : 'withdraw_uniswap_failed',
 };

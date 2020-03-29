@@ -9,6 +9,7 @@ import token from './token';
 import selectedPrivacy from './selectedPrivacy';
 import app from './app';
 import dex from './dex';
+import uniswap from './uniswap';
 import pin from './pin';
 import globalReducer from './globalReducer';
 import receivers from './receivers';
@@ -22,6 +23,7 @@ const rootReducer = reduceReducers(
     selectedPrivacy,
     app,
     dex,
+    uniswap,
     pin,
     form: formReducer,
     modal: modalReducer,

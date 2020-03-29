@@ -1,6 +1,5 @@
 import {KEY} from '@src/services/wallet/Server';
 
-// import { isMainnet } from './config';
 const isMainnet = global.isMainnet ?? true;
 const prefix_network = 'testnet';
 const KEYS = {
@@ -15,6 +14,7 @@ const KEYS = {
   USER_UNFOLLOWING_TOKEN_ID_LIST: '$USER_UNFOLLOWING_TOKEN_ID_LIST',
   DEX: '$DEX',
   DEX_HISTORY: '$DEX_HISTORY',
+  UNISWAP_HISTORY: '$UNISWAP_HISTORY',
   SEEN_DEPOSIT_GUIDE: '$SEEN_DEPOSIT_GUIDE',
   PIN: '$PIN',
   IS_CHECK_FOLLOWED_TOKEN: '$IS_CHECK_FOLLOWED_TOKEN',
@@ -35,6 +35,7 @@ const KEYS_TESTNET = {
   LIST_TOKEN: `${prefix_network}_LIST_TOKEN`,
   USER_UNFOLLOWING_TOKEN_ID_LIST: `${prefix_network}_$USER_UNFOLLOWING_TOKEN_ID_LIST`,
   DEX: `${prefix_network}_DEX`,
+  UNISWAP_HISTORY: `${prefix_network}_UNISWAP_HISTORY`,
   DEX_HISTORY: `${prefix_network}_$DEX_HISTORY`,
   SEEN_DEPOSIT_GUIDE: `${prefix_network}_$SEEN_DEPOSIT_GUIDE`,
   PIN: `${prefix_network}_$PIN`,

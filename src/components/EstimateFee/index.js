@@ -161,8 +161,6 @@ class EstimateFeeContainer extends Component {
       const { userFee } = this.state;
       const { selectedPrivacy, amount, toAddress, estimateFeeData: { feeUnitByTokenId }, multiply } = this.props;
 
-      console.debug('EST', amount, toAddress, selectedPrivacy);
-
       if (!amount || !toAddress || !selectedPrivacy) {
         return;
       }

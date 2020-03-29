@@ -480,4 +480,68 @@ export default class Account {
   static isPendingTx(error) {
     return error.stackTrace.includes(STACK_TRACE.REPLACEMENT);
   }
+
+  static generateIncognitoContractAddress(wallet, account) {
+    const indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+    return wallet.MasterAccount.child[
+      indexAccount
+    ].generateIncognitoContractAddress(account.PrivateKey);
+  }
+
+  static sign0x(wallet, account, {
+    sourceToken,
+    sourceQuantity,
+    sourceTokenName,
+    destToken,
+    destTokenName,
+    quoteUrl,
+    tradeABI,
+    tradeDeployedAddress,
+    privateKey,
+  }) {
+    const indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+    return wallet.MasterAccount.child[
+      indexAccount
+    ].sign0x({
+      sourceToken,
+      sourceQuantity,
+      sourceTokenName,
+      destToken,
+      destTokenName,
+      quoteUrl,
+      tradeABI,
+      tradeDeployedAddress,
+      privateKey,
+    });
+  }
+
+  static signKyber(wallet, account, {
+    sourceToken,
+    sourceQuantity,
+    destToken,
+    tradeABI,
+    tradeDeployedAddress,
+    privateKey,
+    expectRate,
+  }) {
+    const indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+    return wallet.MasterAccount.child[
+      indexAccount
+    ].signKyber({
+      sourceToken,
+      sourceQuantity,
+      destToken,
+      tradeABI,
+      tradeDeployedAddress,
+      privateKey,
+      expectRate,
+    });
+  }
+
+  static withdrawSmartContract(wallet, account, tokenAddress) {
+    const indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+    return wallet.MasterAccount.child[
+      indexAccount
+    ].withdrawSmartContract(account.PaymentAddress, account.PrivateKey, tokenAddress);
+  }
 }
