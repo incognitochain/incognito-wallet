@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>283351295312-u8kl0hps7r9i2k4jr8ul6guoq9ue75fk.apps.googleusercontent.com</string>
+	<string>283351295312-hmu348ftuuajaqslg3da8023rfq1heuh.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.283351295312-u8kl0hps7r9i2k4jr8ul6guoq9ue75fk</string>
+	<string>com.googleusercontent.apps.283351295312-hmu348ftuuajaqslg3da8023rfq1heuh</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>283351295312-5c5kghkov4roiv7vgjg4n09m46qci7o8.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.incognito.wallet.debug</string>
+	<string>com.incognito.wallet.staging</string>
 	<key>PROJECT_ID</key>
 	<string>aos-brain</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:283351295312:ios:92d31ba5fcf79b5caaf855</string>
+	<string>1:283351295312:ios:2efcdb52efc3f728aaf855</string>
 	<key>DATABASE_URL</key>
 	<string>https://aos-brain.firebaseio.com</string>
 </dict>
