@@ -21,6 +21,8 @@ export const PRV = {
   isVerified: true,
 };
 
+const BurningRequestMeta = 27;
+const BurningForDepositToSCRequestMeta = 96;
 
 export default class Token {
   // static async createSendCustomToken(param, fee, account, wallet) {
@@ -140,7 +142,7 @@ export default class Token {
   ) {
     await Wallet.resetProgressTx();
     // get index account by name
-    let indexAccount = wallet.getAccountIndexByName(account.name);
+    let indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
     // prepare param for create and send privacy custom token
     // payment info
     // @@ Note: it is use for receivers constant
@@ -159,6 +161,38 @@ export default class Token {
         feeNativeToken,
         feePToken,
         remoteAddress
+      );
+      await saveWallet(wallet);
+    } catch (e) {
+      throw e;
+    }
+    await Wallet.resetProgressTx();
+    return response;
+  }
+
+  // Deposit to smart contract
+  static async depositToSmartContract(
+    submitParam,
+    feeNativeToken,
+    feePToken,
+    remoteAddress,
+    account,
+    wallet
+  ) {
+    await Wallet.resetProgressTx();
+    let indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+    let paymentInfos = [];
+    let response;
+    try {
+      response = await wallet.MasterAccount.child[
+        indexAccount
+      ].createAndSendBurningRequestTx(
+        paymentInfos,
+        submitParam,
+        feeNativeToken,
+        feePToken,
+        remoteAddress,
+        BurningForDepositToSCRequestMeta,
       );
       await saveWallet(wallet);
     } catch (e) {

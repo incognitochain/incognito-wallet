@@ -47,7 +47,6 @@ target 'constantWalletMobile' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
   pod 'NMSSH', '~> 2.2.5'
-  pod 'RNSound', :path => '../node_modules/react-native-sound'
   pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
@@ -83,7 +82,6 @@ target 'constantWalletMobile' do
   pod 'react-native-iot-wifi', :path => '../node_modules/@josectobar/react-native-iot-wifi'
 #  pod 'RNZmqService', :path => '../node_modules/react-native-zmq-service'
   pod 'RNFirebase', :path => '../node_modules/react-native-firebase/ios'
-  pod 'RNSensors', :path => '../node_modules/react-native-sensors'
   pod 'react-native-camera', :path => '../node_modules/react-native-camera'
   pod 'RCTRestart', :path => '../node_modules/react-native-restart/ios'
   pod 'TouchID', :path => "../node_modules/react-native-touch-id"
@@ -93,6 +91,7 @@ target 'constantWalletMobile' do
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
   pod 'CodePush', :path => '../node_modules/react-native-code-push'
   pod 'AppsFlyerFramework'
+  pod 'react-native-keep-awake', :path => '../node_modules/react-native-keep-awake'
 
   # React-Native is not great about React double-including from the Podfile
   post_install do |installer|

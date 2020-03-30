@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import {getDecimalSeparator} from '@src/resources/separator';
+import BigNumber from 'bignumber.js';
 
 const checkAmount = (amount) => {
   if (!Number.isFinite(amount)) throw new Error('Can not format invalid amount');
@@ -76,5 +77,21 @@ export default {
       hash |= 0; // Convert to 32bit integer
     }
     return hash.toString();
-  }
+  },
+
+  toPDecimals(number, token) {
+    return BigNumber(number)
+      .dividedBy(BigNumber(10).pow(token.decimals))
+      .multipliedBy(BigNumber(10).pow(token.pDecimals))
+      .dividedToIntegerBy(1)
+      .toNumber();
+  },
+
+  toDecimals(number, token) {
+    return BigNumber(number)
+      .dividedBy(BigNumber(10).pow(token.pDecimals))
+      .multipliedBy(BigNumber(10).pow(token.decimals))
+      .dividedToIntegerBy(1)
+      .toString();
+  },
 };

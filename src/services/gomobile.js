@@ -17,6 +17,7 @@ const requiredTimeMethods = [
 ];
 
 const log = (...args) => console.log('GOMODULE', ...args);
+
 try {
   const asyncMethods = [
     'deriveSerialNumber',
@@ -35,6 +36,10 @@ try {
     'hybridDecryptionASM',
     'hybridEncryptionASM',
     'stopAutoStaking',
+    'generateIncognitoContractAddress',
+    'withdrawSmartContractBalance',
+    'sign0x',
+    'signKyber',
   ];
   const syncMethods = [
     'scalarMultBase',
@@ -54,8 +59,7 @@ try {
                 reject(error);
               }
 
-              console.debug(methodName, time);
-              log(`${methodName} called successfully with result`, time);
+              log(`${methodName} called successfully with result`, result);
               return resolve(result);
             });
           } else {

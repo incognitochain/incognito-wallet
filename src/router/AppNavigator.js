@@ -22,6 +22,9 @@ import BackupKeys from '@src/screens/BackupKeys';
 import WhyShield from '@src/screens/WhyShield';
 import {navigationOptionsHandler} from '@src/utils/router';
 import Dex from '@screens/Dex';
+import pUniswap from '@screens/Uniswap';
+import UniswapHistory from '@screens/UniswapHistory';
+import UniswapHistoryDetail from '@screens/UniswapHistoryDetail';
 import Shield from '@screens/Shield';
 import FrequentReceivers, {
   FrequentReceiversForm,
@@ -82,6 +85,16 @@ const AppNavigator = createStackNavigator(
     [ROUTE_NAMES.Dex]: navigationOptionsHandler(Dex, {
       title: 'pDex',
       header: () => null,
+    }),
+    [ROUTE_NAMES.pUniswap]: navigationOptionsHandler(pUniswap, {
+      title: 'pUniswap',
+      header: () => null,
+    }),
+    [ROUTE_NAMES.UniswapHistory]: navigationOptionsHandler(UniswapHistory, {
+      title: 'History',
+    }),
+    [ROUTE_NAMES.UniswapHistoryDetail]: navigationOptionsHandler(UniswapHistoryDetail, {
+      title: 'Transaction Detail',
     }),
     [ROUTE_NAMES.WhyShield]: navigationOptionsHandler(WhyShield, {
       title: 'Why Shield?',

@@ -2,6 +2,7 @@ import { ActivityIndicator, Text, View } from '@src/components/core';
 import { COLORS } from '@src/styles';
 import PropTypes from 'prop-types';
 import React  from 'react';
+import KeepAwake from 'react-native-keep-awake';
 import style from './style';
 
 const FullScreenLoading = ({ open, mainText }) => !open ? null : (
@@ -10,6 +11,7 @@ const FullScreenLoading = ({ open, mainText }) => !open ? null : (
     <Text style={style.desc}>
       {mainText ? mainText : 'Completing this action...\n\nPlease do not navigate away from the app.'}
     </Text>
+    <KeepAwake />
   </View>
 );
 

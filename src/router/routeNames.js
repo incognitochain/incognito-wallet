@@ -46,4 +46,7 @@ export default {
   FrequentReceiversForm: 'FrequentReceiversForm',
   FrequentReceivers: 'FrequentReceivers',
   NodeHelp: 'NodeHelp',
+  pUniswap: 'pUniswap',
+  UniswapHistory: 'UniswapHistory',
+  UniswapHistoryDetail: 'UniswapHistoryDetail',
 };

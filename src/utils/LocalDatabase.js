@@ -10,6 +10,7 @@ export const KEY_SAVE = {
   LIST_TOKEN: CONSTANT_KEYS.LIST_TOKEN,
   DEX: CONSTANT_KEYS.DEX,
   DEX_HISTORY: CONSTANT_KEYS.DEX_HISTORY,
+  UNISWAP_HISTORY: CONSTANT_KEYS.UNISWAP_HISTORY,
   SEEN_DEPOSIT_GUIDE: CONSTANT_KEYS.SEEN_DEPOSIT_GUIDE,
   PIN: CONSTANT_KEYS.PIN,
   DECIMAL_SEPARATOR: '$decimal_separator',
@@ -247,4 +248,17 @@ export default class LocalDatabase {
     txs = txs.filter(tx => tx.burningTxId !== burningTxId);
     return LocalDatabase.saveValue(KEY_SAVE.WITHDRAWAL_DATA, JSON.stringify(txs));
   };
+  
+  static async saveUniswapHistory(swapHistory) {
+    await LocalDatabase.saveValue(
+      KEY_SAVE.UNISWAP_HISTORY,
+      JSON.stringify(swapHistory),
+    );
+  }
+
+  static async getUniswapHistory() {
+    const swapHistory =
+      (await LocalDatabase.getValue(KEY_SAVE.UNISWAP_HISTORY)) || '';
+    return _.isEmpty(swapHistory) ? [] : JSON.parse(swapHistory);
+  }
 }

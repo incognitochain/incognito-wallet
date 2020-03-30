@@ -101,8 +101,6 @@ const TokenSelect = ({ onSelect, onlyPToken, size, style, iconStyle, showOrigina
       }
     }
 
-    // console.debug('ALL', allTokens);
-
     setAllTokens(allTokens);
   }, [internalTokens, pTokens]);
 
