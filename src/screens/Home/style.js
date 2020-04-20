@@ -13,10 +13,8 @@ const style = StyleSheet.create({
     flexWrap: 'wrap',
     alignItems: 'center',
     alignContent: 'center',
-    width: width - 40,
+    width: width,
     height: '100%',
-    marginLeft: 20,
-    marginRight: 20,
     marginTop: 10,
   },
   content: {
@@ -34,8 +32,8 @@ const style = StyleSheet.create({
     alignContent: 'center',
     height: 70,
     alignItems: 'center',
-    paddingEnd: 20,
-    paddingLeft: 20,
+    paddingEnd: 35,
+    paddingLeft: 35,
     justifyContent: 'space-between',
   },
   accTitle: {

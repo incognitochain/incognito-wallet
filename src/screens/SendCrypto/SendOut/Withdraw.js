@@ -19,6 +19,7 @@ import { ExHandler } from '@services/exception';
 import convertUtil from '@utils/convert';
 import formatUtil from '@utils/format';
 import memmoize from 'memoize-one';
+import walletValidator from 'wallet-address-validator';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { isExchangeRatePToken } from '@services/wallet/RpcClientService';
@@ -64,7 +65,7 @@ class Withdraw extends React.Component {
       estimateFeeData: {},
       supportedFeeTypes: [],
       feeForBurn: 0,
-      shouldBlockETHWrongAddress: false
+      shouldBlockETHWrongAddress: false,
     };
   }
 
@@ -322,24 +323,27 @@ class Withdraw extends React.Component {
     });
   };
 
-  checkIfValidAddressETH = (address, isETH) => {
-    if (isETH && address != '') {
+  checkIfValidAddressETH = (address, isETH, isETHValid) => {
+    if (isETH && isETHValid && address != '') {
       try {
-        let url = CONSTANT_CONFIGS.ETHERSCAN_URL + '/address/' + address;
-        fetch(url).
-          then(async (resp) => {
-            return resp.text();
+        let url = CONSTANT_CONFIGS.API_BASE_URL + '/eta/is-eth-account?address=' + address;
+        fetch(url)
+          .then((response) => {
+            return response.json();
           })
-          .then((text) => {
-            let hasAddressValid = text.includes('\nAddress\n<span id=\'mainaddress\' class=\'text-size-address text-secondary text-break mr-1\' data-placement=\'top\'>' + address + '</span>');
-            this.setState({ shouldBlockETHWrongAddress: !hasAddressValid });
-          })
-          .catch(() => {
-            alert('Could not validate ETH address for now, please try again');
+          .then((data) => {
+            console.log(LogManager.parseJsonObjectToJsonString(data));
+            if (data && data.Result === false) {
+              this.setState({ shouldBlockETHWrongAddress: true });
+            } else {
+              this.setState({ shouldBlockETHWrongAddress: false });
+            }
           });
       } catch (err) {
         alert('Could not validate ETH address for now, please try again');
       }
+    } else {
+      this.setState({ shouldBlockETHWrongAddress: false });
     }
   }
 
@@ -395,7 +399,11 @@ class Withdraw extends React.Component {
               <>
                 <Field
                   component={InputQRField}
-                  onChange={(text) => { this.checkIfValidAddressETH(text, isETH); }}
+                  onChange={(text) => { 
+                    // I wanna check text is ETH valid coin
+                    let ETHValid = walletValidator.validate(text, 'ETH', 'both');
+                    this.checkIfValidAddressETH(text, isETH, ETHValid); 
+                  }}
                   name="toAddress"
                   label="To"
                   placeholder={`Enter your ${tokenName}  address`}
@@ -404,9 +412,11 @@ class Withdraw extends React.Component {
                   onOpenAddressBook={onShowFrequentReceivers}
                   showNavAddrBook
                 />
-                {(isErc20Token || externalSymbol === CONSTANT_COMMONS.CRYPTO_SYMBOL.ETH) &&
-                  <Text style={[style.warning, shouldBlockETHWrongAddress ? { color: COLORS.red } : {}]}>{shouldBlockETHWrongAddress ? 'Please withdraw to ethereum wallet address only. \nCan not withdraw to smart contract address.' : 'Please withdraw to ethereum wallet address only. Withdrawals to smart contract addresses will be lost.'}</Text>
-                }
+                {(isErc20Token || externalSymbol === CONSTANT_COMMONS.CRYPTO_SYMBOL.ETH) && (
+                  <Text style={[style.warning, shouldBlockETHWrongAddress ? { color: COLORS.red } : {}]}>
+                    Please withdraw to wallet addresses only.
+                  </Text>
+                )}
                 <Field
                   component={InputMaxValueField}
                   name="amount"

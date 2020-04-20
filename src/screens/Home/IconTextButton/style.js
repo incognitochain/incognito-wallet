@@ -8,7 +8,7 @@ const style = StyleSheet.create({
     alignItems: 'center',
     height: 130,
     width: (width - 40) / 3,
-    marginBottom: 20,
+    marginBottom: 15,
     alignSelf: 'flex-start',
   },
   image: {
