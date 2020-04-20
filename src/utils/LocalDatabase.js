@@ -291,16 +291,16 @@ export default class LocalDatabase {
     return LocalDatabase.getValue(KEY_SAVE.BACKUP_STAKE_KEY);
   }
 
-  static async getViewUniswapTooltip() {
-    const value = !!(await LocalDatabase.getValue(KEY_SAVE.VIEW_UNISWAP_TOOLTIP));
-    this.saveViewUniswapTooltip();
+  static async getViewUniswapTooltip(type) {
+    const value = await LocalDatabase.getValue(KEY_SAVE.VIEW_UNISWAP_TOOLTIP);
+    this.saveViewUniswapTooltip(type);
     return value;
   }
 
-  static saveViewUniswapTooltip() {
+  static saveViewUniswapTooltip(type) {
     return LocalDatabase.saveValue(
       KEY_SAVE.VIEW_UNISWAP_TOOLTIP,
-      JSON.stringify(true),
+      type,
     );
   }
 

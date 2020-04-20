@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     bottom: 100,
     paddingVertical: 20,
     paddingHorizontal: 25,
-    width: 200,
+    width: 240,
     borderRadius: 8,
   },
   title: {
