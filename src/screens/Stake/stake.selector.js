@@ -11,15 +11,7 @@ export const stakeSelector = createSelector(
 
 export const stakeDataSelector = createSelector(
   stakeSelector,
-  stake => {
-    const {data} = stake;
-    const {balance} = data;
-    const staked = balance !== 0;
-    return {
-      ...data,
-      staked,
-    };
-  },
+  stake => stake.data,
 );
 
 export const flowStakeSelector = createSelector(
@@ -81,7 +73,7 @@ export const activeFlowSelector = createSelector(
     };
     switch (activeFlow) {
     case DEPOSIT_FLOW:
-      hook.btnSubmitAmount = fee.isFetching ? 'Estimate fee...' : 'Deposit';
+      hook.btnSubmitAmount = fee.isFetching ? 'Estimating fee...' : 'Deposit';
       hook.btnSubmitStatus = createStake.backup
         ? 'OK'
         : 'Back up your account';

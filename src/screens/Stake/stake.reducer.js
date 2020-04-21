@@ -20,6 +20,7 @@ import {
   ACTION_FETCH_FAIL_CREATE_UNSTAKE,
   ACTION_BACKUP_CREATE_STAKE,
 } from './stake.constant';
+import {DEFAULT_REWARD_RATE} from './stake.utils';
 
 const initialState = {
   isFetching: false,
@@ -42,7 +43,7 @@ const initialState = {
     minToWithdraw: 0,
     maxToStake: 0,
     balance: 0,
-    currentRewardRate: '',
+    currentRewardRate: DEFAULT_REWARD_RATE,
     stakingMasterAddress: '',
     balancePStake: 0,
   },

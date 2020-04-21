@@ -20,9 +20,9 @@ import {actionChangeFLowStep} from './stake.actions';
 import {DEPOSIT_FLOW, STEP_FLOW} from './stake.constant';
 import {stakeDataSelector, stakeSelector} from './stake.selector';
 import {
-  getTotalBalance,
   MAX_DIGITS_BALANCE_PSTAKE,
   TIMEOUT_CAL_REALTIME_BALANCE_PSTAKE,
+  calInterestRate,
 } from './stake.utils';
 import Header from './stake.header';
 import StakePoolCommunity from './features/StakePoolCommunity';
@@ -40,6 +40,7 @@ const Stake = props => {
     pDecimals,
     nodeTime,
     shouldCalInterestRate,
+    totalBalance,
   } = useSelector(stakeDataSelector);
   const initialState = {
     balanceCurrent: 0,
@@ -69,14 +70,14 @@ const Stake = props => {
       if (!nextNodeTime) {
         return;
       }
-      const totalBalance = getTotalBalance({
-        nodeTime: nextNodeTime,
+      const interestRate = calInterestRate({
+        nowToMilSec: nextNodeTime,
         balance,
-        currentRewardRate,
+        rate: currentRewardRate,
         rewardDateToMilSec,
       });
-      const totalBalanceFixed = format.balance(
-        totalBalance,
+      const totalBalanceCurrent = format.balance(
+        totalBalance + interestRate,
         pDecimals,
         MAX_DIGITS_BALANCE_PSTAKE,
       );
@@ -84,13 +85,13 @@ const Stake = props => {
         nextNodeTime + TIMEOUT_CAL_REALTIME_BALANCE_PSTAKE;
       await setState({
         ...state,
-        balanceCurrent: totalBalanceFixed,
+        balanceCurrent: totalBalanceCurrent,
         nextNodeTime: nextNodeTimeCurrent,
       });
     } catch (error) {
       await setState({
         ...state,
-        balanceCurrent: balance,
+        balanceCurrent: totalBalance,
       });
     }
   };
@@ -107,7 +108,7 @@ const Stake = props => {
       setState({
         ...state,
         balanceCurrent: format.balance(
-          balance,
+          totalBalance,
           pDecimals,
           MAX_DIGITS_BALANCE_PSTAKE,
         ),

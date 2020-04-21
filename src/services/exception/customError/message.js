@@ -50,4 +50,5 @@ export default {
   [CODE.node_pending_withdrawal]: 'Please wait for your previous withdrawal request to finish processing. Simply try again later.',
   [CODE.api_bnb_memo_required]: 'The Memo is required',
   [CODE.FULLNODE_DOWN]: 'The network is a little busy',
+  [CODE.api_unstake_fail]: 'Please wait a few moments until the previous staking is complete.',
 };

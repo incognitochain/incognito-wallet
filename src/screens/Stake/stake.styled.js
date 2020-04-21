@@ -53,8 +53,8 @@ export const styled = StyleSheet.create({
   },
   balance: {
     fontFamily: FONT.NAME.regular,
-    fontSize: FONT.SIZE.superLarge + 5,
-    lineHeight: FONT.SIZE.superLarge + 10,
+    fontSize: FONT.SIZE.large + 5,
+    lineHeight: FONT.SIZE.large + 10,
     color: COLORS.black,
     textAlign: 'right',
     maxWidth: '100%',

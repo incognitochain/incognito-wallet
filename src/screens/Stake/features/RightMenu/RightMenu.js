@@ -39,15 +39,15 @@ const RightMenu = () => {
   const rightMenuFactories = [
     {
       id: 0,
-      title: 'Activities',
-      desc: 'See your transaction history here',
+      title: 'Activity',
+      desc: 'See your staking history here',
       onPressItem: () => onHandlePressItem(onActivities),
       icon: <ActivitiesIcon />,
     },
     {
       id: 1,
       title: 'Withdraw',
-      desc: 'Withdraw an amount of PRV from your pStake account',
+      desc: 'Withdraw PRV from your pStake account',
       onPressItem: () => onHandlePressItem(onWithdraw),
       icon: <WithdrawIcon />,
     },

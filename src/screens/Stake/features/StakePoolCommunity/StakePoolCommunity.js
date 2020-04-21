@@ -34,10 +34,10 @@ const StakePoolCommunity = props => {
     {
       pool: 'Constant',
       icon: srcIconConstant,
-      link: 'https://www.myconstant.com/',
+      link: 'https://www.myconstant.com/staking',
     },
     {
-      pool: 'JServer',
+      pool: 'JServers',
       icon: srcIconJSServer,
       link: 'http://jservers.com/',
     },

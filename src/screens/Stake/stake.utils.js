@@ -5,6 +5,7 @@ import convert from '@src/utils/convert';
 
 export const MAX_DIGITS_BALANCE_PSTAKE = 9;
 export const TIMEOUT_CAL_REALTIME_BALANCE_PSTAKE = 70;
+export const DEFAULT_REWARD_RATE = 57;
 
 export const STAKE = {
   MAIN_ACCOUNT: 'pStake',
@@ -22,7 +23,7 @@ export const isStakeAccount = account => {
 
 export const mappingData = (dataMasterAddress, dataStakerInfo) => {
   const {pDecimals, symbol} = CONSTANT_COMMONS.PRV;
-  const balance = dataStakerInfo?.Balance + dataStakerInfo?.RewardBalance || 0;
+  const balance = dataStakerInfo?.Balance || 0;
   const minToStake = dataMasterAddress?.MinToStake || 0;
   const balanceToHumanAmount = _.floor(convert.toHumanAmount(balance, 9));
   const minToStakeToHunmanAmount = _.floor(
@@ -30,10 +31,15 @@ export const mappingData = (dataMasterAddress, dataStakerInfo) => {
   );
   const shouldCalInterestRate =
     balanceToHumanAmount >= minToStakeToHunmanAmount;
+  const rewardBalance = dataStakerInfo?.RewardBalance || 0;
+  const totalBalance = balance + rewardBalance;
+  const staked = balance !== 0;
   return {
     minToStake: minToStake,
     minToWithdraw: 1,
-    currentRewardRate: dataMasterAddress?.CurrentRewardRate || 50,
+    currentRewardRate: staked
+      ? dataStakerInfo?.RewardRate
+      : dataMasterAddress?.CurrentRewardRate || DEFAULT_REWARD_RATE,
     stakingMasterAddress: dataMasterAddress?.StakingMasterAddress || '',
     balance,
     rewardDate: dataStakerInfo?.RewardDate || '',
@@ -44,15 +50,18 @@ export const mappingData = (dataMasterAddress, dataStakerInfo) => {
     balanceToHumanAmount,
     minToStakeToHunmanAmount,
     shouldCalInterestRate,
+    rewardBalance,
+    totalBalance,
+    staked,
   };
 };
 
-export const calInterestRate = (
+export const calInterestRate = ({
   nowToMilSec,
   balance = 0,
   rate = 50,
   rewardDateToMilSec,
-) => {
+}) => {
   try {
     const duration = nowToMilSec - rewardDateToMilSec;
     if (duration < 0) {
@@ -68,19 +77,4 @@ export const calInterestRate = (
     new ExHandler(error).showErrorToast();
     return 0;
   }
-};
-
-export const getTotalBalance = ({
-  nodeTime,
-  balance,
-  currentRewardRate,
-  rewardDateToMilSec,
-}) => {
-  const interestRate = calInterestRate(
-    nodeTime,
-    balance,
-    currentRewardRate,
-    rewardDateToMilSec,
-  );
-  return balance + interestRate;
 };

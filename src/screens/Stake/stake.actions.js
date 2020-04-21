@@ -75,6 +75,12 @@ export const actionFetch = () => async (dispatch, getState) => {
       await apiGetStakerInfo({paymentAddress: pStakeAccount?.PaymentAddress}),
       await getNodeTime(),
     ]);
+    console.log(
+      'dataMasterAddress',
+      dataMasterAddress,
+      'dataStakerInfo',
+      dataStakerInfo,
+    );
     const payload = mappingData(dataMasterAddress, dataStakerInfo);
     await dispatch(
       actionFetched({
