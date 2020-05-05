@@ -66,3 +66,7 @@ const App = () => {
 };
 
 export default codePush(codePushOptions)(App);
+
+// If we want to wrap whole app into deeplink handler, we need
+// const App = withDeepLinking(AppComponent);
+// After that, export and wrap the least codePush.
