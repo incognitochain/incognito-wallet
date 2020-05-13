@@ -67,7 +67,10 @@ const text = {
     fontSize: FONTS.SIZE.medium,
   },
   defaultSize: FONTS.SIZE.regular,
-  largeTitleSize: FONTS.SIZE.superLarge
+  largeTitleSize: FONTS.SIZE.superLarge,
+  alignCenterText: {
+    textAlign: 'center'
+  }
 };
 
 const MARGIN = {

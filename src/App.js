@@ -13,6 +13,9 @@ import 'react-native-console-time-polyfill';
 import { Provider } from 'react-redux';
 import AppUpdater from '@components/AppUpdater/index';
 import { PersistGate } from 'redux-persist/integration/react';
+import NetInfo from '@react-native-community/netinfo';
+import { Linking } from 'react-native';
+import ModalConnection from './components/Modal/ModalConnection';
 
 const isShowDeviceLog = false;
 const { store, persistor } = configureStore();
@@ -33,13 +36,47 @@ function getActiveRouteName(navigationState) {
 
 const App = () => {
   const [currentScreen, setCurrentScreen] = useState(ROUTE_NAMES.Wizard);
+  const [currentNetworkConnectedState, setCurrentNetworkConnectedState] = useState(true);
 
   useEffect(() => {
+    // Notification
     initNotification();
+
+    // Network state change
+    listenNetworkChanges();
   }, []);
+
+  const listenNetworkChanges = () => {
+    // Add event listener for network state changes
+    NetInfo.addEventListener(state => {
+      console.log('Connection type', state.type);
+      console.log('Is connected?', state.isConnected);
+
+      // I want to do this here because of 
+      // the state change from none => yes => It will check again and show overlay 1 time before set it to only first time veryly
+      if (currentNetworkConnectedState === state?.isConnected) {
+        setCurrentNetworkConnectedState(currentNetworkConnectedState);
+      } else {
+        setCurrentNetworkConnectedState(state?.isConnected);
+      }
+    });
+  };
 
   const initNotification = () => {
     notificationInitialize();
+  };
+
+  const openSettingApp = () => {
+    let messageErr = 'Can\'t handle settings url, please go to Setting manually';
+    Linking.canOpenURL('app-settings:')
+      .then(supported => {
+        if (!supported) {
+          alert(messageErr);
+        } else {
+          return Linking.openURL('app-settings:');
+        }
+      })
+      .catch(err => alert(messageErr));
   };
 
   return (
@@ -59,6 +96,11 @@ const App = () => {
           <AppUpdater />
           <QrScanner />
           <Toast />
+          <ModalConnection
+            isVisible={!currentNetworkConnectedState}
+            onPressSetting={() => { openSettingApp(); }}
+            onPressOk={() => listenNetworkChanges()}
+          />
         </AppScreen>
       </PersistGate>
     </Provider>
