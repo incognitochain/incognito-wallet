@@ -1,27 +1,41 @@
 import StepIndicator from '@components/StepIndicator';
 import BaseScreen from '@screens/BaseScreen';
-import {TouchableOpacity, View} from '@src/components/core';
-import {getAccountByName} from '@src/redux/selectors/account';
+import { TouchableOpacity, View } from '@src/components/core';
+import { getAccountByName } from '@src/redux/selectors/account';
 import routeNames from '@src/router/routeNames';
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import FirstScreen from '@screens/GetStartedAddNode/components/FirstScreen';
-import { locationPermission } from '@src/utils/PermissionUtil';
+import { locationPermission, checkPermission, ENUM_RESULT_PERMISSION } from '@src/utils/PermissionUtil';
 import TurnOffCellular from '@screens/GetStartedAddNode/components/TurnOffCellular';
-import {COLORS} from '@src/styles';
-import {Icon} from 'react-native-elements';
+import { COLORS } from '@src/styles';
+import { Icon } from 'react-native-elements';
+import { checkBandWidth, cancelCheckBandWidth } from '@src/utils/connection';
+import { RESULTS } from 'react-native-permissions';
+import ModalPermission from '@src/components/Modal/ModalPermission';
+import { Linking } from 'react-native';
+import { withNavigationFocus } from 'react-navigation';
+import locationPermissionPng from '@src/assets/images/location.png';
 import ScanQRCode from './components/ScanQRCode';
 import SetupWifi from './components/SetupWifi';
-import {DialogNotify} from './components/BackUpAccountDialog';
+import { DialogNotify } from './components/BackUpAccountDialog';
 import styles from './styles';
+
+
 
 export const TAG = 'GetStartedAddNode';
 
 const TEST_DATA = {
   step: 2,
   qrCode: '0205-284853',
-  account: {'name':'0205-284853','AccountName':'0205-284853','PaymentAddress':'12S24P6ReX425TqJDoj2U74F9y9seYSPKbK9mNrQrrHZbXubT13iz2wC7dBefaGnfNft62x9Gm8VDRkMn9f71Zg6ryu43aUrPkmKU5T','ReadonlyKey':'13hdeYULQK8R6BVmqsuPJo3B5hC4rZRuRoWy2MWzwoQoWuqzghTRS6YNqysDG9r7GNje8PoFxKTWQedh3S7Vk9BqTFZ1RD49tN9gLYf','PrivateKey':'112t8rndgm2LWVVkhYPakXGNGyaAb78rjtUxPqScudXegEr3UNJVxWnm42QY1eoKNLeBQGD92PLkSKzdNY234tTjua2ymP6MHemShLP5Qwiz','PublicKey':'b4ac7d62696a6a2f58465697f8e098f64cd090d96fe19c3d9ebfedbdf1ac7dad','PublicKeyCheckEncode':'12Na52Ze5U6UzumVtFs5NK5dSLcXbm82n6wdRQzxYewkKMe8DYm','PublicKeyBytes':'180,172,125,98,105,106,106,47,88,70,86,151,248,224,152,246,76,208,144,217,111,225,156,61,158,191,237,189,241,172,125,173','ValidatorKey':'123LVpXiFGQXg6txnt8BCD5yP8erSxDu6J8fkYWT67Z5GYjyPMo'},
+  account: { 'name': '0205-284853', 'AccountName': '0205-284853', 'PaymentAddress': '12S24P6ReX425TqJDoj2U74F9y9seYSPKbK9mNrQrrHZbXubT13iz2wC7dBefaGnfNft62x9Gm8VDRkMn9f71Zg6ryu43aUrPkmKU5T', 'ReadonlyKey': '13hdeYULQK8R6BVmqsuPJo3B5hC4rZRuRoWy2MWzwoQoWuqzghTRS6YNqysDG9r7GNje8PoFxKTWQedh3S7Vk9BqTFZ1RD49tN9gLYf', 'PrivateKey': '112t8rndgm2LWVVkhYPakXGNGyaAb78rjtUxPqScudXegEr3UNJVxWnm42QY1eoKNLeBQGD92PLkSKzdNY234tTjua2ymP6MHemShLP5Qwiz', 'PublicKey': 'b4ac7d62696a6a2f58465697f8e098f64cd090d96fe19c3d9ebfedbdf1ac7dad', 'PublicKeyCheckEncode': '12Na52Ze5U6UzumVtFs5NK5dSLcXbm82n6wdRQzxYewkKMe8DYm', 'PublicKeyBytes': '180,172,125,98,105,106,106,47,88,70,86,151,248,224,152,246,76,208,144,217,111,225,156,61,158,191,237,189,241,172,125,173', 'ValidatorKey': '123LVpXiFGQXg6txnt8BCD5yP8erSxDu6J8fkYWT67Z5GYjyPMo' },
   hotspotSSID: 'TheMiner-284853',
+};
+
+const CONNECTION_STATUS = {
+  HIGH: 'high',
+  MEDIUM: 'medium',
+  LOW: 'low'
 };
 
 class GetStartedAddNode extends BaseScreen {
@@ -33,6 +47,9 @@ class GetStartedAddNode extends BaseScreen {
       step: 0,
       hotspotSSID: '',
       success: false,
+      statusConnection: CONNECTION_STATUS.LOW,
+      errPermission: '',
+      isErrPermission: false
     };
   }
 
@@ -49,15 +66,79 @@ class GetStartedAddNode extends BaseScreen {
     };
   };
 
-  componentDidMount() {
-    locationPermission();
+  componentDidMount = async () => {
+    this.checkPermissionForSteps();
+    await this.getNetworkBandwidth();
+  };
+
+  checkPermissionForSteps = async () => {
+    let isGranted = false;
+    await checkPermission()
+      .then(status => {
+        switch (status) {
+        case ENUM_RESULT_PERMISSION.GRANTED.CODE: {
+          this.setState({ errPermission: '', isErrPermission: false });
+          isGranted = true;
+        }
+          break;
+        case ENUM_RESULT_PERMISSION.DENIED.CODE: {
+          locationPermission()
+            .then(val => {
+              if (val != RESULTS.GRANTED) {
+                isGranted = false;
+                this.setState({ errPermission: ENUM_RESULT_PERMISSION.UNAVAILABLE.MESSAGE, isErrPermission: true });
+              } else {
+                isGranted = true;
+              }
+            })
+            .catch(() => {
+              isGranted = false;
+              this.setState({ errPermission: ENUM_RESULT_PERMISSION.UNAVAILABLE.MESSAGE, isErrPermission: true });
+            });
+        }
+          break;
+        case ENUM_RESULT_PERMISSION.UNAVAILABLE.CODE:
+        case ENUM_RESULT_PERMISSION.BLOCKED.CODE: {
+          this.setState({ errPermission: ENUM_RESULT_PERMISSION.UNAVAILABLE.MESSAGE, isErrPermission: true });
+          isGranted = false;
+        }
+          break;
+        default: {
+          isGranted = false;
+        }
+          break;
+        }
+      })
+      .catch(() => {
+        isGranted = false;
+      })
+      .finally(() => {
+        return isGranted;
+      });
+    return isGranted;
+  }
+
+  listenFocusedScreen = () => {
+    this.focusedListener = this.props.navigation.addListener(
+      'willFocus',
+      () => {
+        this.checkPermissionForSteps();
+      }
+    );
+  }
+  componentWillUnmount() {
+    this.focusedListener && this.focusedListener?.remove();
+  }
+  getNetworkBandwidth = async () => {
+    console.log(await checkBandWidth());
+    await cancelCheckBandWidth();
   }
 
   handleFinish = () => {
     this.setState({ success: false }, () => {
       // Need to navigate to RootMiner to pass params
-      this.goToScreen(routeNames.RootMiner, {setupNode: true});
-      this.goToScreen(routeNames.Node, {setupNode: true});
+      this.goToScreen(routeNames.RootMiner, { setupNode: true });
+      this.goToScreen(routeNames.Node, { setupNode: true });
     });
   };
 
@@ -65,14 +146,17 @@ class GetStartedAddNode extends BaseScreen {
     this.setState({ success: true });
   };
 
-  nextScreen = () => {
-    const { step } = this.state;
-    this.setState({ step: step + 1 });
+  nextScreen = async () => {
+    let isLocationGranted = await this.checkPermissionForSteps();
+    if (isLocationGranted) {
+      const { step } = this.state;
+      this.setState({ step: step + 1 });
+    }
   };
 
   scanQrCodeComplete = ({ qrCode, account, hotspotSSID }) => {
     if (account && account?.ValidatorKey && account?.PaymentAddress) {
-      this.setState({qrCode, account, hotspotSSID}, this.nextScreen);
+      this.setState({ qrCode, account, hotspotSSID }, this.nextScreen);
     }
   };
 
@@ -112,13 +196,36 @@ class GetStartedAddNode extends BaseScreen {
     }
   }
 
+  openSettingApp = () => {
+    let messageErr = 'Can\'t handle settings url, please go to Setting manually';
+    try {
+      Linking.openSettings();
+    } catch (err) {
+      alert(messageErr);
+    }
+  };
+
   render() {
-    const {success, step} = this.state;
+    const { success, step, isErrPermission, errPermission } = this.state;
     return (
       <View style={styles.container}>
         <DialogNotify visible={success} onClose={this.handleFinish} />
         <StepIndicator stepCount={4} currentPage={step} />
         {this.renderStep()}
+        <ModalPermission
+          isVisible={isErrPermission}
+          title="Ask location permission"
+          btnTitle="Go to Settings"
+          subTitle={errPermission}
+          uri={locationPermissionPng}
+          onPressDismiss={() => {
+            this.setState({ errPermission: '', isErrPermission: false });
+          }}
+          onPressSetting={() => {
+            this.setState({ errPermission: '', isErrPermission: false });
+            this.openSettingApp();
+          }}
+        />
       </View>
     );
   }
@@ -135,4 +242,4 @@ const mapDispatchToProps = {};
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(GetStartedAddNode);
+)(withNavigationFocus(GetStartedAddNode));

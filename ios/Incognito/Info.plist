@@ -2,8 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key></key>
-	<string></string>
+	<key/>
+	<string/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -75,6 +75,8 @@
 	<string>Will you allow this app to always know your location?</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This will help Node find your home Wi-Fi</string>
+  <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+  <string>This will help Node find your home Wi-Fi</string>
 	<key>NSMotionUsageDescription</key>
 	<string>${PRODUCT_NAME} Motion Usage</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
@@ -114,6 +116,17 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Octicons.ttf</string>
 		<string>Zocial.ttf</string>
+		<string>HelveticaNeuBold.ttf</string>
+		<string>HelveticaNeue.ttf</string>
+		<string>HelveticaNeueBd.ttf</string>
+		<string>HelveticaNeueBlackCond.ttf</string>
+		<string>HelveticaNeueHv.ttf</string>
+		<string>HelveticaNeueIt.ttf</string>
+		<string>HelveticaNeueLight.ttf</string>
+		<string>HelveticaNeueLt.ttf</string>
+		<string>HelveticaNeueMed.ttf</string>
+		<string>HelveticaNeueMedium.ttf</string>
+		<string>HelveticaNeueThin.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

@@ -97,7 +97,7 @@ const App = () => {
           <QrScanner />
           <Toast />
           <ModalConnection
-            isVisible={!currentNetworkConnectedState}
+            isVisible={false}
             onPressSetting={() => { openSettingApp(); }}
             onPressOk={() => listenNetworkChanges()}
           />
