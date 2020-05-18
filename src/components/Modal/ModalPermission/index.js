@@ -37,7 +37,7 @@ ModalPermission.propTypes = {
   title: PropTypes.string,
   subTitle: PropTypes.string,
   btnTitle: PropTypes.string,
-  uri: PropTypes.string,
+  uri: PropTypes.number,
   btnDismiss: PropTypes.string,
 };
 
