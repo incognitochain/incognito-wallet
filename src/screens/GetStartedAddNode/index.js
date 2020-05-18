@@ -10,18 +10,19 @@ import { locationPermission, checkPermission, ENUM_RESULT_PERMISSION } from '@sr
 import TurnOffCellular from '@screens/GetStartedAddNode/components/TurnOffCellular';
 import { COLORS } from '@src/styles';
 import { Icon } from 'react-native-elements';
+import bandWidthPng from '@src/assets/images/bandwidth.png';
 import { checkBandWidth, cancelCheckBandWidth } from '@src/utils/connection';
 import { RESULTS } from 'react-native-permissions';
 import ModalPermission from '@src/components/Modal/ModalPermission';
 import { Linking } from 'react-native';
 import { withNavigationFocus } from 'react-navigation';
 import locationPermissionPng from '@src/assets/images/location.png';
+import ModalBandWidth from '@src/components/Modal/ModalBandWidth';
+import LogManager from '@src/services/LogManager';
 import ScanQRCode from './components/ScanQRCode';
 import SetupWifi from './components/SetupWifi';
 import { DialogNotify } from './components/BackUpAccountDialog';
 import styles from './styles';
-
-
 
 export const TAG = 'GetStartedAddNode';
 
@@ -48,8 +49,10 @@ class GetStartedAddNode extends BaseScreen {
       hotspotSSID: '',
       success: false,
       statusConnection: CONNECTION_STATUS.LOW,
+      bandWidth: {},
       errPermission: '',
-      isErrPermission: false
+      isErrPermission: false,
+      showBandWidthModal: false,
     };
   }
 
@@ -68,8 +71,12 @@ class GetStartedAddNode extends BaseScreen {
 
   componentDidMount = async () => {
     this.checkPermissionForSteps();
-    await this.getNetworkBandwidth();
+    this.checkBandwidthNetwork();
   };
+
+  checkBandwidthNetwork = async () => {
+    await this.getNetworkBandwidth();
+  }
 
   checkPermissionForSteps = async () => {
     let isGranted = false;
@@ -126,12 +133,33 @@ class GetStartedAddNode extends BaseScreen {
       }
     );
   }
+
   componentWillUnmount() {
     this.focusedListener && this.focusedListener?.remove();
   }
+
+  checkBandwidthValid = (speed) => {
+    if (!speed || Number.isNaN(speed)) {
+      this.setState({ showBandWidthModal: false });
+    } else {
+      this.setState({ showBandWidthModal: speed <= 0.2 });
+    }
+  }
+
   getNetworkBandwidth = async () => {
-    console.log(await checkBandWidth());
-    await cancelCheckBandWidth();
+    await checkBandWidth()
+      .then(data => {
+        console.log('Check bandwidth ' + LogManager.parseJsonObjectToJsonString(data));
+        this.setState({ bandWidth: data }, () => {
+          this.checkBandwidthValid(data?.speed || 0);
+        });
+      })
+      .catch(err => {
+        this.setState({ bandWidth: {}, showBandWidthModal: true });
+      });
+
+    // If wanna cancel, do this.
+    // await cancelCheckBandWidth();
   }
 
   handleFinish = () => {
@@ -147,8 +175,9 @@ class GetStartedAddNode extends BaseScreen {
   };
 
   nextScreen = async () => {
+    const {bandWidth} = this.state;
     let isLocationGranted = await this.checkPermissionForSteps();
-    if (isLocationGranted) {
+    if (isLocationGranted && bandWidth?.speed > 0.2) {
       const { step } = this.state;
       this.setState({ step: step + 1 });
     }
@@ -206,7 +235,7 @@ class GetStartedAddNode extends BaseScreen {
   };
 
   render() {
-    const { success, step, isErrPermission, errPermission } = this.state;
+    const { success, step, isErrPermission, errPermission, bandWidth, showBandWidthModal } = this.state;
     return (
       <View style={styles.container}>
         <DialogNotify visible={success} onClose={this.handleFinish} />
@@ -223,6 +252,17 @@ class GetStartedAddNode extends BaseScreen {
           }}
           onPressSetting={() => {
             this.setState({ errPermission: '', isErrPermission: false });
+            this.openSettingApp();
+          }}
+        />
+        <ModalBandWidth
+          isVisible={showBandWidthModal}
+          uri={bandWidthPng}
+          title="Low quality connection"
+          btnTitle="Go to Settings"
+          subTitle={`We recommend to you that should use the better wifi/celcular for setting up everything smoother.\nCurrently, speed is ${bandWidth?.speed?.toFixed(2) || 0} MBps`}
+          onPressSetting={() => {
+            this.setState({ showBandWidthModal: false });
             this.openSettingApp();
           }}
         />

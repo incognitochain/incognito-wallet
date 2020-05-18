@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { Text, Button, Image } from '@src/components/core';
 import { ScreenWidth } from '@src/utils/devices';
-import internetConnectionIssue from '@src/assets/images/internet_connection.png';
+import bandWidth from '@src/assets/images/bandwidth.png';
 import theme from '@src/styles/theme';
 import PropTypes from 'prop-types';
 
@@ -11,20 +11,20 @@ import PropTypes from 'prop-types';
 // But for now, I want to separately the modal type.
 // Will be change in the future if needed, for now, no need.
 // Ui change immediately
-const ModalConnection = ({ isVisible, onPressSetting }) => {
+const ModalBandWidth = ({title, subTitle, btnTitle, isVisible, onPressSetting, uri }) => {
   return (
     <Modal isVisible={isVisible} animationIn="fadeIn" animationOut="fadeOut" animationInTiming={800} animationOutTiming={1000}>
       <View style={[styles.container, { backgroundColor: 'white', padding: 20 }, theme.SHADOW.normal]}>
         <View style={styles.contentContainer}>
-          <Text style={[theme.text.headerTextStyle, theme.text.alignCenterText]}>Connectivity problem</Text>
-          <Text style={[theme.text.largeTitleSize, theme.MARGIN.marginTopDefault]}>There is a problem with your connection. Make sure you checked and enabled Wifi or 3G/4G/5G. </Text>
+          <Text style={[theme.text.headerTextStyle, theme.text.alignCenterText]}>{`${title ?? ''}`}</Text>
+          <Text style={[theme.text.largeTitleSize, theme.MARGIN.marginTopDefault, theme.text.alignCenterText]}>{`${subTitle ?? ''}`}</Text>
         </View>
         <View style={styles.contentContainer}>
           <View style={[theme.MARGIN.marginBottomDefault]}>
-            <Image source={internetConnectionIssue} style={{ width: ScreenWidth / 5, height: ScreenWidth / 5 }} />
+            <Image source={uri ? uri : bandWidth} style={{ width: ScreenWidth / 5, height: ScreenWidth / 5 }} />
           </View>
           <View style={[theme.FLEX.rowSpaceBetween, theme.FLEX.fullWidth]}>
-            <Button onPress={onPressSetting} title="Go to Setting" textContainerStyle={{ width: '100%' }} />
+            <Button onPress={onPressSetting} title={btnTitle ?? ''} textContainerStyle={{ width: ScreenWidth * 0.65 }} />
           </View>
         </View>
       </View>
@@ -33,17 +33,25 @@ const ModalConnection = ({ isVisible, onPressSetting }) => {
 };
 
 
-ModalConnection.propTypes = {
+ModalBandWidth.propTypes = {
   isVisible: PropTypes.bool,
   onPressSetting: PropTypes.func,
+  title: PropTypes.string,
+  subTitle: PropTypes.string,
+  btnTitle: PropTypes.string,
+  uri: PropTypes.string,
 };
 
-ModalConnection.defaultProps = {
+ModalBandWidth.defaultProps = {
   isVisible: false,
-  onPressSetting: () => { }
+  onPressSetting: () => { },
+  title: '',
+  subTitle: '',
+  btnTitle: '',
+  uri: ' ',
 };
 
-export default ModalConnection;
+export default ModalBandWidth;
 
 const styles = StyleSheet.create({
   container: {
@@ -59,7 +67,6 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     width: '100%',
-    justifyContent: 'center',
     alignItems: 'center'
   }
 });
