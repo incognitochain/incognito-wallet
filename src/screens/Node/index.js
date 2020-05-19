@@ -123,7 +123,7 @@ class Node extends BaseScreen {
 
   async componentDidMount() {
     const { navigation } = this.props;
-    this.listener = navigation.addListener('didFocus', () => {
+    this.listener = navigation.addListener('willFocus', () => {
 
       const {setupNode} = navigation?.state?.params || this.props.navigation.dangerouslyGetParent()?.state?.params || {};
 
@@ -384,10 +384,20 @@ class Node extends BaseScreen {
 
     if (!isFetching && _.isEmpty(listDevice)) {
       return (
-        <WelcomeNodes
-          onAddVNode={this.handleAddVirtualNodePress}
-          onAddPNode={this.handleAddNodePress}
-        />
+        <ScrollView refreshControl={(
+          <RefreshControl
+            onRefresh={this.handleRefresh}
+            refreshing={isFetching}
+            tintColor={COLORS.primary}
+            colors={[COLORS.primary]}
+          />
+        )}
+        >
+          <WelcomeNodes
+            onAddVNode={this.handleAddVirtualNodePress}
+            onAddPNode={this.handleAddNodePress}
+          />
+        </ScrollView>
       );
     }
 

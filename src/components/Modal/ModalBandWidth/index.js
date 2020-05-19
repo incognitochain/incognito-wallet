@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 // But for now, I want to separately the modal type.
 // Will be change in the future if needed, for now, no need.
 // Ui change immediately
-const ModalBandWidth = ({title, subTitle, btnTitle, isVisible, onPressSetting, uri }) => {
+const ModalBandWidth = ({title, subTitle, btnTitle, isVisible, btnSetting, onPress, onPressSetting, uri }) => {
   return (
     <Modal isVisible={isVisible} animationIn="fadeIn" animationOut="fadeOut" animationInTiming={800} animationOutTiming={1000}>
       <View style={[styles.container, { backgroundColor: 'white', padding: 20 }, theme.SHADOW.normal]}>
@@ -24,7 +24,8 @@ const ModalBandWidth = ({title, subTitle, btnTitle, isVisible, onPressSetting, u
             <Image source={uri ? uri : bandWidth} style={{ width: ScreenWidth / 5, height: ScreenWidth / 5 }} />
           </View>
           <View style={[theme.FLEX.rowSpaceBetween, theme.FLEX.fullWidth]}>
-            <Button onPress={onPressSetting} title={btnTitle ?? ''} textContainerStyle={{ width: ScreenWidth * 0.65 }} />
+            <Button onPress={onPressSetting} title={btnTitle ?? ''} textContainerStyle={{ width: ScreenWidth * 0.8 * 0.35 }} />
+            <Button onPress={onPress} title={btnSetting ?? ''} textContainerStyle={{ width: ScreenWidth * 0.8 * 0.35 }} />
           </View>
         </View>
       </View>
@@ -39,6 +40,7 @@ ModalBandWidth.propTypes = {
   title: PropTypes.string,
   subTitle: PropTypes.string,
   btnTitle: PropTypes.string,
+  btnSetting: PropTypes.string,
   uri: PropTypes.number,
 };
 
@@ -48,6 +50,7 @@ ModalBandWidth.defaultProps = {
   title: '',
   subTitle: '',
   btnTitle: '',
+  btnSetting: '',
   uri: ' ',
 };
 

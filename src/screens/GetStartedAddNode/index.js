@@ -23,6 +23,7 @@ import ScanQRCode from './components/ScanQRCode';
 import SetupWifi from './components/SetupWifi';
 import { DialogNotify } from './components/BackUpAccountDialog';
 import styles from './styles';
+import WifiSetup from './components/SetupWifi/WifiSetup';
 
 export const TAG = 'GetStartedAddNode';
 
@@ -38,6 +39,8 @@ const CONNECTION_STATUS = {
   MEDIUM: 'medium',
   LOW: 'low'
 };
+
+const MINIMUM_BANDWIDTH = 0.25;
 
 class GetStartedAddNode extends BaseScreen {
   constructor(props) {
@@ -142,7 +145,7 @@ class GetStartedAddNode extends BaseScreen {
     if (!speed || Number.isNaN(speed)) {
       this.setState({ showBandWidthModal: false });
     } else {
-      this.setState({ showBandWidthModal: speed <= 0.2 });
+      this.setState({ showBandWidthModal: speed <= MINIMUM_BANDWIDTH });
     }
   }
 
@@ -165,7 +168,7 @@ class GetStartedAddNode extends BaseScreen {
   handleFinish = () => {
     this.setState({ success: false }, () => {
       // Need to navigate to RootMiner to pass params
-      this.goToScreen(routeNames.RootMiner, { setupNode: true });
+      // this.goToScreen(routeNames.RootMiner, { setupNode: true });
       this.goToScreen(routeNames.Node, { setupNode: true });
     });
   };
@@ -175,11 +178,15 @@ class GetStartedAddNode extends BaseScreen {
   };
 
   nextScreen = async () => {
-    const {bandWidth} = this.state;
+    const { bandWidth } = this.state;
     let isLocationGranted = await this.checkPermissionForSteps();
-    if (isLocationGranted && bandWidth?.speed > 0.2) {
-      const { step } = this.state;
-      this.setState({ step: step + 1 });
+    if (isLocationGranted) {
+      if (Number(bandWidth?.speed || 0) > MINIMUM_BANDWIDTH) {
+        const { step } = this.state;
+        this.setState({ step: step + 1 });
+      } else {
+        this.setState({ showBandWidthModal: true });
+      }
     }
   };
 
@@ -215,7 +222,7 @@ class GetStartedAddNode extends BaseScreen {
 
     if (step === 3) {
       return (
-        <SetupWifi
+        <WifiSetup
           onNext={this.handleSetupComplete}
           qrCode={qrCode}
           account={account}
@@ -260,7 +267,11 @@ class GetStartedAddNode extends BaseScreen {
           uri={bandWidthPng}
           title="Low quality connection"
           btnTitle="Go to Settings"
-          subTitle={`We recommend to you that should use the better wifi/celcular for setting up everything smoother.\nCurrently, speed is ${bandWidth?.speed?.toFixed(2) || 0} MBps`}
+          btnSetting='OK'
+          subTitle={`We recommend to you should use the better wifi/celcular for setting up everything smoother.\nCurrently, speed is ${bandWidth?.speed?.toFixed(2) || 0} MBps`}
+          onPress={() => {
+            this.setState({ showBandWidthModal: false });
+          }}
           onPressSetting={() => {
             this.setState({ showBandWidthModal: false });
             this.openSettingApp();
