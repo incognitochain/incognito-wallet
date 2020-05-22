@@ -1,24 +1,25 @@
 import PropTypes from 'prop-types';
-import {Button, Text, Toast} from '@src/components/core';
-import {getAccountByName} from '@src/redux/selectors/account';
+import { Button, Text, Toast } from '@src/components/core';
+import { getAccountByName } from '@src/redux/selectors/account';
 import { reloadAccountList } from '@src/redux/actions/wallet';
 import _ from 'lodash';
-import React, {Component} from 'react';
-import {ScrollView, View} from 'react-native';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import { ScrollView, View } from 'react-native';
+import { connect } from 'react-redux';
 import accountService from '@services/wallet/accountService';
 import Util from '@utils/Util';
 import APIService from '@services/api/miner/APIService';
 import AccountModel from '@models/account';
+import LogManager from '@src/services/LogManager';
 import GetQrcode from './GetQrCode';
 import styles from '../../styles';
 
 export const TAG = 'ScanQRCode';
 
 const fetchHotspotInfo = (qrCode) => {
-  return Util.excuteWithTimeout(APIService.qrCodeCheckGetWifi({ QRCode: qrCode}),5)
-    .then(response => response.data.WifiName)
-    .catch(error => throw new Error('Can not get your hotspot info ' + error.message));
+  return Util.excuteWithTimeout(APIService.qrCodeCheckGetWifi({ QRCode: qrCode }), 5)
+    .then(response => response)
+    .catch(error => { throw new Error('Can not get your hotspot info ' + error?.message); });
 };
 
 class ScanQRCode extends Component {
@@ -69,14 +70,20 @@ class ScanQRCode extends Component {
     this.setState({ qrCode, error: '' }, async () => {
       try {
         this.setState({ loading: true });
-        const hotspotSSID = await fetchHotspotInfo(qrCode);
+        fetchHotspotInfo(qrCode)
+          .then(async hotspotSSID => {
+            let data = hotspotSSID;
+            if (data?.status != 1 || !data?.data?.WifiName) {
+              return this.setState({ error: data?.data || 'Can not get your hotspot ssid with qr code ' + qrCode });
+            } else {
+              this.setState({ hotspotSSID: data?.data?.WifiName });
+              await this.createAccount();
+            }
+          })
+          .catch(err => {
+            this.setState({ error: err?.message });
+          });
 
-        if (!hotspotSSID) {
-          return this.setState({error: 'Can not get your hotspot ssid with qr code ' + qrCode});
-        }
-
-        this.setState({ hotspotSSID });
-        await this.createAccount();
       } finally {
         this.setState({ loading: false });
       }
@@ -105,7 +112,7 @@ class ScanQRCode extends Component {
   };
 
   renderFooter = () => {
-    const {loading, qrCode, account} = this.state;
+    const { loading, qrCode, account } = this.state;
 
     return (
       <View style={styles.footer}>

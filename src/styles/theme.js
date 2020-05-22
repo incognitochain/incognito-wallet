@@ -214,10 +214,10 @@ const SHADOW = {
     shadowColor: COLORS.black,
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 1,
     },
-    shadowOpacity: 0.5,
-    shadowRadius: 3.84,
+    shadowOpacity: 0.3,
+    shadowRadius: 2.84,
     elevation: isIOS ? 0 : 5,
   }
 };
