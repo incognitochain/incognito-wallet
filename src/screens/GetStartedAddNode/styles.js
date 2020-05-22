@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   log: {
-    paddingTop: 25,
+    paddingTop: 20,
     flexDirection: 'row',
   },
   logIcon: {

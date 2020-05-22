@@ -716,7 +716,7 @@ class WifiSetup extends PureComponent {
       this.getLastVerifyCode();
       break;
     case 'checkWifiInfo':
-      this.checkWifiInfo();
+      this.handleNext();
       break;
     case 'setupAndConnectWifiForNode':
       this.setupAndConnectWifiForNode();
@@ -734,7 +734,7 @@ class WifiSetup extends PureComponent {
       this.handleSetupNode();
       break;
     case 'tryVerifyCode':
-      this.tryVerifyCode();
+      this.verifyCodeFirebase();
       break;
     case 'setupWifiZMQ':
       this.setupAndConnectWifiForNode();
