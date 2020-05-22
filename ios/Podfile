@@ -11,6 +11,7 @@ pod 'Firebase/Database', '~> 6.3.0'
 pod 'Fabric', '~> 1.10.2'
 pod 'Crashlytics', '~> 3.13.2'
 pod 'GoogleIDFASupport', '~> 3.14.0'
+pod 'lottie-ios', '~> 3.1.3'
 target 'Incognito' do
   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
   # use_frameworks!
@@ -92,6 +93,8 @@ target 'Incognito' do
   pod 'react-native-keep-awake', :path => '../node_modules/react-native-keep-awake'
 
   # React-Native is not great about React double-including from the Podfile
+  pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
+
   post_install do |installer|
     installer.pods_project.targets.each do |target|
       if target.name == "React"

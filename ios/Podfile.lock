@@ -111,39 +111,43 @@ PODS:
   - JWT (3.0.0-beta.12):
     - Base64 (~> 1.1.2)
   - leveldb-library (1.22)
+  - lottie-ios (3.1.8)
+  - lottie-react-native (3.3.2):
+    - lottie-ios (~> 3.1.3)
+    - React
   - nanopb (0.3.901):
     - nanopb/decode (= 0.3.901)
     - nanopb/encode (= 0.3.901)
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
   - NMSSH (2.2.9)
-  - Permission-Calendars (2.0.2):
+  - Permission-Calendars (2.1.4):
     - RNPermissions
-  - Permission-Camera (2.0.2):
+  - Permission-Camera (2.1.4):
     - RNPermissions
-  - Permission-Contacts (2.0.2):
+  - Permission-Contacts (2.1.4):
     - RNPermissions
-  - Permission-FaceID (2.0.2):
+  - Permission-FaceID (2.1.4):
     - RNPermissions
-  - Permission-LocationAlways (2.0.2):
+  - Permission-LocationAlways (2.1.4):
     - RNPermissions
-  - Permission-LocationWhenInUse (2.0.2):
+  - Permission-LocationWhenInUse (2.1.4):
     - RNPermissions
-  - Permission-MediaLibrary (2.0.2):
+  - Permission-MediaLibrary (2.1.4):
     - RNPermissions
-  - Permission-Motion (2.0.2):
+  - Permission-Motion (2.1.4):
     - RNPermissions
-  - Permission-Notifications (2.0.2):
+  - Permission-Notifications (2.1.4):
     - RNPermissions
-  - Permission-PhotoLibrary (2.0.2):
+  - Permission-PhotoLibrary (2.1.4):
     - RNPermissions
-  - Permission-Reminders (2.0.2):
+  - Permission-Reminders (2.1.4):
     - RNPermissions
-  - Permission-Siri (2.0.2):
+  - Permission-Siri (2.1.4):
     - RNPermissions
-  - Permission-SpeechRecognition (2.0.2):
+  - Permission-SpeechRecognition (2.1.4):
     - RNPermissions
-  - Permission-StoreKit (2.0.2):
+  - Permission-StoreKit (2.1.4):
     - RNPermissions
   - Protobuf (3.9.2)
   - RCTRequired (0.61.2)
@@ -387,7 +391,7 @@ PODS:
     - React
   - RNOS (1.2.5):
     - React
-  - RNPermissions (2.0.2):
+  - RNPermissions (2.1.4):
     - React
   - RNReanimated (1.2.0):
     - React
@@ -395,7 +399,7 @@ PODS:
     - React
   - RNVectorIcons (6.6.0):
     - React
-  - RNWifi (2.2.4):
+  - RNWifi (3.1.2):
     - React
   - SSZipArchive (2.2.2)
   - TcpSockets (3.3.2):
@@ -420,6 +424,8 @@ DEPENDENCIES:
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - GoogleIDFASupport (~> 3.14.0)
+  - lottie-ios (~> 3.1.3)
+  - lottie-react-native (from `../node_modules/lottie-react-native`)
   - NMSSH (~> 2.2.5)
   - Permission-Calendars (from `../node_modules/react-native-permissions/ios/Calendars.podspec`)
   - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera.podspec`)
@@ -503,6 +509,7 @@ SPEC REPOS:
     - GTMSessionFetcher
     - JWT
     - leveldb-library
+    - lottie-ios
     - nanopb
     - NMSSH
     - Protobuf
@@ -521,6 +528,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/Folly.podspec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  lottie-react-native:
+    :path: "../node_modules/lottie-react-native"
   Permission-Calendars:
     :path: "../node_modules/react-native-permissions/ios/Calendars.podspec"
   Permission-Camera:
@@ -661,22 +670,24 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 61bb0f61a4cb560030f1222021178008a5727a23
   JWT: 9b5c05abbcc1a0e69c3c91e1655b3387fc7e581d
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
+  lottie-ios: 48fac6be217c76937e36e340e2d09cf7b10b7f5f
+  lottie-react-native: 2a1a82bb326ae51331a5520de0cf706733c6db69
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   NMSSH: eb4a63d52631d3ffe348181793bb19434b01c32a
-  Permission-Calendars: 36599553ccfb54d3b9af5a777102b22b71decd0c
-  Permission-Camera: 626e0ac1c9e92e680b223522dcf9344bb1041fff
-  Permission-Contacts: bd8980f2a060853da7673012dab313bb5a087a86
-  Permission-FaceID: 3e8b5afdf136d1bbbfdc5c7279505880d8c7229b
-  Permission-LocationAlways: 94832b8fa358c939cc16c142e6eb15b8b0c6ffd1
-  Permission-LocationWhenInUse: 75577651fdcc5bc34e1c41641989e13cfeac903a
-  Permission-MediaLibrary: c81ab01798b7c1faf23ea232995932af377a6d66
-  Permission-Motion: bb39c790053463bf5ab3b7635154465a0cacfece
-  Permission-Notifications: e48255cd901bf9d294b9833bfaf51b82e8f67a77
-  Permission-PhotoLibrary: 5ff534553bd84abcd1190bc80a7dcb8671a41e1a
-  Permission-Reminders: b79269dae7faa7746bc024b4b27c19d3b71683fb
-  Permission-Siri: 9153edff3f884db18d4e68fa57adb1f6462e53e1
-  Permission-SpeechRecognition: 40d5647d06c602aceebe4b5540a14e7b52a34172
-  Permission-StoreKit: 465934988b7161f7e7c6072d6c30ce0e0fe7f757
+  Permission-Calendars: a451703f55ae46a53be140407b8ae18dcfaf89da
+  Permission-Camera: 402f1ac15b962448d75e8cf2039d235e7bc09a85
+  Permission-Contacts: 546030b78788365b36c202b7ac5a8205f8c7efba
+  Permission-FaceID: 08f06f502c95dbd7d35033e65c7ebe23d4189f67
+  Permission-LocationAlways: 48085521ad224052f5b25c3fdc6d0e996d162428
+  Permission-LocationWhenInUse: 7449010ca36a26dbe6b10e69e9d6ebcab0222c42
+  Permission-MediaLibrary: 04ebc411e788b3ff11c74c30128ecf6507cdc9ce
+  Permission-Motion: f1d0e65296b9a741ac3493a86c2330b8c06b04b4
+  Permission-Notifications: d437cafc026900006d35981d35a2d694f883f44e
+  Permission-PhotoLibrary: d98d4dcf5da6bb811fac27abdd441e6a2facc53c
+  Permission-Reminders: bf9a50c0bacbff547eaebc9f2af6b7648b9854d9
+  Permission-Siri: 782f6152006ace9ea1103160104f2f9fff4193c2
+  Permission-SpeechRecognition: f72edf19023885941b0c37762d2d1563ffb37237
+  Permission-StoreKit: 0e6437409b465302ad5c1f30b80c21776b7f9530
   Protobuf: 67fb42ba613def994e61854de2b3164f13790cc4
   RCTRequired: c639d59ed389cfb1f1203f65c2ea946d8ec586e2
   RCTRestart: dd19aab87fc1118e05b6b5b91b959105647f56b4
@@ -712,16 +723,16 @@ SPEC CHECKSUMS:
   RNGestureHandler: 5329a942fce3d41c68b84c2c2276ce06a696d8b0
   RNLocalize: 07eb7a91d10021cdf59d80061ebf3adb8a5b5688
   RNOS: c3ca1e6bdeb868076fca62f2188848f2b267d19c
-  RNPermissions: 9525b0f4d209fdf9a373d52d1492ae2943e691e5
+  RNPermissions: 3635b407c15f2fe591bd2101c8f20aa0912caba8
   RNReanimated: 1b52415c4302f198cb581282a0166690bad62c43
   RNSVG: a53a5de0d90ec96a6502cc3a4534dfcc0c130622
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
-  RNWifi: a73163c18dd7ebf722e299d343764a4e1fabb808
+  RNWifi: 0d4ae389ead4643139921a6804f28aef015df07e
   SSZipArchive: fa16b8cc4cdeceb698e5e5d9f67e9558532fbf23
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   TouchID: ba4c656d849cceabc2e4eef722dea5e55959ecf4
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f
 
-PODFILE CHECKSUM: bb6adeaef9f0a4f776fe995e1d0e32fd5b88d94f
+PODFILE CHECKSUM: f57d51f466ce8bd3e9cd616c050bf785fb388aa8
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.1

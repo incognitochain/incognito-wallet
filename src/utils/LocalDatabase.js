@@ -203,8 +203,9 @@ export default class LocalDatabase {
     return LocalDatabase.saveValue(KEY_SAVE.VERIFY_CODE, verifyCode);
   }
 
-  static getVerifyCode() {
-    return LocalDatabase.getValue(KEY_SAVE.VERIFY_CODE);
+  static getVerifyCode = async () => {
+    let verifyCode = await LocalDatabase.getValue(KEY_SAVE.VERIFY_CODE);
+    return verifyCode;
   }
 
   static getSyncReceivers = keySync => {

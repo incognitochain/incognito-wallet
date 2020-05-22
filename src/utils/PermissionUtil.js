@@ -116,11 +116,11 @@ const checkPermission = () => {
 const ENUM_RESULT_PERMISSION = {
   UNAVAILABLE: {
     CODE: RESULTS.UNAVAILABLE,
-    MESSAGE: 'This feature is not available for requesting. Please go to Settings and enable yourself'
+    MESSAGE: 'This feature is not available for requesting. Please go to Settings and enable it to ALWAYS'
   },
   DENIED: {
     CODE: RESULTS.DENIED,
-    MESSAGE: 'The permission has not been requested or is denied. Please go to Settings and enable yourself'
+    MESSAGE: 'The permission has not been requested or is denied. Please go to Settings and enable it to ALWAYS'
   },
   GRANTED: {
     CODE: RESULTS.GRANTED,
@@ -128,7 +128,7 @@ const ENUM_RESULT_PERMISSION = {
   },
   BLOCKED: {
     CODE: RESULTS.BLOCKED,
-    MESSAGE: 'The permission is denied. Please go to Settings and enable yourself'
+    MESSAGE: 'The permission is denied. Please go to Settings and enable it to ALWAYS'
   },
 };
 

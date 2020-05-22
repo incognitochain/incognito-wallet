@@ -16,43 +16,21 @@ import knownCode from '@src/services/exception/customError/code/knownCode';
 import NodeService from '@src/services/NodeService';
 import APIService from '@services/api/miner/APIService';
 import Util from '@utils/Util';
+import NetInfo from '@react-native-community/netinfo';
 import { CustomError } from '@services/exception';
 import { PASS_HOSPOT } from 'react-native-dotenv';
 import LocalDatabase from '@utils/LocalDatabase';
 import { DEVICES } from '@src/constants/miner';
-import NetInfo from '@react-native-community/netinfo';
 import { CONSTANT_MINER } from '@src/constants';
 import clipboard from '@services/clipboard';
 import LongLoading from '@components/LongLoading/index';
 import { Icon } from 'react-native-elements';
 import { COLORS } from '@src/styles';
 import LogManager from '@src/services/LogManager';
+import ModalConnectWifi from '@src/components/Modal/ModalConnection/ModalConnectWifi';
 import styles from '../../styles';
 
 export const TAG = 'SetupWifi';
-
-// Get current wifi name
-// with device connected
-const getWifiSSID = (empty = false) => {
-  return Util.tryAtMost(async () => {
-    let ssid;
-    try {
-      ssid = await WifiManager.getCurrentWifiSSID();
-    } catch {
-      ssid = '';
-    }
-    
-    if (!empty && !ssid) {
-      throw new Error('Can not get Wi-Fi SSID');
-    }
-
-    if (ssid.includes('unknown ssid')) {
-      throw new Error('Can not get Wi-Fi SSID');
-    }
-    
-    return ssid;
-  }, 15, 2);
-};
 
 class WifiSetup extends PureComponent {
   constructor(props) {
@@ -60,15 +38,64 @@ class WifiSetup extends PureComponent {
     this.state = {
       loading: false,
       ssid: '',
+      lastVerifyCode: '',
+      verifyCode: '',
+      isCorrectWifi: false,
       password: '',
       error: '',
       steps: [],
+      stackRetryStep: [],
+      connectWifi: {
+        shouldShowModalConnectWifi: false,
+        isCheckingWifiConnection: false,
+        isConnected: false,
+        title: 'We are trying to connect to your network',
+      },
     };
-
+    this.isMounteds = false;
     this.scrollView = React.createRef();
+    
   }
 
+  tryAtMost = async(promiseFunc, count = 6,delayToTry = 1) =>{
+    if (count > 0 && promiseFunc && this.isMounteds === true) {
+      const result = await promiseFunc().catch(e => e);
+      console.log(`tryAtMost result = ${result}, count = ${count}---isEROR = ${result instanceof Error}`);
+      if (result instanceof Error) {
+        if(_.isNumber(delayToTry)){
+          await Util.delay(delayToTry);
+        }
+        return await this.tryAtMost(promiseFunc, count - 1, delayToTry);
+      }
+      return result;
+    }
+    return Promise.reject(`Tried ${count} times and failed`);
+  };
+
+  // Get current wifi name
+  // with device connected
+  getWifiSSID = (empty = false) => {
+    return this.tryAtMost(async () => {
+      let ssid;
+      try {
+        ssid = await WifiManager.getCurrentWifiSSID();
+      } catch {
+        ssid = '';
+      }
+      if (!empty && !ssid) {
+        throw new Error('Can not get Wi-Fi SSID');
+      }
+
+      if (ssid.includes('unknown ssid')) {
+        throw new Error('Can not get Wi-Fi SSID');
+      }
+
+      return ssid;
+    }, 15, 2);
+  };
+
   componentDidMount() {
+    this.isMounteds = true;
     this.getCurrentWifi();
     this.getLastVerifyCode();
   }
@@ -85,7 +112,15 @@ class WifiSetup extends PureComponent {
   // Check last verify code if exist => Set state for current verifyCode
   async getLastVerifyCode() {
     const lastVerifyCode = await LocalDatabase.getVerifyCode();
-    this.setState({ lastVerifyCode });
+    if (lastVerifyCode && lastVerifyCode != '') {
+      this.setState({ lastVerifyCode });
+    }
+  }
+
+  componentWillUnmount() {
+    this.isMounted = false;
+    clearInterval(this._interval);
+    clearInterval(this.checkNetWorkSwitched);
   }
 
   addStep(step) {
@@ -96,7 +131,7 @@ class WifiSetup extends PureComponent {
 
   connectToWifi = async (ssid, password) => {
     try {
-      const previousSSID = await getWifiSSID();
+      const previousSSID = await this.getWifiSSID();
 
       this.addStep({ name: 'Current Wi-Fi ' + previousSSID });
 
@@ -112,64 +147,142 @@ class WifiSetup extends PureComponent {
           args = [ssid];
         }
 
-        connectFunction(...args).then(
-          async () => {
-            this.addStep({ name: 'Wait for phone to disconnect from current Wi-Fi' });
+        connectFunction(...args)
+          .then(
+            async () => {
+              this.addStep({ name: 'Wait for phone to disconnect from current Wi-Fi' });
 
-            try {
-              let count = 0;
-              await Util.tryAtMost(async () => {
-                count++;
-                const currentSSID = await getWifiSSID(true);
+              try {
+                let count = 0;
+                this._interval = setInterval(async () => {
+                  count++;
+                  const currentSSID = await this.getWifiSSID(true);
+                  if (currentSSID !== previousSSID) {
+                    clearInterval(this._interval);
+                    return;
+                  }
 
-                if (currentSSID !== previousSSID) {
-                  return;
-                }
+                  if (count === 50 && currentSSID === ssid) {
+                    clearInterval(this._interval);
+                    return;
+                  }
 
-                if (count === 30 && currentSSID === ssid) {
-                  return;
-                }
+                  if (currentSSID) {
+                    throw new Error('Not connect to new Wi-Fi');
+                  }
+                }, 1000);
+                this.addStep({ name: 'Disconnected from current Wi-Fi' });
 
-                if (currentSSID) {
-                  throw new Error('Not connect to new Wi-Fi');
-                }
-              }, 30, 1);
+                await this.tryAtMost(async () => {
+                  const currentSSID = await this.getWifiSSID(true);
+                  this.addStep({ name: 'Wi-Fi ' + currentSSID });
+                  if (!currentSSID) {
+                    this.setState({ steps: [] });
+                    throw new Error('Wifi name or password is incorrect');
+                  }
+                }, 5, 3);
+              } catch (e) {
+                reject(e);
+              }
 
-              this.addStep({ name: 'Disconnected from current Wi-Fi' });
+              const currentSSID = await this.getWifiSSID();
+              this.addStep({ name: 'New Wi-Fi ' + currentSSID });
 
-              await Util.tryAtMost(async () => {
-                const currentSSID = await getWifiSSID(true);
-                this.addStep({ name: 'Wi-Fi ' + currentSSID });
-                if (!currentSSID) {
-                  throw new Error('Wifi name or password is incorrect');
-                }
-              }, 5, 3);
-            } catch (e) {
-              reject(e);
+              if (currentSSID === ssid) {
+                resolve(true);
+              } else {
+                reject(new Error('Connect to another Wi-Fi'));
+              }
+            },
+            (error) => {
+              console.debug('CONNECT ERROR', error);
+              reject({});
             }
-
-            const currentSSID = await getWifiSSID();
-            this.addStep({ name: 'New Wi-Fi ' + currentSSID });
-
-            if (currentSSID === ssid) {
-              resolve(true);
-            } else {
-              reject(new Error('Connect to another Wi-Fi'));
-            }
-          },
-          (error) => {
-            console.debug('CONNECT ERROR', error);
-            reject({});
-          }
-        );
+          );
       });
-
       this.addStep({ name: `Connect to Wi-Fi ${ssid}` });
       return true;
     } catch (e) {
-      throw new Error('Can not connect to ' + ssid);
+      throw new Error('Can not connect to ' + ssid + '' + e?.message);
     }
   };
+
+  toggleModalConnectWifi = (isShow) => {
+    const { connectWifi } = this.state;
+    this.setState({
+      connectWifi: {
+        ...connectWifi,
+        shouldShowModalConnectWifi: isShow,
+        isCheckingWifiConnection: isShow,
+        isConnected: false
+      }
+    });
+  }
+
+  toggleConnectedModalConnectWifi = () => {
+    const { connectWifi } = this.state;
+    this.setState({
+      connectWifi: {
+        ...connectWifi,
+        isCheckingWifiConnection: false,
+        isConnected: true
+      }
+    }, () => {
+      setTimeout(() => {
+        this.toggleModalConnectWifi(false);
+      }, 2000);
+    });
+  }
+
+
+  // Try to connect to network wifi with ssid and pass
+  tryToConnectToWifiWithSSIDAndPass = async (ssid, password) => {
+    console.log(ssid);
+    console.log(password);
+    const { connectWifi } = this.state;
+    this.setState({
+      connectWifi: {
+        ...connectWifi,
+        shouldShowModalConnectWifi: true,
+        isCheckingWifiConnection: true,
+        isConnected: false
+      }
+    }, async () => {
+      // Check if is IOS and password is empty
+      // Connect only by ssid
+      if (Platform.OS === 'ios' && (!password || password === '')) {
+        await WifiManager.connectToSSID(ssid)
+          .then(
+            () => {
+              this.checkNetWorkSwitched = setInterval(async () => {
+                let currentWifiName = await WifiManager.getCurrentWifiSSID();
+                if (currentWifiName === ssid) {
+                  console.log('Connected only SSID successfully!');
+                  clearInterval(this.checkNetWorkSwitched);
+                } else {
+                  console.log('No yet!');
+                }
+              }, 1000);
+            },
+            (err) => {
+              console.log('Connection only SSID failed!' + err?.message);
+            }
+          )
+          .catch(err => {
+
+          });
+      } else {
+        await WifiManager.connectToProtectedSSID(ssid, password, false).then(
+          () => {
+            console.log('Connected successfully!');
+          },
+          (err) => {
+            console.log('Connection failed!' + err?.message);
+          }
+        );
+      }
+    });
+  }
 
   // Get current wifi
   async getCurrentWifi() {
@@ -197,32 +310,26 @@ class WifiSetup extends PureComponent {
   }
 
   // Check if wifi is correct 
-  // And its working
+  // And its has to be working
   async checkWifiInfo() {
     const { ssid, password, isCorrectWifi } = this.state;
 
     this.addStep({ name: 'Check your Wi-Fi information' });
 
-    if (isCorrectWifi) {
-      return true;
-    }
-
-    const result = await this.connectToWifi(ssid, password);
     try {
-      this.addStep({ name: 'Check internet is available in Wi-Fi' });
+      this.addStep({ name: 'Trying to connect your network' });
+      const result = await this.connectToWifi(ssid, password);
 
-      await Util.tryAtMost(async () => {
-        await fetch('https://www.google.com');
-      }, 15, 1);
-
-      return result;
+      this.addStep({ name: 'Checking internet is good to go ... ' });
+      const networkState = await NetInfo.fetch();
+      return networkState?.isInternetReachable || false;
     } catch (e) {
-      this.addStep({ name: 'Wi-Fi connected but no Internet', detail: ssid });
+      this.addStep({ name: 'Please check your wifi connection', detail: ssid });
       this.showAlertInfor({
         title: 'Error',
-        subTitle: 'Wi-Fi connected but no Internet. Please use another one better',
+        subTitle: 'Your currently wifi connection has issues. Please use another one better',
       });
-      throw new Error('Wi-Fi connected but no Internet');
+      throw new Error('Your currently wifi connection has issues');
     }
   }
 
@@ -272,8 +379,7 @@ class WifiSetup extends PureComponent {
         };
         await Util.delay(3);
         let currentVersionSupport = await NodeService.sendZMQ(checkVersionParams);
-        console.log('VERSION ' + currentVersionSupport);
-        resolve(!currentVersionSupport || !currentVersionSupport?.value );
+        resolve(!currentVersionSupport || !currentVersionSupport?.value);
       } catch (err) {
         reject(false);
       }
@@ -313,13 +419,6 @@ class WifiSetup extends PureComponent {
       const result = await NodeService.sendZMQ(params);
       if (result) {
         return result;
-      } else {
-        this.showAlertInfor({
-          title: 'Error',
-          subTitle: 'Cannot setup node for connecting wifi',
-          titleOK: 'Retry',
-          onPressOK: () => { this.setupWifiZMQ(params); }
-        });
       }
     } catch (err) {
       this.showAlertInfor({
@@ -333,15 +432,22 @@ class WifiSetup extends PureComponent {
 
   // Send data to node
   sendZMQ = async () => {
-    const { ssid, password } = this.state;
+    const { ssid, password, lastVerifyCode, verifyCode } = this.state;
     const { qrCode, hotspotSSID, account } = this.props;
     const deviceId = DeviceInfo.getUniqueId();
     const date = new Date();
-    const verifyCode = `${deviceId}.${date.getTime()}`;
+    let time = date.getTime();
+    let verifyNewCode = `${deviceId}.${time}`;
     const userJson = await LocalDatabase.getUserInfo();
     const user = userJson.toJSON();
     const { id, token } = user;
     const { ValidatorKey } = account;
+
+    this.setState({ verifyCode: verifyNewCode, lastVerifyCode: verifyNewCode }, () => {
+      console.log('Last VerifyCode' + lastVerifyCode);
+      console.log('Verify Code' + verifyNewCode);
+    });
+
     const params = {
       action: 'send_wifi_info',
       ssid: `'${ssid}'`,
@@ -350,7 +456,7 @@ class WifiSetup extends PureComponent {
       qrcode: `${qrCode}`,
       product_type: DEVICES.MINER_TYPE,
       source: Platform.OS,
-      verify_code: verifyCode,
+      verify_code: verifyNewCode,
       platform: CONSTANT_MINER.PRODUCT_TYPE,
       token,
       time_zone: getTimeZone(),
@@ -359,10 +465,9 @@ class WifiSetup extends PureComponent {
       address_lat: 0.0,
       validatorKey: ValidatorKey
     };
-    this.setState({ verifyCode });
 
     // Try to connect to wifi of hotspot
-    await Util.tryAtMost(async () => {
+    await this.tryAtMost(async () => {
       await this.connectToWifiHotspot();
     }, 10, 5);
 
@@ -380,12 +485,12 @@ class WifiSetup extends PureComponent {
       throw new CustomError(knownCode.node_can_not_connect_hotspot);
     }
 
-    await LocalDatabase.saveVerifyCode(verifyCode);
+    await LocalDatabase.saveVerifyCode(verifyNewCode);
     // Re connect wifi
 
     this.addStep({ name: 'Check node hotspot' });
 
-    this.setState({ lastVerifyCode: verifyCode });
+    this.setState({ lastVerifyCode: verifyNewCode });
 
     if (Platform.OS === 'android') {
       this.addStep({ name: 'Load Wi-Fi list' });
@@ -408,7 +513,7 @@ class WifiSetup extends PureComponent {
       });
     } else {
       try {
-        const currentSSID = await getWifiSSID();
+        const currentSSID = await this.getWifiSSID();
         if (currentSSID === hotspotSSID) {
           throw new Error('Setup wifi for node failed');
         }
@@ -416,9 +521,9 @@ class WifiSetup extends PureComponent {
         //
       }
     }
-    console.log('=======' + ssid + '===' + password);
+    // Connect to current wifi for retain current logic
     await this.connectToWifi(ssid, password);
-    return verifyCode;
+    return verifyNewCode;
   };
 
   // Send ssid and password wifi for Node
@@ -433,22 +538,18 @@ class WifiSetup extends PureComponent {
       // Send data/info to node
       await this.sendZMQ();
     } catch (error) {
-      // this.showAlertInfor({
-      //   title: 'Error',
-      //   subTitle: `Connect HOTSPOT FAILED.\n ${error?.message || ''}`,
-      //   titleOK: 'Retry',
-      //   onPressOK: () => this.setupAndConnectWifiForNode()
-      // });
+      this.addStep({ name: 'Setup and connect wifi for node' });
       await APIService.trackLog({ action: funcName, message: `Connect HOTSPOT FAILED = ${error?.message || ''}` });
       throw error;
     }
   };
 
   tryVerifyCode = async () => {
-    const { verifyCode } = this.state;
+    const { verifyCode, lastVerifyCode } = this.state;
+    console.log('================= tryVerifyCode ' + verifyCode + '_' + lastVerifyCode);
     this.addStep({ name: 'Verify code', detail: verifyCode });
-    const result = await Util.tryAtMost(async () => {
-      return await NodeService.verifyProductCode(verifyCode)
+    const result = await this.tryAtMost(async () => {
+      return NodeService.verifyProductCode(lastVerifyCode)
         .then(res => {
           if (!res) {
             throw new Error('empty result');
@@ -462,7 +563,6 @@ class WifiSetup extends PureComponent {
           throw error;
         });
     }, 36, 5);
-
     if (result) {
       this.addStep({ name: 'Verify code success', detail: JSON.stringify(result) });
     } else {
@@ -477,7 +577,7 @@ class WifiSetup extends PureComponent {
     const { qrCode } = this.props;
     const funcName = `${qrCode}-authFirebase`;
     await APIService.trackLog({ action: funcName, message: 'Bat dau Auth Firebase', rawData: `productInfo = ${JSON.stringify(productInfo)}` });
-    const authFirebase = await Util.tryAtMost(async () => {
+    const authFirebase = await this.tryAtMost(async () => {
       const resultFbUID = await NodeService.authFirebase(productInfo)
         .catch(error => this.addStep({ name: 'Authenticate firebase error ', detail: error?.message }));
       this.addStep({ name: 'Authenticate firebase ', detail: resultFbUID });
@@ -508,12 +608,12 @@ class WifiSetup extends PureComponent {
   };
 
   handleSetupAccount = async (productInfo) => {
-    const { qrCode, account } = this.props;
+    const { qrCode, account, onNext } = this.props;
     const funcName = `${qrCode}-changeDeviceName`;
     try {
       this.addStep({ name: 'Setup account for node ', detail: account.PaymentAddress });
       this.updateDeviceNameRequest(productInfo.product_id, qrCode);
-      const fetchProductInfo = {
+      let fetchProductInfo = {
         ...productInfo,
         product_name: qrCode,
         product_type: DEVICES.MINER_TYPE,
@@ -525,22 +625,33 @@ class WifiSetup extends PureComponent {
       const { product_id } = fetchProductInfo;
       const { PaymentAddress, ValidatorKey } = account;
       this.addStep({ name: 'Send stake request' });
-      const response = await Util.excuteWithTimeout(APIService.requestStake({
+      await Util.excuteWithTimeout(APIService.requestStake({
         ProductID: product_id,
         ValidatorKey: ValidatorKey,
         qrCodeDeviceId: qrCode,
         PaymentAddress: PaymentAddress
-      }), 60);
-      this.addStep({ name: 'Send stake request success', detail: response });
-      await APIService.trackLog({ action: funcName, message: `Result: requestStake ==> ${response ? 'SUCCESS' : 'FAIL'}` });
-      const dataRequestStake = response?.data || {};
-      if (!_.isEmpty(dataRequestStake) && !_.isEmpty(dataRequestStake.PaymentAddress)) {
-        fetchProductInfo.minerInfo = {
-          ...fetchProductInfo.minerInfo,
-          ...dataRequestStake
-        };
-      }
-      await LocalDatabase.updateDevice(fetchProductInfo);
+      }), 60)
+        .then(async response => {
+          this.addStep({ name: 'Send stake request success', detail: response });
+          await APIService.trackLog({ action: funcName, message: `Result: requestStake ==> ${response ? 'SUCCESS' : 'FAIL'}` });
+          const dataRequestStake = response?.data || {};
+          if (!_.isEmpty(dataRequestStake) && !_.isEmpty(dataRequestStake.PaymentAddress)) {
+            fetchProductInfo.minerInfo = {
+              ...fetchProductInfo.minerInfo,
+              ...dataRequestStake
+            };
+          }
+          await LocalDatabase.updateDevice(fetchProductInfo);
+          await LocalDatabase.saveVerifyCode('');
+        })
+        .catch(async error => {
+          let messageErr = error?.message || '';
+          if (typeof messageErr === 'string' && messageErr?.includes('already staked')) {
+            await LocalDatabase.saveVerifyCode('');
+            onNext();
+          }
+        });
+
     } catch (error) {
       await APIService.trackLog({ action: funcName, message: `Result: connected Node ==> ERROR- message ${error.message}` });
       throw error;
@@ -558,7 +669,7 @@ class WifiSetup extends PureComponent {
     } catch (e) {
       this.addStep({ name: 'Setup Wi-Fi for node failed', detail: e?.message });
 
-      if (lastVerifyCode) {
+      if (lastVerifyCode && lastVerifyCode != '') {
         // Setup node failed but verifyCode exist
         this.addStep({ name: 'Try using last verify code' });
         this.setState({ verifyCode: lastVerifyCode });
@@ -602,35 +713,43 @@ class WifiSetup extends PureComponent {
 
   // On press button next
   handleNext = async () => {
-    const { onNext } = this.props;
-    const { password } = this.state;
+    const { steps } = this.state;
+    // Check if verifyCode exist, check 1 time
+    if (steps.length > 0) {
+      this.verifyCodeFirebase();
+    } else {
+      // 
+      const { onNext } = this.props;
+      const { password } = this.state;
 
-    if (password.length > 0 && password.length < 8) {
-      return this.setState({ error: 'Password must be empty or at least 8 characters' });
-    }
-
-    try {
-      this.setState({ loading: true });
-
-      const isCorrectWifi = await this.checkWifiInfo();
-      if (!isCorrectWifi) {
-        this.setState({ error: 'Wifi name or password is incorrect' });
-      } else {
-        this.setState({ isCorrectWifi });
-
-        // Start to setup node
-        await this.handleSetupNode();
-
-        // Save verifyCode
-        await LocalDatabase.saveVerifyCode('');
-        onNext();
+      if (password.length > 0 && password.length < 8) {
+        return this.setState({ error: 'Password must be empty or at least 8 characters' });
       }
-    } catch (e) {
-      console.debug('SETUP FAILED', e);
-      this.setState({ error: e.message });
-      this.addStep({ name: 'Setup failed', detail: e });
-    } finally {
-      this.setState({ loading: false });
+
+      try {
+        this.setState({ loading: true });
+
+        const isCorrectWifi = await this.checkWifiInfo();
+        console.log('isCorrectWifi ' + isCorrectWifi);
+        if (!isCorrectWifi) {
+          this.setState({ error: 'Wifi name or password is incorrect', steps: [] });
+        } else {
+          this.setState({ isCorrectWifi });
+
+          // Start to setup node
+          await this.handleSetupNode();
+
+          // Save verifyCode
+          await LocalDatabase.saveVerifyCode('');
+          onNext();
+        }
+      } catch (e) {
+        console.debug('SETUP FAILED', e);
+        this.setState({ error: e.message });
+        this.addStep({ name: `Setup failed ${e?.message || ''}`, detail: e });
+      } finally {
+        this.setState({ loading: false });
+      }
     }
   };
 
@@ -676,7 +795,7 @@ class WifiSetup extends PureComponent {
     return (
       <View style={{}}>
         <ScrollView
-          style={{ height: 200 }}
+          style={{ height: 250 }}
           ref={ref => this.scrollView = ref}
           onContentSizeChange={() => {
             if (this.scrollView) {
@@ -701,7 +820,7 @@ class WifiSetup extends PureComponent {
   };
 
   render() {
-    const { steps } = this.state;
+    const { steps, ssid, connectWifi } = this.state;
     const rootCauseMessage = this.getErrorMessage();
 
     return (
@@ -712,6 +831,14 @@ class WifiSetup extends PureComponent {
           <Text style={styles.errorText}>{rootCauseMessage}</Text>
           {this.renderFooter()}
         </ScrollView>
+        <ModalConnectWifi
+          isLoading={connectWifi.isCheckingWifiConnection}
+          isVisible={connectWifi.shouldShowModalConnectWifi}
+          isSuccess={connectWifi.isConnected}
+          title={connectWifi.title}
+          titleConfirm='OK'
+          titleRetry='Retry'
+        />
       </View>
     );
   }

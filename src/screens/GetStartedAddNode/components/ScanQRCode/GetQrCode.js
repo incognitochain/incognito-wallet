@@ -13,28 +13,28 @@ import { Icon } from 'react-native-elements';
 import styles from '../../styles';
 
 export const TAG = 'GetQrcode';
-const  GetQrcode = React.memo(({ onSuccess, qrCode = ''})=>{
-  const [deviceId,setDeviceId] = useState(qrCode);
-  const [loading,setLoading] = useState(false);
-  const [isPassedValidate,setIdPassedValidate] = useState(false);
-  const [errorMessage,setErrorMessage] = useState('');
-  const verifyQrcode = onClickView( async (qrcode)=>{
-    if(!_.isEmpty(qrcode)){
+const GetQrcode = React.memo(({ onSuccess, qrCode = '' }) => {
+  const [deviceId, setDeviceId] = useState(qrCode);
+  const [loading, setLoading] = useState(false);
+  const [isPassedValidate, setIdPassedValidate] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const verifyQrcode = onClickView(async (qrcode) => {
+    if (!_.isEmpty(qrcode)) {
       setLoading(true);
       DeviceLog.logInfo(`${TAG}-verifyQrcode begin- value = ${qrCode}`);
-      const checked = await Util.excuteWithTimeout(APIService.qrCodeCheck({QRCode:qrcode}),6).catch(console.log)||{};
-      const {data='',status = -1 } = checked??{};
+      const checked = await Util.excuteWithTimeout(APIService.qrCodeCheck({ QRCode: qrcode }), 6).catch(console.log) || {};
+      const { data = '', status = -1 } = checked ?? {};
       DeviceLog.logInfo(`${TAG}-verifyQrcode result = ${JSON.stringify(checked)}`);
-      const isPassed =  _.isEqual(status,1) || __DEV__;
+      const isPassed = _.isEqual(status, 1) || __DEV__;
       setIdPassedValidate(isPassed);
       setDeviceId(qrcode);
-      setErrorMessage(isPassed?'':data);
+      setErrorMessage(isPassed ? '' : data);
       isPassed && onSuccess && onSuccess(qrcode);
       setLoading(false);
     }
   });
-  useMemo(()=>verifyQrcode(qrCode),[qrCode]);
-  const handleQrcode = useCallback(onClickView(()=>{
+  useMemo(() => verifyQrcode(qrCode), [qrCode]);
+  const handleQrcode = useCallback(onClickView(() => {
     openQrScanner(async dataReader => {
       if(_.isEmpty(dataReader)) {
         setDeviceId('');
@@ -44,31 +44,30 @@ const  GetQrcode = React.memo(({ onSuccess, qrCode = ''})=>{
         setDeviceId(dataReader);
         verifyQrcode(dataReader);
       }
-
     });
-  }),[deviceId]);
+  }), [deviceId]);
   return (
     <>
       <Image style={styles.content_step1} source={images.ic_getstarted_scan_device} />
 
-      {!isPassedValidate ?(
+      {!isPassedValidate ? (
         <TouchableOpacity onPress={handleQrcode}>
           <Image style={styles.content_step1} source={images.ic_getstarted_qrcode} />
           <Text style={styles.step3_text}>Tap to scan</Text>
         </TouchableOpacity>
-      ):(loading?ViewUtil.loadingComponent(): (
+      ) : (loading ? ViewUtil.loadingComponent() : (
         <>
           <Icon size={scaleInApp(50)} color='#25CDD6' name="check" type='simple-line-icon' />
-          <Text style={[styles.step3_text,{color:'#25CDD6'}]}>Scan complete</Text>
+          <Text style={[styles.step3_text, { color: '#25CDD6' }]}>Scan complete</Text>
         </>
       )
       )}
       {!isPassedValidate && (
-        <Text style={[styles.text,styles.errorText,styles.item_container_error]}>{errorMessage}</Text>
+        <Text style={[styles.text, styles.errorText, styles.item_container_error]}>{errorMessage}</Text>
       )}
 
-      { !_.isEmpty(deviceId) && (
-        <Text style={[styles.text,styles.item_container_input,{ textAlign:'center',paddingBottom:2}]}>{deviceId}</Text>
+      {!_.isEmpty(deviceId) && (
+        <Text style={[styles.text, styles.item_container_input, { textAlign: 'center', paddingBottom: 2 }]}>{deviceId}</Text>
       )}
 
     </>

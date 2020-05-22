@@ -2,8 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key/>
-	<string/>
+	<key></key>
+	<string></string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -71,12 +71,12 @@
 	<string>${PRODUCT_NAME} Contacts Usage</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Enabling Face ID allows you quick and secure access to your account.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This will help Node find your home Wi-Fi</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Will you allow this app to always know your location?</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This will help Node find your home Wi-Fi</string>
-  <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-  <string>This will help Node find your home Wi-Fi</string>
 	<key>NSMotionUsageDescription</key>
 	<string>${PRODUCT_NAME} Motion Usage</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
