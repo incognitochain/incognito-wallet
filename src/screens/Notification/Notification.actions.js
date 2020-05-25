@@ -211,7 +211,7 @@ export const actionNavigate = (item, navigation) => async (
     case 'deposit-update': {
       navigation.navigate(routeNames.WalletDetail);
       const token = {
-        ...selectedPrivacySeleclor.getPrivacyDataByTokenID(rootState),
+        ...selectedPrivacySeleclor.getPrivacyDataByTokenID(rootState)(tokenId),
         id: tokenId,
         ID: tokenId,
       };

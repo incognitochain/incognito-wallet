@@ -267,8 +267,9 @@ class Withdraw extends React.Component {
       return validator.combinedAURAddress;
     } else if (externalSymbol === CONSTANT_COMMONS.CRYPTO_SYMBOL.ZIL) {
       return validator.combinedZILAddress;
+    } else if (externalSymbol === CONSTANT_COMMONS.CRYPTO_SYMBOL.XMR) {
+      return validator.combinedXMRAddress;
     }
-
     // default
     return validator.combinedUnknownAddress;
   });
@@ -363,6 +364,7 @@ class Withdraw extends React.Component {
                   // I wanna check text is ETH valid coin
                   let ETHValid = walletValidator.validate(text, 'ETH', 'both');
                   this.checkIfValidAddressETH(text, isETH, ETHValid);
+                  rfFocus(formName, 'toAddress');
                 }}
                 name="toAddress"
                 label="To"

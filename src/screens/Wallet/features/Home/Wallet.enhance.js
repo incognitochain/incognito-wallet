@@ -13,7 +13,6 @@ import {
 import storageService from '@src/services/storage';
 import { CONSTANT_KEYS, CONSTANT_COMMONS } from '@src/constants';
 import { countFollowToken } from '@src/services/api/token';
-import withFCM from '@src/screens/Notification/Notification.withFCM';
 import { useNavigation, useIsFocused } from 'react-navigation-hooks';
 import {
   setSelectedPrivacy,
@@ -148,7 +147,6 @@ const enhance = WrappedComp => props => {
 };
 
 export default compose(
-  withFCM,
   withLayout_2,
   enhance,
 );

@@ -23,7 +23,7 @@
 		58511263A8694957A9667323 /* SF-Pro-Display-RegularItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = D44C119054EC45B8A1D4E416 /* SF-Pro-Display-RegularItalic.otf */; };
 		712C447B244313E700A3CBA6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 712C447A244313E700A3CBA6 /* GoogleService-Info.plist */; };
 		7144D81C24373E68005224F2 /* Gomobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7144D81B24373E68005224F2 /* Gomobile.framework */; };
-		71DCB747246A5B4500BCF914 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 71DCB746246A5B4500BCF914 /* Images.xcassets */; };
+		71ACEF372477D8CE003AE3E3 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 71ACEF362477D8CE003AE3E3 /* Images.xcassets */; };
 		7951D9F679874B4EA8E3CFEE /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27AAED89E8AD4248BBC41F79 /* libRNFirebase.a */; };
 		79A0496630414ECA8E900065 /* Helvetica-Neue-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = D1CBFF9A6B4846FDB3E64476 /* Helvetica-Neue-Bold.otf */; };
 		7BDA05DC4F96444192E100CF /* SF-Pro-Display-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 960F2226C98F46CA8A9CE6B3 /* SF-Pro-Display-Light.otf */; };
@@ -142,7 +142,7 @@
 		712C447A244313E700A3CBA6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7139BB1E57B94AE2A6C8F4AF /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		7144D81B24373E68005224F2 /* Gomobile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Gomobile.framework; sourceTree = "<group>"; };
-		71DCB746246A5B4500BCF914 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		71ACEF362477D8CE003AE3E3 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		728920B4B46C4A338855AD52 /* SF-Pro-Display-Ultralight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Ultralight.otf"; path = "../src/assets/fonts/SF-Pro-Display-Ultralight.otf"; sourceTree = "<group>"; };
 		7314E748FE8E4E34B81A890F /* HelveticaNeueHv.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = HelveticaNeueHv.ttf; path = ../src/assets/fonts/HelveticaNeueHv.ttf; sourceTree = "<group>"; };
 		7375685BE9DC4CE6B1D711DB /* HelveticaNeueIt.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = HelveticaNeueIt.ttf; path = ../src/assets/fonts/HelveticaNeueIt.ttf; sourceTree = "<group>"; };
@@ -236,7 +236,7 @@
 		13B07FAE1A68108700A75B9A /* Incognito */ = {
 			isa = PBXGroup;
 			children = (
-				71DCB746246A5B4500BCF914 /* Images.xcassets */,
+				71ACEF362477D8CE003AE3E3 /* Images.xcassets */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -545,7 +545,6 @@
 				FED68302235DBC6A002F1A7C /* autonomous_config.plist in Resources */,
 				1F298112246D5724000EE1C6 /* Info.plist in Resources */,
 				1F1BF8DF2472DCA200A2DA95 /* Helvetica-Neue.otf in Resources */,
-				71DCB747246A5B4500BCF914 /* Images.xcassets in Resources */,
 				712C447B244313E700A3CBA6 /* GoogleService-Info.plist in Resources */,
 				3A12A570E48E48C0B340C24F /* SF-Pro-Display-Bold.otf in Resources */,
 				D9635E23B98A4C1ABCD1C169 /* SF-Pro-Display-BoldItalic.otf in Resources */,
@@ -556,6 +555,7 @@
 				A10667CB28F742399B925978 /* SF-Pro-Display-LightItalic.otf in Resources */,
 				953B9826BC464541AA42922F /* SF-Pro-Display-Medium.otf in Resources */,
 				F20A45871E5C433B9D9CF8DC /* SF-Pro-Display-MediumItalic.otf in Resources */,
+				71ACEF372477D8CE003AE3E3 /* Images.xcassets in Resources */,
 				F562FA37C7A94F53BB23EC40 /* SF-Pro-Display-Regular.otf in Resources */,
 				58511263A8694957A9667323 /* SF-Pro-Display-RegularItalic.otf in Resources */,
 				F48AB109EC3A43EE8179B45E /* Helvetica-Neue.otf in Resources */,
@@ -727,7 +727,7 @@
 				CODE_SIGN_ENTITLEMENTS = Incognito/Incognito.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 73;
+				CURRENT_PROJECT_VERSION = 74;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = G63A8CY3DS;
 				ENABLE_BITCODE = NO;
@@ -762,7 +762,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-zmq-service/ios/**",
 				);
-				MARKETING_VERSION = 49.7;
+				MARKETING_VERSION = 49.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -789,7 +789,7 @@
 				CODE_SIGN_ENTITLEMENTS = Incognito/Incognito.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 73;
+				CURRENT_PROJECT_VERSION = 74;
 				DEVELOPMENT_TEAM = G63A8CY3DS;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -823,7 +823,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-zmq-service/ios/**",
 				);
-				MARKETING_VERSION = 49.7;
+				MARKETING_VERSION = 49.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -897,7 +897,7 @@
 				CODE_SIGN_ENTITLEMENTS = Incognito/Incognito.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 73;
+				CURRENT_PROJECT_VERSION = 74;
 				DEVELOPMENT_TEAM = G63A8CY3DS;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -935,7 +935,7 @@
 					"$(SRCROOT)/../node_modules/react-native-zmq-service/ios/**",
 					"$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)",
 				);
-				MARKETING_VERSION = 49.7;
+				MARKETING_VERSION = 49.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1010,7 +1010,7 @@
 				CODE_SIGN_ENTITLEMENTS = Incognito/Incognito.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 73;
+				CURRENT_PROJECT_VERSION = 74;
 				DEVELOPMENT_TEAM = G63A8CY3DS;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1048,7 +1048,7 @@
 					"$(SRCROOT)/../node_modules/react-native-zmq-service/ios/**",
 					"$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)",
 				);
-				MARKETING_VERSION = 49.7;
+				MARKETING_VERSION = 49.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
