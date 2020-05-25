@@ -1,41 +1,32 @@
-import { THEME, DECOR, COLORS } from '@src/styles';
+import { COLORS, FONT } from '@src/styles';
 import { StyleSheet } from 'react-native';
 
 const style = StyleSheet.create({
   container: {
-    flexDirection: 'column',
+    marginTop: 30,
   },
   row: {
-    ...THEME.textInput,
-    height: DECOR.inputHeight,
-    alignItems: 'center',
-    flexDirection: 'row'
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    height: 40,
   },
   label: {
-    ...THEME.text.defaultTextStyle,
-    fontSize: 14,
-    marginBottom: 5,
-  },
-  labelFocus: {
-    color: COLORS.blue
+    fontFamily: FONT.NAME.bold,
+    fontSize: FONT.SIZE.superMedium,
+    lineHeight: FONT.NORMALIZE(FONT.FONT_SIZES.medium),
+    color: COLORS.black,
+    marginBottom: 10,
   },
   input: {
     flex: 1,
-    height: DECOR.inputHeight,
-    paddingVertical: 3,
-    fontSize: 16,
-    ...THEME.text.defaultTextStyle,
-  },
-  focus: {
-    borderColor: COLORS.blue,
-    borderBottomWidth: DECOR.borderWidth + 0.5
-  },
-  maxLengthContainer: {
-    alignSelf: 'flex-end'
-  },
-  maxLengthText: {
-    fontSize: 10,
-    color: COLORS.lightGrey8
+    fontFamily: FONT.NAME.medium,
+    fontSize: FONT.SIZE.superMedium,
+    lineHeight: FONT.NORMALIZE(FONT.FONT_SIZES.superMedium),
+    color: COLORS.colorGreyBold,
+    height: '100%',
+    padding: 0,
+    marginRight: 10,
   },
 });
 

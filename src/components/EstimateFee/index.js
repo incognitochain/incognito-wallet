@@ -329,7 +329,7 @@ class EstimateFeeContainer extends Component {
         tokenObject,
         accountWallet,
       );
-
+    
       return fee;
     } catch (e) {
       throw e;

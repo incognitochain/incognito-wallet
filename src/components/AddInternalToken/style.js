@@ -11,7 +11,7 @@ const style = StyleSheet.create({
     width: '100%',
   },
   verifyInfoContainer: {
-    marginTop: 25,
+    // marginTop: 25,
   },
   verifyInfoHeader: {
     flexDirection: 'row',
@@ -26,32 +26,31 @@ const style = StyleSheet.create({
   block: {
     backgroundColor: COLORS.white,
     paddingVertical: 15,
-    marginBottom: 10
+    marginBottom: 10,
   },
   desc: {
-    marginBottom: 10
+    marginBottom: 10,
   },
   input: {
-    marginBottom: 15
+    // marginBottom: 15,
   },
   descriptionInput: {
     height: 80,
   },
-  noteText: {
-    fontSize: FONT.SIZE.small,
-    fontWeight: 'bold',
-    marginVertical: 15
-  },
   submitBtn: {
     marginTop: 40,
-    borderRadius: 4,
+    borderRadius: 20,
+    backgroundColor: COLORS.orange,
+  },
+  submitBtnDisabed: {
+    opacity: 0.5,
   },
   title: {
     fontSize: THEME.text.largeTitleSize,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   balance: {
-    textAlign: 'center'
+    textAlign: 'center',
   },
   error: {
     color: COLORS.red,
@@ -64,23 +63,33 @@ const style = StyleSheet.create({
     paddingVertical: 20,
   },
   showMyAddressLabel: {
-    flex: 1
+    flex: 1,
+    fontSize: FONT.SIZE.regular,
+    fontFamily: FONT.NAME.regular,
+    lineHeight: FONT.NORMALIZE(FONT.SIZE.regular + 4),
+    color: COLORS.black,
   },
   switch: {
     height: '100%',
-    marginBottom: 0
+    marginBottom: 0,
   },
   ownerAddressContainer: {
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   ownerAddressLabel: {
     marginBottom: 10,
-    fontSize: 14
+    fontSize: FONT.SIZE.regular,
+    fontFamily: FONT.NAME.regular,
+    lineHeight: FONT.NORMALIZE(FONT.SIZE.regular + 4),
+    color: COLORS.black,
   },
   ownerAddressValue: {
     paddingHorizontal: 1,
-    color: COLORS.lightGrey1
-  }
+    fontSize: FONT.SIZE.regular,
+    fontFamily: FONT.NAME.regular,
+    lineHeight: FONT.NORMALIZE(FONT.SIZE.regular + 4),
+    color: COLORS.colorGreyBold,
+  },
 });
 
 export default style;

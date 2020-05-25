@@ -1,6 +1,6 @@
 {
   "name": "incognito-wallet",
-  "version": "3.6.6.1",
+  "version": "3.6.7",
   "private": true,
   "rnpm": {
     "assets": [
@@ -31,18 +31,18 @@
     "ios:clean": "yarn cache clean && rm -rf ~/Library/Developer/Xcode/DerivedData",
     "postinstall": "./node_modules/.bin/rn-nodeify --install crypto,stream,vm --hack && npx jetify",
     "devtools": "react-devtools",
-    "deployIOS:dev": "appcenter codepush release-react -a 0xSiris/Incognito -t \"49.6\" -d Development --development",
-    "deployIOS:prod": "appcenter codepush release-react -a 0xSiris/Incognito -t \"49.6\" -d Production -x",
-    "deployIOS:staging": "appcenter codepush release-react -a 0xSiris/Incognito -t \"49.6\" -d Staging",
-    "deployIOS:next": "appcenter codepush release-react -a 0xSiris/Incognito -t \"49.6\" -d NextRelease",
-    "deployAndroid:dev": "appcenter codepush release-react -a 0xSiris/Incognito-Android -t \"3.6.6\" -d Development --development -x",
-    "deployAndroid:staging": "appcenter codepush release-react -a 0xSiris/Incognito-Android -t \"3.6.6\" -d Staging",
-    "deployAndroid:prod": "appcenter codepush release-react -a 0xSiris/Incognito-Android -t \"3.6.6\" -d Production -x",
-    "deployAndroid:next": "appcenter codepush release-react -a 0xSiris/Incognito-Android -t \"3.6.6\" -d NextRelease",
+    "deployIOS:dev": "appcenter codepush release-react -a 0xSiris/Incognito -t \"49.7\" -d Development --development",
+    "deployIOS:prod": "appcenter codepush release-react -a 0xSiris/Incognito -t \"49.7\" -d Production -x",
+    "deployIOS:staging": "appcenter codepush release-react -a 0xSiris/Incognito -t \"49.7\" -d Staging",
+    "deployIOS:next": "appcenter codepush release-react -a 0xSiris/Incognito -t \"49.7\" -d NextRelease",
+    "deployAndroid:dev": "appcenter codepush release-react -a 0xSiris/Incognito-Android -t \"3.6.7\" -d Development --development -x",
+    "deployAndroid:staging": "appcenter codepush release-react -a 0xSiris/Incognito-Android -t \"3.6.7\" -d Staging",
+    "deployAndroid:prod": "appcenter codepush release-react -a 0xSiris/Incognito-Android -t \"3.6.7\" -d Production -x",
+    "deployAndroid:next": "appcenter codepush release-react -a 0xSiris/Incognito-Android -t \"3.6.7\" -d NextRelease -x",
     "deploy:dev": "yarn deployIOS:dev && yarn deployAndroid:dev",
     "deploy:staging": "yarn deployIOS:staging && yarn deployAndroid:staging",
     "deploy:prod": "yarn deployIOS:prod && yarn deployAndroid:prod",
-    "deploy:next": "yarn deployIOS:prod && yarn deployAndroid:prod"
+    "deploy:next": "yarn deployIOS:next && yarn deployAndroid:next"
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.3.4",

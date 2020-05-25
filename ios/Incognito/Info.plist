@@ -71,8 +71,6 @@
 	<string>${PRODUCT_NAME} Contacts Usage</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Enabling Face ID allows you quick and secure access to your account.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This will help Node find your home Wi-Fi</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Will you allow this app to always know your location?</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -127,6 +125,28 @@
 		<string>HelveticaNeueMed.ttf</string>
 		<string>HelveticaNeueMedium.ttf</string>
 		<string>HelveticaNeueThin.ttf</string>
+		<string>SF-Pro-Display-Black.otf</string>
+		<string>SF-Pro-Display-BlackItalic.otf</string>
+		<string>SF-Pro-Display-Bold.otf</string>
+		<string>SF-Pro-Display-BoldItalic.otf</string>
+		<string>SF-Pro-Display-Heavy.otf</string>
+		<string>SF-Pro-Display-HeavyItalic.otf</string>
+		<string>SF-Pro-Display-Light.otf</string>
+		<string>SF-Pro-Display-LightItalic.otf</string>
+		<string>SF-Pro-Display-Medium.otf</string>
+		<string>SF-Pro-Display-MediumItalic.otf</string>
+		<string>SF-Pro-Display-Regular.otf</string>
+		<string>SF-Pro-Display-RegularItalic.otf</string>
+		<string>SF-Pro-Display-Semibold.otf</string>
+		<string>SF-Pro-Display-SemiboldItalic.otf</string>
+		<string>SF-Pro-Display-Thin.otf</string>
+		<string>SF-Pro-Display-ThinItalic.otf</string>
+		<string>SF-Pro-Display-Ultralight.otf</string>
+		<string>SF-Pro-Display-UltralightItalic.otf</string>
+		<string>HelveticaNeue-Regular.ttf</string>
+		<string>Helvetica-Neue.otf</string>
+		<string>Helvetica-Neue-Bold.otf</string>
+		<string>Helvetica-Neue-Medium.otf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

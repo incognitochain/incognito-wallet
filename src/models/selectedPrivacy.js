@@ -72,6 +72,9 @@ class SelectedPrivacy {
     this.incognitoTotalSupply = this.isIncognitoToken && Number(token?.totalSupply) || 0;
     this.isVerified = combineData.call(this, pTokenData?.verified, token?.verified, true); // PRV always is verified
     this.iconUrl = getIconUrl.call(this, token?.image);
+    this.priceUsd = pTokenData?.priceUsd || 0;
+    this.change = pTokenData?.change || '0';
+    this.pricePrv = pTokenData?.pricePrv || 0;
   }
 }
 

@@ -1,23 +1,34 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import LoadingContainer from '@components/LoadingContainer';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import convertUtil from '@utils/convert';
 import formatUtil from '@utils/format';
 import accountService from '@services/wallet/accountService';
 import tokenService from '@services/wallet/tokenService';
-import {getBalance} from '@src/redux/actions/account';
-import {getBalance as getTokenBalance} from '@src/redux/actions/token';
-import {CONSTANT_COMMONS, CONSTANT_EVENTS, CONSTANT_KEYS} from '@src/constants';
-import {logEvent} from '@services/firebase';
-import {MESSAGES} from '@screens/Dex/constants';
-import {actionToggleModal as toggleModal} from '@src/components/Modal';
+import { getBalance } from '@src/redux/actions/account';
+import { getBalance as getTokenBalance } from '@src/redux/actions/token';
+import {
+  CONSTANT_COMMONS,
+  CONSTANT_EVENTS,
+  CONSTANT_KEYS,
+} from '@src/constants';
+import { logEvent } from '@services/firebase';
+import { MESSAGES } from '@screens/Dex/constants';
+import { actionToggleModal as toggleModal } from '@src/components/Modal';
 import routeNames from '@src/router/routeNames';
-import {ExHandler} from '@src/services/exception';
-import {change as rfOnChangeValue} from 'redux-form';
-import {sendInReceiversSelector} from '@src/redux/selectors/receivers';
-import {HEADER_TITLE_RECEIVERS} from '@src/redux/types/receivers';
-import SendCrypto, {formName} from './SendCrypto';
+import { ExHandler } from '@src/services/exception';
+import { change as rfOnChangeValue } from 'redux-form';
+import { sendInReceiversSelector } from '@src/redux/selectors/receivers';
+import { HEADER_TITLE_RECEIVERS } from '@src/redux/types/receivers';
+import { estimateFeeSelector } from '@src/components/EstimateFee/EstimateFee.selector';
+import {
+  selectedPrivacySeleclor,
+  sharedSeleclor,
+  accountSeleclor,
+} from '@src/redux/selectors';
+import { actionInitEstimateFee } from '@src/components/EstimateFee/EstimateFee.actions';
+import SendCrypto, { formName } from './SendCrypto';
 
 class SendCryptoContainer extends Component {
   constructor() {
@@ -29,14 +40,30 @@ class SendCryptoContainer extends Component {
   }
 
   componentDidMount() {
-    const {selectedPrivacy} = this.props;
+    const { selectedPrivacy, actionInitEstimateFee } = this.props;
     logEvent(CONSTANT_EVENTS.VIEW_SEND, {
       tokenId: selectedPrivacy.tokenId,
       tokenSymbol: selectedPrivacy.symbol,
     });
+    actionInitEstimateFee();
   }
 
-  getTxInfo = ({message} = {}) => message;
+  componentDidUpdate(prevProps) {
+    const { selectedPrivacy, actionInitEstimateFee } = this.props;
+    const { selectedPrivacy: oldSelectedPrivacy } = prevProps;
+    const { tokenId } = selectedPrivacy;
+    if (
+      oldSelectedPrivacy !== selectedPrivacy ||
+      prevProps?.isGettingTotalBalance !== this.props?.isGettingTotalBalance ||
+      prevProps?.accountBalance !== this.props?.accountBalance ||
+      prevProps?.isGettingTotalBalance.includes(tokenId) !==
+        this.props?.isGettingTotalBalance.includes(tokenId)
+    ) {
+      actionInitEstimateFee();
+    }
+  }
+
+  getTxInfo = ({ message } = {}) => message;
 
   _handleSendMainCrypto = async values => {
     const {
@@ -45,14 +72,12 @@ class SendCryptoContainer extends Component {
       selectedPrivacy,
       getAccountBalanceBound,
     } = this.props;
-    const {toAddress, amount, fee, feeUnit, message} = values;
+    const { toAddress, amount, feeUnit, message, originalFee } = values;
     const fromAddress = selectedPrivacy?.paymentAddress;
     const originalAmount = convertUtil.toOriginalAmount(
       convertUtil.toNumber(amount),
       selectedPrivacy?.pDecimals,
     );
-    const originalFee = convertUtil.toNumber(fee);
-
     const paymentInfos = [
       {
         paymentAddressStr: toAddress,
@@ -60,7 +85,7 @@ class SendCryptoContainer extends Component {
       },
     ];
 
-    const info = this.getTxInfo({message});
+    const info = this.getTxInfo({ message });
 
     try {
       this.setState({
@@ -91,7 +116,7 @@ class SendCryptoContainer extends Component {
           feeUnit,
         };
 
-        this.setState({receiptData});
+        this.setState({ receiptData });
 
         setTimeout(() => getAccountBalanceBound(account), 10000);
       } else {
@@ -100,7 +125,7 @@ class SendCryptoContainer extends Component {
     } catch (e) {
       throw e;
     } finally {
-      this.setState({isSending: false});
+      this.setState({ isSending: false });
     }
   };
 
@@ -112,10 +137,16 @@ class SendCryptoContainer extends Component {
       selectedPrivacy,
       getTokenBalanceBound,
     } = this.props;
-    const {toAddress, amount, fee, feeUnit, message, isUseTokenFee} = values;
+    const {
+      toAddress,
+      amount,
+      feeUnit,
+      message,
+      isUseTokenFee,
+      originalFee,
+    } = values;
     const fromAddress = selectedPrivacy?.paymentAddress;
     const type = CONSTANT_COMMONS.TOKEN_TX_TYPE.SEND;
-    const originalFee = convertUtil.toNumber(fee);
     const originalAmount = convertUtil.toOriginalAmount(
       convertUtil.toNumber(amount),
       selectedPrivacy?.pDecimals,
@@ -134,12 +165,9 @@ class SendCryptoContainer extends Component {
         },
       ],
     };
-
-    const info = this.getTxInfo({message});
-
+    const info = this.getTxInfo({ message });
     try {
-      this.setState({isSending: true});
-
+      this.setState({ isSending: true });
       if (!isUseTokenFee) {
         const prvBalance = await accountService.getBalance(account, wallet);
 
@@ -173,7 +201,7 @@ class SendCryptoContainer extends Component {
           decimals: selectedPrivacy.decimals,
         };
 
-        this.setState({receiptData});
+        this.setState({ receiptData });
 
         const foundToken = tokens?.find(t => t.id === selectedPrivacy?.tokenId);
         foundToken && setTimeout(() => getTokenBalanceBound(foundToken), 10000);
@@ -183,19 +211,19 @@ class SendCryptoContainer extends Component {
     } catch (e) {
       throw e;
     } finally {
-      this.setState({isSending: false});
+      this.setState({ isSending: false });
     }
   };
 
   handleSend = () => {
-    const {selectedPrivacy} = this.props;
+    const { selectedPrivacy } = this.props;
 
     if (selectedPrivacy?.isToken) return this._handleSendToken;
     if (selectedPrivacy?.isMainCrypto) return this._handleSendMainCrypto;
   };
 
   onShowFrequentReceivers = async () => {
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     try {
       navigation.navigate(routeNames.FrequentReceivers, {
         keySave: CONSTANT_KEYS.REDUX_STATE_RECEIVERS_IN_NETWORK,
@@ -208,23 +236,26 @@ class SendCryptoContainer extends Component {
   };
 
   onSelectedItem = info => {
-    const {rfOnChangeValue, navigation} = this.props;
+    const { rfOnChangeValue, navigation } = this.props;
     rfOnChangeValue(formName, 'toAddress', info.address);
     navigation.pop();
   };
 
   render() {
-    const {selectedPrivacy} = this.props;
-    const {receiptData, isSending} = this.state;
-
-    if (!selectedPrivacy) return <LoadingContainer />;
-
+    const { selectedPrivacy, estimateFee, isGettingTotalBalance } = this.props;
+    const { receiptData, isSending } = this.state;
     const componentProps = {
       handleSend: this.handleSend(),
       receiptData,
       isSending,
     };
-
+    if (
+      !selectedPrivacy ||
+      !estimateFee.init ||
+      isGettingTotalBalance.length > 0
+    ) {
+      return <LoadingContainer />;
+    }
     return (
       <SendCrypto
         {...{
@@ -240,6 +271,13 @@ class SendCryptoContainer extends Component {
 const mapState = state => ({
   tokens: state.token.followed,
   receivers: sendInReceiversSelector(state).receivers,
+  estimateFee: estimateFeeSelector(state),
+  selectedPrivacy: selectedPrivacySeleclor.selectedPrivacy(state),
+  getPrivacyDataByTokenID: selectedPrivacySeleclor.getPrivacyDataByTokenID(
+    state,
+  ),
+  isGettingTotalBalance: sharedSeleclor.isGettingBalance(state),
+  accountBalance: accountSeleclor.defaultAccountBalanceSelector(state),
 });
 
 const mapDispatch = {
@@ -247,6 +285,7 @@ const mapDispatch = {
   getTokenBalanceBound: getTokenBalance,
   toggleModal,
   rfOnChangeValue,
+  actionInitEstimateFee,
 };
 
 SendCryptoContainer.defaultProps = {
@@ -263,6 +302,14 @@ SendCryptoContainer.propTypes = {
   getTokenBalanceBound: PropTypes.func.isRequired,
   tokens: PropTypes.arrayOf(PropTypes.object),
   rfOnChangeValue: PropTypes.func.isRequired,
+  estimateFee: PropTypes.object.isRequired,
+  getPrivacyDataByTokenID: PropTypes.func.isRequired,
+  isGettingTotalBalance: PropTypes.array.isRequired,
+  accountBalance: PropTypes.number.isRequired,
+  actionInitEstimateFee: PropTypes.func.isRequired,
 };
 
-export default connect(mapState, mapDispatch)(SendCryptoContainer);
+export default connect(
+  mapState,
+  mapDispatch,
+)(SendCryptoContainer);

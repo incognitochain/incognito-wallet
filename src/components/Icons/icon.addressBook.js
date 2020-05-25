@@ -5,7 +5,7 @@ import srcAddressBookIcon from '@src/assets/images/icons/address_book.png';
 const AddressBookIcon = props => {
   const defaultStyle = {
     width: 20,
-    height: 20,
+    height: 22,
   };
   const {style, source, ...rest} = props;
   return (

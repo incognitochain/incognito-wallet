@@ -138,8 +138,8 @@ android {
         applicationId "com.incognito.wallet"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 71
-        versionName "3.6.6"
+        versionCode 73
+        versionName "3.6.7"
         missingDimensionStrategy 'react-native-camera', 'general'
     }
     signingConfigs {
@@ -222,10 +222,6 @@ android {
     }
 }
 
-repositories {
-  mavenCentral()
-}
-
 dependencies {
     implementation project(':lottie-react-native')
     implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -255,9 +251,6 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-
-    implementation 'com.appsflyer:af-android-sdk:5.0.0'
-    implementation 'com.android.installreferrer:installreferrer:1.0'
 }
 
 // Run this once to be able to run the application with BUCK

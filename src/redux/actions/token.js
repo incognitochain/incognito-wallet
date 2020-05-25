@@ -1,8 +1,17 @@
 import type from '@src/redux/types/token';
-import {accountSeleclor} from '@src/redux/selectors';
-import {getTokenList} from '@src/services/api/token';
+import { accountSeleclor, selectedPrivacySeleclor } from '@src/redux/selectors';
+import { getTokenList, apiGetExchangeRate } from '@src/services/api/token';
 import tokenService from '@src/services/wallet/tokenService';
 import accountService from '@src/services/wallet/accountService';
+import {
+  combineHistory,
+  loadTokenHistory,
+  getHistoryFromApi,
+  loadAccountHistory,
+  normalizeData,
+} from '@src/redux/utils/token';
+// eslint-disable-next-line import/no-cycle
+import { getBalance as getAccountBalance } from '@src/redux/actions/account';
 
 export const setToken = (
   token = throw new Error('Token object is required'),
@@ -158,3 +167,67 @@ export const actionAddFollowTokenSuccess = payload => ({
   type: type.ADD_FOLLOW_TOKEN_SUCCESS,
   payload,
 });
+
+export const actionInitHistory = () => ({
+  type: type.ACTION_INIT_HISTORY,
+});
+
+export const actionFetchingHistory = () => ({
+  type: type.ACTION_FETCHING_HISTORY,
+});
+
+export const actionFetchedHistory = payload => ({
+  type: type.ACTION_FETCHED_HISTORY,
+  payload,
+});
+
+export const actionFetchFailHistory = () => ({
+  type: type.ACTION_FETCH_FAIL_HISTORY,
+});
+
+export const actionFetchHistory = () => async (dispatch, getState) => {
+  try {
+    const state = getState();
+    const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
+    const tokenId = selectedPrivacySeleclor.selectedPrivacyTokenID(state);
+    if (!tokenId) {
+      return;
+    }
+    const token = selectedPrivacySeleclor.selectedPrivacyByFollowedSelector(
+      state,
+    );
+    const account = accountSeleclor.defaultAccountSelector(state);
+    let histories = [];
+    await dispatch(actionFetchingHistory());
+    if (selectedPrivacy?.isToken) {
+      const [historiesDt, historiesDtFromApi] = await Promise.all([
+        loadTokenHistory()(dispatch, getState),
+        getHistoryFromApi()(dispatch, getState),
+        token ? dispatch(getBalance(token)) : null,
+      ]);
+      histories = combineHistory(
+        historiesDt,
+        historiesDtFromApi,
+        selectedPrivacy?.symbol,
+        selectedPrivacy?.externalSymbol,
+        selectedPrivacy?.decimals,
+        selectedPrivacy?.pDecimals,
+      );
+    }
+    if (selectedPrivacy?.isMainCrypto) {
+      const [accountHistory] = await new Promise.all([
+        loadAccountHistory()(dispatch, getState),
+        dispatch(getAccountBalance(account)),
+      ]);
+      histories = normalizeData(
+        accountHistory,
+        selectedPrivacy?.decimals,
+        selectedPrivacy?.pDecimals,
+      );
+    }
+    await dispatch(actionFetchedHistory(histories));
+  } catch (error) {
+    await dispatch(actionFetchFailHistory());
+    throw error;
+  }
+};

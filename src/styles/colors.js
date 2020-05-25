@@ -9,7 +9,7 @@ const COLORS = {
   blue3: '#ACE9EC',
   blue4: '#004AA9',
   red: '#FE4D4D',
-  green: '#26C64D',
+  green: '#34C759',
   dark1: '#101111',
   dark2: '#0D3A3C',
   dark3: '#014E52',
@@ -41,10 +41,13 @@ const COLORS = {
   overlayBlackDark: 'rgba(0, 0, 0, 0.8)',
   overlayBlackLight: 'rgba(0, 0, 0, 0.3)',
   errorMessage: '#ed4337',
-  colorGrey: '#ECECEC',
-  mottoGrey: '#8c9c9d'
-};
+  mottoGrey: '#8c9c9d',
 
+  colorGrey: '#ECECEC',
+  colorGreyMedium: '#C4C4C6',
+  colorGreyBold: '#8A8A8E',
+  colorPrimary: '#33373A',
+};
 
 export default {
   ...COLORS,

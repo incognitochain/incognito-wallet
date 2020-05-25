@@ -1,7 +1,13 @@
 import { Text, Button, View, Toast, TextInput } from '@src/components/core';
 import LoadingTx from '@src/components/LoadingTx';
 import { Field, change, isValid, formValueSelector } from 'redux-form';
-import { createForm, InputField, ImagePickerField, SwitchField, validator } from '@src/components/core/reduxForm';
+import {
+  createForm,
+  InputField,
+  ImagePickerField,
+  SwitchField,
+  validator,
+} from '@src/components/core/reduxForm';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withNavigation } from 'react-navigation';
@@ -25,7 +31,7 @@ import VerifiedText from '../VerifiedText';
 const formName = 'addInternalToken';
 const selector = formValueSelector(formName);
 const initialValues = {
-  showOwnerAddress: false
+  showOwnerAddress: false,
 };
 const Form = createForm(formName, { initialValues });
 const descriptionMaxLength = validator.maxLength(255);
@@ -52,7 +58,10 @@ class AddInternalToken extends Component {
     const { amount: oldAmount, isFormValid: oldIsFormValid } = prevProps;
     const { isFormValid, amount } = this.props;
 
-    if ((amount !== oldAmount || isFormValid !== oldIsFormValid) && isFormValid) {
+    if (
+      (amount !== oldAmount || isFormValid !== oldIsFormValid) &&
+      isFormValid
+    ) {
       this.handleShouldGetFee();
     }
   }
@@ -62,29 +71,32 @@ class AddInternalToken extends Component {
     if (typeof rfChange === 'function') {
       rfChange(formName, field, value);
     }
-  }
+  };
 
   goBack = () => {
     const { navigation } = this.props;
     navigation?.navigate(ROUTES_NAME.Wallet);
   };
 
-  handleSaveCoinInfo = async (data) => {
+  handleSaveCoinInfo = async data => {
     try {
       return await addTokenInfo(data);
     } catch (e) {
-      new ExHandler(e, 'Your coin logo has been not saved yet, but you can update it again in Coin Detail screen.').showWarningToast();
+      new ExHandler(
+        e,
+        'Your coin logo has been not saved yet, but you can update it again in Coin Detail screen.',
+      ).showWarningToast();
     }
-  }
+  };
 
   // estimate fee when user update isPrivacy or amount, and toAddress is not null
-  handleEstimateFee = async (values) => {
+  handleEstimateFee = async values => {
     const { account, wallet } = this.props;
 
     const { fromAddress, toAddress, name, symbol, amount } = values;
 
     const tokenObject = {
-      Privacy : true,
+      Privacy: true,
       TokenID: '',
       TokenName: name,
       TokenSymbol: symbol,
@@ -92,47 +104,70 @@ class AddInternalToken extends Component {
       TokenAmount: Number(amount),
       TokenReceivers: {
         PaymentAddress: toAddress,
-        Amount: Number(amount)
-      }
+        Amount: Number(amount),
+      },
     };
 
     const accountWallet = wallet.getAccountByName(account.name);
-    try{
+    try {
       this.setState({ isGettingFee: true });
-      const fee =  await getEstimateFeeForPToken(fromAddress, toAddress, Number(amount), tokenObject, accountWallet);
+      const fee = await getEstimateFeeForPToken(
+        fromAddress,
+        toAddress,
+        Number(amount),
+        tokenObject,
+        accountWallet,
+      );
 
       // update fee
       this.setState({ fee: Number(fee * 2) || 50 });
-    } catch(e){
+    } catch (e) {
       new ExHandler(e).showErrorToast(true);
     } finally {
       this.setState({ isGettingFee: false });
     }
   };
 
-  handleCreateSendToken = async (values) => {
+  handleCreateSendToken = async values => {
     const { account, wallet, setWallet, getInternalTokenList } = this.props;
 
-    const { name, symbol, amount, logo, showOwnerAddress, description, ownerName, ownerEmail, ownerWebsite } = values;
+    const {
+      name,
+      symbol,
+      amount,
+      logo,
+      showOwnerAddress,
+      description,
+      ownerName,
+      ownerEmail,
+      ownerWebsite,
+    } = values;
     const { fee } = this.state;
     const parseAmount = Number(amount);
 
     const tokenObject = {
-      Privacy : true,
+      Privacy: true,
       TokenID: '',
       TokenName: name,
       TokenSymbol: symbol,
       TokenTxType: CONSTANT_COMMONS.TOKEN_TX_TYPE.INIT,
       TokenAmount: parseAmount,
-      TokenReceivers: [{
-        PaymentAddress: account?.PaymentAddress,
-        Amount: parseAmount
-      }]
+      TokenReceivers: [
+        {
+          PaymentAddress: account?.PaymentAddress,
+          Amount: parseAmount,
+        },
+      ],
     };
 
     try {
       this.setState({ isCreatingOrSending: true });
-      const res = await Token.createSendPToken(tokenObject, Number(fee) || 0, account, wallet);
+      const res = await Token.createSendPToken(
+        tokenObject,
+        Number(fee) || 0,
+        account,
+        wallet,
+      );
       if (res.txId) {
         const { tokenID, tokenName, tokenSymbol } = res;
         Toast.showSuccess('Create coin successfully');
@@ -149,7 +184,7 @@ class AddInternalToken extends Component {
           ownerEmail,
           ownerWebsite,
           txId: res.txId,
-          amount: parseAmount
+          amount: parseAmount,
         }).catch(() => {
           // err is no matter, the user can update their token info later in Coin Detail screen
           // so just let them pass this process
@@ -176,33 +211,41 @@ class AddInternalToken extends Component {
     const { account, isFormValid, name, symbol, amount } = this.props;
     const { PaymentAddress: paymentAddress } = account;
 
-    if (!isFormValid || !paymentAddress){
+    if (!isFormValid || !paymentAddress) {
       return;
     }
 
-    if (amount && paymentAddress && name && symbol){
+    if (amount && paymentAddress && name && symbol) {
       this.handleEstimateFee({
         name,
         symbol,
         amount,
         toAddress: paymentAddress,
-        fromAddress: paymentAddress
+        fromAddress: paymentAddress,
       });
     }
-  }
+  };
 
   renderBalance = () => {
     const { account } = this.props;
 
-    return <Text style={styleSheet.balance}>{` Balance: ${ formatUtil.amount(account.value, CONSTANT_COMMONS.DECIMALS.MAIN_CRYPTO_CURRENCY) } ${ CONSTANT_COMMONS.CRYPTO_SYMBOL.PRV }`}</Text>;
-  }
+    return (
+      <Text style={styleSheet.balance}>
+        {` Balance: ${formatUtil.amount(
+          account.value,
+          CONSTANT_COMMONS.DECIMALS.MAIN_CRYPTO_CURRENCY,
+        )} ${CONSTANT_COMMONS.CRYPTO_SYMBOL.PRV}`}
+      </Text>
+    );
+  };
 
   render() {
     const { isCreatingOrSending, isGettingFee, fee } = this.state;
     const { account } = this.props;
     const isNotEnoughFee = account?.value < fee;
-    const isCanSubmit = !isGettingFee && typeof fee === 'number' && !isNotEnoughFee;
-
+    const isCanSubmit =
+      !isGettingFee && typeof fee === 'number' && !isNotEnoughFee;
+    const disabled = !isCanSubmit;
     return (
       <View style={styleSheet.container}>
         <Form style={styleSheet.form}>
@@ -212,29 +255,34 @@ class AddInternalToken extends Component {
                 <View style={styleSheet.block}>
                   <Field
                     component={InputField}
-                    name='name'
-                    placeholder='Enter coin name'
-                    label='Name'
-                    style={styleSheet.input}
+                    name="name"
+                    placeholder="Enter coin name"
+                    label="Name"
+                    style={[
+                      styleSheet.input,
+                      {
+                        marginTop: 0,
+                      },
+                    ]}
                     validate={validator.combinedTokenName}
                   />
                   <Field
                     component={InputField}
                     componentProps={{ autoCapitalize: 'characters' }}
-                    name='symbol'
-                    placeholder='Enter coin ticker'
-                    label='Ticker'
+                    name="symbol"
+                    placeholder="Enter coin ticker"
+                    label="Ticker"
                     style={styleSheet.input}
                     validate={validator.combinedTokenSymbol}
                   />
                   <Field
                     component={InputField}
-                    name='amount'
-                    placeholder='Enter number of coins'
-                    label='Total supply'
+                    name="amount"
+                    placeholder="Enter number of coins"
+                    label="Total supply"
                     style={styleSheet.input}
                     componentProps={{
-                      keyboardType: 'decimal-pad'
+                      keyboardType: 'decimal-pad',
                     }}
                     validate={[...validator.combinedNanoAmount]}
                   />
@@ -242,51 +290,69 @@ class AddInternalToken extends Component {
                     component={InputField}
                     inputStyle={styleSheet.descriptionInput}
                     containerStyle={styleSheet.descriptionInput}
-                    componentProps={{ multiline: true, numberOfLines: 10 }}
-                    name='description'
-                    placeholder='Explain what your token is for, how users can get it, and any other details of your project. 255 characters max.'
-                    label='Description'
-                    style={[styleSheet.input, styleSheet.descriptionInput, { marginBottom: 25 }]}
+                    componentProps={{
+                      multiline: true,
+                      numberOfLines: 10,
+                      maxLength: 200
+                    }}
+                    name="description"
+                    placeholder="Explain what your token is for, how users can get it, and any other details of your project. 255 characters max."
+                    label="Description"
+                    style={[
+                      styleSheet.input,
+                      styleSheet.descriptionInput,
+                      { marginBottom: 50 },
+                    ]}
+                    maxLength={255}
                     validate={descriptionMaxLength}
                   />
                   <View style={styleSheet.verifyInfoContainer}>
-                    <View style={styleSheet.verifyInfoHeader}>
+                    {/* <View style={styleSheet.verifyInfoHeader}>
                       <Help
                         marginLeft={0}
-                        title={<VerifiedText text='Verification badge' isVerified style={{ fontWeight: '500' }} />}
-                        content='A verification badge shows the community that your coin is legitimate, and is part of a genuine project.'
+                        title={(
+                          <VerifiedText
+                            text="Verification badge"
+                            isVerified
+                            style={{ fontWeight: '500' }}
+                          />
+                        )}
+                        content="A verification badge shows the community that your coin is legitimate, and is part of a genuine project."
                       />
-                      <Text style={styleSheet.verifyInfoLabel}>To earn a verified badge, please fill in these fields (optional):</Text>
-                    </View>
+                      <Text style={styleSheet.verifyInfoLabel}>
+                        To earn a verified badge, please fill in these fields
+                        (optional):
+                      </Text>
+                    </View> */}
                     <Field
                       component={InputField}
-                      name='ownerName'
-                      placeholder='Enter creator name'
-                      label='Creator'
+                      name="ownerName"
+                      placeholder="Enter creator name"
+                      label="Creator"
                       maxLength={100}
                       style={styleSheet.input}
                     />
                     <Field
                       component={InputField}
-                      name='ownerWebsite'
+                      name="ownerWebsite"
                       componentProps={{
-                        autoCapitalize: 'none'
+                        autoCapitalize: 'none',
                       }}
                       maxLength={100}
-                      placeholder='Enter project or coin URL'
-                      label='Website'
+                      placeholder="Enter project or coin URL"
+                      label="Website"
                       style={styleSheet.input}
                     />
                     <Field
                       component={InputField}
-                      name='ownerEmail'
+                      name="ownerEmail"
                       componentProps={{
                         keyboardType: 'email-address',
-                        autoCapitalize: 'none'
+                        autoCapitalize: 'none',
                       }}
                       maxLength={100}
-                      placeholder='Enter the official email address for your coin or project'
-                      label='Email address'
+                      placeholder="Enter the official email address for your coin or project"
+                      label="Email address"
                       style={styleSheet.input}
                       validate={isEmail}
                     />
@@ -294,16 +360,30 @@ class AddInternalToken extends Component {
                 </View>
                 <View style={styleSheet.block}>
                   <View>
-                    <CopiableText text={account.PaymentAddress} style={styleSheet.ownerAddressContainer} copiedMessage='Owner address was copied'>
-                      <Text style={styleSheet.ownerAddressLabel}>Creator address</Text>
-                      <Text style={styleSheet.ownerAddressValue} numberOfLines={1} ellipsizeMode="middle">{account.PaymentAddress}</Text>
+                    <CopiableText
+                      text={account.PaymentAddress}
+                      style={styleSheet.ownerAddressContainer}
+                      copiedMessage="Owner address was copied"
+                    >
+                      <Text style={styleSheet.ownerAddressLabel}>
+                        Creator address
+                      </Text>
+                      <Text
+                        style={styleSheet.ownerAddressValue}
+                        numberOfLines={1}
+                        ellipsizeMode="middle"
+                      >
+                        {account.PaymentAddress}
+                      </Text>
                     </CopiableText>
                   </View>
                   <View style={styleSheet.showMyAddressContainer}>
-                    <Text style={styleSheet.showMyAddressLabel}>Display my Incognito Address (Optional)</Text>
+                    <Text style={styleSheet.showMyAddressLabel}>
+                      Display my Incognito Address (Optional)
+                    </Text>
                     <Field
                       component={SwitchField}
-                      name='showOwnerAddress'
+                      name="showOwnerAddress"
                       style={[styleSheet.input, styleSheet.switch]}
                     />
                   </View>
@@ -312,31 +392,38 @@ class AddInternalToken extends Component {
                 <View style={styleSheet.block}>
                   <Field
                     component={ImagePickerField}
-                    name='logo'
+                    name="logo"
                     text="Upload an icon for your coin (optional, PNG and less than 50kb)"
-                    textButton='Upload'
+                    textButton="Upload"
                     style={styleSheet.input}
                     validate={imageValidate}
                   />
                 </View>
 
-                {
-                  isGettingFee
-                    ? <Text>Calculating fee...</Text>
-                    : typeof fee === 'number' && (
-                      <Text style={isNotEnoughFee && styleSheet.error}>
-                        Issuance fee: {formatUtil.amountFull(fee, CONSTANT_COMMONS.DECIMALS.MAIN_CRYPTO_CURRENCY)} {CONSTANT_COMMONS.CRYPTO_SYMBOL.PRV}
-                        {isNotEnoughFee && ' (please top up your balance to cover the fee)' }
-                      </Text>
-                    )
-                }
+                {isGettingFee ? (
+                  <Text>Calculating fee...</Text>
+                ) : (
+                  typeof fee === 'number' && (
+                    <Text style={isNotEnoughFee && styleSheet.error}>
+                      Issuance fee:{' '}
+                      {formatUtil.amountFull(
+                        fee,
+                        CONSTANT_COMMONS.DECIMALS.MAIN_CRYPTO_CURRENCY,
+                      )}{' '}
+                      {CONSTANT_COMMONS.CRYPTO_SYMBOL.PRV}
+                      {isNotEnoughFee &&
+                        ' (please top up your balance to cover the fee)'}
+                    </Text>
+                  )
+                )}
               </View>
               <Button
-                disabled={!isCanSubmit}
-                title={
-                  isGettingFee ? 'Calculating fee...' : 'Issue a privacy coin'
-                }
-                style={styleSheet.submitBtn}
+                disabled={disabled}
+                title={isGettingFee ? 'Calculating fee...' : 'Mint'}
+                style={[
+                  styleSheet.submitBtn,
+                  disabled && styleSheet.submitBtnDisabed,
+                ]}
                 onPress={handleSubmit(this.handleCreateSendToken)}
                 isAsync
                 isLoading={isGettingFee || submitting}
@@ -344,7 +431,7 @@ class AddInternalToken extends Component {
             </>
           )}
         </Form>
-        { isCreatingOrSending && <LoadingTx /> }
+        {isCreatingOrSending && <LoadingTx />}
       </View>
     );
   }
@@ -354,7 +441,7 @@ AddInternalToken.defaultProps = {
   isFormValid: false,
   name: null,
   symbol: null,
-  amount: null
+  amount: null,
 };
 
 AddInternalToken.propTypes = {
@@ -372,18 +459,20 @@ AddInternalToken.propTypes = {
 const mapDispatch = {
   rfChange: change,
   setWallet,
-  getInternalTokenList
+  getInternalTokenList,
 };
 
 const mapState = state => ({
   amount: selector(state, 'amount'),
   name: selector(state, 'name'),
   symbol: selector(state, 'symbol'),
-  isFormValid: isValid(formName)(state)
+  isFormValid: isValid(formName)(state),
 });
 
-
 export default compose(
-  connect(mapState, mapDispatch),
-  withNavigation
+  connect(
+    mapState,
+    mapDispatch,
+  ),
+  withNavigation,
 )(AddInternalToken);

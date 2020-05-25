@@ -1,30 +1,26 @@
-import { Container, Image, Text } from '@src/components/core';
-import PropTypes from 'prop-types';
+import { Image, Text } from '@src/components/core';
+import { View } from 'react-native';
 import React from 'react';
-import noTransaction from '@assets/images/no_transaction.png';
+import noTransaction from '@assets/images/icons/shield.png';
+import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { useSelector } from 'react-redux';
 import styles from './style';
 
-const EmptyHistory = ({ actionButton }) => (
-  <Container style={styles.container}>
-    <Image source={noTransaction} style={styles.image} />
-    {actionButton ?
-      <>
-        <Text style={styles.text}>Shield a public coin to start</Text>
-        <Text style={styles.text}>transacting privately</Text>
-        {actionButton}
-      </>
-      :
-      <Text style={styles.text}>No transactions yet</Text>
-    }
-  </Container>
-);
-
-EmptyHistory.defaultProps = {
-  actionButton: null
+const EmptyHistory = () => {
+  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  return (
+    <View style={styles.container}>
+      <Image source={noTransaction} style={styles.image} />
+      <Text style={styles.text}>
+        {`Shield some ${selectedPrivacy?.externalSymbol ||
+          selectedPrivacy?.symbol} to start\ntransacting anonymously.`}
+      </Text>
+    </View>
+  );
 };
 
-EmptyHistory.propTypes = {
-  actionButton: PropTypes.element
-};
+EmptyHistory.defaultProps = {};
+
+EmptyHistory.propTypes = {};
 
 export default EmptyHistory;

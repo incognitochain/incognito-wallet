@@ -1,7 +1,17 @@
-import { Container, Divider, Text, TouchableOpacity, View } from '@src/components/core';
+import {
+  Container,
+  Divider,
+  Text,
+  TouchableOpacity,
+  View,
+} from '@src/components/core';
 import { CONSTANT_COMMONS } from '@src/constants';
 import routeNames from '@src/router/routeNames';
-import { ConfirmedTx, FailedTx, SuccessTx } from '@src/services/wallet/WalletService';
+import {
+  ConfirmedTx,
+  FailedTx,
+  SuccessTx,
+} from '@src/services/wallet/WalletService';
 import { COLORS } from '@src/styles';
 import formatUtil from '@src/utils/format';
 import PropTypes from 'prop-types';
@@ -9,6 +19,7 @@ import React from 'react';
 import { generateTestId } from '@utils/misc';
 import { TOKEN } from '@src/constants/elements';
 import Swipeout from 'react-native-swipeout';
+import { useNavigation } from 'react-navigation-hooks';
 import styleSheet from './style';
 
 const getStatusData = (status, statusCode, decentralized) => {
@@ -22,7 +33,7 @@ const getStatusData = (status, statusCode, decentralized) => {
       return {
         statusText,
         statusColor,
-        statusNumber
+        statusNumber,
       };
     }
   }
@@ -60,7 +71,7 @@ const getStatusData = (status, statusCode, decentralized) => {
   return {
     statusText,
     statusColor,
-    statusNumber
+    statusNumber,
   };
 };
 
@@ -95,7 +106,7 @@ const getTypeData = (type, history) => {
   return {
     typeText,
     balanceColor,
-    balanceDirection
+    balanceDirection,
   };
 };
 
@@ -114,10 +125,14 @@ const HistoryItemWrapper = ({ history, onCancelEtaHistory, ...otherProps }) => {
       <Swipeout
         autoClose
         style={{
-          backgroundColor: 'transparent'
+          backgroundColor: 'transparent',
         }}
         right={[
-          { text: 'Cancel', backgroundColor: COLORS.red, onPress: () => onCancelEtaHistory(history) }
+          {
+            text: 'Remove',
+            backgroundColor: COLORS.red,
+            onPress: () => onCancelEtaHistory(history),
+          },
         ]}
       >
         {component}
@@ -128,77 +143,91 @@ const HistoryItemWrapper = ({ history, onCancelEtaHistory, ...otherProps }) => {
   return component;
 };
 
-const HistoryItem = ({ history, divider, navigation }) => {
+const HistoryItem = ({ history }) => {
+  const navigation = useNavigation();
   if (!history) {
     return null;
   }
-
-  const { statusText, statusColor, statusNumber } = getStatusData(history.status, history.statusCode, history.decentralized);
-  const { typeText, balanceColor, balanceDirection } = getTypeData(history.type, history);
-  const amount = (history.amount && formatUtil.amount(history.amount, history.pDecimals)) || formatUtil.number(history.requestedAmount);
+  const { statusText, statusColor, statusNumber } = getStatusData(
+    history.status,
+    history.statusCode,
+    history.decentralized,
+  );
+  const { typeText, balanceColor, balanceDirection } = getTypeData(
+    history.type,
+    history,
+  );
+  const amount =
+    (history.amount && formatUtil.amount(history.amount, history.pDecimals)) ||
+    formatUtil.number(history.requestedAmount);
   // const [addressDirection, address] = getAddress(history);
   const onPress = () => {
-    navigation?.navigate(routeNames.TxHistoryDetail, { data: { history, typeText, balanceColor, balanceDirection, statusText, statusColor, statusNumber } });
+    navigation?.navigate(routeNames.TxHistoryDetail, {
+      data: {
+        history,
+        typeText,
+        balanceColor,
+        balanceDirection,
+        statusText,
+        statusColor,
+        statusNumber,
+      },
+    });
   };
 
   return (
-    <>
-      <TouchableOpacity onPress={onPress} style={styleSheet.itemContainer}>
-        <View style={styleSheet.row}>
-          <Text
-            style={[styleSheet.typeText]}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            {...generateTestId(TOKEN.TRANSACTION_TYPE)}
-          >
-            {typeText}
-          </Text>
-          <Text
-            style={styleSheet.timeText}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            {...generateTestId(TOKEN.TRANSACTION_TIME)}
-          >
-            {formatUtil.formatDateTime(history.time)}
-          </Text>
-        </View>
-        <View style={styleSheet.row}>
-          <Text
-            style={[styleSheet.amountText, {
-              color: balanceColor
-            }]}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            {...generateTestId(TOKEN.TRANSACTION_CONTENT)}
-          >
-            {
-              amount ? `${balanceDirection} ${amount} ${history.symbol}` : ''
-            }
-          </Text>
-          <Text
-            style={[styleSheet.statusText, { color: statusColor }]}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            {...generateTestId(TOKEN.TRANSACTION_STATUS)}
-          >
-            {statusText} {(!!statusNumber || statusNumber === 0) ? `[${statusNumber}]` : null}
-          </Text>
-        </View>
-      </TouchableOpacity>
-      {divider && <Divider height={2} style={styleSheet.divider} color={COLORS.lightGrey6} />}
-    </>
+    <TouchableOpacity onPress={onPress} style={styleSheet.itemContainer}>
+      <View style={[styleSheet.row, styleSheet.rowTop]}>
+        <Text
+          style={[styleSheet.title, styleSheet.leftText]}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          {...generateTestId(TOKEN.TRANSACTION_TYPE)}
+        >
+          {typeText}
+        </Text>
+        <Text
+          style={[styleSheet.title, styleSheet.righText]}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          {...generateTestId(TOKEN.TRANSACTION_CONTENT)}
+        >
+          {amount ? amount : ''}
+        </Text>
+      </View>
+      <View style={styleSheet.row}>
+        <Text
+          style={[styleSheet.desc, styleSheet.leftText]}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          {...generateTestId(TOKEN.TRANSACTION_TIME)}
+        >
+          {formatUtil.formatDateTime(history.time)}
+        </Text>
+        <Text
+          style={[styleSheet.desc, styleSheet.righText]}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          {...generateTestId(TOKEN.TRANSACTION_STATUS)}
+        >
+          {statusText}{' '}
+          {!!statusNumber || statusNumber === 0 ? `[${statusNumber}]` : null}
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 
-const HistoryList = ({ histories, actionButton, onCancelEtaHistory, navigation }) => (
-  <Container style={styleSheet.container}>
-    <View style={styleSheet.content}>
-      {
-        histories.map((history, index) => (
-          <HistoryItemWrapper key={history.id} history={history} divider={index < (histories.length - 1)} onCancelEtaHistory={onCancelEtaHistory} navigation={navigation} />))
-      }
-    </View>
-  </Container>
+const HistoryList = ({ histories, onCancelEtaHistory }) => (
+  <View style={styleSheet.container}>
+    {histories.map(history => (
+      <HistoryItemWrapper
+        key={history.id}
+        history={history}
+        onCancelEtaHistory={onCancelEtaHistory}
+      />
+    ))}
+  </View>
 );
 
 HistoryItem.defaultProps = {
@@ -213,7 +242,6 @@ HistoryItem.defaultProps = {
     statusCode: null,
     status: null,
   },
-  divider: false
 };
 
 HistoryItem.propTypes = {
@@ -231,7 +259,7 @@ HistoryItem.propTypes = {
     canRetryExpiredDeposit: PropTypes.bool,
     pDecimals: PropTypes.number,
     requestedAmount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    status: PropTypes.string,
+    status: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     expiredAt: PropTypes.string,
     depositAddress: PropTypes.string,
     userPaymentAddress: PropTypes.string,
@@ -239,21 +267,16 @@ HistoryItem.propTypes = {
     privacyTokenAddress: PropTypes.string,
     walletAddress: PropTypes.string,
   }),
-  divider: PropTypes.bool,
-  navigation: PropTypes.object.isRequired
 };
 
 HistoryList.defaultProps = {
-  histories: null,
-  actionButton: null,
-  onCancelEtaHistory: null
+  histories: [],
+  onCancelEtaHistory: null,
 };
 
 HistoryList.propTypes = {
   histories: PropTypes.array,
-  actionButton: PropTypes.element,
   onCancelEtaHistory: PropTypes.func,
-  navigation: PropTypes.object.isRequired
 };
 
 export default HistoryList;

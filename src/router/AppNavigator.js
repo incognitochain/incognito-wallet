@@ -2,13 +2,9 @@ import { THEME } from '@src/styles';
 import { createStackNavigator } from 'react-navigation-stack';
 import CreateAccount from '@src/screens/CreateAccount';
 import ExportAccount from '@src/screens/ExportAccount';
-import FollowToken from '@src/screens/FollowToken';
-import CreateToken from '@src/screens/CreateToken';
-import AddToken from '@src/screens/AddToken';
 import ImportAccount from '@src/screens/ImportAccount';
 import NetworkSetting from '@src/screens/NetworkSetting';
 import WalletDetail from '@src/screens/WalletDetail';
-import ReceiveCoin from '@src/screens/ReceiveCoin';
 import SendCrypto from '@screens/SendCrypto';
 import WhySend from '@screens/WhySend';
 import WhyReceive from '@screens/WhyReceive';
@@ -35,7 +31,6 @@ import FrequentReceivers, {
 import Notification from '@src/screens/Notification';
 import NodeHelp from '@screens/NodeHelp';
 import BuyNodeScreen from '@screens/BuyNodeScreen';
-import Stake from '@screens/Stake';
 import StakeHistory from '@screens/StakeHistory';
 import StakeRecoverAccount from '@screens/Stake/features/RecoverAccount';
 import StakeHistoryDetail from '@screens/StakeHistory/features/Detail';
@@ -57,19 +52,7 @@ const AppNavigator = createStackNavigator(
       title: 'Import Account',
     }),
     [ROUTE_NAMES.ExportAccount]: navigationOptionsHandler(ExportAccount),
-    [ROUTE_NAMES.FollowToken]: navigationOptionsHandler(FollowToken, {
-      header: () => null,
-    }),
-    [ROUTE_NAMES.CreateToken]: navigationOptionsHandler(CreateToken, {
-      title: 'Issue a privacy coin',
-    }),
-    [ROUTE_NAMES.AddToken]: navigationOptionsHandler(AddToken, {
-      title: 'Add manually',
-    }),
     [ROUTE_NAMES.WalletDetail]: navigationOptionsHandler(WalletDetail),
-    [ROUTE_NAMES.ReceiveCoin]: navigationOptionsHandler(ReceiveCoin, {
-      title: 'Receive privacy coins',
-    }),
     [ROUTE_NAMES.SendCrypto]: navigationOptionsHandler(SendCrypto, {
       title: 'Send',
     }),
@@ -123,9 +106,6 @@ const AppNavigator = createStackNavigator(
     [ROUTE_NAMES.pApps]: navigationOptionsHandler(pApps),
     [ROUTE_NAMES.NodeHelp]: navigationOptionsHandler(NodeHelp, {
       title: 'Need help?',
-    }),
-    [ROUTE_NAMES.Stake]: navigationOptionsHandler(Stake, {
-      header: () => null,
     }),
     [ROUTE_NAMES.StakeHistory]: navigationOptionsHandler(StakeHistory, {
       title: 'Activities',

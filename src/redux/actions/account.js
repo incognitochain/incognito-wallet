@@ -7,6 +7,7 @@ import {getPassphrase} from '@src/services/wallet/passwordService';
 import {getUserUnfollowTokenIDs} from '@src/services/wallet/tokenService';
 import convert from '@src/utils/convert';
 import {tokenSeleclor, accountSeleclor} from '../selectors';
+// eslint-disable-next-line import/no-cycle
 import {getBalance as getTokenBalance, setListToken} from './token';
 
 /**

@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
-import {withNavigation, NavigationActions} from 'react-navigation';
-import {Modal} from '@src/components/core';
+import React, { Component } from 'react';
+import { withNavigation, NavigationActions } from 'react-navigation';
+import { Modal } from '@src/components/core';
 import routeNames from '@src/router/routeNames';
-import {ExHandler} from '@src/services/exception';
-import {CONSTANT_KEYS} from '@src/constants';
-import {compose} from 'recompose';
+import { ExHandler } from '@src/services/exception';
+import { CONSTANT_KEYS } from '@src/constants';
+import { compose } from 'recompose';
 import Receipt from './Receipt';
 import styleSheet from './style';
 
@@ -60,27 +60,27 @@ class ReceiptModal extends Component {
   }
 
   openReceipt = info => {
-    this.setState({open: true, info});
+    this.setState({ open: true, info });
   };
 
   closeReceipt = () => {
-    this.setState({open: false, info: {}});
+    this.setState({ open: false, info: {} });
   };
 
   goBackToWallet = () => {
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     this.closeReceipt();
     navigation.reset(
-      [NavigationActions.navigate({routeName: routeNames.RootTab})],
+      [NavigationActions.navigate({ routeName: routeNames.Wallet })],
       0,
     );
   };
 
   onSaveReceivers = () => {
     try {
-      const {navigation} = this.props;
-      const {info} = this.state;
-      navigation.navigate(routeNames.FrequentReceiversForm, {
+      const { navigation } = this.props;
+      const { info } = this.state;
+      navigation?.navigate(routeNames.FrequentReceiversForm, {
         info,
         keySave: CONSTANT_KEYS.REDUX_STATE_RECEIVERS_IN_NETWORK,
         headerTitle: 'Save address',
@@ -92,7 +92,7 @@ class ReceiptModal extends Component {
   };
 
   render() {
-    const {open, info} = this.state;
+    const { open, info } = this.state;
     return (
       <Modal
         visible={open}
@@ -111,4 +111,4 @@ class ReceiptModal extends Component {
 }
 
 export default compose(withNavigation)(ReceiptModal);
-export {closeReceipt, openReceipt};
+export { closeReceipt, openReceipt };

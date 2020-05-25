@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
-import { createForm, InputField, validator } from '@src/components/core/reduxForm';
+import {
+  createForm,
+  InputField,
+  validator,
+} from '@src/components/core/reduxForm';
 import { Button, View } from '@src/components/core';
 import styles from './style';
-
 
 const formName = 'addBep2Token';
 const Form = createForm(formName, {
@@ -31,50 +34,58 @@ class AddBep2Token extends Component {
     const { isSearching, onAdd, data } = this.props;
 
     return (
-      <Form initialValues={data} onChange={this.handleFormChange} style={styles.container}>
+      <Form
+        initialValues={data}
+        onChange={this.handleFormChange}
+        style={styles.container}
+      >
         {({ handleSubmit, submitting }) => (
           <>
             <View style={styles.fields}>
               <Field
                 component={InputField}
-                name='originalSymbol'
-                label='Origin Symbol'
-                placeholder='Search by BEP2 origin symbol'
+                name="originalSymbol"
+                label="Origin Symbol"
+                placeholder="Search by BEP2 origin symbol"
                 style={styles.input}
                 validate={isRequired}
+                componentProps={{
+                  labelStyle: [styles.text, styles.boldText],
+                }}
               />
-              { data?.name ? (
+              {data?.name ? (
                 <Field
                   component={InputField}
-                  name='name'
-                  label='Name'
+                  name="name"
+                  label="Name"
                   style={styles.input}
                   componentProps={{
-                    editable: false
+                    editable: false,
                   }}
                   validate={isRequired}
                 />
               ) : null}
-              { data?.originalSymbol ? (
+              {data?.originalSymbol ? (
                 <Field
                   component={InputField}
-                  name='symbol'
-                  label='Symbol'
+                  name="symbol"
+                  label="Symbol"
                   style={styles.input}
                   validate={isRequired}
                   componentProps={{
-                    editable: false
+                    editable: false,
                   }}
                 />
               ) : null}
             </View>
             <Button
-              title='Add manually'
+              title="Add manually"
               style={styles.submitBtn}
               onPress={handleSubmit(onAdd)}
               isAsync
               disabled={!data || isSearching || submitting}
               isLoading={isSearching || submitting}
+              titleStyle={styles.submitBtnTitle}
             />
           </>
         )}
@@ -89,8 +100,8 @@ AddBep2Token.defaultProps = {
     bep2symbol: '',
     symbol: '',
     name: '',
-    originalSymbol: ''
-  }
+    originalSymbol: '',
+  },
 };
 
 AddBep2Token.propTypes = {
@@ -102,8 +113,7 @@ AddBep2Token.propTypes = {
     symbol: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     originalSymbol: PropTypes.string.isRequired,
-  })
+  }),
 };
-
 
 export default AddBep2Token;

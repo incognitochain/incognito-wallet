@@ -20,15 +20,7 @@ import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
 
 import com.microsoft.codepush.react.CodePush;
 
-import com.appsflyer.AppsFlyerLib;
-import com.appsflyer.AppsFlyerConversionListener;
-import java.util.Map;
-import android.util.Log;
-
 public class MainApplication extends Application implements ReactApplication {
-
-  private static final String AF_DEV_KEY = "FdTLFrVc9wNVebXvZGA6Ag";
-  private static final String TAG = "MainApplication";
 
   private final ReactNativeHost mReactNativeHost =
           new ReactNativeHost(this) {
@@ -72,35 +64,5 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
-    AppsFlyerConversionListener conversionListener = new AppsFlyerConversionListener() {
-        @Override
-        public void onConversionDataSuccess(Map<String, Object> conversionData) {
-            for (String attrName : conversionData.keySet()) {
-                Log.d(TAG, "attribute: " + attrName + " = " + conversionData.get(attrName));
-            }
-        }
-
-        @Override
-        public void onConversionDataFail(String errorMessage) {
-            Log.d(TAG, "error getting conversion data: " + errorMessage);
-        }
-
-        @Override
-        public void onAppOpenAttribution(Map<String, String> conversionData) {
-
-            for (String attrName : conversionData.keySet()) {
-                Log.d(TAG, "attribute: " + attrName + " = " + conversionData.get(attrName));
-            }
-
-        }
-
-        @Override
-        public void onAttributionFailure(String errorMessage) {
-            Log.d(TAG, "error onAttributionFailure : " + errorMessage);
-        }
-    };
-
-    AppsFlyerLib.getInstance().init(AF_DEV_KEY, conversionListener, getApplicationContext());
-    AppsFlyerLib.getInstance().startTracking(this);
   }
 }

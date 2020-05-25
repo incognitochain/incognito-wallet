@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {StyleSheet} from 'react-native';
-import {View} from '@components/core';
-import {COLORS} from '@src/styles';
+import { StyleSheet } from 'react-native';
+import { View } from '@components/core';
+import { COLORS } from '@src/styles';
 
 const styled = StyleSheet.create({
   container: {
@@ -24,7 +24,7 @@ const styled = StyleSheet.create({
     borderBottomColor: COLORS.white,
     position: 'absolute',
     bottom: -15,
-    transform: [{rotate: '180deg'}],
+    transform: [{ rotate: '180deg' }],
   },
   triangleContainer: {
     justifyContent: 'center',
@@ -32,10 +32,15 @@ const styled = StyleSheet.create({
   },
 });
 
-const Tooltip = ({content, containerStyle, triangleStyle}) => (
+const Tooltip = ({
+  content,
+  containerStyle,
+  triangleStyle,
+  triangleContainerStyle,
+}) => (
   <View style={[styled.container, containerStyle]}>
     {content}
-    <View style={styled.triangleContainer}>
+    <View style={[styled.triangleContainer, triangleContainerStyle]}>
       <View style={[styled.triangle, triangleStyle]} />
     </View>
   </View>
@@ -44,12 +49,14 @@ const Tooltip = ({content, containerStyle, triangleStyle}) => (
 Tooltip.defaultProps = {
   containerStyle: null,
   triangleStyle: null,
+  triangleContainerStyle: null,
 };
 
 Tooltip.propTypes = {
   content: PropTypes.element.isRequired,
   containerStyle: PropTypes.any,
   triangleStyle: PropTypes.any,
+  triangleContainerStyle: PropTypes.any,
 };
 
 export default React.memo(Tooltip);

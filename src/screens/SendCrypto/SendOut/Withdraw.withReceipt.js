@@ -1,20 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import formatUtil from '@src/utils/format';
-import {CONSTANT_COMMONS, CONSTANT_KEYS} from '@src/constants';
-import {useDispatch, useSelector} from 'react-redux';
-import {actionToggleModal} from '@src/components/Modal';
-import {useNavigation} from 'react-navigation-hooks';
-import {NavigationActions} from 'react-navigation';
+import { CONSTANT_COMMONS, CONSTANT_KEYS } from '@src/constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionToggleModal } from '@src/components/Modal';
+import { useNavigation } from 'react-navigation-hooks';
+import { NavigationActions } from 'react-navigation';
 import routeNames from '@src/router/routeNames';
-import {ExHandler} from '@src/services/exception';
-import {withdrawReceiversSelector} from '@src/redux/selectors/receivers';
-import {useBtnSaveReceiver} from '../FrequentReceivers/FrequentReceivers.hooks';
+import { ExHandler } from '@src/services/exception';
+import { withdrawReceiversSelector } from '@src/redux/selectors/receivers';
+import { useBtnSaveReceiver } from '../FrequentReceivers/FrequentReceivers.hooks';
 
 const enhance = WrappedComp => props => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const {receivers} = useSelector(withdrawReceiversSelector);
+  const { receivers } = useSelector(withdrawReceiversSelector);
   const {
     toAddress,
     lockTime,
@@ -62,7 +62,7 @@ const enhance = WrappedComp => props => {
       }),
     );
     navigation.reset(
-      [NavigationActions.navigate({routeName: routeNames.RootTab})],
+      [NavigationActions.navigate({ routeName: routeNames.Wallet })],
       0,
     );
   };
@@ -91,7 +91,7 @@ const enhance = WrappedComp => props => {
     toAddress,
   });
   return (
-    <WrappedComp {...{...props, onBack, infoFactories, btnSaveReceiver}} />
+    <WrappedComp {...{ ...props, onBack, infoFactories, btnSaveReceiver }} />
   );
 };
 

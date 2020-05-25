@@ -1,20 +1,18 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import { TouchableOpacity, Image, StyleSheet } from 'react-native';
+import QrCodeSrc from '@src/assets/images/icons/qr_code.png';
 
-const IC_QR = (
-  <Svg width={20} height={20} viewBox="0 0 20 20">
-    <Path
-      d="M1.111 0C.498 0 0 .498 0 1.111v4.445c0 .613.498 1.11 1.111 1.11h4.445c.613 0 1.11-.497 1.11-1.11V1.11C6.667.498 6.17 0 5.557 0H1.11zM8.89 0v2.222h2.222V0H8.89zm5.555 0c-.613 0-1.11.498-1.11 1.111v4.445c0 .613.497 1.11 1.11 1.11h4.445c.613 0 1.111-.497 1.111-1.11V1.11C20 .498 19.502 0 18.889 0h-4.445zM2.222 2.222h2.222v2.222H2.222V2.222zm13.334 0h2.222v2.222h-2.222V2.222zM8.889 4.444v2.223h2.222V4.444H8.89zM0 8.89v2.222h2.222V8.89H0zm4.444 0v2.222h2.223V8.89H4.444zm4.445 0v2.222h2.222V8.89H8.89zm2.222 2.222v2.222h2.222v-2.222h-2.222zm2.222 0h2.223V8.89h-2.223v2.222zm2.223 0v2.222h2.222v-2.222h-2.222zm2.222 0H20V8.89h-2.222v2.222zm0 2.222v2.223H20v-2.223h-2.222zm0 2.223h-2.222v2.222h2.222v-2.222zm0 2.222V20H20v-2.222h-2.222zm-2.222 0h-2.223V20h2.223v-2.222zm-2.223 0v-2.222h-2.222v2.222h2.222zm-2.222 0H8.89V20h2.222v-2.222zm0-2.222v-2.223H8.89v2.223h2.222zm2.222 0h2.223v-2.223h-2.223v2.223zM1.111 13.333c-.613 0-1.111.498-1.111 1.111v4.445C0 19.502.498 20 1.111 20h4.445c.613 0 1.11-.498 1.11-1.111v-4.445c0-.613-.497-1.11-1.11-1.11H1.11zm1.111 2.223h2.222v2.222H2.222v-2.222z"
-      fill="#000"
-      fillRule="nonzero"
-    />
-  </Svg>
-);
+const styled = StyleSheet.create({
+  icon: {
+    width: 20,
+    height: 20,
+  },
+});
+
 const BtnQRCode = props => {
   return (
     <TouchableOpacity {...props}>
-      {IC_QR}
+      <Image style={styled.icon} source={QrCodeSrc} />
     </TouchableOpacity>
   );
 };

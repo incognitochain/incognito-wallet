@@ -9,13 +9,13 @@ const text = {
   errorText: {
     ...FONTS.STYLE.normal,
     fontSize: FONTS.SIZE.superSmall,
-    color: COLORS.red
+    color: COLORS.red,
   },
   defaultTextStyle: {
     ...FONTS.STYLE.normal,
     color: COLORS.dark1,
     fontSize: FONTS.SIZE.regular,
-    letterSpacing: 0
+    letterSpacing: 0,
   },
   headerTextStyle: {
     ...FONTS.STYLE.bold,
@@ -68,9 +68,6 @@ const text = {
   },
   defaultSize: FONTS.SIZE.regular,
   largeTitleSize: FONTS.SIZE.superLarge,
-  alignCenterText: {
-    textAlign: 'center'
-  }
 };
 
 const MARGIN = {
@@ -79,23 +76,23 @@ const MARGIN = {
     marginRight: 15,
   },
   marginLeftDefault: {
-    marginLeft: 15
+    marginLeft: 15,
   },
   marginBottomDefault: {
-    marginBottom: 15
+    marginBottom: 15,
   },
   marginBottomSmall: {
-    marginBottom: 10
+    marginBottom: 10,
   },
   marginTopDefault: {
-    marginTop: 15
+    marginTop: 15,
   },
 };
 
 const header = {
   headerHeight: DECOR.scaleInApp(55),
   backgroundColor: COLORS.dark4,
-  headerTintColor: COLORS.dark1
+  headerTintColor: COLORS.dark1,
 };
 const opacityButton = {
   button: {
@@ -107,57 +104,57 @@ const opacityButton = {
     height: DECOR.buttonHeight,
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   buttonText: {
     ...text.defaultTextStyle,
     color: COLORS.white,
     textAlign: 'center',
     fontSize: 18,
-    letterSpacing: 0
+    letterSpacing: 0,
   },
   disabled: {
     backgroundColor: COLORS.blue3,
-  }
+  },
 };
 
 const indicator = {
-  color: COLORS.blue
+  color: COLORS.colorGreyBold,
 };
 
 const container = {
   padding: SPACINGS.small,
-  backgroundColor: COLORS.grey
+  backgroundColor: COLORS.grey,
 };
 
 const toast = {
   error: {
     backgroundColor: COLORS.red,
-    textColor: COLORS.white
+    textColor: COLORS.white,
   },
   warning: {
     backgroundColor: COLORS.orange,
-    textColor: COLORS.white
+    textColor: COLORS.white,
   },
   info: {
     backgroundColor: COLORS.primary,
-    textColor: COLORS.white
-  }
+    textColor: COLORS.white,
+  },
 };
 
 const textInput = {
   ...text.defaultTextStyle,
   borderBottomWidth: DECOR.borderWidth,
-  borderColor: COLORS.lightGrey4
+  borderColor: COLORS.lightGrey4,
 };
 
 const divider = {
   color: COLORS.black,
-  height: 1
+  height: 1,
 };
 
 const modal = {
-  headerHeight: DECOR.scaleInApp(44)
+  headerHeight: DECOR.scaleInApp(44),
 };
 
 const FLEX = {
@@ -181,17 +178,17 @@ const FLEX = {
     height: '100%',
   },
   absoluteIndicator: {
-    flex: 1, 
-    position: 'absolute',  
-    alignSelf: 'center', 
-    top: ScreenHeight * 0.4
-  }
+    flex: 1,
+    position: 'absolute',
+    alignSelf: 'center',
+    top: ScreenHeight * 0.4,
+  },
 };
 
 const SIZES = {
   pickerView: {
-    height: 40
-  }
+    height: 40,
+  },
 };
 
 const BORDER_RADIUS = {
@@ -214,12 +211,12 @@ const SHADOW = {
     shadowColor: COLORS.black,
     shadowOffset: {
       width: 0,
-      height: 1,
+      height: 2,
     },
-    shadowOpacity: 0.3,
-    shadowRadius: 2.84,
+    shadowOpacity: 0.5,
+    shadowRadius: 3.84,
     elevation: isIOS ? 0 : 5,
-  }
+  },
 };
 
 const IMAGES = {
@@ -227,7 +224,7 @@ const IMAGES = {
     width: ScreenWidth * 0.22,
     height: ScreenWidth * 0.22,
     borderRadius: BORDER_RADIUS.avatar,
-  }
+  },
 };
 
 const RECT = {
@@ -236,8 +233,8 @@ const RECT = {
     underlineColorAndroid: 'cyan',
     borderColor: COLORS.lightGrey2,
     borderWidth: 0.5,
-    height: SIZES.pickerView.height
-  }
+    height: SIZES.pickerView.height,
+  },
 };
 
 const INPUT = {
@@ -251,7 +248,7 @@ const INPUT = {
       borderColor: 'gray',
       borderRadius: 8,
       color: 'black',
-      paddingRight: 30, 
+      paddingRight: 30,
     },
     inputAndroid: {
       fontSize: FONTS.SIZE.medium,
@@ -262,9 +259,9 @@ const INPUT = {
       borderColor: 'purple',
       borderRadius: 8,
       color: 'black',
-      paddingRight: 20, 
+      paddingRight: 20,
     },
-  }
+  },
 };
 
 export default {
@@ -287,7 +284,7 @@ export default {
   modal,
   Button: {
     containerStyle: {
-      backgroundColor: 'red'
-    }
-  }
+      backgroundColor: 'red',
+    },
+  },
 };

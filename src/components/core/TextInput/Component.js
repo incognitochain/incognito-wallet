@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import {TextInput as RNComponent, View, Text, TouchableOpacity} from 'react-native';
+import {
+  TextInput as RNComponent,
+  View,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import { Icon } from 'react-native-elements';
 import { COLORS } from '@src/styles';
 import styleSheet from './style';
@@ -17,11 +22,11 @@ const TextInput = ({
   clearable,
   maxLength,
   onRef,
+  labelStyle,
   ...props
 }) => {
   const [focus, setFocus] = useState(false);
   let textInput = React.createRef();
-
   React.useEffect(() => {
     if (textInput && onRef) {
       onRef(textInput);
@@ -51,52 +56,44 @@ const TextInput = ({
     }
   }
 
-  function getLength() {
-    const { value, defaultValue } = props || {};
-    const data = value || defaultValue || '';
-    return data?.length || 0;
-  }
-
   return (
     <View style={[styleSheet.container, style]}>
-      {label && <Text style={[styleSheet.label, focus && styleSheet.labelFocus]}>{label}</Text>}
-      <View
-        style={[
-          styleSheet.row,
-          containerStyle,
-          focus && styleSheet.focus
-        ]}
-      >
+      {label && (
+        <Text
+          style={[
+            styleSheet.label,
+            labelStyle,
+            focus && styleSheet.labelFocus,
+          ]}
+        >
+          {label}
+        </Text>
+      )}
+      <View style={[styleSheet.row, containerStyle, focus && styleSheet.focus]}>
         {appendView}
         <RNComponent
           allowFontScaling={false}
-          placeholderTextColor={COLORS.lightGrey3}
+          placeholderTextColor={COLORS.colorGreyBold}
           returnKeyType="done"
           maxLength={maxLength}
-          {...props}
-          style={[
-            styleSheet.input,
-            inputStyle,
-          ]}
+          style={[styleSheet.input, inputStyle]}
           onFocus={handleFocus}
           onBlur={handleBlur}
           ref={textInput}
+          {...props}
         />
-        { clearable && focus && (
+        {clearable && focus && (
           <TouchableOpacity onPress={handleClear}>
-            <Icon name="ios-close-circle" type='ionicon' color={COLORS.lightGrey3} size={20} />
+            <Icon
+              name="ios-close-circle"
+              type="ionicon"
+              color={COLORS.lightGrey3}
+              size={20}
+            />
           </TouchableOpacity>
-        ) }
+        )}
         {prependView}
       </View>
-      {
-        maxLength > 0 && (
-          <View style={styleSheet.maxLengthContainer}>
-            <Text style={styleSheet.maxLengthText}>{getLength()}/{maxLength}</Text>
-          </View>
-        )
-      }
-
     </View>
   );
 };
@@ -112,7 +109,8 @@ TextInput.defaultProps = {
   onFocus: undefined,
   onBlur: undefined,
   style: null,
-  maxLength: null
+  maxLength: null,
+  labelStyle: null,
 };
 
 TextInput.propTypes = {
@@ -126,7 +124,8 @@ TextInput.propTypes = {
   onBlur: PropTypes.func,
   onFocus: PropTypes.func,
   style: PropTypes.object,
-  maxLength: PropTypes.number
+  maxLength: PropTypes.number,
+  labelStyle: PropTypes.any,
 };
 
 export default TextInput;

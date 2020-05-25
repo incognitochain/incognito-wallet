@@ -1,7 +1,7 @@
 import React from 'react';
-import {DeleteIcon} from '@src/components/Icons';
-import {COLORS} from '@src/styles';
-import {StyleSheet} from 'react-native';
+import { DeleteIcon } from '@src/components/Icons';
+import { COLORS } from '@src/styles';
+import { StyleSheet } from 'react-native';
 import Button from './Button';
 
 const styled = StyleSheet.create({
@@ -15,7 +15,7 @@ const BtnDelete = props => (
     {...{
       ...props,
       icon: <DeleteIcon />,
-      title: 'Delete',
+      title: 'Remove',
       styledContainer: styled.container,
     }}
   />

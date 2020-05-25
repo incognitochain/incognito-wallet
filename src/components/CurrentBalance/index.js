@@ -15,7 +15,7 @@ const CurrentBalanceContainer = ({ selectedPrivacy, symbol, select, hideBalanceT
       isNestedCurrentBalance={isNestedCurrentBalance}
       hideBalanceTitle={hideBalanceTitle}
       amount={formatUtil.amount(selectedPrivacy?.amount, selectedPrivacy?.pDecimals)}
-      symbol={symbol ?? selectedPrivacy?.symbol}
+      symbol={selectedPrivacy?.externalSymbol ||  selectedPrivacy?.symbol || symbol}
       select={select}
       tokenId={selectedPrivacy.tokenId}
     />

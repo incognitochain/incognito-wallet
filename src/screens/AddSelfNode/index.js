@@ -203,7 +203,7 @@ class AddSelfNode extends BaseScreen {
     return (
       <ScrollView keyboardShouldPersistTaps="handled">
         <Loader loading={loading} />
-        <KeyboardAvoidingView contentContainerStyle={{flex:1}} keyboardVerticalOffset={50} behavior="padding" style={[container]}>
+        <KeyboardAvoidingView contentContainerStyle={{flex:1}} keyboardVerticalOffset={200} behavior="padding" style={[container]}>
 
           <ViewInput ref={this.inputView} />
           <Button

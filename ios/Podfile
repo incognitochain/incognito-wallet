@@ -89,7 +89,6 @@ target 'Incognito' do
   pod 'RNFS', :path => '../node_modules/react-native-fs'
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
   pod 'CodePush', :path => '../node_modules/react-native-code-push'
-  pod 'AppsFlyerFramework'
   pod 'react-native-keep-awake', :path => '../node_modules/react-native-keep-awake'
 
   # React-Native is not great about React double-including from the Podfile

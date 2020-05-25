@@ -1,4 +1,4 @@
-import { COLORS } from '@src/styles';
+import { COLORS, FONT } from '@src/styles';
 import { StyleSheet } from 'react-native';
 
 const style = StyleSheet.create({
@@ -11,7 +11,7 @@ const style = StyleSheet.create({
   balanceContainer: {
     // flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   balance: {
     fontSize: 22,
@@ -25,8 +25,9 @@ const style = StyleSheet.create({
     marginLeft: 5,
   },
   desc: {
-    fontSize: 14,
-    marginBottom: 5,
+    fontFamily: FONT.NAME.bold,
+    fontSize: FONT.SIZE.superMedium,
+    color: COLORS.black,
   },
   selectContainer: {
     borderWidth: 1,
@@ -39,7 +40,7 @@ const style = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 2,
     flexDirection: 'row',
-  }
+  },
 });
 
 export default style;

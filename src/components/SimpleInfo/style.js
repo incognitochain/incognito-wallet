@@ -1,19 +1,19 @@
 import { StyleSheet } from 'react-native';
+import { FONT, COLORS } from '@src/styles';
 
 export default StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   mainContainer: {
     flex: 1,
-    marginTop: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   iconContainer: {
     height: 150,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   icon: {
     fontSize: 60,
@@ -21,13 +21,19 @@ export default StyleSheet.create({
   text: {
     maxWidth: 400,
     textAlign: 'center',
+    fontFamily: FONT.NAME.regular,
+    fontSize: FONT.SIZE.regular,
+    color: COLORS.black,
   },
   subText: {
     marginTop: 5,
     maxWidth: 500,
     textAlign: 'center',
+    fontFamily: FONT.NAME.regular,
+    fontSize: FONT.SIZE.regular,
+    color: COLORS.black,
   },
   buttonContainer: {
-    marginVertical: 50
+    marginVertical: 50,
   },
 });

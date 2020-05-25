@@ -90,7 +90,7 @@ const enhance = WrappedComp => props => {
         }),
       );
       Toast.showInfo('Saved!');
-      return navigation.navigate(routeNames.RootTab);
+      return navigation.navigate(routeNames.Wallet);
     } catch (error) {
       new ExHandler(error).showErrorToast();
     }

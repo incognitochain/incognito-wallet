@@ -1,6 +1,7 @@
 import { Dimensions, StatusBar, StyleSheet } from 'react-native';
 import colors from './colors';
 import DECOR from './decor';
+// eslint-disable-next-line import/no-cycle
 import font from './font';
 
 export const STATUSBAR_HEIGHT = StatusBar.currentHeight || 20;

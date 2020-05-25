@@ -1,22 +1,20 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {BaseTextInput as TextInput} from '@components/core';
+import { View, Text, StyleSheet } from 'react-native';
+import { BaseTextInput as TextInput } from '@components/core';
 import PropTypes from 'prop-types';
-import {BtnMax} from '@src/components/Button';
-import {COLORS} from '@src/styles';
-import {commonStyled as styled} from './input.styled';
+import { BtnMax } from '@src/components/Button';
+import { COLORS } from '@src/styles';
+import { commonStyled as styled } from './input.styled';
 
 const inputStyled = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderBottomColor: COLORS.lightGrey1,
+    borderBottomColor: COLORS.colorGreyBold,
     borderBottomWidth: 1,
-    paddingBottom: 10,
+    marginRight: 30,
   },
-  inputFocused: {
-    borderBottomColor: COLORS.primary,
-  },
+  inputFocused: {},
   input: {
     flex: 1,
   },
@@ -38,16 +36,15 @@ const Input = React.forwardRef((props, ref) => {
   const [state, setState] = React.useState({
     isFocused: false,
   });
-  const {isFocused} = state;
+  const { isFocused } = state;
   const onFocus = () => {
-    setState({...state, isFocused: true});
+    setState({ ...state, isFocused: true });
     if (typeof rest.onFocus === 'function') {
       rest.onFocus();
     }
   };
-
   const onBlur = () => {
-    setState({...state, isFocused: false});
+    setState({ ...state, isFocused: false });
     if (typeof rest.onBlur === 'function') {
       rest.onBlur();
     }
