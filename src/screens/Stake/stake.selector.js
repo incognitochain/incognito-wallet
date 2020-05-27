@@ -84,7 +84,7 @@ export const activeFlowSelector = createSelector(
       hook.titleStatus = 'Deposit is in progress';
       hook.warningStatus = backup
         ? ''
-        : 'Back up your staking account to keep your assets safe.';
+        : 'Back up your pStake account now to avoid loss of funds.';
       break;
     case WITHDRAW_FLOW:
       hook.btnSubmitAmount = 'Withdraw';

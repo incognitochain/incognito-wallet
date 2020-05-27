@@ -53,7 +53,7 @@ const styled = StyleSheet.create({
     marginVertical: 25,
   },
   warning: {
-    color: COLORS.black,
+    color: COLORS.red,
     fontFamily: FONT.NAME.regular,
     fontSize: FONT.SIZE.regular,
     lineHeight: FONT.SIZE.regular + 6,
