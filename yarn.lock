@@ -8974,10 +8974,10 @@ react-native-webview@^7.4.3:
     escape-string-regexp "2.0.0"
     invariant "2.2.4"
 
-react-native-wifi-reborn@2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/react-native-wifi-reborn/-/react-native-wifi-reborn-2.2.1.tgz#ec98a68fd2b7720eeacfc262fccce4e20033e27c"
-  integrity sha512-Oyb0VvwvnPI6UwzVnUlrIGtlO/UR5Yn5UvgkEZveNheqJTNo1GvxGhIsD3NY5YjRHrh/9N8ip2O1BB1l3rIrKw==
+react-native-wifi-reborn@^2.2.1:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-wifi-reborn/-/react-native-wifi-reborn-2.4.0.tgz#d5b9d8f3a6deba1cc4e2c0bcd17907f962599731"
+  integrity sha512-jp6BoXUBiGl+aR3QlEBHKbkEAy6eLv7rFPl4f1zUkcVXsWaGfTCw0JF2HcT+c6NLw5UkXmZNDB0WuxnvgU5FJg==
 
 "react-native-zmq-service@https://github.com/matsatit/RNZmqService.git":
   version "1.0.0"

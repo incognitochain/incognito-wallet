@@ -398,7 +398,7 @@ PODS:
     - React
   - RNVectorIcons (6.6.0):
     - React
-  - RNWifi (3.1.2):
+  - RNWifi (2.2.1):
     - React
   - SSZipArchive (2.2.2)
   - TcpSockets (3.3.2):

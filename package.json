@@ -142,7 +142,7 @@
     "react-native-udp": "^2.6.0",
     "react-native-vector-icons": "^6.5.0",
     "react-native-webview": "^7.4.3",
-    "react-native-wifi-reborn": "2.2.1",
+    "react-native-wifi-reborn": "^2.2.1",
     "react-native-zmq-service": "https://github.com/matsatit/RNZmqService.git",
     "react-navigation": "^4.0.10",
     "react-navigation-hooks": "^1.1.0",
