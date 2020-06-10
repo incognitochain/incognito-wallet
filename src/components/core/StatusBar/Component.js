@@ -38,6 +38,7 @@ const {
   UnShieldModal,
   pApp,
   TxHistoryDetail,
+  GetStartedAddNode, 
 } = routeNames;
 
 const whiteScreens = [
@@ -68,12 +69,14 @@ const whiteScreens = [
   UnShieldModal,
   pApp,
   TxHistoryDetail,
+  // Node,
+  GetStartedAddNode,
 ];
 const blue2Screens = [];
 const blue1Screens = [Wizard, Node];
 const dark2Screen = [Dex, DexHistory, DexHistoryDetail];
 const blackScreen = [];
-const linearScreen = [Stake];
+const linearScreen = [Stake, Node];
 
 const isIOS = Platform.OS === 'ios';
 const isIphoneX = DeviceInfo.hasNotch();

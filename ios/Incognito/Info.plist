@@ -2,8 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key></key>
-	<string></string>
+	<key/>
+	<string/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -149,6 +149,7 @@
 		<string>Helvetica-Neue.otf</string>
 		<string>Helvetica-Neue-Bold.otf</string>
 		<string>Helvetica-Neue-Medium.otf</string>
+		<string>SFProDisplay-Semibold.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

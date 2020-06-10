@@ -25,7 +25,7 @@ const style = StyleSheet.create({
     height: 120,
     left: 0,
     right: 0,
-    backgroundColor: COLORS.dark2,
+    // backgroundColor: COLORS.dark2,
   },
   buyButton: {
     marginTop: 15,

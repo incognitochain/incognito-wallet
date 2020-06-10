@@ -23,6 +23,7 @@ const fontNames = {
       ? `${FONT_FAMILY}-MediumItalic`
       : `${FONT_FAMILY}MediumItalic`,
   bold: Platform.OS === 'ios' ? `${FONT_FAMILY}-Bold` : `${FONT_FAMILY}Bold`,
+  semiBold: Platform.OS === 'ios' ? `${FONT_FAMILY}-SemiBold` : `${FONT_FAMILY}SemiBold`,
   boldItalic:
     Platform.OS === 'ios'
       ? `${FONT_FAMILY}-BoldItalic`

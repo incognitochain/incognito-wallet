@@ -9,7 +9,7 @@ export default createAppContainer(
     {
       [ROUTE_NAMES.RootApp]: AppNavigator,
       [ROUTE_NAMES.RootSplash]: SplashNavigator,
-      [ROUTE_NAMES.RootMiner]: MinerNavigator,
+      // [ROUTE_NAMES.RootMiner]: MinerNavigator,
     },
     {
       initialRouteName: ROUTE_NAMES.RootSplash,

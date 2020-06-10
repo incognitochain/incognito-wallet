@@ -5,12 +5,20 @@ import ExportAccount from '@src/screens/ExportAccount';
 import ImportAccount from '@src/screens/ImportAccount';
 import NetworkSetting from '@src/screens/NetworkSetting';
 import WhySend from '@screens/WhySend';
+import AddNode from '@src/screens/AddNode';
+import Node from '@src/screens/Node';
+import AddStake from '@src/screens/AddStake';
+import Unstake from '@src/screens/Unstake';
+import AddSelfNode from '@src/screens/AddSelfNode';
+import LinkDevice from '@screens/LinkDevice';
+import HeaderBar from '@src/components/HeaderBar';
+import GetStartedAddNode from '@src/screens/GetStartedAddNode';
+import RepairingSetupNode from '@src/screens/GetStartedAddNode/continueSetup/RepairingSetupNode';
 import WhyReceive from '@screens/WhyReceive';
 import pApps from '@screens/Papps';
 import Setting from '@screens/Setting';
 import DexHistory from '@screens/DexHistory';
 import DexHistoryDetail from '@screens/DexHistoryDetail';
-import HeaderBar from '@src/components/HeaderBar';
 import AddPIN from '@src/screens/AddPIN';
 import BackupKeys from '@src/screens/BackupKeys';
 import PriceChartCrypto from '@src/screens/PriceChartCrypto';
@@ -96,6 +104,14 @@ const AppNavigator = createStackNavigator(
       headerTitleStyle: { alignSelf: 'center' },
       title: 'Buy Node',
     }),
+    [ROUTE_NAMES.Node]: navigationOptionsHandler(Node, { header: () => null, }),
+    [ROUTE_NAMES.AddNode]: navigationOptionsHandler(AddNode, { header: () => null, }),
+    [ROUTE_NAMES.LinkDevice]: navigationOptionsHandler(LinkDevice, { header: () => null,}),
+    [ROUTE_NAMES.AddStake]: navigationOptionsHandler(AddStake, { title: 'Stake' }),
+    [ROUTE_NAMES.Unstake]: navigationOptionsHandler(Unstake, { title: 'Unstake' }),
+    [ROUTE_NAMES.AddSelfNode]: navigationOptionsHandler(AddSelfNode, { header: () => null, }),
+    [ROUTE_NAMES.GetStaredAddNode]: navigationOptionsHandler(GetStartedAddNode, { header: () => null,}),
+    [ROUTE_NAMES.RepairingSetupNode]: navigationOptionsHandler(RepairingSetupNode, { title: 'Continue setup' }),
     [ROUTE_NAMES.PriceChartCrypto]: navigationOptionsHandler(PriceChartCrypto, {
       title: 'Price chart',
     }),

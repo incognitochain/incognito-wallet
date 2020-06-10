@@ -1,10 +1,12 @@
 import { StyleSheet } from 'react-native';
 import { COLORS, FONT } from '@src/styles';
+import { ScreenWidth } from '@src/utils/devices';
+import theme from '@src/styles/theme';
 
 const style = StyleSheet.create({
   container: {
     padding: 30,
-    backgroundColor: COLORS.lightGrey6,
+    backgroundColor: COLORS.white,
   },
   title: {
     fontSize: 24,
@@ -18,33 +20,34 @@ const style = StyleSheet.create({
     justifyContent: 'flex-start' 
   },
   pNode: {
-    padding: 30,
-    paddingTop: 40,
+    paddingTop: 30,
     backgroundColor: COLORS.white,
-    borderRadius: 8,
-    shadowOpacity: 1,
-    shadowRadius: 4,
-    shadowColor: COLORS.lightGrey15,
-    shadowOffset: { height: 2, width: 0 },
     marginBottom: 15,
-    elevation: 3,
   },
   pNodeImg: {
-    width: 200,
     alignSelf: 'center',
-    resizeMode: 'cover',
-    marginBottom: -20,
+    width: ScreenWidth,
+    height: ScreenWidth * 0.82,
   },
   pNodeButton: {
-    marginBottom: 35,
+    marginBottom: 55,
+    height: theme.SIZES.button.height
   },
   buyButton: {
-    backgroundColor: COLORS.dark2,
+    backgroundColor: COLORS.white,
   },
   buyText: {
-    textAlign: 'center',
-    color: COLORS.lightGrey9,
+    textAlign: 'left',
+    color: COLORS.colorPrimary,
+    fontFamily: FONT.NAME.bold,
+    fontSize: FONT.FONT_SIZES.medium,
     marginBottom: 15,
+  },
+  getNode: {
+    textAlign: 'left',
+    color: COLORS.lightGrey1,
+    fontFamily: FONT.NAME.medium,
+    fontSize: FONT.FONT_SIZES.medium,
   },
   vNodeTitle: {
     textAlign: 'center',

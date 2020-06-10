@@ -1,6 +1,6 @@
 import StepIndicator from '@components/StepIndicator';
 import BaseScreen from '@screens/BaseScreen';
-import { TouchableOpacity, View } from '@src/components/core';
+import { TouchableOpacity, View, StatusBar } from '@src/components/core';
 import { getAccountByName } from '@src/redux/selectors/account';
 import routeNames from '@src/router/routeNames';
 import React from 'react';
@@ -61,16 +61,15 @@ class GetStartedAddNode extends BaseScreen {
   }
 
   static navigationOptions = ({ navigation }) => {
-    return {
-      headerRight: (
-        <TouchableOpacity
-          onPress={() => navigation.navigate(routeNames.NodeHelp)}
-          style={styles.headerRight}
-        >
-          <Icon name="help-outline" color={COLORS.white} />
-        </TouchableOpacity>
-      )
-    };
+    return null;
+    // headerRight: (
+    //   <TouchableOpacity
+    //     onPress={() => navigation.navigate(routeNames.NodeHelp)}
+    //     style={styles.headerRight}
+    //   >
+    //     <Icon name="help-outline" color={COLORS.white} />
+    //   </TouchableOpacity>
+    // )
   };
 
   componentDidMount = async () => {
@@ -351,8 +350,9 @@ class GetStartedAddNode extends BaseScreen {
     const { success, step, isErrPermission, errPermission, bandWidth, showBandWidthModal } = this.state;
     return (
       <View style={styles.container}>
+        {/* <StatusBar /> */}
         <DialogNotify visible={success} onClose={this.handleFinish} />
-        <StepIndicator stepCount={5} currentPage={step} />
+        {/* <StepIndicator stepCount={5} currentPage={step} /> */}
         {this.renderStep()}
         <ModalPermission
           isVisible={isErrPermission}

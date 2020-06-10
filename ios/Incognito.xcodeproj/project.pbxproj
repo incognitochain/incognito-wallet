@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		0D4F7FF3224B482F9DFC427A /* libRNReanimated.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AC3439C990274B2AA62796BA /* libRNReanimated.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
@@ -50,6 +49,7 @@
 		FEEBD6D72355CA35006EFECD /* libreact-native-randombytes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEBD6D62355CA35006EFECD /* libreact-native-randombytes.a */; };
 		FEEBD6DB2355CA94006EFECD /* libRNPermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEBD6DA2355CA94006EFECD /* libRNPermissions.a */; };
 		FEEBD6E32355CBB3006EFECD /* libreact-native-camera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEBD6E22355CBB3006EFECD /* libreact-native-camera.a */; };
+		E287B8843659448BAF8F4FD0 /* SFProDisplay-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6982440116EE41A8AC972046 /* SFProDisplay-Semibold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -200,6 +200,7 @@
 		FEEBD6DC2355CA94006EFECD /* libRNSensors.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNSensors.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEEBD6DE2355CA94006EFECD /* libRNSound.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNSound.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEEBD6E22355CBB3006EFECD /* libreact-native-camera.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libreact-native-camera.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6982440116EE41A8AC972046 /* SFProDisplay-Semibold.ttf */ = {isa = PBXFileReference; name = "SFProDisplay-Semibold.ttf"; path = "../src/assets/fonts/SFProDisplay-Semibold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -424,6 +425,7 @@
 				F150832F71344BE09CCA8702 /* Helvetica-Neue.otf */,
 				D1CBFF9A6B4846FDB3E64476 /* Helvetica-Neue-Bold.otf */,
 				B9A60B371464497786EFB6D1 /* Helvetica-Neue-Medium.otf */,
+				6982440116EE41A8AC972046 /* SFProDisplay-Semibold.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -559,6 +561,7 @@
 				1F298112246D5724000EE1C6 /* Info.plist in Resources */,
 				712C447B244313E700A3CBA6 /* GoogleService-Info.plist in Resources */,
 				71ACEF372477D8CE003AE3E3 /* Images.xcassets in Resources */,
+				E287B8843659448BAF8F4FD0 /* SFProDisplay-Semibold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

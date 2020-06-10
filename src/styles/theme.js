@@ -5,71 +5,101 @@ import DECOR from './decor';
 import FONTS from './font';
 import SPACINGS from './spacing';
 
+const fontSizes = {
+  superSmall: 12,
+  small: 14,
+  regular: 16,
+  medium: 18,
+  superMedium: 20,
+  large: 22,
+  veryLarge: 38,
+  superLarge: 40,
+};
+
+
+const SIZES = {
+  pickerView: {
+    height: 40,
+  },
+  button: {
+    height: 50,
+  }
+};
+
+const BORDER_RADIUS = {
+  avatar: 12,
+  picker: 12,
+};
+
 const text = {
   errorText: {
     ...FONTS.STYLE.normal,
-    fontSize: FONTS.SIZE.superSmall,
+    fontSize: fontSizes.superSmall,
     color: COLORS.red,
   },
   defaultTextStyle: {
     ...FONTS.STYLE.normal,
     color: COLORS.dark1,
-    fontSize: FONTS.SIZE.regular,
+    fontSize: fontSizes.regular,
     letterSpacing: 0,
   },
   headerTextStyle: {
     ...FONTS.STYLE.bold,
     fontFamily: FONTS.NAME.medium,
     color: COLORS.black,
-    fontSize: FONTS.SIZE.large,
+    fontSize: fontSizes.large,
   },
   regularTextStyle: {
     ...FONTS.STYLE.medium,
     color: COLORS.black,
-    fontSize: FONTS.SIZE.large,
+    fontSize: fontSizes.large,
   },
   mediumTextStyle: {
     ...FONTS.STYLE.normal,
     color: COLORS.black,
-    fontSize: FONTS.SIZE.medium,
+    fontSize: fontSizes.medium,
   },
   boldTextStyle: {
     ...FONTS.STYLE.bold,
     color: COLORS.black,
-    fontSize: FONTS.SIZE.regular,
+    fontSize: fontSizes.regular,
   },
   boldTextStyleMedium: {
     ...FONTS.STYLE.bold,
     color: COLORS.black,
-    fontSize: FONTS.SIZE.medium,
+    fontSize: fontSizes.medium,
   },
   boldTextStyleLarge: {
     ...FONTS.STYLE.bold,
     color: COLORS.black,
-    fontSize: FONTS.SIZE.large,
+    fontSize: fontSizes.large,
   },
   regularTextMotto: {
     ...FONTS.STYLE.normal,
     fontFamily: FONTS.NAME.regular,
     color: COLORS.mottoGrey,
-    fontSize: FONTS.SIZE.regular,
+    fontSize: fontSizes.regular,
   },
   mediumText: {
     ...FONTS.STYLE.normal,
     fontFamily: FONTS.NAME.medium,
     color: COLORS.black,
-    fontSize: FONTS.SIZE.medium,
+    fontSize: fontSizes.medium,
   },
   mediumTextBold: {
     ...FONTS.STYLE.normal,
     fontFamily: FONTS.NAME.bold,
     color: COLORS.black,
-    fontSize: FONTS.SIZE.medium,
+    fontSize: fontSizes.medium,
   },
   defaultSize: FONTS.SIZE.regular,
-  largeTitleSize: FONTS.SIZE.superLarge,
+  largeTitleSize: fontSizes.superLarge,
   alignCenterText: {
     textAlign: 'center'
+  },
+  BUTTON_TITLE: {
+    fontFamily: FONTS.NAME.semiBold,
+    fontSize: fontSizes.medium,
   }
 };
 
@@ -90,7 +120,11 @@ const MARGIN = {
   marginTopDefault: {
     marginTop: 15,
   },
+  marginTopAvg: {
+    marginTop: 24,
+  },
 };
+
 
 const header = {
   headerHeight: DECOR.scaleInApp(55),
@@ -171,6 +205,15 @@ const FLEX = {
     justifyContent: 'space-between',
     alignContents: 'center',
   },
+  rowSpaceBetweenDefault: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  rowSpaceBetweenCenter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
   alignViewSelfCenter: {
     alignSelf: 'center',
   },
@@ -186,17 +229,6 @@ const FLEX = {
     alignSelf: 'center',
     top: ScreenHeight * 0.4,
   },
-};
-
-const SIZES = {
-  pickerView: {
-    height: 40,
-  },
-};
-
-const BORDER_RADIUS = {
-  avatar: 12,
-  picker: 12,
 };
 
 const SHADOW = {
@@ -267,6 +299,14 @@ const INPUT = {
   },
 };
 
+const BUTTON = {
+  BLACK_TYPE: {
+    backgroundColor: COLORS.colorPrimary,
+    borderRadius: 25,
+    width: '100%'
+  }
+};
+
 export default {
   header,
   IMAGES,
@@ -277,6 +317,7 @@ export default {
   SIZES,
   MARGIN,
   SHADOW,
+  BUTTON,
   opacityButton,
   text,
   indicator,
