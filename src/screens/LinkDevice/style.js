@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
     padding: 25,
   },
   input: {
-    marginBottom: 15
+    marginBottom: 40
   },
 });
 

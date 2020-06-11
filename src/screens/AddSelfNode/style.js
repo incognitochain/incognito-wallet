@@ -1,5 +1,6 @@
 import TextStyle, { FontStyle, scaleInApp } from '@src/styles/TextStyle';
 import { StyleSheet } from 'react-native';
+import { COLORS, FONT } from '@src/styles';
 
 export const placeHolderColor = '#B9C9CA';
 const styles = StyleSheet.create({
@@ -9,7 +10,7 @@ const styles = StyleSheet.create({
     padding: scaleInApp(20)
   },
   item: {
-    marginTop: scaleInApp(20)
+    marginTop: scaleInApp(30)
   },
   item_container_input:{
     borderColor: '#E5E9EA',
@@ -21,7 +22,7 @@ const styles = StyleSheet.create({
   },
   item_account_text: {
     ...TextStyle.normalText,
-    color:'#1C1C1C',
+    color: COLORS.colorPrimary,
     paddingVertical: scaleInApp(5)
   },
   textInputPrivateKey:{
@@ -37,7 +38,9 @@ const styles = StyleSheet.create({
   },
   textInput: {
     ...TextStyle.mediumText,
-    color:'#1C1C1C',
+    color: COLORS.colorPrimary,
+    fontFamily: FontStyle.light.fontFamily,
+    fontSize: FONT.FONT_SIZES.medium
   },
   buttonChooseAccount:{
     ...TextStyle.smallText,
@@ -52,14 +55,16 @@ const styles = StyleSheet.create({
     marginTop: scaleInApp(8)
   },
   label: {
-    ...TextStyle.normalText,
-    color: '#8C9C9D'
+    ...TextStyle.mediumText,
+    color: COLORS.colorPrimary,
+    fontFamily: FontStyle.medium.fontFamily,
+    marginBottom: -20
   },
   button:{
     backgroundColor:'#25CDD6',
     padding:scaleInApp(10),
     borderRadius:scaleInApp(4),
-    marginTop:scaleInApp(20),
+    marginTop:scaleInApp(30),
   },
   textTitleButton:{
     ...TextStyle.mediumText,

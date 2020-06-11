@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import storageService from '@src/services/storage';
 import { CONSTANT_KEYS } from '@src/constants';
 import routeNames from '@src/router/routeNames';
+import { StatusBar } from 'react-native';
 import Wizard from './Wizard';
 
 export default class WizardContainer extends Component {

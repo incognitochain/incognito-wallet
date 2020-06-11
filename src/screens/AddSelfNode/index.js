@@ -15,6 +15,9 @@ import PropTypes from 'prop-types';
 import React, { useImperativeHandle, useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { getTimeZone } from 'react-native-localize';
+import Header from '@src/components/Header';
+import theme from '@src/styles/theme';
+import { COLORS } from '@src/styles';
 import styles, { placeHolderColor } from './style';
 
 const SHORT_DOMAIN_REGEX = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$/;
@@ -36,13 +39,13 @@ const ViewInput = React.forwardRef((props,ref)=>{
   return (
     <Input
       ref={inputView}
-      placeholderTextColor={placeHolderColor}
+      placeholderTextColor={COLORS.lightGrey1}
       maxLength={200}
       // errorMessage={!_.isNil(inputView.current) && _.isEmpty(text)?'Required':''}
       labelStyle={label}
       onChangeText={(t) => setText(t)}
       underlineColorAndroid="transparent"
-      inputStyle={textInput}
+      inputStyle={[textInput, theme.text.TEXT_TITLE]}
       inputContainerStyle={item_container_input}
       containerStyle={item}
       placeholder="192.168.1.1:1002 or node.example.com"
@@ -205,10 +208,13 @@ class AddSelfNode extends BaseScreen {
         <Loader loading={loading} />
         <KeyboardAvoidingView contentContainerStyle={{flex:1}} keyboardVerticalOffset={200} behavior="padding" style={[container]}>
 
+          <Header
+            title="Virtual node"
+          />
           <ViewInput ref={this.inputView} />
           <Button
             titleStyle={styles.textTitleButton}
-            buttonStyle={styles.button}
+            buttonStyle={[styles.button, theme.BUTTON.BLACK_TYPE]}
             onPress={this.handleSetUpPress}
             title='Add'
           />

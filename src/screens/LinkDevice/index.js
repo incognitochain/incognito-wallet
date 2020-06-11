@@ -9,7 +9,9 @@ import Device from '@models/device';
 import LocalDatabase from '@utils/LocalDatabase';
 import InputQRField from '@components/core/reduxForm/fields/inputQR';
 import NodeService from '@services/NodeService';
-import {ExHandler} from '@services/exception';
+import { ExHandler } from '@services/exception';
+import Header from '@src/components/Header';
+import theme from '@src/styles/theme';
 import styles from './style';
 
 class LinkDevice extends BaseScreen {
@@ -25,9 +27,9 @@ class LinkDevice extends BaseScreen {
 
   addNode = async () => {
     try {
-      this.setState({loading: true});
-      const {nodeInfo} = this.state;
-      const {qrCode, paymentAddress, productId, commission} = nodeInfo;
+      this.setState({ loading: true });
+      const { nodeInfo } = this.state;
+      const { qrCode, paymentAddress, productId, commission } = nodeInfo;
       const node = new Device({
         minerInfo: {
           qrCodeDeviceId: qrCode,
@@ -55,7 +57,7 @@ class LinkDevice extends BaseScreen {
     }
 
     try {
-      this.setState({loading: true, qrCode});
+      this.setState({ loading: true, qrCode });
       const nodeInfo = await NodeService.getInfoByQrCode(qrCode);
       this.setState({
         nodeInfo: {
@@ -85,29 +87,34 @@ class LinkDevice extends BaseScreen {
     return (
       <View style={container}>
         <Loader loading={loading} />
+        <Header
+          title="Link device"
+        />
         <InputQRField
           input={{
             onChange: this.handleChangeQRCode
           }}
-          oldVersion
           label='QR Code'
-          placeholder='Enter your node qr code'
+          placeholder='Scan Node QR code'
           style={styles.input}
+          inputStyle={theme.text.TEXT_TITLE}
+          labelStyle={theme.text.BUTTON_TITLE}
         />
-        { !!nodeInfo && (
-        <>
-          <TextInput
-            label="Payment Address"
-            editable={false}
-            style={styles.input}
-            value={nodeInfo.paymentAddress}
-          />
-        </>
+        {!!nodeInfo && (
+          <>
+            <TextInput
+              label="Payment Address"
+              editable={false}
+              style={styles.input}
+              value={nodeInfo.paymentAddress}
+            />
+          </>
         )}
         <Button
           onPress={this.addNode}
           disabled={!nodeInfo}
           title='Link'
+          style={[theme.BUTTON.BLACK_TYPE, theme.text.BUTTON_TITLE]}
         />
       </View>
     );
