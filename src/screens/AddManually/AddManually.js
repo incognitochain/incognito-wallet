@@ -3,7 +3,6 @@ import { View, ScrollView } from 'react-native';
 import { Text, TouchableOpacity } from '@src/components/core';
 import AddERC20Token from '@src/components/AddERC20Token';
 import AddBep2Token from '@src/components/AddBep2Token';
-import AddInternalToken from '@src/components/AddInternalToken';
 import Icons from 'react-native-vector-icons/Fontisto';
 import Header from '@src/components/Header';
 import PureModal from '@src/components/Modal/features/PureModal';

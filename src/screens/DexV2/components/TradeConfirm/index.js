@@ -91,7 +91,7 @@ const Trade = ({
                 <Help title="Trading fee" content="This is a Kyber pool. You are trading anonymously on the Ethereum network which will incur trading fees. Incognito does not charge trading fees." />
               </View>
             )}
-            right={`${format.amount(fee + DEFI_TRADING_FEE, feeToken.pDecimals)} ${feeToken.symbol}`}
+            right={`${format.amount(DEFI_TRADING_FEE, feeToken.pDecimals)} ${feeToken.symbol}`}
             style={styles.extra}
           />
         </>
@@ -103,6 +103,7 @@ const Trade = ({
         style={styles.button}
         title="Confirm"
         onPress={onTrade}
+        disabled={!!error}
       />
       <Loading open={trading} />
     </View>

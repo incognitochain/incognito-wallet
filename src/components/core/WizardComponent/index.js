@@ -7,16 +7,14 @@ import { ScreenWidth, ScreenHeight } from '@src/utils/devices';
 
 const WizardAnim = ({onAnimationFinish}) => {
   return (
-    <View style={styles.content}>
-      <View style={styles.container}>
-        <LottieView
-          autoPlay
-          loop={false}
-          resizeMode="cover"
-          onAnimationFinish={onAnimationFinish}
-          source={require('../../../assets/lottie/intro.json')}
-        />
-      </View>
+    <View style={styles.container}>
+      <LottieView
+        autoPlay
+        loop={false}
+        resizeMode="cover"
+        onAnimationFinish={onAnimationFinish}
+        source={require('../../../assets/lottie/intro.json')}
+      />
     </View>
   );
 };
@@ -24,20 +22,10 @@ const WizardAnim = ({onAnimationFinish}) => {
 export default WizardAnim;
 
 const styles = StyleSheet.create({ 
-  content: {
+  container: {
+    backgroundColor: COLORS.black,  
     width: '100%', 
     height: '100%', 
-    position: 'absolute',
-    alignContent: 'center', 
-    alignItems: 'center', 
-    alignSelf: 'center', 
-    justifyContent: 'center' 
-  },
-  container: {
-    backgroundColor: COLORS.black, 
-    borderWidth: 0.5, 
-    width: ScreenWidth, 
-    height: ScreenHeight, 
     alignContent: 'center', 
     alignItems: 'center', 
     alignSelf: 'center', 

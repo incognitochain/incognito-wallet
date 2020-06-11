@@ -2,9 +2,9 @@ import React, {useState} from 'react';
 import _ from 'lodash';
 import { useNavigationParam } from 'react-navigation-hooks';
 import { calculateInputValue } from '@screens/DexV2/components/Trade/utils';
-import {MAX_FEE_PER_TX} from '@components/EstimateFee/EstimateFee.utils';
+import { MAX_DEX_FEE } from '@components/EstimateFee/EstimateFee.utils';
 import convert from '@utils/convert';
-import {MAX_PDEX_TRADE_STEPS, MIN_PERCENT} from '@screens/DexV2/constants';
+import { MIN_PERCENT } from '@screens/DexV2/constants';
 
 const withParams = WrappedComp => (props) => {
   const [filled, setFilled] = useState(false);
@@ -41,7 +41,7 @@ const withParams = WrappedComp => (props) => {
       if (outputValue) {
         const minimumAmount = _.floor(outputValue / MIN_PERCENT);
         const inputValue = calculateInputValue(pair, inputToken, minimumAmount, outputToken);
-        const inputText = convert.toHumanAmount(inputValue + (MAX_FEE_PER_TX * MAX_PDEX_TRADE_STEPS), inputToken.pDecimals);
+        const inputText = convert.toHumanAmount(inputValue + (MAX_DEX_FEE), inputToken.pDecimals);
         onChangeInputText(inputText.toString());
       }
     }

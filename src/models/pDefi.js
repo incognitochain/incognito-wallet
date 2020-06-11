@@ -1,6 +1,6 @@
 import formatUtil, { LONG_DATE_TIME_FORMAT } from '@utils/format';
 import moment from 'moment';
-import { DEFI_TRADING_FEE } from '@components/EstimateFee/EstimateFee.utils';
+import { MAX_DEX_FEE } from '@components/EstimateFee/EstimateFee.utils';
 
 export class RewardModel {
   constructor(data = {}) {
@@ -54,13 +54,14 @@ export class PDexTradeHistoryModel {
 
     if (buyToken?.address && sellToken?.address) {
       this.exchange = 'Kyber';
-      if (this.networkFee > DEFI_TRADING_FEE) {
-        this.tradingFee = DEFI_TRADING_FEE;
-      } else if (this.networkFee > 4e8) {
-        this.tradingFee = 4e8;
-      } else {
-        this.tradingFee = 1e7;
-      }
+      // if (this.networkFee > DEFI_TRADING_FEE) {
+      //   this.tradingFee = DEFI_TRADING_FEE;
+      // } else if (this.networkFee > 4e8) {
+      //   this.tradingFee = 4e8;
+      // } else {
+      //   this.tradingFee = 1e7;
+      // }
+      this.tradingFee = this.networkFee - MAX_DEX_FEE;
       this.networkFee = this.networkFee - this.tradingFee;
       this.buyAmount = this.buyAmount / Math.pow(10, buyToken.decimals - buyToken.pDecimals);
       this.buyAmount = Math.floor(this.buyAmount * this.sellAmount / Math.pow(10, sellToken.pDecimals));

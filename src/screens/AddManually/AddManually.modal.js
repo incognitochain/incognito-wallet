@@ -16,10 +16,10 @@ const styled = StyleSheet.create({
     fontFamily: FONT.NAME.bold,
     fontSize: FONT.SIZE.superMedium,
     lineHeight: FONT.SIZE.superMedium + 4,
-    color: COLORS.black,
+    color: COLORS.colorGreyMedium,
   },
   boldText: {
-    color: COLORS.colorGreyMedium,
+    color: COLORS.black,
   },
   typeItem: {
     flexDirection: 'row',

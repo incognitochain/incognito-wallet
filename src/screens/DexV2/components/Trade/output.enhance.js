@@ -28,15 +28,15 @@ const withCalculateOutput = WrappedComp => (props) => {
 
     let outputText = formatUtils.amountFull(minimumAmount, outputToken.pDecimals);
 
-    if (outputValue === 0 || minimumAmount === 0) {
-      outputText = '';
+    if (outputValue === 0 || minimumAmount === 0 || _.isNaN(minimumAmount)) {
+      outputText = 0;
     }
 
     setOutputText(outputText.toString());
 
     // console.debug('TOKEN', inputToken.symbol, outputToken.symbol, outputToken.pDecimals, inputValue);
     // console.debug('PAIR', pair, pair[inputToken.id], pair[outputToken.id]);
-    // console.debug('RESULT', outputValue, minimumAmount, outputText);
+    // console.debug('RESULT', outputValue, minimumAmount, outputText, outputValue === 0 || minimumAmount === 0 || isNaN(outputText));
   };
 
   const getQuote = async (inputToken, outputToken, value) => {
@@ -62,7 +62,7 @@ const withCalculateOutput = WrappedComp => (props) => {
 
 
       if (minimumAmount === 0 || isNaN(minimumAmount)) {
-        setOutputText('');
+        setOutputText(0);
       } else {
         const outputText = formatUtils.amountFull(minimumAmount, outputToken.pDecimals);
         setOutputText(outputText);
@@ -71,7 +71,8 @@ const withCalculateOutput = WrappedComp => (props) => {
     } catch (error) {
       setMinimumAmount(0);
       setOutputValue(0);
-      setOutputText('');
+      setOutputText(0);
+      setQuote(null);
     } finally {
       setGettingQuote(false);
     }
@@ -90,7 +91,7 @@ const withCalculateOutput = WrappedComp => (props) => {
 
     if (!inputValue) {
       setOutputValue(0);
-      setOutputText('');
+      setOutputText(0);
       setMinimumAmount(0);
       setQuote(null);
     }

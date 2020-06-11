@@ -105,7 +105,7 @@ export default {
       .dividedBy(BigNumber(10).pow(token.pDecimals))
       .multipliedBy(BigNumber(10).pow(token.decimals))
       .dividedToIntegerBy(1)
-      .toString();
+      .toFixed(0);
   },
 };
 

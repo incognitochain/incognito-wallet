@@ -59,7 +59,7 @@ export async function getQuote({buyToken, sellToken, sellAmount, protocol}) {
     [PROTOCOLS.KYBER]: getKyberQuote,
   };
 
-  const originalSellAmount = convertUtils.toDecimals(sellAmount, sellToken).toString();
+  const originalSellAmount = convertUtils.toDecimals(sellAmount, sellToken);
 
   const quote = await supportedProtocols[protocol]({
     buyToken,
