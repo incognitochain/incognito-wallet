@@ -6,6 +6,7 @@ import theme from '@src/styles/theme';
 const style = StyleSheet.create({
   container: {
     padding: 30,
+    paddingTop: 0,
     backgroundColor: COLORS.white,
   },
   title: {

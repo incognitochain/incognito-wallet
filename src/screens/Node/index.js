@@ -28,8 +28,9 @@ import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import LogManager from '@src/services/LogManager';
+import { BtnQuestionDefault } from '@src/components/Button';
+import Header from '@src/components/Header';
 import WelcomeSetupNode from './components/WelcomeSetupNode';
-import Header from './Header';
 import style from './style';
 
 export const TAG = 'Node';
@@ -434,7 +435,7 @@ class Node extends BaseScreen {
     return (
       <View style={style.container}>
         <View style={style.background} />
-        <Header goToScreen={this.goToScreen} isFetching={listDevice.length > loadedDevices.length || isFetching} />
+        {/* <Header goToScreen={this.goToScreen} isFetching={listDevice.length > loadedDevices.length || isFetching} /> */}
         <DialogLoader loading={loading} />
         <ScrollView
           contentContainerStyle={{paddingBottom: 40}}
