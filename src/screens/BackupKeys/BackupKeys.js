@@ -1,55 +1,68 @@
-import {
-  Container,
-  Text,
-  Button,
-  View,
-  ScrollView
-} from '@src/components/core';
+/* eslint-disable import/no-cycle */
+import { ScrollView, TouchableOpacity } from '@src/components/core';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import Icons from 'react-native-vector-icons/Ionicons';
+import React from 'react';
 import CopiableText from '@src/components/CopiableText';
-import style from './style';
+import { View, Text } from 'react-native';
+import Header from '@src/components/Header';
+import IconCopy from '@src/components/Icons/icon.copy';
+import { ButtonBasic } from '@src/components/Button';
+import { ArrowRightGreyIcon } from '@src/components/Icons';
+import style from './BackupKeys.styled';
+import withBackupKeys from './BackupKeys.enhance';
 
-class BackupKeys extends Component {
-  renderAccountItem = (name, key) => {
+const BackupKeys = (props) => {
+  const { onSaveAs, onCopyAll, backupData, getNameKey } = props;
+
+  const renderAccountItem = (name, key) => {
     return (
-      <CopiableText key={name} text={`${name}: ${key}`} copiedMessage={`"${name}" private key was copied`} style={style.accountItemContainer}>
+      <CopiableText
+        key={name}
+        text={`${name}: ${key}`}
+        copiedMessage={`"${name}" private key was copied`}
+        style={style.accountItemContainer}
+      >
         <View style={style.accountItemHeader}>
-          <Text style={style.accountItemNameText}>{name}</Text>
-          <Icons name='md-copy' style={style.copyIcon} />
+          <Text style={style.title}>{name}</Text>
+          <IconCopy />
         </View>
-        <View style={style.accountItemKey}>
-          <Text style={style.accountItemKeyText}>{key}</Text>
-        </View>
+        <Text numberOfLines={1} ellipsizeMode="middle" style={style.desc}>
+          {key}
+        </Text>
       </CopiableText>
     );
-  }
+  };
 
-  render() {
-    const { onSaveAs, onCopyAll, backupData, getNameKey } = this.props;
-
-    return (
-      <View style={style.container}>
+  return (
+    <View style={style.container}>
+      <Header title="Back up private keys" />
+      <View style={style.wrapper}>
         <ScrollView>
-          <Container style={style.topGroup}>
-            {
-              backupData?.map(pair => {
-                const [name, key] = getNameKey(pair);
-                return this.renderAccountItem(name, key);
-              })
-            }
-          </Container>
+          <View style={style.topGroup}>
+            {backupData?.map((pair) => {
+              const [name, key] = getNameKey(pair);
+              return renderAccountItem(name, key);
+            })}
+          </View>
+          <View style={style.bottomGroup}>
+            <Text style={style.title}>Back up all keys</Text>
+            <TouchableOpacity onPress={onSaveAs}>
+              <View style={style.saveAsBtn}>
+                <Text style={style.desc}>Choose back up option</Text>
+                <ArrowRightGreyIcon />
+              </View>
+            </TouchableOpacity>
+            <ButtonBasic
+              btnStyle={style.copyAllButton}
+              title="Copy all keys"
+              onPress={onCopyAll}
+            />
+          </View>
         </ScrollView>
-        <View style={style.bottomGroup}>
-          <Text style={style.bottomGroupText}>Back up all keys</Text>
-          <Button style={style.saveAsBtn} titleStyle={style.saveAsBtnText} title='Choose back up option' onPress={onSaveAs} isAsync />
-          <Button style={style.copyAllButton} title='Copy all keys' onPress={onCopyAll} />
-        </View>
       </View>
-    );
-  }
-}
+    </View>
+  );
+};
 
 BackupKeys.defaultProps = {
   backupData: [],
@@ -62,4 +75,4 @@ BackupKeys.propTypes = {
   getNameKey: PropTypes.func.isRequired,
 };
 
-export default BackupKeys;
+export default withBackupKeys(BackupKeys);

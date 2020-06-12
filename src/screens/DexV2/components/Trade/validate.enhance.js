@@ -2,7 +2,6 @@ import React from 'react';
 import _ from 'lodash';
 import convertUtil from '@utils/convert';
 import { MESSAGES, MIN_INPUT } from '@screens/Dex/constants';
-import {COINS} from '@src/constants';
 
 const withValidate = WrappedComp => (props) => {
   const [error, setError] = React.useState('');
@@ -11,9 +10,7 @@ const withValidate = WrappedComp => (props) => {
     inputBalance,
     inputText,
     inputFee,
-    prvFee,
     feeToken,
-    prvBalance,
   } = props;
   const validate = () => {
     try {
@@ -37,8 +34,6 @@ const withValidate = WrappedComp => (props) => {
           setError(MESSAGES.MUST_BE_INTEGER);
         } else if (inputBalance !== null && inputFee !== null && number > inputBalance) {
           setError(MESSAGES.BALANCE_INSUFFICIENT);
-        } else if (prvFee !== null && prvBalance !== null && inputToken.id !== COINS.PRV_ID && !inputFee && prvBalance < prvFee ){
-          setError(MESSAGES.NOT_ENOUGH_PRV_NETWORK_FEE);
         } else {
           setError('');
         }

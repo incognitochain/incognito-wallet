@@ -188,7 +188,7 @@ const GetStartedInvest = ({ onPress, accounts, pairs, shares }) => {
         <Text style={styles.title}>Provide liquidity for pDEX.</Text>
         <Image source={icInvest} style={styles.image} />
         <Text style={styles.title}>Provide privacy for the world.</Text>
-        <Text style={styles.description}>55,000 PRV will be distributed to liquidity providers.</Text>
+        <Text style={styles.description}>55,000 PRV will be distributed to liquidity providers in June.</Text>
       </View>
       <View style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Button title="Get started" onPress={onPress} style={styles.btn} />

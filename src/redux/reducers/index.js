@@ -8,6 +8,7 @@ import stakeHistory from '@screens/StakeHistory/stakeHistory.reducer';
 import shield from '@screens/Shield/Shield.reducer';
 import estimateFee from '@components/EstimateFee/EstimateFee.reducer';
 import home from '@screens/Home/Home.reducer';
+import setting from '@screens/Setting/Setting.reducer';
 import wallet from './wallet';
 import account from './account';
 import server from './server';
@@ -40,6 +41,7 @@ const rootReducer = reduceReducers(
     shield,
     estimateFee,
     home,
+    setting,
   }),
   globalReducer,
 );

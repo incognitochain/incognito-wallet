@@ -1,7 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { Field, formValueSelector, isValid, change, focus } from 'redux-form';
+import {
+  Field,
+  formValueSelector,
+  isValid,
+  change,
+  focus,
+  reset,
+} from 'redux-form';
 import { connect } from 'react-redux';
 import { Toast } from '@components/core';
 import LoadingTx from '@components/LoadingTx';
@@ -118,12 +125,13 @@ class SendCrypto extends React.Component {
     }
   }, 200);
 
-  handleSend = async values => {
+  handleSend = async (values) => {
     const {
       handleSend,
       feeData,
       selectedPrivacy,
       actionToggleModal,
+      rfReset,
     } = this.props;
     const disabledForm = this.shouldDisabledSubmit();
     const { fee, feeUnit } = feeData;
@@ -144,8 +152,14 @@ class SendCrypto extends React.Component {
           feeData.feePDecimals,
         ),
       );
-      const res = await handleSend({ ...feeData, ...values, originalFee, originalAmount });
+      const res = await handleSend({
+        ...feeData,
+        ...values,
+        originalFee,
+        originalAmount,
+      });
       if (res) {
+        await rfReset(formName);
         await actionToggleModal({
           visible: true,
           data: (
@@ -206,13 +220,13 @@ class SendCrypto extends React.Component {
     return values;
   };
 
-  handleSelectToken = tokenId => {
+  handleSelectToken = (tokenId) => {
     const { setSelectedPrivacy } = this.props;
     setSelectedPrivacy(tokenId);
   };
   // When click into Max button, auto set to max value with substract fee
   // It should be refactored into a utils, not prefer this here.
-  reReduceMaxAmount = amount => {
+  reReduceMaxAmount = (amount) => {
     // Holding on next stage
     const { rfChange } = this.props;
     rfChange(formName, 'amount', `${amount}`);
@@ -236,7 +250,7 @@ class SendCrypto extends React.Component {
           {({ handleSubmit }) => (
             <View>
               <Field
-                onChange={text => {
+                onChange={(text) => {
                   rfChange(formName, 'amount', text);
                   rfFocus(formName, 'amount');
                 }}
@@ -256,7 +270,7 @@ class SendCrypto extends React.Component {
                 {...generateTestId(SEND.AMtOUNT_INPUT)}
               />
               <Field
-                onChange={text => {
+                onChange={(text) => {
                   rfChange(formName, 'toAddress', text);
                   rfFocus(formName, 'toAddress');
                 }}
@@ -326,10 +340,11 @@ SendCrypto.propTypes = {
   isFormEstimateFeeValid: PropTypes.bool.isRequired,
   rfChange: PropTypes.func.isRequired,
   rfFocus: PropTypes.func.isRequired,
+  rfReset: PropTypes.func.isRequired,
   actionToggleModal: PropTypes.func.isRequired,
 };
 
-const mapState = state => ({
+const mapState = (state) => ({
   amount: selector(state, 'amount'),
   toAddress: selector(state, 'toAddress'),
   isFormValid: isValid(formName)(state),
@@ -343,6 +358,7 @@ const mapDispatch = {
   rfChange: change,
   rfFocus: focus,
   actionToggleModal,
+  rfReset: reset,
 };
 
 export default connect(

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { differenceBy } from 'lodash';
 import type from '@src/redux/types/account';
 import TokenModel from '@src/models/token';
@@ -6,9 +7,10 @@ import accountService from '@src/services/wallet/accountService';
 import { getPassphrase } from '@src/services/wallet/passwordService';
 import { getUserUnfollowTokenIDs } from '@src/services/wallet/tokenService';
 import convert from '@src/utils/convert';
-import { tokenSeleclor, accountSeleclor } from '../selectors';
-// eslint-disable-next-line import/no-cycle
+import { reloadAccountList } from '@src/redux/actions/wallet';
+import AccountModel from '@src/models/account';
 import { getBalance as getTokenBalance, setListToken } from './token';
+import { tokenSeleclor, accountSeleclor } from '../selectors';
 
 /**
  *  return basic account object from its name like its KEY, not including account methods (please use accountWallet instead)
@@ -356,5 +358,91 @@ export const actionLoadAllBalance = () => async (dispatch, getState) => {
     );
   } catch (error) {
     throw Error(error);
+  }
+};
+
+export const actionFetchingCreateAccount = () => ({
+  type: type.ACTION_FETCHING_CREATE_ACCOUNT,
+});
+
+export const actionFetchedCreateAccount = () => ({
+  type: type.ACTION_FETCHED_CREATE_ACCOUNT,
+});
+
+export const actionFetchFailCreateAccount = () => ({
+  type: type.ACTION_FETCH_FAIL_CREATE_ACCOUNT,
+});
+
+export const actionFetchCreateAccount = ({ accountName }) => async (
+  dispatch,
+  getState,
+) => {
+  const state = getState();
+  const create = accountSeleclor.createAccountSelector(state);
+  const wallet = state?.wallet;
+  if (!!create || !accountName || !wallet) {
+    return;
+  }
+  try {
+    await dispatch(actionFetchingCreateAccount());
+    const account = await accountService.createAccount(accountName, wallet);
+    const serializedAccount = new AccountModel(
+      accountService.toSerializedAccountObj(account),
+    );
+    await dispatch(reloadAccountList());
+    await dispatch(followDefaultTokens(serializedAccount));
+    await dispatch(actionFetchedCreateAccount());
+    return serializedAccount;
+  } catch (error) {
+    await dispatch(actionFetchFailCreateAccount());
+  }
+};
+
+//
+
+export const actionFetchingImportAccount = () => ({
+  type: type.ACTION_FETCHING_IMPORT_ACCOUNT,
+});
+
+export const actionFetchedImportAccount = () => ({
+  type: type.ACTION_FETCHED_IMPORT_ACCOUNT,
+});
+
+export const actionFetchFailImportAccount = () => ({
+  type: type.ACTION_FETCH_FAIL_IMPORT_ACCOUNT,
+});
+
+export const actionFetchImportAccount = ({ accountName, privateKey }) => async (
+  dispatch,
+  getState,
+) => {
+  const state = getState();
+  const importAccount = accountSeleclor.importAccountSelector(state);
+  const wallet = state?.wallet;
+  if (!!importAccount || !accountName || !wallet || !privateKey) {
+    return;
+  }
+  try {
+    await dispatch(actionFetchingImportAccount());
+    const passphrase = await getPassphrase();
+    const isImported = await accountService.importAccount(
+      privateKey,
+      accountName,
+      passphrase,
+      wallet,
+    );
+    if (isImported) {
+      await dispatch(actionFetchedImportAccount());
+      const accountList = await dispatch(reloadAccountList());
+      const account = accountList.find(
+        (acc) => acc?.name === accountName || acc?.AccountName === accountName,
+      );
+      if (account) {
+        await dispatch(followDefaultTokens(account));
+      }
+    }
+    return isImported;
+  } catch (error) {
+    await dispatch(actionFetchFailImportAccount());
   }
 };

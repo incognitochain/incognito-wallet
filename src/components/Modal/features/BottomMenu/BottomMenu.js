@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
-import {COLORS, FONT} from '@src/styles';
+import { COLORS, FONT } from '@src/styles';
 
 const styled = StyleSheet.create({
   container: {
@@ -11,15 +11,16 @@ const styled = StyleSheet.create({
   },
   menu: {
     backgroundColor: COLORS.white,
-    borderRadius: 8,
-    padding: 30,
+    borderTopRightRadius: 13,
+    borderTopLeftRadius: 13,
+    paddingTop: 15,
+    paddingBottom: 30,
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
-    borderBottomColor: COLORS.lightGrey1,
-    borderBottomWidth: 0.5,
+    paddingVertical: 15,
+    paddingHorizontal: 25,
   },
   icon: {
     flex: 1,
@@ -29,28 +30,29 @@ const styled = StyleSheet.create({
     flex: 5,
   },
   title: {
-    fontFamily: FONT.NAME.medium,
-    fontSize: FONT.SIZE.regular,
-    lineHeight: FONT.SIZE.regular + 6,
+    fontFamily: FONT.NAME.bold,
+    fontSize: FONT.SIZE.superMedium,
+    lineHeight: FONT.SIZE.superMedium + 3,
     color: COLORS.black,
   },
   desc: {
-    fontFamily: FONT.NAME.regular,
-    fontSize: FONT.SIZE.regular,
-    lineHeight: FONT.SIZE.regular + 6,
-    color: COLORS.lightGrey1,
+    fontFamily: FONT.NAME.medium,
+    fontSize: FONT.SIZE.medium,
+    lineHeight: FONT.SIZE.medium + 3,
+    color: COLORS.colorGreyBold,
+    marginTop: 5,
   },
   lastChild: {
     borderBottomWidth: 0,
   },
 });
 
-const MenuItem = ({data, lastChild}) => {
-  const {title, desc, icon, onPressItem} = data;
+const MenuItem = ({ data, lastChild }) => {
+  const { title, desc, icon, onPressItem } = data;
   return (
     <TouchableOpacity onPress={onPressItem}>
       <View style={[styled.item, lastChild ? styled.lastChild : null]}>
-        <View style={styled.icon}>{icon}</View>
+        {icon && <View style={styled.icon}>{icon}</View>}
         <View style={styled.hook}>
           <Text style={styled.title}>{title}</Text>
           <Text style={styled.desc}>{desc}</Text>
@@ -60,7 +62,7 @@ const MenuItem = ({data, lastChild}) => {
   );
 };
 
-const Menu = ({data}) => {
+const Menu = ({ data }) => {
   return (
     <View style={styled.container}>
       <View style={styled.menu}>

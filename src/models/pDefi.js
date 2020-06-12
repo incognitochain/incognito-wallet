@@ -1,6 +1,7 @@
 import formatUtil, { LONG_DATE_TIME_FORMAT } from '@utils/format';
 import moment from 'moment';
-import { MAX_DEX_FEE } from '@components/EstimateFee/EstimateFee.utils';
+import { MAX_DEX_FEE, MAX_FEE_PER_TX } from '@components/EstimateFee/EstimateFee.utils';
+import BigNumber from 'bignumber.js';
 
 export class RewardModel {
   constructor(data = {}) {
@@ -61,10 +62,21 @@ export class PDexTradeHistoryModel {
       // } else {
       //   this.tradingFee = 1e7;
       // }
-      this.tradingFee = this.networkFee - MAX_DEX_FEE;
+      this.tradingFee = (this.networkFee - MAX_DEX_FEE) + MAX_FEE_PER_TX;
       this.networkFee = this.networkFee - this.tradingFee;
-      this.buyAmount = this.buyAmount / Math.pow(10, buyToken.decimals - buyToken.pDecimals);
-      this.buyAmount = Math.floor(this.buyAmount * this.sellAmount / Math.pow(10, sellToken.pDecimals));
+
+      const originalSellAmount = BigNumber(this.sellAmount)
+        .dividedBy(BigNumber(10).pow(sellToken.pDecimals));
+      const originalPrice = BigNumber(this.buyAmount)
+        .dividedBy(BigNumber(10).pow(18));
+      this.buyAmount = BigNumber(originalPrice)
+        .multipliedBy(originalSellAmount)
+        .multipliedBy(BigNumber(10).pow(buyToken.pDecimals))
+        .toFixed(0);
+
+      // this.buyAmount = (this.buyAmount / sellDecimals) * (this.sellAmount / sellPDecimals) * buyDecimals;
+      // this.buyAmount = this.buyAmount / Math.pow(10, buyToken.decimals - buyToken.pDecimals);
+      // this.buyAmount = Math.floor(this.buyAmount * this.sellAmount / Math.pow(10, sellToken.pDecimals));
     } else {
       this.exchange = 'Incognito';
     }

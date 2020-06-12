@@ -1,79 +1,73 @@
-import {ScrollView, Text, TouchableOpacity, View} from '@src/components/core';
-import PropTypes from 'prop-types';
+import { ScrollView, Text, View } from '@src/components/core';
 import React from 'react';
-import LocalDatabase from '@utils/LocalDatabase';
-import Device from '@models/device';
-import PINSection from '@screens/Setting/PINSection';
-import BackupHeaderBtn from '@src/components/HeaderRight/Backup';
-import SeparatorSection from '@screens/Setting/SeparatorSection';
 import AppUpdater from '@components/AppUpdater/index';
-import DevSection from '@screens/Setting/DevSection';
-import AccountSection from './AccountSection';
-import NetworkSection from './NetworkSection';
-import {settingStyle} from './style';
-import FrequentReceiverSection from './FrequentReceiversSection';
-import StakeSection from './StakeSection';
+import Header from '@src/components/Header';
+import { useNavigation } from 'react-navigation-hooks';
+import routeNames from '@src/router/routeNames';
+import { useSelector } from 'react-redux';
+import PINSection from './features/PINSection';
+import SeparatorSection from './features/SeparatorSection';
+import DevSection from './features/DevSection';
+import AccountSection from './features/AccountSection';
+import { settingStyle } from './Setting.styled';
+import AddressBookSection from './features/AddressBookSection';
+import { SectionItem } from './features/Section';
+import { settingSelector } from './Setting.selector';
+import { actionFetchServers } from './Setting.actions';
+import withSetting from './Setting.enhance';
 
-class Setting extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      defaultServerId: 1,
-      devices: [],
-    };
-  }
+const Setting = () => {
+  const navigation = useNavigation();
+  const { server, devices } = useSelector(settingSelector);
+  const sectionItemFactories = [
+    {
+      title: 'Create',
+      desc: 'Create a new keychain',
+      handlePress: () => navigation.navigate(routeNames.CreateAccount),
+    },
+    {
+      title: 'Import',
+      desc: 'Import an existing keychain',
+      handlePress: () => navigation.navigate(routeNames.ImportAccount),
+    },
+    {
+      title: 'Back up',
+      desc: 'Back up your private keys',
+      handlePress: () => navigation.navigate(routeNames.BackupKeys),
+    },
+    {
+      title: 'Network',
+      desc: `${server?.name || 'Change default server'}`,
+      subDesc: `${server?.address || '---'}`,
+      handlePress: () =>
+        navigation?.navigate(routeNames.NetworkSetting, {
+          onReloadedNetworks: actionFetchServers,
+        }),
+    },
+  ];
 
-  static navigationOptions = ({navigation}) => {
-    return {
-      headerRight: (
-        <View>
-          <BackupHeaderBtn navigation={navigation} />
-        </View>
-      ),
-    };
-  };
-
-  componentDidMount() {
-    this.getDevices();
-  }
-
-  async getDevices() {
-    const devices = (await LocalDatabase.getListDevices()).map(device =>
-      Device.getInstance(device),
-    );
-    this.setState({devices});
-  }
-
-  render() {
-    const {defaultServerId, devices} = this.state;
-    const {navigation} = this.props;
-    return (
-      <ScrollView contentContainerStyle={{flexGrow: 1}}>
-        <View style={settingStyle.container}>
-          <AccountSection navigation={navigation} devices={devices} />
-          <NetworkSection
-            navigation={navigation}
-            defaultServerId={defaultServerId}
-          />
-          <PINSection navigation={navigation} />
+  return (
+    <View style={settingStyle.container}>
+      <Header title="Settings" style={settingStyle.header} />
+      <ScrollView>
+        <AccountSection devices={devices} />
+        <View style={settingStyle.extra}>
+          {sectionItemFactories.map((item, id) => (
+            <SectionItem data={item} key={id} />
+          ))}
+          <PINSection />
           <SeparatorSection />
-          <FrequentReceiverSection />
-          <StakeSection />
-
+          <AddressBookSection />
           {global.isDebug() && <DevSection />}
         </View>
-        <TouchableOpacity>
-          <Text style={settingStyle.textVersion}>
-            {`v${AppUpdater.appVersion}`}
-          </Text>
-        </TouchableOpacity>
+        <Text style={settingStyle.textVersion}>
+          {`v${AppUpdater.appVersion}`}
+        </Text>
       </ScrollView>
-    );
-  }
-}
-
-Setting.propTypes = {
-  navigation: PropTypes.object.isRequired,
+    </View>
+  );
 };
 
-export default Setting;
+Setting.propTypes = {};
+
+export default withSetting(Setting);

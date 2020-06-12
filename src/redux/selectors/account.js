@@ -51,6 +51,7 @@ export const listAccountSelector = createSelector(
     list.map((item) => ({
       ...item,
       accountName: item?.name || item?.AccountName,
+      privateKey: item?.PrivateKey,
     })),
 );
 
@@ -89,6 +90,28 @@ export const switchAccountSelector = createSelector(
   (account) => account?.switch || null,
 );
 
+export const createAccountSelector = createSelector(
+  (state) => state?.account,
+  (account) => account?.create || null,
+);
+
+export const importAccountSelector = createSelector(
+  (state) => state?.account,
+  (account) => account?.import || null,
+);
+
+export const getAccountByNameSelector = createSelector(
+  listAccountSelector,
+  (accounts) =>
+    memoize((accountName) =>
+      accounts.find(
+        (account) =>
+          account?.accountName === accountName ||
+          account?.AccountName === accountName,
+      ),
+    ),
+);
+
 export default {
   defaultAccountName,
   listAccount,
@@ -101,5 +124,8 @@ export default {
   defaultAccountSelector,
   isGettingAccountBalanceSelector,
   defaultAccountBalanceSelector,
-  switchAccountSelector
+  switchAccountSelector,
+  createAccountSelector,
+  importAccountSelector,
+  getAccountByNameSelector,
 };

@@ -22,6 +22,12 @@ import TradeHistoryDetail from '@screens/DexV2/components/HistoryDetail';
 import UnShieldModal from '@screens/UnShield/UnShield.modal';
 import pApp from '@src/screens/PappView';
 import TxHistoryDetail from '@screens/Wallet/features/TxHistoryDetail';
+import ImportAccount from '@src/screens/Account/features/ImportAccount';
+import CreateAccount from '@src/screens/Account/features/CreateAccount';
+import BackupKeys from '@src/screens/BackupKeys';
+import Setting from '@screens/Setting';
+import ExportAccount from '@src/screens/Account/features/ExportAccount';
+import NetworkSetting from '@src/screens/NetworkSetting';
 import routeNames from './routeNames';
 
 const routes = [
@@ -117,6 +123,30 @@ const routes = [
     screen: TxHistoryDetail,
     name: routeNames.TxHistoryDetail,
   },
+  {
+    screen: ImportAccount,
+    name: routeNames.ImportAccount,
+  },
+  {
+    screen: CreateAccount,
+    name: routeNames.CreateAccount,
+  },
+  {
+    screen: ExportAccount,
+    name: routeNames.ExportAccount,
+  },
+  {
+    screen: BackupKeys,
+    name: routeNames.BackupKeys,
+  },
+  {
+    screen: Setting,
+    name: routeNames.Setting,
+  },
+  {
+    screen: NetworkSetting,
+    name: routeNames.NetworkSetting,
+  },
 ];
 
 export const getRoutesNoHeader = () =>
@@ -126,3 +156,5 @@ export const getRoutesNoHeader = () =>
     });
     return result;
   }, {});
+
+export const getRoutesNameNoHeader = () => routes.map((route) => route?.name);

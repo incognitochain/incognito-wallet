@@ -19,7 +19,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { detectToken, generateTestId } from '@utils/misc';
-import { change, Field, formValueSelector, isValid, focus } from 'redux-form';
+import {
+  change,
+  Field,
+  formValueSelector,
+  isValid,
+  focus,
+  reset,
+} from 'redux-form';
 import { MESSAGES } from '@screens/Dex/constants';
 import { View } from 'react-native';
 import { actionToggleModal } from '@src/components/Modal';
@@ -121,17 +128,20 @@ class Withdraw extends React.Component {
   }, 200);
 
   handleSubmit = async (values) => {
-    const { selectedPrivacy, feeData, actionToggleModal } = this.props;
+    const {
+      selectedPrivacy,
+      feeData,
+      actionToggleModal,
+      rfReset,
+      handleCentralizedWithdraw,
+      handleDecentralizedWithdraw,
+    } = this.props;
     const disabledForm = this.shouldDisabledSubmit();
     if (disabledForm) {
       return;
     }
     let res;
     try {
-      const {
-        handleCentralizedWithdraw,
-        handleDecentralizedWithdraw,
-      } = this.props;
       const { amount, toAddress, memo } = values;
       const { fee, isUsedPRVFee, rate, feePDecimals, feeUnit } = feeData;
       const originalAmount = floor(
@@ -141,8 +151,10 @@ class Withdraw extends React.Component {
         ),
       );
       const originalFee = floor(
-        convertUtil.toOriginalAmount(convertUtil.toNumber(fee, true), feePDecimals) /
-          rate,
+        convertUtil.toOriginalAmount(
+          convertUtil.toNumber(fee, true),
+          feePDecimals,
+        ) / rate,
       );
       const _fee = format.amountFull(originalFee, feePDecimals);
       const feeForBurn = originalFee;
@@ -164,6 +176,7 @@ class Withdraw extends React.Component {
         res = await handleCentralizedWithdraw(payload);
       }
       if (res) {
+        await rfReset(formName);
         await actionToggleModal({
           visible: true,
           data: (
@@ -481,6 +494,7 @@ Withdraw.propTypes = {
   isFormEstimateFeeValid: PropTypes.bool.isRequired,
   rfChange: PropTypes.func.isRequired,
   rfFocus: PropTypes.func.isRequired,
+  rfReset: PropTypes.func.isRequired,
   onShowFrequentReceivers: PropTypes.func.isRequired,
 };
 
@@ -496,6 +510,7 @@ const mapState = (state) => ({
 const mapDispatch = {
   rfChange: change,
   rfFocus: focus,
+  rfReset: reset,
   actionToggleModal,
 };
 

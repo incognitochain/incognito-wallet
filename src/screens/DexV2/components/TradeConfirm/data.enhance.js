@@ -1,11 +1,12 @@
 import React from 'react';
-import _ from 'lodash';
 import { useNavigationParam } from 'react-navigation-hooks';
+import convertUtil from '@utils/convert';
+import formatUtil from '@utils/format';
 
 const withData = WrappedComp => (props) => {
   const inputToken = useNavigationParam('inputToken');
   const inputValue = useNavigationParam('inputValue');
-  const inputText = useNavigationParam('inputText');
+  const rawText = useNavigationParam('inputText');
   const outputToken = useNavigationParam('outputToken');
   const outputValue = useNavigationParam('outputValue');
   const minimumAmount = useNavigationParam('minimumAmount');
@@ -16,6 +17,8 @@ const withData = WrappedComp => (props) => {
   const feeToken = useNavigationParam('feeToken');
   const isErc20 = useNavigationParam('isErc20');
   const quote = useNavigationParam('quote');
+
+  const inputText = formatUtil.toFixed(convertUtil.toNumber(rawText), inputToken.pDecimals);
 
   return (
     <WrappedComp

@@ -34,3 +34,4 @@ export { default as OpenUrlIcon } from './icon.openUrl';
 export { default as CopyIcon } from './icon.copy';
 export { default as ExclamationIcon } from './icon.exclamation';
 export { default as ClockWiseIcon } from './icon.clockwise';
+export { default as ExportIcon } from './icon.export';

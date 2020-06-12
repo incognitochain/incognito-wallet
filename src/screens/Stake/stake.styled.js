@@ -1,4 +1,4 @@
-import {StyleSheet, Dimensions} from 'react-native';
+import {StyleSheet, Dimensions, Platform} from 'react-native';
 import {COLORS, FONT} from '@src/styles';
 
 const screenHeight = Math.round(Dimensions.get('window').height);
@@ -61,7 +61,6 @@ export const styled = StyleSheet.create({
     justifyContent: 'center',
   },
   balance: {
-    fontFamily: FONT.NAME.regular,
     fontSize: FONT.SIZE.large + 5,
     lineHeight: FONT.SIZE.large + 10,
     color: COLORS.black,

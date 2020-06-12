@@ -7,6 +7,8 @@ const initialState = {
   defaultAccountName: '',
   isGettingBalance: [],
   switch: false,
+  create: false,
+  import: false,
 };
 
 const setAccount = (list, account) => {
@@ -106,6 +108,42 @@ const reducer = (state = initialState, action) => {
     return {
       ...state,
       switch: false,
+    };
+  }
+  case type.ACTION_FETCHING_CREATE_ACCOUNT: {
+    return {
+      ...state,
+      create: true,
+    };
+  }
+  case type.ACTION_FETCHED_CREATE_ACCOUNT: {
+    return {
+      ...state,
+      create: false,
+    };
+  }
+  case type.ACTION_FETCH_FAIL_CREATE_ACCOUNT: {
+    return {
+      ...state,
+      create: false,
+    };
+  }
+  case type.ACTION_FETCHING_IMPORT_ACCOUNT: {
+    return {
+      ...state,
+      import: true,
+    };
+  }
+  case type.ACTION_FETCHED_IMPORT_ACCOUNT: {
+    return {
+      ...state,
+      import: false,
+    };
+  }
+  case type.ACTION_FETCH_FAIL_IMPORT_ACCOUNT: {
+    return {
+      ...state,
+      import: false,
     };
   }
   default:
