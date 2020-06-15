@@ -26,6 +26,10 @@ import LogManager from '@src/services/LogManager';
 import LocalDatabase from '@src/utils/LocalDatabase';
 import NodeService from '@src/services/NodeService';
 import Util from '@src/utils/Util';
+import Header from '@src/components/Header';
+import BtnInfo from '@src/components/Button/BtnInfo';
+import NavigationService from '@src/services/NavigationService';
+import { ScreenHeight } from '@src/utils/devices';
 import ScanQRCode from './components/ScanQRCode';
 import { DialogNotify } from './components/BackUpAccountDialog';
 import styles from './styles';
@@ -350,9 +354,12 @@ class GetStartedAddNode extends BaseScreen {
     const { success, step, isErrPermission, errPermission, bandWidth, showBandWidthModal } = this.state;
     return (
       <View style={styles.container}>
-        {/* <StatusBar /> */}
+        <Header
+          rightHeader={<BtnInfo onPress={()=>NavigationService.navigate(routeNames.NodeHelp)} />}
+          title=""
+          style={styles.header}
+        />
         <DialogNotify visible={success} onClose={this.handleFinish} />
-        {/* <StepIndicator stepCount={5} currentPage={step} /> */}
         {this.renderStep()}
         <ModalPermission
           isVisible={isErrPermission}

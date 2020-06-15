@@ -1,40 +1,23 @@
-import {Text, View} from '@src/components/core';
+import { Text, View } from '@src/components/core';
 import React from 'react';
-import {isIOS, isAndroid} from '@utils/platform';
-import {Icon} from 'react-native-elements';
-import {COLORS} from '@src/styles';
+import { isIOS, isAndroid } from '@utils/platform';
+import { Icon } from 'react-native-elements';
+import { COLORS } from '@src/styles';
 import styles from '../../styles';
 
 const Guide = () => (
   <View style={styles.guide}>
-    {isIOS() ? (
-      <View style={[styles.row, styles.center]}>
-        <Text>Settings</Text>
-        <Icon
-          containerStyle={styles.icon}
-          color={COLORS.lightGrey2}
-          name="chevron-right"
-        />
-        <Text>Cellular</Text>
-        <Icon
-          containerStyle={styles.icon}
-          color={COLORS.lightGrey2}
-          name="chevron-right"
-        />
-        <Text>Off</Text>
-      </View>
-    ) : (
-      <View style={{marginTop: 10}}>
-        <Text style={[styles.guideLine]}>
-          <Text style={[styles.bold]}>Step 1: </Text>
+
+    <View style={{ marginTop: 10 }}>
+      <Text style={[styles.guideLine]}>
+        <Text style={[styles.bold]}>Step 1: </Text>
           &nbsp;Go to network settings
-        </Text>
-        <Text style={[styles.guideLine]}>
-          <Text style={styles.bold}>Step 2: </Text>
+      </Text>
+      <Text style={[styles.guideLine]}>
+        <Text style={styles.bold}>Step 2: </Text>
           &nbsp;Turn off your cellular/mobile data
-        </Text>
-      </View>
-    )}
+      </Text>
+    </View>
   </View>
 );
 

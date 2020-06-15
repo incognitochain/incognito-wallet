@@ -12,6 +12,7 @@ import APIService from '@services/api/miner/APIService';
 import AccountModel from '@models/account';
 import LogManager from '@src/services/LogManager';
 import LocalDatabase from '@src/utils/LocalDatabase';
+import theme from '@src/styles/theme';
 import GetQrcode from './GetQrCode';
 import styles from '../../styles';
 
@@ -115,14 +116,16 @@ class ScanQRCode extends Component {
 
   renderFooter = () => {
     const { loading, qrCode, account } = this.state;
-
+    let isDisabled = loading || !qrCode || !account; 
     return (
       <View style={styles.footer}>
         <Button
-          disabled={loading || !qrCode || !account}
+          disabled={isDisabled}
           loading={loading}
           onPress={this.handleNext}
           title="Next"
+          titleStyle={[isDisabled ? theme.text.BUTTON_TITLE_DISABLE: {}]}
+          style={[isDisabled ? theme.BUTTON.BLACK_TYPE_DISABLE : theme.BUTTON.BLACK_TYPE]}
         />
       </View>
     );
@@ -132,7 +135,7 @@ class ScanQRCode extends Component {
     const { error } = this.state;
     return (
       <ScrollView>
-        <Text style={styles.title2}>Scan the code at the base of your device</Text>
+        <Text style={styles.title2}>{'Scan the code at the base\nof your device'}</Text>
         {this.renderContent()}
         <Text style={styles.errorText}>{error}</Text>
         {this.renderFooter()}

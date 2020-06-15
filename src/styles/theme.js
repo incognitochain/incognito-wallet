@@ -100,7 +100,12 @@ const text = {
   BUTTON_TITLE: {
     fontFamily: FONTS.NAME.semiBold,
     fontSize: fontSizes.medium,
-  }
+  },
+  BUTTON_TITLE_DISABLE: {
+    fontFamily: FONTS.NAME.semiBold,
+    fontSize: fontSizes.medium,
+    color: COLORS.black,
+  },
 };
 
 const MARGIN = {
@@ -303,7 +308,14 @@ const BUTTON = {
   BLACK_TYPE: {
     backgroundColor: COLORS.colorPrimary,
     borderRadius: 25,
-    width: '100%'
+    width: '100%',
+    height: SIZES.button.height,
+  },
+  BLACK_TYPE_DISABLE: {
+    backgroundColor: COLORS.colorGreyLight,
+    borderRadius: 25,
+    width: '100%',
+    height: SIZES.button.height,
   }
 };
 

@@ -10,6 +10,7 @@ import _ from 'lodash';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
+import { COLORS } from '@src/styles';
 import styles from '../../styles';
 
 export const TAG = 'GetQrcode';
@@ -52,23 +53,22 @@ const GetQrcode = React.memo(({ onSuccess, qrCode = '' }) => {
 
       {!isPassedValidate ? (
         <TouchableOpacity onPress={handleQrcode}>
-          <Image style={styles.content_step1} source={images.ic_getstarted_qrcode} />
+          <Image style={styles.content_step1QRCode} source={images.ic_getstarted_qrcode} />
           <Text style={styles.step3_text}>Tap to scan</Text>
         </TouchableOpacity>
       ) : (loading ? ViewUtil.loadingComponent() : (
         <>
-          <Icon size={scaleInApp(50)} color='#25CDD6' name="check" type='simple-line-icon' />
-          <Text style={[styles.step3_text, { color: '#25CDD6' }]}>Hello, Node</Text>
+          <Icon size={scaleInApp(50)} color={COLORS.colorGreyBold} name="check" type='simple-line-icon' />
+          <Text style={[styles.step3_text, { color: COLORS.colorGreyBold }]}>Hello, Node:</Text>
         </>
       )
       )}
-      {!isPassedValidate && (
-        <Text style={[styles.text, styles.errorText, styles.item_container_error]}>{errorMessage}</Text>
-      )}
+      {!isPassedValidate && errorMessage != '' ? 
+        <Text style={[styles.text, styles.errorText]}>{errorMessage}</Text> : null}
 
-      {!_.isEmpty(deviceId) && (
+      {!_.isEmpty(deviceId) ?
         <Text style={[styles.text, styles.item_container_input, { textAlign: 'center', paddingBottom: 2 }]}>{deviceId}</Text>
-      )}
+        : null}
 
     </>
   );
