@@ -97,6 +97,10 @@ const text = {
   alignCenterText: {
     textAlign: 'center'
   },
+  TEXT_TITLE: {
+    fontFamily: FONTS.NAME.default,
+    fontSize: fontSizes.medium,
+  },
   BUTTON_TITLE: {
     fontFamily: FONTS.NAME.semiBold,
     fontSize: fontSizes.medium,

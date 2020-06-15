@@ -360,6 +360,7 @@ class WifiSetup extends PureComponent {
 
     return (
       <View>
+        <Text style={[styles.title2, { textAlign: 'left', marginLeft: 20 }]}>Wi-Fi</Text>
         <Input
           underlineColorAndroid="transparent"
           containerStyle={item}
@@ -844,6 +845,7 @@ class WifiSetup extends PureComponent {
               this.handleNext();
             }
           }}
+          style={[loading ? theme.BUTTON.BLACK_TYPE_DISABLE : theme.BUTTON.BLACK_TYPE]}
           title={backToQRCode ? 'Re-Setup' : steps.length > 0 ? 'Retry' : 'Next'}
         />
       </View>
@@ -906,7 +908,7 @@ class WifiSetup extends PureComponent {
     return (
       <View>
         <ScrollView>
-          <Text style={styles.title2}>Enter your home WiFi detail</Text>
+          <Text style={styles.title2}>{'Connecting Node\nto your home WiFi'}</Text>
           {steps.length > 0 ? this.renderLogs() : this.renderContent()}
           <Text style={styles.errorText}>{rootCauseMessage}</Text>
           {this.renderFooter()}

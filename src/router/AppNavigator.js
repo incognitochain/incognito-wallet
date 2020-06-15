@@ -57,7 +57,7 @@ const AppNavigator = createStackNavigator(
     [ROUTE_NAMES.Notification]: navigationOptionsHandler(Notification),
     [ROUTE_NAMES.pApps]: navigationOptionsHandler(pApps),
     [ROUTE_NAMES.NodeHelp]: navigationOptionsHandler(NodeHelp, {
-      title: 'Need help?',
+      header: () => null
     }),
     [ROUTE_NAMES.StakeHistory]: navigationOptionsHandler(StakeHistory, {
       title: 'Activities',

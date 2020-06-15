@@ -7,7 +7,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    padding: scaleInApp(20)
+    padding: scaleInApp(20),
+    paddingTop: 0,
   },
   item: {
     marginTop: scaleInApp(30)
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
     ...TextStyle.mediumText,
     color: COLORS.colorPrimary,
     fontFamily: FontStyle.light.fontFamily,
-    fontSize: FONT.FONT_SIZES.medium
+    fontSize: FONT.FONT_SIZES.regular
   },
   buttonChooseAccount:{
     ...TextStyle.smallText,

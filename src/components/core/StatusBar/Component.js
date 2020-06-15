@@ -44,7 +44,8 @@ const {
   ExportAccount,
   BackupKeys,
   Setting,
-  NetworkSetting
+  NetworkSetting,
+  NodeHelp
 } = routeNames;
 
 const whiteScreens = [
@@ -81,6 +82,7 @@ const whiteScreens = [
   ExportAccount,
   BackupKeys,
   Setting,
+  NodeHelp,
   NetworkSetting
 ];
 const blue2Screens = [];

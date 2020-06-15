@@ -39,7 +39,7 @@ const ViewInput = React.forwardRef((props,ref)=>{
   return (
     <Input
       ref={inputView}
-      placeholderTextColor={COLORS.lightGrey1}
+      placeholderTextColor={COLORS.colorGreyMedium}
       maxLength={200}
       // errorMessage={!_.isNil(inputView.current) && _.isEmpty(text)?'Required':''}
       labelStyle={label}
@@ -53,6 +53,7 @@ const ViewInput = React.forwardRef((props,ref)=>{
       defaultValue={text}
       autoCapitalize="none"
       clearable
+      ellipsizeMode="tail"
     />
   );
 });

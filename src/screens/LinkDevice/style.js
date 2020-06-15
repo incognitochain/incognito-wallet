@@ -5,6 +5,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     padding: 25,
+    paddingTop: 0,
   },
   input: {
     marginBottom: 40
