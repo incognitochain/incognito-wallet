@@ -383,9 +383,9 @@ class GetStartedAddNode extends BaseScreen {
           isVisible={showBandWidthModal}
           uri={bandWidthPng}
           title="Weak connection"
-          btnTitle="Switch networks"
+          btnTitle="Go to setting"
           btnSetting='OK'
-          subTitle="Setup may take longer than expected due to slow network speeds"
+          subTitle="There seems to be an issue with your WiFi connection. Please try again or switch to a different network if available"
           onPress={() => {
             this.setState({ showBandWidthModal: false });
           }}
