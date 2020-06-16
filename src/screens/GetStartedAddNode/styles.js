@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     paddingTop: 3,
   },
   disabledText: {
-    color: COLORS.lightGrey1,
+    color: COLORS.colorPrimary,
   },
   headerRight: {
     marginRight: 15,

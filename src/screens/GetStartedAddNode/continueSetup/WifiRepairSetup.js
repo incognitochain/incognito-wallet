@@ -109,6 +109,7 @@ class WifiRepairSetup extends PureComponent {
 
     return (
       <View>
+        <Text style={[styles.title2, { textAlign: 'left', marginLeft: 20, marginTop: 40, marginBottom: 20 }]}>Wi-Fi</Text>
         <Input
           underlineColorAndroid="transparent"
           containerStyle={item}
@@ -141,15 +142,15 @@ class WifiRepairSetup extends PureComponent {
     const { verifyProductCode } = this.props;
     if (!verifyProductCode || verifyProductCode === '') {
       this.setState({ loading: false });
-      throw new Error('Verify code failed');
+      throw new Error('Could not verify device code');
     }
     console.log('### INCOGNITO ###: tryVerifyCode ' + verifyProductCode);
-    this.addStep({ name: 'Trying last product code ...', detail: verifyProductCode, isSuccess: true });
+    this.addStep({ name: 'Verifying last device code ', detail: verifyProductCode, isSuccess: true });
     const result = await this.tryAtMost(() => {
       return NodeService.verifyProductCode(verifyProductCode)
         .then(res => {
           if (!res) {
-            this.addStep({ name: 'Verify code failed', isSuccess: false });
+            this.addStep({ name: 'Could not verify device code', isSuccess: false });
             throw new Error('empty result');
           }
 
@@ -161,11 +162,11 @@ class WifiRepairSetup extends PureComponent {
     }, count, 5);
 
     if (result && result?.status != 0) {
-      this.addStep({ name: 'Verify code success', detail: JSON.stringify(result), isSuccess: true });
+      this.addStep({ name: 'Success! Node verified', detail: JSON.stringify(result), isSuccess: true });
     } else {
       this.setState({ loading: false });
-      this.addStep({ name: 'Verify code failed', isSuccess: false });
-      throw new Error('Verify code failed');
+      this.addStep({ name: 'Could not verify device code', isSuccess: false });
+      throw new Error('Unable to verify Node');
     }
     return result;
   };
@@ -176,16 +177,17 @@ class WifiRepairSetup extends PureComponent {
       account = JSON.parse(account);
       let qrCode = account?.name || '';
       const funcName = `${qrCode}-authFirebase`;
+      this.addStep({ name: 'Authenticating firebase', detail: '', isSuccess: true });
       await APIService.trackLog({ action: funcName, message: 'Bat dau Auth Firebase', rawData: `productInfo = ${JSON.stringify(productInfo)}` });
       const authFirebase = await this.tryAtMost(async () => {
         const resultFbUID = await NodeService.authFirebase(productInfo)
           .catch(error => this.addStep({ name: 'Authenticate firebase error ', detail: error?.message, isSuccess: false }));
         if (!resultFbUID) {
           this.setState({ loading: false });
-          this.addStep({ name: 'Authenticate firebase failed', detail: resultFbUID, isSuccess: false });
+          this.addStep({ name: 'Unable to authenticate firebase', detail: resultFbUID, isSuccess: false });
           throw new CustomError(knownCode.node_auth_firebase_fail);
         } else {
-          this.addStep({ name: 'Authenticate firebase success', detail: resultFbUID, isSuccess: true });
+          this.addStep({ name: 'Success! Authenticated firebase', detail: resultFbUID, isSuccess: true });
         }
         return _.isEmpty(resultFbUID) ? new CustomError(knownCode.node_auth_firebase_fail) : resultFbUID;
       }, 3, 3);
@@ -193,7 +195,7 @@ class WifiRepairSetup extends PureComponent {
       return authFirebase;
     } catch (err) {
       this.setState({ loading: false });
-      this.addStep({ name: 'Authenticate firebase failed', detail: '', isSuccess: false });
+      this.addStep({ name: 'Unable to authenticate firebase', detail: '', isSuccess: false });
       throw err;
     }
   };
@@ -225,14 +227,14 @@ class WifiRepairSetup extends PureComponent {
       account = JSON.parse(account);
     } catch (err) {
       this.setState({ loading: false });
-      this.addStep({ name: 'Send stake request failed', detail: err?.message || err, isSuccess: false });
+      this.addStep({ name: 'Sending stake request', detail: err?.message || err, isSuccess: false });
       throw err;
     }
     let qrCode = account?.name || '';
     const { onNext } = this.props;
     const funcName = `${qrCode}-changeDeviceName`;
     try {
-      this.addStep({ name: 'Setup account for node ', detail: account?.PaymentAddress || '', isSuccess: true });
+      this.addStep({ name: 'Create keychain for Node', detail: account?.PaymentAddress || '', isSuccess: true });
       this.updateDeviceNameRequest(productInfo.product_id, qrCode);
       let fetchProductInfo = {
         ...productInfo,
@@ -246,7 +248,7 @@ class WifiRepairSetup extends PureComponent {
       const { product_id } = fetchProductInfo;
       let PaymentAddress = account?.PaymentAddress || '';
       let ValidatorKey = account?.ValidatorKey || '';
-      this.addStep({ name: 'Send stake request', isSuccess: true });
+      this.addStep({ name: 'Sending stake request', isSuccess: true });
       await Util.excuteWithTimeout(APIService.requestStake({
         ProductID: product_id,
         ValidatorKey: ValidatorKey,
@@ -255,7 +257,7 @@ class WifiRepairSetup extends PureComponent {
       }), 60)
         .then(async response => {
           this.setState({ loading: true });
-          this.addStep({ name: 'Send stake request success', detail: response, isSuccess: true });
+          this.addStep({ name: 'Success! Stake request sent', detail: response, isSuccess: true });
           await APIService.trackLog({ action: funcName, message: `Result: requestStake ==> ${response ? 'SUCCESS' : 'FAIL'}` });
           const dataRequestStake = response?.data || {};
           if (!_.isEmpty(dataRequestStake) && !_.isEmpty(dataRequestStake.PaymentAddress)) {
@@ -277,7 +279,7 @@ class WifiRepairSetup extends PureComponent {
             return;
           }
           this.setState({ loading: false });
-          this.addStep({ name: 'Send stake request failed', detail: '', isSuccess: false });
+          this.addStep({ name: 'Stake request not yet sent', detail: '', isSuccess: false });
           throw error;
         });
 
@@ -389,8 +391,8 @@ class WifiRepairSetup extends PureComponent {
         {isLastStep && loading ? <ActivityIndicator style={styles.logIcon} size="small" /> : (
           <Icon
             containerStyle={styles.logIcon}
-            color={step?.isSuccess ? COLORS.primary : COLORS.red}
-            size={14}
+            color={step?.isSuccess ? COLORS.colorPrimary : COLORS.red}
+            size={15}
             name="checkbox-blank-circle"
             type="material-community"
           />
