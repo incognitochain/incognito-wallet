@@ -3,21 +3,27 @@ import BaseScreen from '@screens/BaseScreen';
 import images from '@src/assets';
 import { onClickView } from '@src/utils/ViewUtil';
 import React from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View, Text } from 'react-native';
 import { ListItem } from '@src/components/core';
+import Header from '@src/components/Header';
 import styles, { rightNextIcon } from './styles';
 
 export const TAG = 'AddNode';
 const listItems = [
   {
-    title:'Node',
-    subTitle:'Plug in and connect',
-    img :images.ic_add_node_device,
+    title: 'Node',
+    subTitle: 'Plug in and connect',
+    routeName: routeNames.GetStaredAddNode
   },
   {
-    title:'Node Virtual',
-    subTitle:'Run a virtual node',
-    img :images.ic_add_self_node,
+    title: 'Link existing device',
+    subTitle: 'Link existing or remove Node devices',
+    routeName: routeNames.LinkDevice
+  },
+  {
+    title: 'Node Virtual',
+    subTitle: 'Run a virtual node',
+    routeName: routeNames.AddSelfNode
   },
 ];
 
@@ -41,30 +47,33 @@ class AddNode extends BaseScreen {
       return this.goToScreen(routeNames.LinkDevice);
     }
 
-    this.goToScreen(index ===0?routeNames.GetStaredAddNode:routeNames.AddSelfNode);
+    this.goToScreen(index === 0 ? routeNames.GetStaredAddNode : routeNames.AddSelfNode);
   };
 
-  renderListActions = () => {
+  renderItem = (item) => {
+    return (
+      <TouchableOpacity onPress={() => this.goToScreen(item?.routeName)} style={styles.contentItem}>
+        <Text style={styles.title}>
+          {item?.title}
+        </Text>
+        <Text style={styles.subTitle}>
+          {item?.subTitle}
+        </Text>
+      </TouchableOpacity>
+    );
+  }
 
+  renderListActions = () => {
     return (
       <View style={styles.container_list_action}>
-
-        {listItems.map((item, index) => {
-          return (
-            <ListItem
-              Component={TouchableOpacity}
-              containerStyle={styles.item_container}
-              title={item.title}
-              subtitle={item.subTitle}
-              leftElement={<Image resizeMode='contain' source={item.img} style={styles.avatar} />}
-              rightIcon={rightNextIcon}
-              subtitleStyle={styles.subTitle}
-              onPress={onClickView(()=>this.handleItemClick(index))}
-              key={`${item.title}`}
-              titleStyle={styles.title}
-            />
-          );
-        })}
+        <Header title="Add a Node" />
+        <View style={styles.content}>
+          {listItems?.map(item => {
+            return (
+              this.renderItem(item)
+            );
+          })}
+        </View>
       </View>
     );
   };

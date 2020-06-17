@@ -17,6 +17,7 @@ import tokenService, { PRV } from '@services/wallet/tokenService';
 import { CONSTANT_CONFIGS, MESSAGES } from '@src/constants';
 import routeNames from '@src/router/routeNames';
 import APIService from '@src/services/api/miner/APIService';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import COLORS from '@src/styles/colors';
 import LocalDatabase from '@utils/LocalDatabase';
 import Util from '@utils/Util';
@@ -30,6 +31,8 @@ import { connect } from 'react-redux';
 import LogManager from '@src/services/LogManager';
 import { BtnQuestionDefault } from '@src/components/Button';
 import Header from '@src/components/Header';
+import BtnAdd from '@src/components/Button/BtnAdd';
+import NavigationService from '@src/services/NavigationService';
 import WelcomeSetupNode from './components/WelcomeSetupNode';
 import style from './style';
 
@@ -436,6 +439,10 @@ class Node extends BaseScreen {
       <View style={style.container}>
         <View style={style.background} />
         {/* <Header goToScreen={this.goToScreen} isFetching={listDevice.length > loadedDevices.length || isFetching} /> */}
+        <Header 
+          title="Node"
+          rightHeader={<BtnAdd onPress={()=>{NavigationService.navigate(routeNames.AddNode);}} />}
+        />
         <DialogLoader loading={loading} />
         <ScrollView
           contentContainerStyle={{paddingBottom: 40}}

@@ -10,8 +10,8 @@ const style = StyleSheet.create({
     marginLeft: 'auto',
   },
   container: {
-    paddingTop: 15,
-    paddingHorizontal: 5,
+    padding: 20,
+    paddingTop: 0,
     minHeight: '100%',
   },
   headerContainer: {
@@ -57,7 +57,7 @@ const style = StyleSheet.create({
     marginHorizontal: 15,
   },
   list: {
-    paddingHorizontal: 15,
+    paddingHorizontal: 5,
   },
   container_first_app:{
     flex: 1,

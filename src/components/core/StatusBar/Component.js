@@ -45,7 +45,10 @@ const {
   BackupKeys,
   Setting,
   NetworkSetting,
-  NodeHelp
+  NodeHelp,
+  AddNode,
+  LinkDevice,
+  AddSelfNode
 } = routeNames;
 
 const whiteScreens = [
@@ -83,7 +86,10 @@ const whiteScreens = [
   BackupKeys,
   Setting,
   NodeHelp,
-  NetworkSetting
+  NetworkSetting,
+  AddNode,
+  LinkDevice,
+  AddSelfNode
 ];
 const blue2Screens = [];
 const blue1Screens = [Node];

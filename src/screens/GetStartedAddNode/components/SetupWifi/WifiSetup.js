@@ -832,7 +832,7 @@ class WifiSetup extends PureComponent {
   renderLogs() {
     const { steps } = this.state;
     return (
-      <View>
+      <View style={{marginTop: 30}}>
         <LineView color={COLORS.lightGrey10} />
         <ScrollView
           style={[{ height: ScreenHeight * 0.35 }]}

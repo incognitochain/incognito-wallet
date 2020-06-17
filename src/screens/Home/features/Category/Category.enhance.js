@@ -12,6 +12,7 @@ import AppUpdater from '@components/AppUpdater/index';
 import { isIOS } from '@utils/platform';
 import deviceInfo from 'react-native-device-info';
 import { Dimensions, PixelRatio, Platform, Linking } from 'react-native';
+import NavigationService from '@src/services/NavigationService';
 
 const sendFeedback = async () => {
   const buildVersion = AppUpdater.appVersion;
