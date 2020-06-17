@@ -1,25 +1,49 @@
 import { Text, View } from '@components/core';
 import PropTypes from 'prop-types';
 import React from 'react';
-import CryptoIcon from '@components/CryptoIcon/index';
 import formatUtils from '@src/utils/format';
-import VerifiedText from '@components/VerifiedText/index';
-import styles, { rewardStyle } from './style';
+import { PRV } from '@src/services/wallet/tokenService';
+import { rewardStyle } from './style';
 
-const Reward = ({ tokenId, symbol, pDecimals, balance, isVerified }) => (
+const formatBalance = (balanceCurrent, pDecimals) => {
+  let maxDigit = 2;
+  if (balanceCurrent <= 1000000000000000) {
+    maxDigit = 4;
+  }
+  if (balanceCurrent <= 100000000000000) {
+    maxDigit = 5;
+  }
+  if (balanceCurrent <= 10000000000000) {
+    maxDigit = 6;
+  }
+  if (balanceCurrent <= 1000000000000) {
+    maxDigit = 7;
+  }
+  if (balanceCurrent <= 100000000000) {
+    maxDigit = 8;
+  }
+  if (balanceCurrent <= 10000000000) {
+    maxDigit = 9;
+  }
+  let totalBalanceCurrent = formatUtils.balance(
+    balanceCurrent,
+    pDecimals,
+    maxDigit,
+  );
+  return totalBalanceCurrent;
+};
+const Reward = ({ symbol, pDecimals, balance, isDefault, balanceStyle, containerItemStyle }) => (
   <View style={rewardStyle.container}>
-    <View style={styles.imageWrapper}>
-      <CryptoIcon tokenId={tokenId} size={30} />
-    </View>
-    <View style={rewardStyle.row}>
-      <Text style={rewardStyle.balance} numberOfLines={1}>
-        {formatUtils.amount(balance, pDecimals)} {symbol}
-      </Text>
-      <VerifiedText
-        style={rewardStyle.balance}
-        text=" "
-        isVerified={isVerified}
-      />
+    <View style={[{ flexDirection: 'row' }, containerItemStyle]}>
+      {isDefault && isDefault ? (
+        <Text style={[rewardStyle.balance, balanceStyle]} numberOfLines={1}>
+          {symbol === PRV?.symbol ? 'ℙ' : symbol}{formatBalance(formatUtils.amount(balance, pDecimals))}
+        </Text>
+      ) : (
+        <Text style={[rewardStyle.balance, balanceStyle]} numberOfLines={1}>
+          {formatBalance(formatUtils.amount(balance, pDecimals))}{symbol === PRV?.symbol ? 'ℙ' : symbol}
+        </Text>
+      )}
     </View>
   </View>
 );

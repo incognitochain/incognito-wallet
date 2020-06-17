@@ -14,9 +14,14 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { MESSAGES } from '@src/constants';
-import Loader from './Loader';
-import Rewards from './Rewards';
+import LogManager from '@src/services/LogManager';
+import BtnStatus from '@src/components/Button/BtnStatus';
+import BtnWithBlur from '@src/components/Button/BtnWithBlur';
+import NavigationService from '@src/services/NavigationService';
+import routeNames from '@src/router/routeNames';
 import styles from './style';
+import Rewards from './Rewards';
+import Loader from './Loader';
 
 class PNode extends React.Component {
   constructor(props) {
@@ -106,7 +111,7 @@ class PNode extends React.Component {
     menu.push({
       id: 'update',
       icon: <Image source={firmwareIcon} style={{ width: 25, height: 25, resizeMode: 'contain' }} />,
-      label:(
+      label: (
         <View style={styles.withdrawMenuItem}>
           <Text style={styles.withdrawText}>Update firmware</Text>
         </View>
@@ -163,49 +168,50 @@ class PNode extends React.Component {
 
     return <OptionMenu data={menu} icon={<Image source={moreIcon} />} />;
   }
-
+  // Only for test
+  getColorStatus = (item) => {
+    const isUnstaking = item?.StakerAddress ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
+    // Unstaking
+    if (isUnstaking) {
+      return COLORS.orange;
+    }
+    // Online
+    if (item?.IsOnline) {
+      return COLORS.blue4;
+    }
+    // Offline
+    if (!item?.IsOnline) {
+      return COLORS.lightGrey1;
+    }
+    // Waiting - Default
+    return COLORS.green;
+  }
   render() {
-    const {item, isFetching, allTokens} = this.props;
+    const { item, isFetching, allTokens } = this.props;
     const labelName = item.Name;
+
+    // Check if device is unstaking, need to stake
+    const unstakedPNode = item?.Unstaked;
+    const hasStaked = item?.Staked;
 
     return (
       <View style={styles.container}>
-        { isFetching ? <Loader /> : (
+        {isFetching ? <Loader /> : (
           <>
-            <View style={styles.row}>
-              <View style={[styles.itemLeft, styles.imageWrapper, styles.hidden]}>
-                <Image />
+            <TouchableOpacity style={[styles.row]} onPress={() => NavigationService.navigate(routeNames.NodeItemDetail, { device: item })}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <View style={{ height: 20, justifyContent: 'center' }}>
+                  <BtnStatus backgroundColor={this.getColorStatus(item)} />
+                </View>
+                <View>
+                  <Text style={[styles.itemLeft]}>Node {labelName || '-'}</Text>
+                  {isFetching ? <ActivityIndicator size="large" /> : <Rewards isDefault item={item} rewards={item.Rewards} allTokens={allTokens} />}
+                </View>
               </View>
-              <View style={styles.itemCenter}>
-                { isFetching ? <ActivityIndicator size="large" /> : <Rewards item={item} rewards={item.Rewards} allTokens={allTokens} /> }
+              <View style={styles.itemRight}>
+                {!hasStaked && unstakedPNode ? <BtnWithBlur text='Stake' onPress={() => NavigationService.navigate(routeNames.Stake)} /> : null}
               </View>
-              <View style={[styles.itemRight, styles.imageWrapper]}>
-                {this.renderMenu()}
-              </View>
-            </View>
-            <View>
-              <View style={[styles.row, styles.centerAlign]}>
-                <TouchableOpacity onPress={this.showIp} style={[styles.row, styles.centerAlign]}>
-                  <Image source={item.IsOnline ? wifiOnline : wifiOffline} style={[styles.icon]} />
-                  <Text style={[styles.itemLeft, !item.IsOnline && styles.greyText]}>Node {labelName}</Text>
-                </TouchableOpacity>
-                {!isFetching && !item.IsOnline && (
-                  <View style={styles.itemRight}>
-                    <FixModal item={item} />
-                  </View>
-                )}
-              </View>
-              {this.getDescriptionStatus()}
-            </View>
-            {/* <DialogUpdateFirmware
-              visible={showUpdateFirmware}
-              onClose={()=>
-                this.setState({
-                  showUpdateFirmware:false
-                })
-              }
-              device={item}
-            /> */}
+            </TouchableOpacity>
           </>
         )}
       </View>

@@ -13,6 +13,7 @@ const style = StyleSheet.create({
     padding: 20,
     paddingTop: 0,
     minHeight: '100%',
+    flex: 1,
   },
   headerContainer: {
     flexDirection: 'row', 
@@ -25,13 +26,10 @@ const style = StyleSheet.create({
     height: 120,
     left: 0,
     right: 0,
-    // backgroundColor: COLORS.dark2,
   },
   buyButton: {
     marginTop: 15,
-    marginHorizontal: 15,
-    marginBottom: 100,
-    // paddingBottom: 20
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,
@@ -57,7 +55,8 @@ const style = StyleSheet.create({
     marginHorizontal: 15,
   },
   list: {
-    paddingHorizontal: 5,
+    paddingBottom: 50,
+    flex: 1
   },
   container_first_app:{
     flex: 1,
@@ -93,6 +92,23 @@ const style = StyleSheet.create({
     borderRadius:scaleInApp(4),
     marginTop:scaleInApp(10),
   },
+  dot: {
+    width: 16,
+    height: 2,
+    borderRadius: 0,
+    backgroundColor: COLORS.lightGrey5,
+  },
+  activeDot: {
+    width: 16,
+    height: 2,
+    borderRadius: 0,
+    backgroundColor: COLORS.primary,
+  },
+  balance: {
+    fontFamily: FONT.NAME.specialRegular,
+    fontSize: 20,
+    color: COLORS.colorGreyBold,
+  }
 });
 
 export default style;

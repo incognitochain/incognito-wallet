@@ -9,6 +9,7 @@ import AddSelfNode from '@src/screens/AddSelfNode';
 import LinkDevice from '@screens/LinkDevice';
 import HeaderBar from '@src/components/HeaderBar';
 import GetStartedAddNode from '@src/screens/GetStartedAddNode';
+import NodeItemDetail from '@src/screens/Node/components/NodeItemDetail';
 import RepairingSetupNode from '@src/screens/GetStartedAddNode/continueSetup/RepairingSetupNode';
 import WhyReceive from '@screens/WhyReceive';
 import pApps from '@screens/Papps';
@@ -92,6 +93,7 @@ const AppNavigator = createStackNavigator(
     [ROUTE_NAMES.AddSelfNode]: navigationOptionsHandler(AddSelfNode, { header: () => null, }),
     [ROUTE_NAMES.GetStaredAddNode]: navigationOptionsHandler(GetStartedAddNode, { header: () => null,}),
     [ROUTE_NAMES.RepairingSetupNode]: navigationOptionsHandler(RepairingSetupNode, { title: 'Continue setup' }),
+    [ROUTE_NAMES.NodeItemDetail]: navigationOptionsHandler(NodeItemDetail, { header: () => null }),
     [ROUTE_NAMES.PriceChartCrypto]: navigationOptionsHandler(PriceChartCrypto, {
       title: 'Price chart',
     }),

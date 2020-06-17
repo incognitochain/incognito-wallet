@@ -1,30 +1,32 @@
 import { StyleSheet } from 'react-native';
-import { COLORS } from '@src/styles';
+import { COLORS, FONT } from '@src/styles';
 
 const style = StyleSheet.create({
   container: {
-    paddingHorizontal: 25,
-    paddingVertical: 25,
     backgroundColor: COLORS.white,
-    borderRadius: 8,
-    shadowOpacity: 1,
-    shadowRadius: 4,
-    shadowColor: '#DCDDDD',
-    shadowOffset: { height: 2, width: 0 },
     marginBottom: 15,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: COLORS.transparent,
   },
   row: {
     flexDirection: 'row',
+    alignContent: 'center',
   },
   itemLeft: {
     marginRight: 'auto',
+    fontFamily: FONT.NAME.bold,
+    fontSize: FONT.SIZE.medium,
+    color: COLORS.colorPrimary,
+    textAlign: 'left',
+    height: 20,
   },
   itemRight: {
     marginLeft: 'auto',
   },
+  statusContainer: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    marginEnd: 20,
+  },  
   itemCenter: {
     marginLeft: 'auto',
     marginRight: 'auto',
@@ -34,6 +36,12 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
+  },
+  token: {
+    fontFamily: FONT.NAME.specialRegular,
+    fontSize: 20,
+    color: COLORS.colorGreyBold,
+    textAlign: 'center'
   },
   desc: {
     marginTop: 15,
@@ -59,7 +67,7 @@ const style = StyleSheet.create({
     marginLeft: 10,
   },
   hidden: {
-    opacity: 0,
+    opacity: 1,
   },
   fixButton: {
     backgroundColor: COLORS.dark3,
@@ -80,14 +88,12 @@ const style = StyleSheet.create({
 
 export const rewardStyle = StyleSheet.create({
   slider: {
-    height: 130,
-    marginBottom: 20,
+    height: 50,
+    marginTop: 10,
     width: 220,
-    marginLeft: 20,
   },
   container: {
     justifyContent: 'flex-start',
-    alignItems: 'center',
   },
   row: {
     flexDirection: 'row',
@@ -118,7 +124,10 @@ export const rewardStyle = StyleSheet.create({
     backgroundColor: COLORS.primary,
   },
   balance: {
+    fontFamily: FONT.NAME.specialRegular,
     fontSize: 20,
+    color: COLORS.colorGreyBold,
+    textAlign: 'center'
   }
 });
 

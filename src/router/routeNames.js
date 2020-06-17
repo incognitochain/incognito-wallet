@@ -70,4 +70,5 @@ export default {
   TradeHistory: 'TradeHistory',
   TradeHistoryDetail: 'TradeHistoryDetail',
   TradeConfirm: 'TradeConfirm',
+  NodeItemDetail: 'NodeItemDetail'
 };

@@ -35,6 +35,7 @@ const COLORS = {
   lightGrey16: '#8A8A9E',
   lightGrey17: '#707070',
   lightGrey18: '#DCDCDD',
+  lightGreyBlur: '#F4F4F4',
 
   newGrey: '#8A8A8E',
 

@@ -9,7 +9,7 @@ import {PRV} from '@services/wallet/tokenService';
 import { rewardStyle } from './style';
 import Reward from './Reward';
 
-const Rewards = ({ rewards: propRewards, allTokens, item }) => {
+const Rewards = ({ rewards: propRewards, allTokens, item, isDefault }) => {
   if (!allTokens || allTokens.length === 0) {
     return <ActivityIndicator />;
   }
@@ -36,6 +36,7 @@ const Rewards = ({ rewards: propRewards, allTokens, item }) => {
         activeDotStyle={rewardStyle.activeDot}
         showsPagination
         loop
+        horizontal
         key={`${item.ProductId}-${data.length}`}
       >
         {
@@ -43,6 +44,7 @@ const Rewards = ({ rewards: propRewards, allTokens, item }) => {
             <Reward
               key={id}
               tokenId={id}
+              isDefault={isDefault}
               pDecimals={pDecimals}
               symbol={symbol}
               balance={balance}

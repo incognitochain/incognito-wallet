@@ -1,4 +1,4 @@
-import { Alert, Button } from '@components/core';
+import { Alert, Button, ActivityIndicator } from '@components/core';
 import DialogLoader from '@components/DialogLoader';
 import Device from '@models/device';
 import BaseScreen from '@screens/BaseScreen';
@@ -8,36 +8,40 @@ import { getTokenList } from '@services/api/token';
 import { CustomError, ErrorCode, ExHandler } from '@services/exception';
 import NodeService from '@services/NodeService';
 import accountService from '@services/wallet/accountService';
+import {PRV_ID} from '@screens/Dex/constants';
 import {
   getBeaconBestStateDetail,
   getBlockChainInfo,
   listRewardAmount
 } from '@services/wallet/RpcClientService';
+import format from '@src/utils/format';
+import Swiper from 'react-native-swiper';
 import tokenService, { PRV } from '@services/wallet/tokenService';
-import { CONSTANT_CONFIGS, MESSAGES } from '@src/constants';
+import { MESSAGES } from '@src/constants';
 import routeNames from '@src/router/routeNames';
 import APIService from '@src/services/api/miner/APIService';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import COLORS from '@src/styles/colors';
 import LocalDatabase from '@utils/LocalDatabase';
 import Util from '@utils/Util';
 import { onClickView } from '@utils/ViewUtil';
 import _ from 'lodash';
-import PropTypes from 'prop-types';
+import PropTypes, { node } from 'prop-types';
 import React from 'react';
 import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import LogManager from '@src/services/LogManager';
-import { BtnQuestionDefault } from '@src/components/Button';
 import Header from '@src/components/Header';
 import BtnAdd from '@src/components/Button/BtnAdd';
+import convert from '@utils/convert';
 import NavigationService from '@src/services/NavigationService';
+import theme from '@src/styles/theme';
+import { FONT } from '@src/styles';
 import WelcomeSetupNode from './components/WelcomeSetupNode';
 import style from './style';
+import Reward from './components/Reward';
 
 export const TAG = 'Node';
-
 let allTokens = [PRV];
 let beaconHeight;
 let committees = {
@@ -120,6 +124,7 @@ class Node extends BaseScreen {
       loading: false,
       showWelcomeSetupNode: false,
       dialogVisible: false,
+      rewards: []
     };
     this.dialogbox = React.createRef();
     this.renderNode = this.renderNode.bind(this);
@@ -286,16 +291,57 @@ class Node extends BaseScreen {
     const { listDevice, loadedDevices } = this.state;
 
     if (device) {
+
       const deviceIndex = listDevice.findIndex(item => item.ProductId === device.ProductId);
       if (deviceIndex) {
         listDevice[deviceIndex] = device;
         await LocalDatabase.saveListDevices(listDevice);
       }
     }
+    
+    // console.log("==================node rewars", LogManager.parseJsonObjectToJsonString(nodeRewards));
+
+    // const rewards = !_.isEmpty(propRewards) ? propRewards : { [PRV_ID]: 0 };
+
 
     loadedDevices.push(index);
 
-    this.setState({ listDevice, loadedDevices });
+    this.setState({ listDevice, loadedDevices }, () => {
+      var rewardsList = [];
+      // Set reward
+      listDevice.forEach((element, index) => {
+        let rewards = !_.isEmpty(element?.minerInfo?.rewards) ? element?.minerInfo?.rewards : { [PRV_ID] : 0};
+        if (rewards) {
+          const data = (_(Object.keys(rewards)) || [])
+            .map(id => {
+              const value = rewards[id];
+              const token = allTokens.find(token => token.id === id) || {};
+              return token && { ...token, balance: value, displayBalance: convert.toHumanAmount(value, token.pDecimals) };
+            })
+            .value();
+          console.log('==================token', LogManager.parseJsonObjectToJsonString(data));
+          console.log('==================index', index);
+
+          // Push to reward list
+          data.forEach((element, index) => {
+            let currentTokenExistingIndex = rewardsList?.map(function(e) { return e?.id; }).indexOf(element?.id);
+            if (currentTokenExistingIndex === -1)   {
+              console.log('not found');
+              rewardsList.push(element);
+            } else {
+              console.log('found' + index);
+              let currentBalance = rewardsList[currentTokenExistingIndex].balance || 0;
+              currentBalance = currentBalance + (element?.balance || 0);
+              rewardsList[currentTokenExistingIndex].displayBalance = convert.toHumanAmount(currentBalance, element?.pDecimals || 0);
+            }
+          });
+            
+        }
+      });
+      this.setState({rewards: rewardsList});
+      console.log('==================balance', LogManager.parseJsonObjectToJsonString(rewardsList));
+    });
+
   };
 
   handleRefresh = async () => {
@@ -308,12 +354,14 @@ class Node extends BaseScreen {
     list = list.map(item => Device.getInstance(item));
 
     if (!isFetching && !_.isEmpty(list)) {
+      console.log('========================111111');
       this.setState({
         isFetching: true,
         isLoadMore: false,
         listDevice: list,
       }, this.getFullInfo);
     } else {
+      console.log('========================');
       this.setState({ listDevice: list });
     }
   };
@@ -412,8 +460,8 @@ class Node extends BaseScreen {
       listDevice,
       isFetching,
       loading,
-      loadedDevices,
       showWelcomeSetupNode,
+      rewards
     } = this.state;
 
     if (!isFetching && _.isEmpty(listDevice)) {
@@ -437,15 +485,41 @@ class Node extends BaseScreen {
 
     return (
       <View style={style.container}>
-        <View style={style.background} />
-        {/* <Header goToScreen={this.goToScreen} isFetching={listDevice.length > loadedDevices.length || isFetching} /> */}
-        <Header 
-          title="Node"
-          rightHeader={<BtnAdd onPress={()=>{NavigationService.navigate(routeNames.AddNode);}} />}
+        <Header
+          title="Nodes"
+          rightHeader={<BtnAdd onPress={() => { NavigationService.navigate(routeNames.AddNode); }} />}
         />
         <DialogLoader loading={loading} />
+        {!loading && listDevice.length > 0 ? (
+          <View style={{width: '100%', marginTop: 30, height: 70}}>
+            <Swiper
+              dotStyle={style.dot}
+              activeDotStyle={style.activeDot}
+              showsPagination
+              loop
+              horizontal
+            >
+              {
+                rewards.map(({ id, pDecimals, balance, symbol, isVerified }) => (
+                  <Reward
+                    key={id}
+                    tokenId={id}
+                    containerItemStyle={{justifyContent: 'center', alignItems: 'center', alignContent: 'center'}}
+                    balanceStyle={{color: 'black', alignSelf: 'center', textAlign: 'center', fontSize: FONT.FONT_SIZES.avgLarge, fontFamily: FONT.NAME.semiBold}}
+                    pDecimals={pDecimals}
+                    symbol={symbol}
+                    balance={balance}
+                    isVerified={isVerified}
+                  />
+                ))
+              }
+            </Swiper>
+          </View>
+        ) : <DialogLoader loading={loading} /> }
         <ScrollView
-          contentContainerStyle={{paddingBottom: 40}}
+          contentContainerStyle={{ flex: 1 }}
+          nestedScrollEnabled
+          showsVerticalScrollIndicator
           refreshControl={(
             <RefreshControl
               onRefresh={this.handleRefresh}
@@ -456,16 +530,15 @@ class Node extends BaseScreen {
           )}
         >
           <FlatList
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={[{ flexGrow: 1 }]}
+            showsVerticalScrollIndicator
+            contentContainerStyle={[{ flexGrow: 1}]}
             style={style.list}
             data={listDevice}
             keyExtractor={item => String(item.ProductId)}
-            onEndReachedThreshold={0.7}
             renderItem={this.renderNode}
           />
           <Button
-            style={style.buyButton}
+            style={[style.buyButton, theme.BUTTON.BLACK_TYPE]}
             title="Get a Node"
             onPress={() => { this.goToScreen(routeNames.BuyNodeScreen); }}
           />
