@@ -287,6 +287,7 @@ class NodeItemDetail extends Component {
         shouldShowWithdraw = true;
       }
     });
+    console.log('Reward list: ' + LogManager.parseJsonObjectToJsonString(rewardsList));
     return (
       <View style={styles.containerDetail}>
         <Header
@@ -297,14 +298,15 @@ class NodeItemDetail extends Component {
             dotStyle={styles.dot}
             activeDotStyle={styles.activeDot}
             showsPagination
-            loop
+            loop={false}
             horizontal
-            key={`${new Date().getTime()}`}
+            removeClippedSubviews={false}
+            key={new Date().getTime()}
           >
             {
               (rewardsList).map(({ id, pDecimals, balance, symbol, isVerified }) => (
                 <Reward
-                  key={`${new Date().getTime()}`}
+                  key={new Date().getTime()}
                   tokenId={id}
                   containerItemStyle={styles.balanceContainer}
                   balanceStyle={styles.balanceUpdate}
