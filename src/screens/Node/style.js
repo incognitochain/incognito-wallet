@@ -93,16 +93,16 @@ const style = StyleSheet.create({
     marginTop:scaleInApp(10),
   },
   dot: {
-    width: 16,
-    height: 2,
-    borderRadius: 0,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: COLORS.lightGrey5,
   },
   activeDot: {
-    width: 16,
-    height: 2,
-    borderRadius: 0,
-    backgroundColor: COLORS.primary,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: COLORS.blue6,
   },
   balance: {
     fontFamily: FONT.NAME.specialRegular,

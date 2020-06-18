@@ -488,7 +488,7 @@ class Node extends BaseScreen {
               horizontal
             >
               {
-                rewards.map(({ id, pDecimals, balance, symbol, isVerified }) => (
+                [...rewards, ...rewards].map(({ id, pDecimals, balance, symbol, isVerified }) => (
                   <Reward
                     key={id}
                     tokenId={id}
