@@ -11,7 +11,7 @@ export const TYPES = {
 
 export const AddManuallyContext = React.createContext();
 
-const enhance = WrappedComp => props => {
+const enhance = (WrappedComp) => (props) => {
   const typeParam = useNavigationParam('type');
   const [state, setState] = React.useState({
     type: typeParam || TYPES.INCOGNITO.value,
@@ -20,7 +20,7 @@ const enhance = WrappedComp => props => {
   const { type, isShowChooseType } = state;
   const toggleChooseType = async () =>
     await setState({ ...state, isShowChooseType: !isShowChooseType });
-  const handlePressChooseType = async type =>
+  const handlePressChooseType = async (type) =>
     await setState({ ...state, type, isShowChooseType: !isShowChooseType });
   return (
     <ErrorBoundary>
@@ -38,4 +38,7 @@ const enhance = WrappedComp => props => {
   );
 };
 
-export default compose(withLayout_2, enhance);
+export default compose(
+  withLayout_2,
+  enhance,
+);

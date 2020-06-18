@@ -17,6 +17,7 @@ class Dex extends React.Component {
       pairTokens,
       pairs,
       loading,
+      onLoadPairs,
     } = this.props;
 
     return (
@@ -25,6 +26,7 @@ class Dex extends React.Component {
         tokens={tokens}
         pairTokens={pairTokens}
         isLoading={loading}
+        onLoadPairs={onLoadPairs}
       />
     );
   }
@@ -39,30 +41,12 @@ class Dex extends React.Component {
     return this.renderTrade();
   }
 
-  renderContent() {
+  render() {
     return (
       <View style={styles.wrapper}>
         <Header title="pDEX" accountSelectable />
         {this.renderMode()}
       </View>
-    );
-  }
-
-  render() {
-    const { loading, onLoadPairs } = this.props;
-    return (
-      <ScrollView
-        style={styles.wrapper}
-        contentContainerStyle={styles.wrapper}
-        refreshControl={(
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={onLoadPairs}
-          />
-        )}
-      >
-        {this.renderContent()}
-      </ScrollView>
     );
   }
 }

@@ -1,11 +1,11 @@
 import { StyleSheet } from 'react-native';
-import {COLORS, UTILS, FONT} from '@src/styles';
+import { COLORS, UTILS, FONT } from '@src/styles';
 
 const deviceWidth = UTILS.deviceWidth();
 
 export default StyleSheet.create({
   wrapper: {
-    marginVertical: 8,
+    marginVertical: UTILS.heightScale(6),
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

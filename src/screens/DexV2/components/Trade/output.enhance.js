@@ -3,7 +3,10 @@ import _ from 'lodash';
 import formatUtils from '@utils/format';
 import { MIN_PERCENT } from '@screens/DexV2/constants';
 import { getQuote as getQuoteAPI } from '@services/trading';
+import { v4 } from 'uuid';
 import { calculateOutputValue as calculateOutput } from './utils';
+
+let currentDebounceId;
 
 const withCalculateOutput = WrappedComp => (props) => {
   const [outputValue, setOutputValue] = React.useState(0);
@@ -39,7 +42,7 @@ const withCalculateOutput = WrappedComp => (props) => {
     // console.debug('RESULT', outputValue, minimumAmount, outputText, outputValue === 0 || minimumAmount === 0 || isNaN(outputText));
   };
 
-  const getQuote = async (inputToken, outputToken, value) => {
+  const getQuote = async (inputToken, outputToken, value, id) => {
     if (gettingQuote) {
       return;
     }
@@ -53,6 +56,10 @@ const withCalculateOutput = WrappedComp => (props) => {
         buyToken: outputToken,
         protocol: 'Kyber',
       });
+
+      if (id !== currentDebounceId) {
+        return;
+      }
 
       const { amount } = quote;
       const minimumAmount = _.floor(amount * MIN_PERCENT);
@@ -83,10 +90,17 @@ const withCalculateOutput = WrappedComp => (props) => {
   React.useEffect(() => {
     if (inputToken && outputToken && inputValue) {
       if (inputToken.address && outputToken.address) {
-        debouncedGetQuote(inputToken, outputToken, inputValue);
+        const debounceId = v4();
+        debouncedGetQuote(inputToken, outputToken, inputValue, debounceId);
+        currentDebounceId = debounceId;
       } else {
         calculateOutputValue();
       }
+    }
+
+    if (inputToken && outputToken && !inputValue) {
+      debouncedGetQuote.cancel();
+      currentDebounceId = v4();
     }
 
     if (!inputValue) {
@@ -96,6 +110,10 @@ const withCalculateOutput = WrappedComp => (props) => {
       setQuote(null);
     }
   }, [inputToken, inputValue, outputToken, pair]);
+
+  React.useEffect(() => {
+
+  }, [inputToken, inputValue]);
 
   return (
     <WrappedComp

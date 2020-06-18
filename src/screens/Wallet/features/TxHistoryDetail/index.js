@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { Modal, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import {
+  Modal,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  BackHandler,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import LoadingContainer from '@src/components/LoadingContainer';
 import { retryExpiredDeposit } from '@src/services/api/history';
@@ -8,6 +15,7 @@ import { Toast, Button } from '@src/components/core';
 import { compose } from 'recompose';
 import { withLayout_2 } from '@src/components/Layout';
 import Header from '@src/components/Header';
+import routeNames from '@src/router/routeNames';
 import styles from './styles';
 import TxHistoryDetail from './TxHistoryDetail';
 
@@ -22,6 +30,13 @@ class TxHistoryDetailContainer extends Component {
 
   componentDidMount() {
     this.loadHistoryData();
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.onGoBack,
+    );
+  }
+  componentWillUnmount() {
+    this.backHandler.remove();
   }
 
   loadHistoryData = () => {
@@ -92,7 +107,7 @@ class TxHistoryDetailContainer extends Component {
                   within 24 hours.
                 </Text>
                 <TextInput
-                  onChangeText={text => {
+                  onChangeText={(text) => {
                     if (text.replace(/ /g, '').length === 0) {
                       this.setState({ errorTx: true, shouldEnableBtn: false });
                     } else {
@@ -137,6 +152,9 @@ class TxHistoryDetailContainer extends Component {
       </Modal>
     );
   };
+
+  onGoBack = () => this.props?.navigation?.navigate(routeNames.WalletDetail);
+
   render() {
     const { data } = this.state;
     let decentralized = data?.history?.decentralized;
@@ -151,7 +169,7 @@ class TxHistoryDetailContainer extends Component {
           flex: 1,
         }}
       >
-        <Header title="Transaction details" />
+        <Header title="Transaction details" onGoBack={this.onGoBack} />
         <TxHistoryDetail
           {...this.props}
           data={data}

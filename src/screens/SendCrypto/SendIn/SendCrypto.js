@@ -38,6 +38,8 @@ import floor from 'lodash/floor';
 import { actionToggleModal } from '@src/components/Modal';
 import Receipt from '@src/components/Receipt';
 import { CONSTANT_KEYS } from '@src/constants';
+import { actionFetchFeeByMax } from '@src/components/EstimateFee/EstimateFee.actions';
+import format from '@src/utils/format';
 import { homeStyle } from './style';
 
 export const formName = 'sendCrypto';
@@ -140,23 +142,20 @@ class SendCrypto extends React.Component {
       return;
     }
     try {
-      const originalAmount = floor(
-        convert.toOriginalAmount(
-          convert.toNumber(amount, true),
-          selectedPrivacy?.pDecimals,
-        ),
+      const amountToNumber = convert.toNumber(amount, true);
+      const originalAmount = convert.toOriginalAmount(
+        amountToNumber,
+        selectedPrivacy?.pDecimals,
+        false,
       );
-      const originalFee = floor(
-        convert.toOriginalAmount(
-          convert.toNumber(feeData.fee, true),
-          feeData.feePDecimals,
-        ),
-      );
+      const _originalAmount = floor(originalAmount);
+      const originalFee = floor(fee);
+      const _fee = format.amountFull(originalFee, feeData.feePDecimals);
       const res = await handleSend({
         ...feeData,
         ...values,
         originalFee,
-        originalAmount,
+        originalAmount: _originalAmount,
       });
       if (res) {
         await rfReset(formName);
@@ -167,7 +166,7 @@ class SendCrypto extends React.Component {
               {...{
                 ...res,
                 originalAmount,
-                fee,
+                fee: _fee,
                 feeUnit,
                 title: 'Sent.',
                 toAddress,
@@ -232,6 +231,13 @@ class SendCrypto extends React.Component {
     rfChange(formName, 'amount', `${amount}`);
   };
 
+  onPressMax = async () => {
+    const { actionFetchFeeByMax, rfChange, rfFocus } = this.props;
+    const maxAmountText = await actionFetchFeeByMax();
+    rfChange(formName, 'amount', maxAmountText);
+    rfFocus(formName, 'amount');
+  };
+
   render() {
     const {
       isSending,
@@ -241,9 +247,7 @@ class SendCrypto extends React.Component {
       onShowFrequentReceivers,
       rfFocus,
       rfChange,
-      feeData,
     } = this.props;
-    const { maxAmountText } = feeData;
     return (
       <View style={homeStyle.container}>
         <Form>
@@ -258,13 +262,9 @@ class SendCrypto extends React.Component {
                 name="amount"
                 placeholder="0.0"
                 label="Amount"
-                maxValue={maxAmountText}
                 componentProps={{
                   keyboardType: 'decimal-pad',
-                  onPressMax: () => {
-                    rfChange(formName, 'amount', maxAmountText);
-                    rfFocus(formName, 'amount');
-                  },
+                  onPressMax: this.onPressMax,
                 }}
                 validate={this.getAmountValidator()}
                 {...generateTestId(SEND.AMtOUNT_INPUT)}
@@ -342,6 +342,7 @@ SendCrypto.propTypes = {
   rfFocus: PropTypes.func.isRequired,
   rfReset: PropTypes.func.isRequired,
   actionToggleModal: PropTypes.func.isRequired,
+  actionFetchFeeByMax: PropTypes.func.isRequired,
 };
 
 const mapState = (state) => ({
@@ -357,8 +358,9 @@ const mapDispatch = {
   setSelectedPrivacy,
   rfChange: change,
   rfFocus: focus,
-  actionToggleModal,
   rfReset: reset,
+  actionToggleModal,
+  actionFetchFeeByMax,
 };
 
 export default connect(

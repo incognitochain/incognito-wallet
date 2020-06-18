@@ -24,6 +24,7 @@ const TextInput = ({
   onRef,
   labelStyle,
   oldVersion = false,
+  canEditable,
   ...props
 }) => {
   const [focus, setFocus] = useState(false);
@@ -80,28 +81,39 @@ const TextInput = ({
         ]}
       >
         {appendView}
-        <RNComponent
-          ref={textInput}
-          allowFontScaling={false}
-          placeholderTextColor={COLORS.colorGreyBold}
-          returnKeyType="done"
-          maxLength={maxLength}
-          style={[
-            styleSheet.input,
-            oldVersion && styleSheet.oldInput,
-            inputStyle,
-          ]}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          autoCapitalize="none"
-          spellCheck={false}
-          textAlignVertical="center"
-          autoCompleteType="off"
-          autoCorrect={false}
-          ellipsizeMode="middle"
-          numberOfLines={1}
-          {...props}
-        />
+        {canEditable ? (
+          <RNComponent
+            ref={textInput}
+            allowFontScaling={false}
+            placeholderTextColor={COLORS.colorGreyBold}
+            returnKeyType="done"
+            maxLength={maxLength}
+            style={[
+              styleSheet.input,
+              oldVersion && styleSheet.oldInput,
+              inputStyle,
+            ]}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            autoCapitalize="none"
+            spellCheck={false}
+            textAlignVertical="center"
+            autoCompleteType="off"
+            autoCorrect={false}
+            ellipsizeMode="middle"
+            numberOfLines={1}
+            {...props}
+          />
+        ) : (
+          <Text
+            style={styleSheet.input}
+            numberOfLines={1}
+            ellipsizeMode="middle"
+          >
+            {props?.defaultValue || ''}
+          </Text>
+        )}
+
         {clearable && focus && (
           <TouchableOpacity onPress={handleClear}>
             <Icon
@@ -133,6 +145,7 @@ TextInput.defaultProps = {
   labelStyle: null,
   oldVersion: false,
   onRef: null,
+  canEditable: true,
 };
 
 TextInput.propTypes = {
@@ -150,6 +163,7 @@ TextInput.propTypes = {
   labelStyle: PropTypes.any,
   oldVersion: PropTypes.bool,
   onRef: PropTypes.func,
+  canEditable: PropTypes.bool,
 };
 
 export default TextInput;

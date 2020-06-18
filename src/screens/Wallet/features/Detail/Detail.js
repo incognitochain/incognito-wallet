@@ -5,9 +5,10 @@ import {
   selectedPrivacySeleclor,
   sharedSeleclor,
   tokenSeleclor,
+  accountSeleclor,
 } from '@src/redux/selectors';
 import { useSelector } from 'react-redux';
-import { ButtonBasic } from '@src/components/Button';
+import { ButtonBasic, BtnInfo } from '@src/components/Button';
 import { useNavigation } from 'react-navigation-hooks';
 import routeNames from '@src/router/routeNames';
 import {
@@ -20,11 +21,9 @@ import MainCryptoHistory from '@screens/Wallet/features/MainCryptoHistory';
 import PropTypes from 'prop-types';
 import { CONSTANT_COMMONS } from '@src/constants';
 import { isGettingBalance as isGettingTokenBalanceSelector } from '@src/redux/selectors/token';
-import {
-  isGettingBalance as isGettingMainCryptoBalanceSelector,
-  defaultAccountNameSelector,
-} from '@src/redux/selectors/account';
+import { isGettingBalance as isGettingMainCryptoBalanceSelector } from '@src/redux/selectors/account';
 import { ScrollView } from '@src/components/core';
+import { useBackHandler } from '@src/components/UseEffect';
 import withDetail from './Detail.enhance';
 import {
   styled,
@@ -121,12 +120,12 @@ const History = (props) => {
     <View style={historyStyled.container}>
       <ScrollView
         nestedScrollEnabled
-        refreshControl={(
+        refreshControl={
           <RefreshControl
             refreshing={isFetching}
             onRefresh={handleLoadHistory}
           />
-        )}
+        }
       >
         {selectedPrivacy?.isToken && <HistoryToken />}
         {selectedPrivacy?.isMainCrypto && <MainCryptoHistory />}
@@ -147,28 +146,35 @@ const Detail = (props) => {
   const isGettingMainCryptoBalance = useSelector(
     isGettingMainCryptoBalanceSelector,
   );
-  const defaultAccountName = useSelector(defaultAccountNameSelector);
+  const defaultAccount = useSelector(accountSeleclor.defaultAccountSelector);
   const refreshing =
     !!isFetching || selected?.isMainCrypto
-      ? isGettingMainCryptoBalance.length > 0 || !defaultAccountName
+      ? isGettingMainCryptoBalance.length > 0 || !defaultAccount
       : isGettingTokenBalance.length > 0 || !token;
+  const onGoBack = () => navigation.navigate(routeNames.Wallet);
+  const onNavTokenInfo = () => navigation.navigate(routeNames.CoinInfo);
+  useBackHandler({ onGoBack });
   return (
     <View style={styled.container}>
       <Header
         title={selected?.name}
+        customHeaderTitle={
+          <BtnInfo onPress={onNavTokenInfo} style={styled.btnInfo} />
+        }
         rightHeader={<RightHeader />}
-        onGoBack={() => navigation.navigate(routeNames.Wallet)}
+        onGoBack={onGoBack}
+        titleStyled={styled.headerTitleStyle}
       />
       <ScrollView
         contentContainerStyle={{
           flex: 1,
         }}
-        refreshControl={(
+        refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleLoadHistory}
           />
-        )}
+        }
         nestedScrollEnabled
       >
         <Balance />

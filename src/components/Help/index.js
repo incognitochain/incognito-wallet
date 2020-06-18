@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { Overlay, Icon } from 'react-native-elements';
+import { Overlay } from 'react-native-elements';
 import {
   ScrollView,
   Text,
@@ -15,7 +15,10 @@ import stylesheet from './style';
 const Help = ({ title, content }) => {
   const [ visible, setVisible ] = React.useState(false);
   return (
-    <TouchableOpacity onPress={() => setVisible(true)}>
+    <TouchableOpacity
+      onPress={() => setVisible(true)}
+      style={{ justifyContent: 'center', alignItems: 'center' }}
+    >
       <Image source={helpInline} style={stylesheet.icon} />
       <Overlay isVisible={visible} overlayStyle={stylesheet.dialog} onBackdropPress={() => setVisible(false)}>
         <View>

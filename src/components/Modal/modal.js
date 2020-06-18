@@ -5,10 +5,10 @@ import {
   TouchableWithoutFeedback,
   SafeAreaView,
 } from 'react-native';
-import {useSelector, useDispatch} from 'react-redux';
-import {COLORS} from '@src/styles';
-import {modalSelector, modalLoadingSelector} from './modal.selector';
-import {actionToggleModal} from './modal.actions';
+import { useSelector, useDispatch } from 'react-redux';
+import { COLORS } from '@src/styles';
+import { modalSelector, modalLoadingSelector } from './modal.selector';
+import { actionToggleModal } from './modal.actions';
 import LoadingModal from './features/LoadingModal';
 
 const styled = StyleSheet.create({
@@ -19,7 +19,7 @@ const styled = StyleSheet.create({
   },
 });
 const ModalComponent = () => {
-  const {visible, data, shouldCloseModalWhenTapOverlay} = useSelector(
+  const { visible, data, shouldCloseModalWhenTapOverlay } = useSelector(
     modalSelector,
   );
   const {
@@ -30,12 +30,14 @@ const ModalComponent = () => {
   const dispatch = useDispatch();
   const handleToggle = async () =>
     shouldCloseModalWhenTapOverlay ? await dispatch(actionToggleModal()) : null;
+  const onRequestClose = async () => await dispatch(actionToggleModal());
   return (
     <Modal
       presentationStyle="overFullScreen"
       animationType="fade"
       visible={visible}
       transparent
+      onRequestClose={onRequestClose}
     >
       <TouchableWithoutFeedback onPress={handleToggle}>
         <SafeAreaView style={styled.container}>

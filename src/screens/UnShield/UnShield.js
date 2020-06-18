@@ -6,8 +6,9 @@ import { useSelector } from 'react-redux';
 import { useNavigation } from 'react-navigation-hooks';
 import { accountSeleclor, selectedPrivacySeleclor } from '@src/redux/selectors';
 import { isIOS } from '@src/utils/platform';
-import withUnShield from './UnShield.enhance';
+import { useBackHandler } from '@src/components/UseEffect';
 import { styled } from './UnShield.styled';
+import withUnShield from './UnShield.enhance';
 
 const UnShield = () => {
   const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
@@ -15,6 +16,7 @@ const UnShield = () => {
   const account = useSelector(accountSeleclor.defaultAccountSelector);
   const wallet = useSelector((state) => state?.wallet);
   const Wrapper = isIOS() ? KeyboardAvoidingView : View;
+  useBackHandler();
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <Wrapper

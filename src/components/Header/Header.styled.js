@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { FONT, COLORS } from '@src/styles';
+import { FONT, COLORS, UTILS } from '@src/styles';
 
 export const styled = StyleSheet.create({
   container: {
@@ -21,7 +21,6 @@ export const styledHeaderTitle = StyleSheet.create({
     fontSize: FONT.SIZE.medium,
     lineHeight: FONT.SIZE.medium + 4,
     color: COLORS.black,
-    flex: 1,
   },
   searchStyled: {
     textTransform: 'none',

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
-import { Image, TouchableOpacity, View, RoundCornerButton, Text } from '@components/core';
+import { Image, TouchableOpacity, View, RoundCornerButton, Text, RefreshControl, ScrollView } from '@components/core';
 import withFilter from '@screens/DexV2/components/Trade/filter.enhance';
 import {Divider} from 'react-native-elements';
 import downArrow from '@assets/images/icons/circle_arrow_down.png';
@@ -61,6 +61,9 @@ const Trade = ({
   quote,
   gettingQuote,
   isErc20,
+
+  isLoading,
+  onLoadPairs,
 }) => {
   const navigation = useNavigation();
   const navigateTradeConfirm = () => {
@@ -89,70 +92,84 @@ const Trade = ({
   };
 
   return (
-    <View style={styles.wrapper}>
-      <NewInput
-        tokens={pairTokens}
-        onSelectToken={onChangeInputToken}
-        onChange={onChangeInputText}
-        token={inputToken}
-        value={inputText}
-        disabled={inputBalance === null}
-        loading={inputBalance === null}
-        placeholder="0"
-      />
-      <Text style={styles.error}>{error}</Text>
-      <View style={styles.arrowWrapper}>
-        <Divider style={styles.divider} />
-        <TouchableOpacity onPress={onSwapTokens}>
-          <Image source={downArrow} style={styles.arrow} />
-        </TouchableOpacity>
-        <Divider style={styles.divider} />
-      </View>
-      <NewInput
-        tokens={outputList}
-        onSelectToken={onChangeOutputToken}
-        token={outputToken}
-        value={outputText}
-        disabled={inputBalance === null}
-        loading={gettingQuote}
-      />
-      <RoundCornerButton
-        style={styles.button}
-        title="Preview your order"
-        disabled={
-          !!error ||
+    <View style={styles.container}>
+      <ScrollView
+        style={styles.scrollContainer}
+        refreshControl={(
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={onLoadPairs}
+          />
+        )}
+      >
+        <View style={styles.wrapper}>
+          <NewInput
+            tokens={pairTokens}
+            onSelectToken={onChangeInputToken}
+            onChange={onChangeInputText}
+            token={inputToken}
+            value={inputText}
+            disabled={inputBalance === null}
+            loading={inputBalance === null}
+            placeholder="0"
+          />
+          <Text style={styles.error}>{error}</Text>
+          <View style={styles.arrowWrapper}>
+            <Divider style={styles.divider} />
+            <TouchableOpacity onPress={onSwapTokens}>
+              <Image source={downArrow} style={styles.arrow} />
+            </TouchableOpacity>
+            <Divider style={styles.divider} />
+          </View>
+          <NewInput
+            tokens={outputList}
+            onSelectToken={onChangeOutputToken}
+            token={outputToken}
+            value={outputText}
+            disabled={inputBalance === null}
+            loading={gettingQuote}
+          />
+          <RoundCornerButton
+            style={styles.button}
+            title="Preview your order"
+            disabled={
+              !!error ||
           !inputBalance ||
           !inputValue ||
           !outputValue ||
           !minimumAmount ||
           !inputText ||
           !!gettingQuote
-        }
-        onPress={navigateTradeConfirm}
-      />
-      { !!(inputToken && outputToken) && (
-        <View style={styles.extraInfo}>
-          <Balance token={inputToken} balance={inputBalance} />
-          <ExchangeRate
-            inputValue={inputValue}
-            outputValue={outputValue}
-            minimumAmount={minimumAmount}
-
-            inputToken={inputToken}
-            outputToken={outputToken}
-            quote={quote}
+            }
+            onPress={navigateTradeConfirm}
           />
-          {!!(!isErc20 && pair) && <PoolSize outputToken={outputToken} inputToken={inputToken} pair={pair} />}
-          <Powered network={isErc20 ? 'Kyber' : 'Incognito'} />
-          <ExtraInfo left={warning} right="" style={styles.warning} />
+          { !!(inputToken && outputToken) && (
+            <View style={styles.extraInfo}>
+              <Balance token={inputToken} balance={inputBalance} />
+              <ExchangeRate
+                inputValue={inputValue}
+                outputValue={outputValue}
+                minimumAmount={minimumAmount}
+
+                inputToken={inputToken}
+                outputToken={outputToken}
+                quote={quote}
+              />
+              {!!(!isErc20 && pair) && <PoolSize outputToken={outputToken} inputToken={inputToken} pair={pair} />}
+              <Powered network={isErc20 ? 'Kyber' : 'Incognito'} />
+              <ExtraInfo left={warning} right="" style={styles.warning} />
+            </View>
+          )}
         </View>
-      )}
-      {!!histories.length && (
-        <TouchableOpacity onPress={navigateHistory} style={styles.bottomFloatBtn}>
-          <Text style={styles.bottomText}>Order history</Text>
-          <ArrowRightGreyIcon style={{ marginLeft: 10 }} />
-        </TouchableOpacity>
-      )}
+      </ScrollView>
+      <View style={styles.bottomBar}>
+        {!!histories.length && (
+          <TouchableOpacity onPress={navigateHistory} style={styles.bottomFloatBtn}>
+            <Text style={styles.bottomText}>Order history</Text>
+            <ArrowRightGreyIcon style={{ marginLeft: 10 }} />
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 };

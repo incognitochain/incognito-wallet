@@ -1,20 +1,17 @@
 import React from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
-import { useSelector, useDispatch } from 'react-redux';
-import { withLayout_2 } from '@src/components/Layout';
+import { useDispatch, useSelector } from 'react-redux';
 import { compose } from 'recompose';
-import { actionFetchServers, actionFetchDevices } from './Setting.actions';
+import { withLayout_2 } from '@src/components/Layout';
+import { actionFetchServers } from './Setting.actions';
 import { settingSelector } from './Setting.selector';
 
 const enhance = (WrappedComp) => (props) => {
-  const { defaultServerId } = useSelector(settingSelector);
   const dispatch = useDispatch();
+  const { defaultServerId } = useSelector(settingSelector);
   React.useEffect(() => {
     dispatch(actionFetchServers());
   }, [defaultServerId]);
-  React.useEffect(() => {
-    dispatch(actionFetchDevices());
-  }, []);
   return (
     <ErrorBoundary>
       <WrappedComp {...props} />
@@ -22,4 +19,7 @@ const enhance = (WrappedComp) => (props) => {
   );
 };
 
-export default compose(enhance);
+export default compose(
+  withLayout_2,
+  enhance,
+);

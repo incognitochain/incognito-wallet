@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import { withLayout_2 } from '@src/components/Layout';
 import Header from '@src/components/Header';
 import { COLORS, FONT } from '@src/styles';
+import { useBackHandler } from '@src/components/UseEffect';
 
 const styled = StyleSheet.create({
   container: {
@@ -28,6 +29,7 @@ const styled = StyleSheet.create({
 });
 
 const WhyShield = props => {
+  useBackHandler();
   return (
     <View style={styled.container}>
       <Header title="Why Shield?" />

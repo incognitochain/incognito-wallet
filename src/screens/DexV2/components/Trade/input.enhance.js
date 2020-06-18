@@ -33,7 +33,7 @@ const withChangeInput = WrappedComp => (props) => {
         setInputValue(value);
       }
     }
-  }, [fee, feeToken, inputText]);
+  }, [fee, feeToken, inputText, inputToken]);
 
   return (
     <WrappedComp

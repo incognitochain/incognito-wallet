@@ -28,6 +28,13 @@ import BackupKeys from '@src/screens/BackupKeys';
 import Setting from '@screens/Setting';
 import ExportAccount from '@src/screens/Account/features/ExportAccount';
 import NetworkSetting from '@src/screens/NetworkSetting';
+import WhyUnshield from '@src/screens/UnShield/features/WhyUnshield';
+import ExportAccountModal from '@src/screens/Account/features/ExportAccount/ExportAccount.modal';
+import AddressBook from '@src/screens/AddressBook';
+import AddressBookForm from '@src/screens/AddressBook/AddressBook.form';
+import CoinInfo from '@screens/Wallet/features/CoinInfo';
+import Keychain from '@src/screens/Setting/features/Keychain';
+import CoinInfoVerify from '@src/screens/Wallet/features/CoinInfo/CoinInfo.verify';
 import routeNames from './routeNames';
 
 const routes = [
@@ -146,6 +153,34 @@ const routes = [
   {
     screen: NetworkSetting,
     name: routeNames.NetworkSetting,
+  },
+  {
+    screen: WhyUnshield,
+    name: routeNames.WhyUnshield,
+  },
+  {
+    screen: ExportAccountModal,
+    name: routeNames.ExportAccountModal,
+  },
+  {
+    screen: AddressBook,
+    name: routeNames.AddressBook,
+  },
+  {
+    screen: AddressBookForm,
+    name: routeNames.AddressBookForm,
+  },
+  {
+    screen: CoinInfo,
+    name: routeNames.CoinInfo,
+  },
+  {
+    screen: Keychain,
+    name: routeNames.Keychain,
+  },
+  {
+    screen: CoinInfoVerify,
+    name: routeNames.CoinInfoVerify,
   },
 ];
 

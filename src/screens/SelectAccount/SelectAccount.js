@@ -19,6 +19,7 @@ import { Toast, TouchableOpacity } from '@src/components/core';
 import { ExHandler } from '@src/services/exception';
 import includes from 'lodash/includes';
 import debounce from 'lodash/debounce';
+import { useBackHandler } from '@src/components/UseEffect';
 import { styled, itemStyled } from './SelectAccount.styled';
 
 const AccountItem = ({ accountName, PaymentAddress }) => {
@@ -93,6 +94,7 @@ const ListAccount = () => {
 };
 
 const SelectAccount = () => {
+  useBackHandler();
   return (
     <View style={styled.container}>
       <Header

@@ -2,6 +2,7 @@ import React from 'react';
 import { Image, StyleSheet } from 'react-native';
 import QrCodeSrc from '@src/assets/images/icons/qr_code.png';
 import { TouchableOpacity } from '@src/components/core';
+import PropTypes from 'prop-types';
 
 const styled = StyleSheet.create({
   icon: {
@@ -10,14 +11,20 @@ const styled = StyleSheet.create({
   },
 });
 
-const BtnQRCode = props => {
+const BtnQRCode = ({ source, ...rest }) => {
   return (
-    <TouchableOpacity {...props}>
-      <Image style={styled.icon} source={QrCodeSrc} />
+    <TouchableOpacity {...rest}>
+      <Image style={styled.icon} source={source} />
     </TouchableOpacity>
   );
 };
 
-BtnQRCode.propTypes = {};
+BtnQRCode.defaultProps = {
+  source: QrCodeSrc,
+};
+
+BtnQRCode.propTypes = {
+  source: PropTypes.string,
+};
 
 export default BtnQRCode;

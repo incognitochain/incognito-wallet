@@ -6,10 +6,6 @@ import { formValueSelector, isValid } from 'redux-form';
 import trim from 'lodash/trim';
 import PropTypes from 'prop-types';
 
-const validateAccountExist = () => 'Keychain name is exist!';
-
-const validatePrivateKeyExist = () => 'Keychain key is exist!';
-
 const isRequired = validator.required();
 
 const useAccount = (props) => {
@@ -31,16 +27,10 @@ const useAccount = (props) => {
   );
   const getAccountValidator = () => {
     const validate = [...validator.combinedAccountName];
-    // if (isAccountExist) {
-    //   validate.push(validateAccountExist);
-    // }
     return validate;
   };
   const getPrivateKeyValidator = () => {
     const validate = [isRequired];
-    // if (!!privateKey && isPrivateKeyExist) {
-    //   validate.push(validatePrivateKeyExist);
-    // }
     return validate;
   };
   return {

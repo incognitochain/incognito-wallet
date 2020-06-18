@@ -12,7 +12,7 @@ import replace from 'lodash/replace';
 import convert from '@src/utils/convert';
 import trim from 'lodash/trim';
 import { TouchableOpacity } from '@src/components/core';
-import { COLORS, UTILS } from '@src/styles';
+import { COLORS } from '@src/styles';
 import { followingTokenSelector } from '@src/redux/selectors/token';
 import { useSelector } from 'react-redux';
 import { styled } from './Token.styled';
@@ -49,11 +49,9 @@ export const NormalText = ({
 );
 
 export const Name = (props) => {
-  const { tokenProps } = React.useContext(TokenContext);
-  const { name = 'Sample Name', isVerified = false } =
-    tokenProps || defaultProps;
+  const { name = 'Sample Name', isVerified = false } = props;
   return (
-    <View style={styled.name}>
+    <View style={[styled.name, props?.styledContainerName]}>
       <NormalText text={name} style={[styled.boldText, props?.styledName]} />
       {isVerified && <TokenVerifiedIcon />}
     </View>
@@ -173,7 +171,7 @@ const TokenPairPRV = (props) => (
   <TouchableOpacity onPress={props?.onPress}>
     <View style={[styled.container, props?.style]}>
       <View style={[styled.extra, styled.extraTop]}>
-        <Name />
+        <Name {...props} />
         <Amount {...props} />
       </View>
       <View style={styled.extra}>
@@ -188,7 +186,7 @@ const TokenDefault = (props) => (
   <TouchableOpacity onPress={props?.onPress}>
     <View style={[styled.container, props?.style]}>
       <View style={styled.extra}>
-        <Name />
+        <Name {...props} />
         <Amount {...{ ...props, customStyle: styled.boldText }} />
       </View>
     </View>

@@ -16,14 +16,15 @@ const styled = StyleSheet.create({
   title: {
     color: COLORS.white,
     fontFamily: FONT.NAME.bold,
-    fontSize: FONT.SIZE.superMedium,
+    fontSize: FONT.SIZE.medium,
+    lineHeight: FONT.SIZE.medium + 3,
   },
   disabled: {
     backgroundColor: COLORS.colorGreyMedium,
   },
 });
 
-const ButtonBasic = props => {
+const ButtonBasic = (props) => {
   const {
     title = '',
     btnStyle = null,

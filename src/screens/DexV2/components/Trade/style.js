@@ -1,8 +1,16 @@
-import {COLORS, FONT} from '@src/styles';
+import { COLORS, FONT } from '@src/styles';
 import { StyleSheet } from 'react-native';
-import { isAndroid } from '@utils/platform';
+
+const bottomBarHeight = 50;
 
 export default StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollContainer: {
+    paddingBottom: bottomBarHeight,
+    marginBottom: 10,
+  },
   wrapper: {
     flex: 1,
     marginTop: 40,
@@ -39,15 +47,22 @@ export default StyleSheet.create({
     color: COLORS.orange,
   },
   bottomFloatBtn: {
-    position: 'absolute',
     flexDirection: 'row',
-    bottom: isAndroid() ? 80 : 20,
     justifyContent: 'center',
     alignItems: 'center',
-    right: 0,
   },
   bottomText: {
     color: COLORS.lightGrey16,
     ...FONT.STYLE.medium,
+  },
+  bottomBar: {
+    position: 'absolute',
+    bottom: 0,
+    backgroundColor: 'white',
+    height: bottomBarHeight,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    left: 0,
+    right: 0,
   },
 });

@@ -37,7 +37,7 @@ export const styled = StyleSheet.create({
   text: {
     fontFamily: FONT.NAME.medium,
     color: COLORS.colorGreyBold,
-    maxWidth: UTILS.screenWidth() / 2 - 30,
+    maxWidth: UTILS.screenWidth() / 2 - 50,
     fontSize: FONT.SIZE.medium,
     lineHeight: FONT.SIZE.medium + 4,
   },

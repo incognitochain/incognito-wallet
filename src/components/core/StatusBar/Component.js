@@ -44,13 +44,20 @@ const {
   ExportAccount,
   BackupKeys,
   Setting,
-  NetworkSetting,
   NodeHelp,
   AddNode,
   LinkDevice,
   AddSelfNode,
   Unstake,
-  NodeItemDetail
+  NodeItemDetail,
+  NetworkSetting,
+  WhyUnshield,
+  ExportAccountModal,
+  AddressBook,
+  AddressBookForm,
+  CoinInfo,
+  Keychain,
+  CoinInfoVerify,
 } = routeNames;
 
 const whiteScreens = [
@@ -93,7 +100,14 @@ const whiteScreens = [
   LinkDevice,
   AddSelfNode,
   Unstake,
-  NodeItemDetail
+  NodeItemDetail,
+  WhyUnshield,
+  ExportAccountModal,
+  AddressBook,
+  AddressBookForm,
+  CoinInfo,
+  Keychain,
+  CoinInfoVerify,
 ];
 const blue2Screens = [];
 const blue1Screens = [Node];

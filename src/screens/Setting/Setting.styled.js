@@ -7,7 +7,7 @@ export const settingStyle = StyleSheet.create({
   },
   extra: {
     flex: 1,
-    paddingHorizontal: 25,
+    marginTop: 22,
   },
   textVersion: {
     textAlign: 'center',
@@ -15,6 +15,7 @@ export const settingStyle = StyleSheet.create({
     fontSize: FONT.SIZE.small,
     lineHeight: FONT.SIZE.small + 3,
     color: COLORS.black,
+    marginBottom: 25,
   },
   btnBackup: {
     backgroundColor: COLORS.colorGrey,
@@ -26,9 +27,5 @@ export const settingStyle = StyleSheet.create({
     fontFamily: FONT.NAME.medium,
     fontSize: FONT.SIZE.regular,
     lineHeight: FONT.SIZE.regular + 3,
-  },
-  header: {
-    paddingHorizontal: 25,
-    marginBottom: 15,
   },
 });

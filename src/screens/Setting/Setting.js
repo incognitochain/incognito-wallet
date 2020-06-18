@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import PINSection from './features/PINSection';
 import SeparatorSection from './features/SeparatorSection';
 import DevSection from './features/DevSection';
-import AccountSection from './features/AccountSection';
 import { settingStyle } from './Setting.styled';
 import AddressBookSection from './features/AddressBookSection';
 import { SectionItem } from './features/Section';
@@ -18,23 +17,8 @@ import withSetting from './Setting.enhance';
 
 const Setting = () => {
   const navigation = useNavigation();
-  const { server, devices } = useSelector(settingSelector);
+  const { server } = useSelector(settingSelector);
   const sectionItemFactories = [
-    {
-      title: 'Create',
-      desc: 'Create a new keychain',
-      handlePress: () => navigation.navigate(routeNames.CreateAccount),
-    },
-    {
-      title: 'Import',
-      desc: 'Import an existing keychain',
-      handlePress: () => navigation.navigate(routeNames.ImportAccount),
-    },
-    {
-      title: 'Back up',
-      desc: 'Back up your private keys',
-      handlePress: () => navigation.navigate(routeNames.BackupKeys),
-    },
     {
       title: 'Network',
       desc: `${server?.name || 'Change default server'}`,
@@ -50,7 +34,6 @@ const Setting = () => {
     <View style={settingStyle.container}>
       <Header title="Settings" style={settingStyle.header} />
       <ScrollView>
-        <AccountSection devices={devices} />
         <View style={settingStyle.extra}>
           {sectionItemFactories.map((item, id) => (
             <SectionItem data={item} key={id} />

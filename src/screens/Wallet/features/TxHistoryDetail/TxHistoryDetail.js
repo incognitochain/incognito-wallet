@@ -7,7 +7,6 @@ import formatUtil from '@src/utils/format';
 import linkingService from '@src/services/linking';
 import { QrCodeAddressDefault } from '@src/components/QrCodeAddress';
 import { CopyIcon, OpenUrlIcon } from '@src/components/Icons';
-import { styled } from '@src/screens/SendCrypto/FrequentReceivers/FrequentReceivers.styled';
 import { ButtonBasic } from '@src/components/Button';
 import styleSheet from './styles';
 
@@ -68,7 +67,7 @@ const Hook = (props) => {
   if (copyable) {
     return (
       <TouchableOpacity
-        style={styled.rowTextTouchable}
+        style={styleSheet.rowTextTouchable}
         onPress={handleCopyText}
       >
         {renderComponent()}
@@ -77,7 +76,10 @@ const Hook = (props) => {
   }
   if (openUrl) {
     return (
-      <TouchableOpacity style={styled.rowTextTouchable} onPress={handleOpenUrl}>
+      <TouchableOpacity
+        style={styleSheet.rowTextTouchable}
+        onPress={handleOpenUrl}
+      >
         {renderComponent()}
       </TouchableOpacity>
     );

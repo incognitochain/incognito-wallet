@@ -6,7 +6,7 @@ import Text from '../Text';
 import styles from './style';
 
 let instance;
-const DURATION = 5000;
+const DURATION = 1500;
 
 class Toast extends Component {
   constructor(props) {
@@ -15,7 +15,7 @@ class Toast extends Component {
       animation: null,
       msg: null,
       config: {},
-      opacityAni: new Animated.Value(1)
+      opacityAni: new Animated.Value(1),
     };
   }
 
@@ -27,36 +27,42 @@ class Toast extends Component {
 
   static showSuccess(msg, config) {
     Toast.show(msg, {
-      ...typeof config === 'object' ? config : {},
-      icon: <Icon type='material' name='check' size={20} color={COLORS.white} />,
-      containerStyle: styles.successContainer
+      ...(typeof config === 'object' ? config : {}),
+      icon: (
+        <Icon type="material" name="check" size={20} color={COLORS.white} />
+      ),
+      containerStyle: styles.successContainer,
     });
   }
 
-  static showError(msg, config?) {
+  static showError(msg, config) {
     Toast.show(msg, {
-      duration: config?.duration || 10000,
-      ...typeof config === 'object' ? config : {},
-      icon: <Icon type='material' name='error' size={20} color={COLORS.white} />,
+      duration: config?.duration || DURATION,
+      ...(typeof config === 'object' ? config : {}),
+      icon: (
+        <Icon type="material" name="error" size={20} color={COLORS.white} />
+      ),
       containerStyle: styles.errorContainer,
     });
   }
 
-  static showInfo(msg, config?) {
+  static showInfo(msg, config) {
     Toast.show(msg, {
-      icon: <Icon type='material' name='info' size={20} color={COLORS.white} />,
+      icon: <Icon type="material" name="info" size={20} color={COLORS.white} />,
       containerStyle: styles.infoContainer,
-      ...typeof config === 'object' ? config : {},
+      ...(typeof config === 'object' ? config : {}),
     });
   }
 
-  static showWarning(msg, config?) {
+  static showWarning(msg, config) {
     Toast.show(msg, {
-      ...typeof config === 'object' ? config : {},
-      icon: <Icon type='material' name='warning' size={20} color={COLORS.dark1} />,
+      ...(typeof config === 'object' ? config : {}),
+      icon: (
+        <Icon type="material" name="warning" size={20} color={COLORS.dark1} />
+      ),
       closeIconProps: { color: COLORS.dark1 },
       containerStyle: styles.warningContainer,
-      messageStyle: styles.warningMessage
+      messageStyle: styles.warningMessage,
     });
   }
 
@@ -66,7 +72,7 @@ class Toast extends Component {
 
   handleClose = () => {
     this.setState({ animation: null, msg: null });
-  }
+  };
 
   show = (msg, config = {}) => {
     const { opacityAni, animation } = this.state;
@@ -77,37 +83,34 @@ class Toast extends Component {
       animation.stop();
     }
 
-    this.setState({
-      msg,
-      config: config || {}
-    }, () => {
-      const animation = Animated.sequence([
-        Animated.timing(
-          opacityAni,
-          {
+    this.setState(
+      {
+        msg,
+        config: config || {},
+      },
+      () => {
+        const animation = Animated.sequence([
+          Animated.timing(opacityAni, {
             toValue: 1,
             duration: 300,
-          }
-        ),
-        Animated.delay(config?.duration),
-        Animated.timing(
-          opacityAni,
-          {
+          }),
+          Animated.delay(config?.duration),
+          Animated.timing(opacityAni, {
             toValue: 0,
             duration: 200,
+          }),
+        ]);
+
+        animation.start(({ finished }) => {
+          if (finished) {
+            this.setState({ msg: null });
           }
-        )
-      ]);
+        });
 
-      animation.start(({ finished}) => {
-        if (finished) {
-          this.setState({ msg: null });
-        }
-      });
-
-      this.setState({ animation });
-    });
-  }
+        this.setState({ animation });
+      },
+    );
+  };
 
   render() {
     const { msg, config, opacityAni } = this.state;
@@ -115,27 +118,28 @@ class Toast extends Component {
     if (msg) {
       return (
         <Animated.View
-          style={
-            [
-              styles.container,
-              config?.containerStyle,
-              {
-                opacity: opacityAni
-              }
-            ]
-          }
-        > 
-          <Icon onPress={this.handleClose} type='material' name='cancel' size={14} color={COLORS.white} containerStyle={styles.closeBtn} {...config?.closeIconProps || {}} />
+          style={[
+            styles.container,
+            config?.containerStyle,
+            {
+              opacity: opacityAni,
+            },
+          ]}
+        >
+          <Icon
+            onPress={this.handleClose}
+            type="material"
+            name="cancel"
+            size={14}
+            color={COLORS.white}
+            containerStyle={styles.closeBtn}
+            {...(config?.closeIconProps || {})}
+          />
           {config?.icon}
           <Text
             numberOfLines={10}
-            ellipsizeMode='tail'
-            style={
-              [
-                styles.message,
-                config?.messageStyle,
-              ]
-            }
+            ellipsizeMode="tail"
+            style={[styles.message, config?.messageStyle]}
           >
             {msg}
           </Text>
@@ -148,4 +152,3 @@ class Toast extends Component {
 }
 
 export default Toast;
- 

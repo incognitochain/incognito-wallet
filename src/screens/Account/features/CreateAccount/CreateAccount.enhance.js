@@ -9,7 +9,6 @@ import { actionFetchCreateAccount } from '@src/redux/actions/account';
 import trim from 'lodash/trim';
 import { ExHandler, CustomError, ErrorCode } from '@src/services/exception';
 import { Keyboard } from 'react-native';
-import { reset } from 'redux-form';
 import { formCreateAccount } from './CreateAccount';
 
 const enhance = (WrappedComponent) => (props) => {

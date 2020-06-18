@@ -21,3 +21,4 @@ export { default as BtnScanQrCode } from './BtnScanQrCode';
 export { default as BtnOpenUrl } from './BtnOpenUrl';
 export { default as BtnExport } from './BtnExport';
 export { default as BtnCopy } from './BtnCopy';
+export { default as BtnInfo } from './BtnInfo';

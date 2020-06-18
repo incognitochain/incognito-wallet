@@ -23,21 +23,6 @@ import { isStakeAccount } from '@screens/Stake/stake.utils';
 import { settingSelector } from '@screens/Setting/Setting.selector';
 import { accountSection } from './AccountSection.styled';
 
-let lastAccount;
-let clickedTime = 0;
-
-function isDev(account) {
-  if (lastAccount !== account) {
-    clickedTime = 0;
-  }
-  lastAccount = account;
-  clickedTime++;
-
-  if (clickedTime === 7) {
-    global.isDEV = true;
-  }
-}
-
 function isNodeAccount(name, devices) {
   return devices.find(
     (device) => device.IsPNode && device.AccountName === name,
@@ -75,7 +60,7 @@ const createItem = (
     >
       <TouchableOpacity
         style={accountSection.name}
-        onPress={() => onSwitch(account) && isDev(account)}
+        onPress={() => onSwitch(account)}
       >
         <Text
           numberOfLines={1}

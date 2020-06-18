@@ -13,13 +13,13 @@ const _styled = StyleSheet.create({
   },
 });
 
-const TokenBasic = props => {
+const TokenBasic = (props) => {
   const { onPress, style, showBalance, shouldShowFollowed } = props;
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={[styled.container, style]}>
-        <View style={[styled.extra]}>
-          <Name styledName={_styled.styledName} />
+        <View style={[styled.extra, styled.extraTop]}>
+          <Name styledName={_styled.styledName} {...props} />
           {showBalance && (
             <Amount {...{ ...props, customStyle: styled.boldText }} />
           )}

@@ -32,7 +32,7 @@ const enhance = (WrappedComp) => (props) => {
   });
   const { isReloading } = state;
   const navigation = useNavigation();
-  const getFollowingToken = async (shouldLoadBalance) => {
+  const getFollowingToken = async (shouldLoadBalance = true) => {
     try {
       await setState({ isReloading: true });
       await dispatch(actionReloadFollowingToken(shouldLoadBalance));

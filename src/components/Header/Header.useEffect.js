@@ -4,17 +4,17 @@ import { searchBoxConfig } from '@src/components/Header/Header.searchBox';
 import { useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import PropTypes from 'prop-types';
-import lowerCase from 'lodash/lowerCase';
+import toLower from 'lodash/toLower';
 
-export const useSearchBox = props => {
+export const useSearchBox = (props) => {
   const { data, handleFilter } = props;
   const initialState = {
     result: [],
   };
   const selector = formValueSelector(searchBoxConfig.form);
-  const keySearch = lowerCase(
+  const keySearch = toLower(
     (
-      useSelector(state => selector(state, searchBoxConfig.searchBox)) || ''
+      useSelector((state) => selector(state, searchBoxConfig.searchBox)) || ''
     ).trim(),
   );
   const [state, setState] = React.useState(initialState);

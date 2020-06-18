@@ -7,14 +7,18 @@ import { withLayout_2 } from '@src/components/Layout';
 import SendForm from '@screens/SendCrypto/SendIn';
 import { useNavigation } from 'react-navigation-hooks';
 import { isIOS } from '@src/utils/platform';
+import routeNames from '@src/router/routeNames';
+import { useBackHandler } from '@src/components/UseEffect';
 import { styled } from './Send.styled';
 
-const Send = props => {
+const Send = () => {
   const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
   const navigation = useNavigation();
   const account = useSelector(accountSeleclor.defaultAccountSelector);
-  const wallet = useSelector(state => state?.wallet);
+  const wallet = useSelector((state) => state?.wallet);
   const Wrapper = isIOS() ? KeyboardAvoidingView : View;
+  const onGoBack = () => navigation.navigate(routeNames.WalletDetail);
+  useBackHandler({ onGoBack });
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <Wrapper
@@ -27,6 +31,7 @@ const Send = props => {
           titleStyled={styled.headerTitle}
           title={`Send ${selectedPrivacy?.externalSymbol ||
             selectedPrivacy?.symbol}`}
+          onGoBack={onGoBack}
         />
         <SendForm
           navigation={navigation}

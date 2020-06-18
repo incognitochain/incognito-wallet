@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { FONT, COLORS } from '@src/styles';
+import { FONT, COLORS, UTILS } from '@src/styles';
 
 export const styled = StyleSheet.create({
   container: { flex: 1 },
@@ -13,6 +13,13 @@ export const styled = StyleSheet.create({
     color: COLORS.black,
     fontSize: FONT.SIZE.regular - 1,
     fontFamily: FONT.NAME.medium,
+  },
+  btnInfo: {
+    width: 30,
+    alignItems: 'center',
+  },
+  headerTitleStyle: {
+    maxWidth: UTILS.deviceWidth() / 2,
   },
 });
 

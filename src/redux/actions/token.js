@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import type from '@src/redux/types/token';
 import {
   accountSeleclor,
@@ -14,15 +15,11 @@ import {
   loadAccountHistory,
   normalizeData,
 } from '@src/redux/utils/token';
-// eslint-disable-next-line import/no-cycle
-// import { getBalance as getAccountBalance } from '@src/redux/actions/account';
-import { CONSTANT_COMMONS } from '@src/constants';
+import { getBalance as getAccountBalance } from '@src/redux/actions/account';
 import internalTokenModel from '@models/token';
-// eslint-disable-next-line import/no-cycle
 import { setWallet } from './wallet';
 import {
   followingTokenSelector,
-  tokensFollowedSelector,
   isTokenFollowedSelector,
 } from '../selectors/token';
 
@@ -108,12 +105,9 @@ export const getBalanceFinish = (tokenSymbol) => ({
   data: tokenSymbol,
 });
 
-export const getBalance = (
-  token = throw new Error('Token object is required'),
-) => async (dispatch, getState) => {
-  
+export const getBalance = (token) => async (dispatch, getState) => {
   if (!token) {
-    return;
+    throw new Error('Token object is required');
   }
   try {
     await dispatch(getBalanceStart(token?.id));
@@ -132,7 +126,6 @@ export const getBalance = (
         amount: balance,
       }),
     );
-
     return balance;
   } catch (e) {
     dispatch(
@@ -299,6 +292,7 @@ export const actionFetchHistoryMainCrypto = () => async (
   try {
     const state = getState();
     const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
+    const account = accountSeleclor.defaultAccountSelector(state);
     const { isFetching } = tokenSeleclor.historyTokenSelector(state);
     if (isFetching || !selectedPrivacy?.tokenId) {
       return;
@@ -308,7 +302,7 @@ export const actionFetchHistoryMainCrypto = () => async (
     if (selectedPrivacy?.isMainCrypto) {
       const [accountHistory] = await new Promise.all([
         dispatch(loadAccountHistory()),
-        dispatch(getBalance(CONSTANT_COMMONS.PRV.id)),
+        dispatch(getAccountBalance(account)),
       ]);
       histories = normalizeData(
         accountHistory,

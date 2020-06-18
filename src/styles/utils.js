@@ -1,4 +1,5 @@
 import { Dimensions } from 'react-native';
+import { scale, verticalScale } from 'react-native-size-matters';
 
 const deviceWidth = () => Dimensions.get('screen').width;
 
@@ -13,4 +14,6 @@ export default {
   deviceHeight,
   screenHeight,
   screenWidth,
+  heightScale: verticalScale,
+  widthScale: scale,
 };

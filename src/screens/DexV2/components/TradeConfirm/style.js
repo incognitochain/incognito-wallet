@@ -1,9 +1,9 @@
-import {COLORS, FONT} from '@src/styles';
+import  {COLORS, FONT, UTILS } from '@src/styles';
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   button: {
-    marginVertical: 50,
+    marginVertical: UTILS.heightScale(38),
   },
   buttonTitle: {
     fontSize: 20,
@@ -15,10 +15,11 @@ export default StyleSheet.create({
   bigText: {
     color: COLORS.blue5,
     fontSize: 40,
+    lineHeight: 55,
     ...FONT.STYLE.bold,
   },
   mainInfo: {
-    marginVertical: 50,
+    marginVertical: UTILS.heightScale(38),
   },
   bold: {
     ...FONT.STYLE.bold,

@@ -30,7 +30,7 @@ const Form = createForm(formName, {
   },
 });
 
-const EstimateFeeInput = props => {
+const EstimateFeeInput = (props) => {
   const { types, isFetching, isFetched } = useSelector(estimateFeeSelector);
   const {
     fee,
@@ -40,6 +40,7 @@ const EstimateFeeInput = props => {
     isUseTokenFee,
     feePrvText,
     feePTokenText,
+    feePDecimals,
   } = useSelector(feeDataSelector);
   const [state, setState] = React.useState({
     minFeeValidator: null,
@@ -47,13 +48,14 @@ const EstimateFeeInput = props => {
   });
   const dispatch = useDispatch();
   const { minFeeValidator, maxFeeValidator } = state;
-  const onChangeFee = async value => {
+  const onChangeFee = async (value) => {
     try {
       dispatch(change(formName, 'fee', value));
       dispatch(
         actionChangeFee({
-          field: isUseTokenFee ? 'feePTokenText' : 'feePrvText',
           value,
+          isUseTokenFee,
+          feePDecimals,
         }),
       );
     } catch (error) {
@@ -112,7 +114,7 @@ const EstimateFeeInput = props => {
 
 EstimateFeeInput.propTypes = {};
 
-const SupportFeeItem = props => {
+const SupportFeeItem = (props) => {
   const {
     tokenId = null,
     symbol = null,
@@ -147,7 +149,7 @@ const SupportFees = () => {
   if (types.length === 0) {
     return;
   }
-  const onChangeTypeFee = async type => {
+  const onChangeTypeFee = async (type) => {
     await dispatch(actionChangeFeeType(type?.tokenId));
     if (typeof type?.onChangeFee === 'function') {
       type?.onChangeFee(type);

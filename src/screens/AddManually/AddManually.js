@@ -6,6 +6,9 @@ import AddBep2Token from '@src/components/AddBep2Token';
 import Icons from 'react-native-vector-icons/Fontisto';
 import Header from '@src/components/Header';
 import PureModal from '@src/components/Modal/features/PureModal';
+import { useNavigation } from 'react-navigation-hooks';
+import routeNames from '@src/router/routeNames';
+import { useBackHandler } from '@src/components/UseEffect';
 import styles from './AddManually.styled';
 import withAddManually, {
   AddManuallyContext,
@@ -36,9 +39,15 @@ const SelectType = () => {
 };
 
 const ModalSelectType = () => {
-  const { isShowChooseType } = React.useContext(AddManuallyContext);
+  const { isShowChooseType, toggleChooseType } = React.useContext(
+    AddManuallyContext,
+  );
   return (
-    <PureModal visible={isShowChooseType} content={<AddManuallyModal />} />
+    <PureModal
+      visible={isShowChooseType}
+      content={<AddManuallyModal />}
+      onRequestClose={toggleChooseType}
+    />
   );
 };
 

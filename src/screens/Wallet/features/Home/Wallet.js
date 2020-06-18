@@ -20,6 +20,7 @@ import Tooltip from '@src/components/Tooltip/Tooltip';
 import { COLORS } from '@src/styles';
 import isNaN from 'lodash/isNaN';
 import { TouchableOpacity } from '@src/components/core';
+import { useBackHandler } from '@src/components/UseEffect';
 import {
   styled,
   styledHook,
@@ -184,12 +185,12 @@ const Extra = () => {
     <View style={extraStyled.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        refreshControl={
+        refreshControl={(
           <RefreshControl
             refreshing={isReloading}
             onRefresh={() => fetchData(true)}
           />
-        }
+        )}
       >
         <Balance />
         <GroupButton />
@@ -216,13 +217,15 @@ const RightHeader = () => {
 
 const Wallet = () => {
   const navigation = useNavigation();
+  const onGoBack = () => navigation.navigate(routeNames.Home);
+  useBackHandler({ onGoBack });
   return (
     <View style={[styled.container]}>
       <Header
         title="Assets"
         rightHeader={<RightHeader />}
         style={styled.hook}
-        onGoBack={() => navigation.navigate(routeNames.Home)}
+        onGoBack={onGoBack}
       />
       <Extra />
     </View>

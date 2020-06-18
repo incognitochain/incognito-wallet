@@ -1,21 +1,26 @@
-import CopiableText from '@src/components/CopiableText';
-import { ScrollView } from '@src/components/core';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
-import { Modal, TouchableWithoutFeedback, Text, View } from 'react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
 import clipboard from '@src/services/clipboard';
-import QrCodeGenerate from '@src/components/QrCodeGenerate';
 import { BtnQRCode, BtnCopy } from '@src/components/Button';
 import Header from '@src/components/Header';
-import styleSheet from './ExportAccount.styled';
+import srcQrCodeLight from '@src/assets/images/icons/qr_code_light.png';
+import { useNavigation } from 'react-navigation-hooks';
+import routeNames from '@src/router/routeNames';
+import { ScrollView } from '@src/components/core';
 import withExportAccount from './ExportAccount.enhance';
+import styleSheet from './ExportAccount.styled';
 
 const ExportItem = ({ label, data, onPress, onPressQRCode }) => (
   <View onPress={onPress} style={styleSheet.itemContainer}>
     <View style={styleSheet.extra}>
       <Text style={styleSheet.label}>{label}</Text>
       <View style={styleSheet.hook}>
-        <BtnQRCode style={styleSheet.qrCode} onPress={onPressQRCode} />
+        <BtnQRCode
+          style={styleSheet.qrCode}
+          onPress={onPressQRCode}
+          source={srcQrCodeLight}
+        />
         <BtnCopy onPress={onPress} />
       </View>
     </View>
@@ -26,77 +31,30 @@ const ExportItem = ({ label, data, onPress, onPressQRCode }) => (
 );
 
 const ExportAccount = ({ account, token, title }) => {
-  const [isShowQRCodeKey, setShowQRCodeKey] = useState(false);
-  const [itemQRCode, setItemQRCode] = useState('');
-  const [lableQRCode, setLableQRCode] = useState('');
-
+  const navigation = useNavigation();
   const parseShard = (bytes) => {
     const arr = bytes.split(',');
     const lastByte = arr[arr.length - 1];
     return (lastByte % 8).toString();
   };
-  const renderQRCode = () => {
-    let data =
-      (itemQRCode && typeof itemQRCode === 'string' && itemQRCode) || '';
-    let title = (lableQRCode && lableQRCode) || '';
-    return (
-      <Modal
-        transparent
-        animated
-        animationType="bounceIn"
-        visible={isShowQRCodeKey}
-        onRequestClose={() => {
-          console.log('close modal');
-          setShowQRCodeKey(false);
-        }}
-      >
-        <TouchableWithoutFeedback
-          onPress={() => {
-            setShowQRCodeKey(false);
-          }}
-          style={styleSheet.modalContainer}
-        >
-          <View style={styleSheet.modalBackground}>
-            <View style={styleSheet.modalContent}>
-              <Text style={[styleSheet.itemLabel, styleSheet.title]}>
-                {title}
-              </Text>
-              <QrCodeGenerate value={data} size={100} />
-              <CopiableText
-                oneLine
-                showCopyIcon
-                containerProps={{
-                  style: [styleSheet.textBox],
-                }}
-                textProps={{
-                  numberOfLines: 1,
-                  ellipsizeMode: 'middle',
-                }}
-                text={data}
-              />
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-    );
-  };
-
   const renderItem = (label, value) =>
     value ? (
       <ExportItem
         label={label}
         data={value}
-        onPressQRCode={() => {
-          setItemQRCode(value);
-          setLableQRCode(label);
-          setShowQRCodeKey(true);
-        }}
+        onPressQRCode={() =>
+          navigation.navigate(routeNames.ExportAccountModal, {
+            params: {
+              value,
+              label,
+            },
+          })
+        }
         onPress={() => {
           clipboard.set(value, { copiedMessage: `${label} was copied.` });
         }}
       />
     ) : null;
-
   return (
     <View style={styleSheet.container}>
       <Header title={title} />
@@ -114,7 +72,6 @@ const ExportAccount = ({ account, token, title }) => {
           {__DEV__ || global.isDEV
             ? renderItem('Shard', parseShard(account?.PublicKeyBytes))
             : null}
-          {renderQRCode()}
         </ScrollView>
       </View>
     </View>

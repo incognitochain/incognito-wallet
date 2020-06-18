@@ -5,29 +5,50 @@ import React from 'react';
 import isEqual from 'lodash/isEqual';
 import { networkItemStyle } from './NetworkSetting.styled';
 
-const NetworkItem = ({ active, network, onActive }) => (
-  <TouchableOpacity
-    onPress={
-      (__DEV__ || !!global.isDEV) && !isEqual(network?.id, 'local') && onActive
-    }
-  >
-    <View style={[networkItemStyle.container, active && networkItemStyle.activeItem]}>
-      <View style={networkItemStyle.circle} />
-      <View style={networkItemStyle.textInfoContainer}>
-        <Text
-          style={networkItemStyle.networkName}
-          numberOfLines={1}
-          ellipsizeMode="tail"
-        >
-          {network?.name}
-        </Text>
-        <Text style={networkItemStyle.networkAddr} numberOfLines={1} ellipsizeMode="tail">
-          {network?.address}
-        </Text>
+const NetworkItem = ({ active, network, onActive }) => {
+  const [clickTime, setClickTime] = React.useState(0);
+  return (
+    <TouchableOpacity
+      onPress={() => {
+        const currClickTime = clickTime + 1;
+        setClickTime(currClickTime);
+        if (currClickTime === 7) {
+          global.isDEV = true;
+        } else if (
+          (__DEV__ || !!global.isDEV) &&
+          !isEqual(network?.id, 'local')
+        ) {
+          onActive();
+        }
+      }}
+    >
+      <View
+        style={[
+          networkItemStyle.container,
+          active && networkItemStyle.activeItem,
+        ]}
+      >
+        <View style={networkItemStyle.circle} />
+        <View style={networkItemStyle.textInfoContainer}>
+          <Text
+            style={networkItemStyle.networkName}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {network?.name}
+          </Text>
+          <Text
+            style={networkItemStyle.networkAddr}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {network?.address}
+          </Text>
+        </View>
       </View>
-    </View>
-  </TouchableOpacity>
-);
+    </TouchableOpacity>
+  );
+};
 
 export const networkItemShape = PropTypes.shape({
   id: PropTypes.string,

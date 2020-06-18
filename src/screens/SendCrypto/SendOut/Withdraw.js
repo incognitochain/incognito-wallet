@@ -42,6 +42,7 @@ import { selectedPrivacySeleclor } from '@src/redux/selectors';
 import format from '@src/utils/format';
 import floor from 'lodash/floor';
 import Receipt from '@src/components/Receipt';
+import { actionFetchFeeByMax } from '@src/components/EstimateFee/EstimateFee.actions';
 import style from './style';
 
 export const formName = 'withdraw';
@@ -144,24 +145,20 @@ class Withdraw extends React.Component {
     try {
       const { amount, toAddress, memo } = values;
       const { fee, isUsedPRVFee, rate, feePDecimals, feeUnit } = feeData;
-      const originalAmount = floor(
-        convertUtil.toOriginalAmount(
-          convertUtil.toNumber(amount, true),
-          selectedPrivacy?.pDecimals,
-        ),
+      const amountToNumber = convertUtil.toNumber(amount, true);
+      const originalAmount = convertUtil.toOriginalAmount(
+        amountToNumber,
+        selectedPrivacy?.pDecimals,
+        false,
       );
-      const originalFee = floor(
-        convertUtil.toOriginalAmount(
-          convertUtil.toNumber(fee, true),
-          feePDecimals,
-        ) / rate,
-      );
-      const _fee = format.amountFull(originalFee, feePDecimals);
+      const _originalAmount = floor(originalAmount);
+      const originalFee = floor(fee / rate);
+      const _fee = format.amountFull(originalFee * rate, feePDecimals);
       const feeForBurn = originalFee;
       const remoteAddress = toAddress;
       const payload = {
         amount,
-        originalAmount,
+        originalAmount: _originalAmount,
         remoteAddress,
         isUsedPRVFee,
         originalFee,
@@ -184,7 +181,7 @@ class Withdraw extends React.Component {
               {...{
                 ...res,
                 originalAmount,
-                fee,
+                fee: _fee,
                 feeUnit,
                 title: 'Sent.',
                 toAddress,
@@ -335,6 +332,13 @@ class Withdraw extends React.Component {
     }
   };
 
+  onPressMax = async () => {
+    const { actionFetchFeeByMax, rfChange, rfFocus } = this.props;
+    const maxAmountText = await actionFetchFeeByMax();
+    rfChange(formName, 'amount', maxAmountText);
+    rfFocus(formName, 'amount');
+  };
+
   render() {
     const { maxAmountValidator, minAmountValidator } = this.state;
     const {
@@ -344,7 +348,6 @@ class Withdraw extends React.Component {
       rfFocus,
       onShowFrequentReceivers,
       rfChange,
-      feeData,
     } = this.props;
     const { externalSymbol, isErc20Token } = selectedPrivacy || {};
     const addressValidator = this.getAddressValidator(
@@ -354,7 +357,6 @@ class Withdraw extends React.Component {
     let isETH =
       isErc20Token || externalSymbol === CONSTANT_COMMONS.CRYPTO_SYMBOL.ETH;
     let { shouldBlockETHWrongAddress } = this.state;
-    const { maxAmountText } = feeData;
     return (
       <View style={style.container}>
         <Form>
@@ -369,13 +371,9 @@ class Withdraw extends React.Component {
                 name="amount"
                 label="Amount"
                 placeholder="0.0"
-                maxValue={maxAmountText}
                 componentProps={{
                   keyboardType: 'decimal-pad',
-                  onPressMax: () => {
-                    rfChange(formName, 'amount', maxAmountText);
-                    rfFocus(formName, 'amount');
-                  },
+                  onPressMax: this.onPressMax,
                 }}
                 validate={[
                   ...validator.combinedAmount,
@@ -419,26 +417,25 @@ class Withdraw extends React.Component {
                   address.
                 </Text>
               )}
-              {(detectToken.ispBNB(selectedPrivacy?.tokenId) ||
-                selectedPrivacy?.isBep2Token ||
-                selectedPrivacy?.currencyType === 5) && (
-                <View style={style.memoContainer}>
-                  <Field
-                    component={InputQRField}
-                    name="memo"
-                    label="Memo (optional)"
-                    placeholder="Enter a memo"
-                    style={style.input}
-                    validate={memoMaxLength}
-                    maxLength={125}
-                    inputStyle={style.memoInput}
-                  />
-                  <Text style={style.memoText}>
-                    * For withdrawals to wallets on exchanges (e.g. Binance,
-                    etc.), enter your memo to avoid loss of funds.
-                  </Text>
-                </View>
-              )}
+              {selectedPrivacy?.isBep2Token ||
+                (selectedPrivacy?.currencyType === 4 && (
+                  <View style={style.memoContainer}>
+                    <Field
+                      component={InputQRField}
+                      name="memo"
+                      label="Memo (optional)"
+                      placeholder="Enter a memo"
+                      style={style.input}
+                      validate={memoMaxLength}
+                      maxLength={125}
+                      inputStyle={style.memoInput}
+                    />
+                    <Text style={style.memoText}>
+                      * For withdrawals to wallets on exchanges (e.g. Binance,
+                      etc.), enter your memo to avoid loss of funds.
+                    </Text>
+                  </View>
+                ))}
               <EstimateFee
                 amount={
                   isFormValid && !shouldBlockETHWrongAddress ? amount : null
@@ -496,6 +493,7 @@ Withdraw.propTypes = {
   rfFocus: PropTypes.func.isRequired,
   rfReset: PropTypes.func.isRequired,
   onShowFrequentReceivers: PropTypes.func.isRequired,
+  actionFetchFeeByMax: PropTypes.func.isRequired,
 };
 
 const mapState = (state) => ({
@@ -512,6 +510,7 @@ const mapDispatch = {
   rfFocus: focus,
   rfReset: reset,
   actionToggleModal,
+  actionFetchFeeByMax,
 };
 
 export default connect(

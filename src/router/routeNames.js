@@ -70,5 +70,12 @@ export default {
   TradeHistory: 'TradeHistory',
   TradeHistoryDetail: 'TradeHistoryDetail',
   TradeConfirm: 'TradeConfirm',
-  NodeItemDetail: 'NodeItemDetail'
+  NodeItemDetail: 'NodeItemDetail',
+  WhyUnshield: 'WhyUnshield',
+  ExportAccountModal: 'ExportAccountModal',
+  AddressBook: 'AddressBook',
+  AddressBookForm: 'AddressBookForm',
+  CoinInfo: 'CoinInfo',
+  Keychain: 'Keychain',
+  CoinInfoVerify: 'CoinInfoVerify'
 };

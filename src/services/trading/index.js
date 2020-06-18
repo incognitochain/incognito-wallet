@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {get0xQuote, get0xTokens,} from '@services/trading/0x';
 import {CONSTANT_COMMONS, CONSTANT_CONFIGS, TRADING} from '@src/constants';
-import http from '@src/services/thttp';
+import http from '@src/services/http';
 import {getKyberQuote, getKyberTokens} from '@services/trading/kyber';
 import BigNumber from 'bignumber.js';
 import convertUtils from '@utils/convert';

@@ -16,10 +16,10 @@ const styled = StyleSheet.create({
   },
 });
 
-const TokenVerified = ({ style, containerStyled }) => {
+const TokenVerified = ({ style, containerStyled, sourceIcon }) => {
   return (
     <View style={[styled.container, containerStyled]}>
-      <Image style={[styled.icon, style]} source={srcIcon} />
+      <Image style={[styled.icon, style]} source={sourceIcon} />
     </View>
   );
 };
@@ -27,11 +27,13 @@ const TokenVerified = ({ style, containerStyled }) => {
 TokenVerified.defaultProps = {
   style: null,
   containerStyled: null,
+  sourceIcon: srcIcon,
 };
 
 TokenVerified.propTypes = {
   style: PropTypes.object,
   containerStyled: PropTypes.object,
+  sourceIcon: PropTypes.string,
 };
 
 export default TokenVerified;
