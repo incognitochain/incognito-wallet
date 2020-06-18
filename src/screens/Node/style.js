@@ -108,7 +108,19 @@ const style = StyleSheet.create({
     fontFamily: FONT.NAME.specialRegular,
     fontSize: 20,
     color: COLORS.colorGreyBold,
-  }
+  },
+  balanceContainer: {
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    alignContent: 'center' 
+  },
+  balanceUpdate: {
+    color: 'black', 
+    alignSelf: 'center', 
+    textAlign: 'center', 
+    fontSize: FONT.FONT_SIZES.avgLarge, 
+    fontFamily: FONT.NAME.semiBold
+  },
 });
 
 export default style;

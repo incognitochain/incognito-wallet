@@ -30,6 +30,10 @@ class PNode extends React.Component {
       showUpdateFirmware: false,
     };
     this.removeDevice = _.debounce(props.onRemoveDevice, 100);
+    
+  }
+  componentDidMount(){
+    const { item, isFetching, allTokens, onImportAccount, onStake, onUnstake } = this.props;
   }
 
   getDescriptionStatus = () => {
@@ -170,13 +174,13 @@ class PNode extends React.Component {
   }
   // Only for test
   getColorStatus = (item) => {
-    const isUnstaking = item?.StakerAddress ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
+    const isUnstaking = item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
     // Unstaking
     if (isUnstaking) {
       return COLORS.orange;
     }
     // Online
-    if (item?.IsOnline) {
+    if (item?.IsOnline && item?.IsWorking) {
       return COLORS.blue4;
     }
     // Offline
@@ -187,18 +191,41 @@ class PNode extends React.Component {
     return COLORS.green;
   }
   render() {
-    const { item, isFetching, allTokens } = this.props;
+    const { item, isFetching, allTokens, onImportAccount, onStake, onUnstake, onWithdraw } = this.props;
     const labelName = item.Name;
 
     // Check if device is unstaking, need to stake
-    const unstakedPNode = item?.Unstaked;
-    const hasStaked = item?.Staked;
+    const unstakedPNode = item.Unstaked;
+    
+    const hasStaked = item.Staked;
 
+    // Check account not imported
+    const hasAccount = item?.AccountName;
+    
     return (
       <View style={styles.container}>
         {isFetching ? <Loader /> : (
           <>
-            <TouchableOpacity style={[styles.row]} onPress={() => NavigationService.navigate(routeNames.NodeItemDetail, { device: item })}>
+            <TouchableOpacity
+              style={[styles.row]}
+              onPress={() => NavigationService.navigate(routeNames.NodeItemDetail, 
+                {
+                  stake: !hasStaked && unstakedPNode, 
+                  hasAccount: hasAccount, 
+                  allTokens: allTokens, 
+                  deviceName: item.Name, 
+                  ip: item.Host, 
+                  rewards: item.Rewards, 
+                  onUnstake: onUnstake, 
+                  onWithdraw: onWithdraw,
+                  onStake: onStake,
+                  item: item,
+                  isUnstaking: item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking),
+                  withdrawable: item?.IsOnline && item?.IsWorking,
+                  isOffline: !item?.IsOnline,
+                  onImport: onImportAccount,
+                })}
+            >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <View style={{ height: 20, justifyContent: 'center' }}>
                   <BtnStatus backgroundColor={this.getColorStatus(item)} />
@@ -209,7 +236,8 @@ class PNode extends React.Component {
                 </View>
               </View>
               <View style={styles.itemRight}>
-                {!hasStaked && unstakedPNode ? <BtnWithBlur text='Stake' onPress={() => NavigationService.navigate(routeNames.Stake)} /> : null}
+                {!hasAccount ? <BtnWithBlur text='Import' onPress={onImportAccount} /> :
+                  (!hasStaked && unstakedPNode) ? <BtnWithBlur text='Stake' onPress={() => onStake(item)} /> : null}
               </View>
             </TouchableOpacity>
           </>

@@ -48,7 +48,9 @@ const {
   NodeHelp,
   AddNode,
   LinkDevice,
-  AddSelfNode
+  AddSelfNode,
+  Unstake,
+  NodeItemDetail
 } = routeNames;
 
 const whiteScreens = [
@@ -89,7 +91,9 @@ const whiteScreens = [
   NetworkSetting,
   AddNode,
   LinkDevice,
-  AddSelfNode
+  AddSelfNode,
+  Unstake,
+  NodeItemDetail
 ];
 const blue2Screens = [];
 const blue1Screens = [Node];

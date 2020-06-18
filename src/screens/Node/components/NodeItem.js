@@ -10,6 +10,7 @@ import {PRV_ID} from '@screens/Dex/constants';
 import {getUnstakePNodeStatus} from '@services/api/node';
 import Device from '@models/device';
 import _ from 'lodash';
+import LogManager from '@src/services/LogManager';
 import VNode from './VNode';
 import PNode from './PNode';
 
@@ -225,7 +226,7 @@ class NodeItem extends React.Component {
       isFetching,
     } = this.props;
     const { loading } = this.state;
-
+    
     if (item.IsPNode) {
       return (
         <PNode

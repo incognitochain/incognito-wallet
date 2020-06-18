@@ -6,6 +6,7 @@ export default StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     padding: 20,
+    paddingTop: 0,
     backgroundColor: COLORS.lightGrey14,
   },
   card: {

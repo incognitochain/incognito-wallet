@@ -5,11 +5,12 @@ import { COLORS, FONT } from '@src/styles';
 
 const styled = StyleSheet.create({
   btnStyle: {
-    height: 40,
+    height: 38,
     padding: 22,
     paddingTop: 0,
     paddingBottom: 0,
     borderRadius: 20,
+    marginBottom: 4,
     justifyContent: 'center',
     backgroundColor: COLORS.lightGreyBlur
   },

@@ -9,6 +9,7 @@ const COLORS = {
   blue3: '#ACE9EC',
   blue4: '#004AA9',
   blue5: '#5995F0',
+  blue6: '#00407E',
   red: '#FE4D4D',
   green: '#34C759',
   dark1: '#101111',

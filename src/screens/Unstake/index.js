@@ -11,10 +11,10 @@ class UnstakeContainer extends PureComponent {
     const { navigation }= props;
     const { params } = navigation.state;
     const { device } = params;
-
+    
     this.state = {
-      device,
-    };
+      device
+    }; 
   }
 
   handleCompleteUnstake = async () => {

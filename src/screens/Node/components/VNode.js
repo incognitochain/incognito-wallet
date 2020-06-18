@@ -1,5 +1,5 @@
 import withdrawBlack from '@assets/images/icons/withdraw_black.png';
-import { ActivityIndicator, Button, Image, Text, View } from '@components/core';
+import { ActivityIndicator, Button, Image, Text, View, TouchableOpacity } from '@components/core';
 import OptionMenu from '@components/OptionMenu/OptionMenu';
 import FixModal from '@screens/Node/components/FixModal';
 import accountKey from '@src/assets/images/icons/account_key.png';
@@ -10,11 +10,14 @@ import unfollowTokenIcon from '@src/assets/images/icons/unfollowToken.png';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Loader from './Loader';
-import Rewards from './Rewards';
+import BtnStatus from '@src/components/Button/BtnStatus';
+import NavigationService from '@src/services/NavigationService';
+import routeNames from '@src/router/routeNames';
+import BtnWithBlur from '@src/components/Button/BtnWithBlur';
+import { COLORS } from '@src/styles';
 import styles from './style';
-
-
+import Rewards from './Rewards';
+import Loader from './Loader';
 
 const MESSAGES = {
   ACCOUNT_NOT_FOUND: 'Missing account',
@@ -27,7 +30,24 @@ class VNode extends React.Component {
     super(props);
     this.removeDevice = _.debounce(props.onRemoveDevice, 100);
   }
-
+  // Only for test
+  getColorStatus = (item) => {
+    const isUnstaking = item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
+    // Unstaking
+    if (isUnstaking) {
+      return COLORS.orange;
+    }
+    // Online
+    if (item?.IsOnline && item?.IsWorking) {
+      return COLORS.blue4;
+    }
+    // Offline
+    if (!item?.IsOnline) {
+      return COLORS.lightGrey1;
+    }
+    // Waiting - Default
+    return COLORS.green;
+  }
   getDescriptionStatus = () => {
     const { item, isFetching, onStake, onImportAccount } = this.props;
 
@@ -142,38 +162,52 @@ class VNode extends React.Component {
   }
 
   render() {
-    const {item, allTokens, isFetching} = this.props;
+    const { item, allTokens, isFetching, onImportAccount, onStake, onUnstake, onWithdraw, onImport } = this.props;
     const labelName = item.Name;
+    // Check if device is unstaking, need to stake
+    const hasStaked = item?.Staked;
+
+    // Check account not imported
+    const hasAccount = item?.AccountName;
 
     return (
       <View style={styles.container}>
-        { isFetching ? <Loader /> : (
+        {isFetching ? <Loader /> : (
           <>
-            <View style={styles.row}>
-              <View style={[styles.itemLeft, styles.imageWrapper, styles.hidden]}>
-                <Image />
-              </View>
-              <View style={styles.itemCenter}>
-                { isFetching ? <ActivityIndicator size="large" /> : <Rewards item={item} rewards={item.Rewards} allTokens={allTokens} /> }
-              </View>
-              <View style={[styles.itemRight, styles.imageWrapper]}>
-                {this.renderMenu()}
-              </View>
-            </View>
-            <View>
-              <View style={[styles.row, styles.centerAlign]}>
-                <View style={[styles.row, styles.centerAlign]}>
-                  <Image source={item.IsOnline ? wifiOnline : wifiOffline} style={[styles.icon]} />
-                  <Text style={[styles.itemLeft, !item.IsOnline && styles.greyText]}>Node {labelName}</Text>
+            <TouchableOpacity
+              style={[styles.row]} 
+              onPress={() => NavigationService.navigate(routeNames.NodeItemDetail, 
+                {
+                  stake: !hasStaked, 
+                  hasAccount: hasAccount, 
+                  allTokens: allTokens, 
+                  deviceName: item.Name, 
+                  ip: item.Host, 
+                  rewards: item.Rewards, 
+                  onUnstake: onUnstake, 
+                  onWithdraw: onWithdraw,
+                  onStake: onStake,
+                  item: item,
+                  onImport: onImportAccount,
+                  isUnstaking: item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking),
+                  withdrawable: item?.IsOnline && item?.IsWorking,
+                  isOffline: !item?.IsOnline,
+                })}
+            >
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <View style={{ height: 20, justifyContent: 'center' }}>
+                  <BtnStatus backgroundColor={this.getColorStatus(item)} />
                 </View>
-                {!isFetching && !item.IsOnline && (
-                  <View style={styles.itemRight}>
-                    <FixModal item={item} />
-                  </View>
-                )}
+                <View>
+                  <Text style={[styles.itemLeft]}>Node {labelName || '-'}</Text>
+                  {isFetching ? <ActivityIndicator size="large" /> : <Rewards isDefault item={item} rewards={item.Rewards} allTokens={allTokens} />}
+                </View>
               </View>
-              {this.getDescriptionStatus()}
-            </View>
+              <View style={styles.itemRight}>
+                {!hasAccount ? <BtnWithBlur text='Import' onPress={onImportAccount} /> :
+                  !hasStaked ? <BtnWithBlur text='Stake' onPress={() => onStake(item)} /> : null}
+              </View>
+            </TouchableOpacity>
           </>
         )
         }

@@ -80,6 +80,12 @@ const text = {
     color: COLORS.mottoGrey,
     fontSize: fontSizes.regular,
   },
+  mediumTextMotto: {
+    ...FONTS.STYLE.bold,
+    fontFamily: FONTS.NAME.semiBold,
+    color: COLORS.mottoGrey,
+    fontSize: fontSizes.medium,
+  },
   mediumText: {
     ...FONTS.STYLE.normal,
     fontFamily: FONTS.NAME.medium,
@@ -320,7 +326,13 @@ const BUTTON = {
     borderRadius: 25,
     width: '100%',
     height: SIZES.button.height,
-  }
+  },
+  BLUE_TYPE: {
+    backgroundColor: COLORS.blue6,
+    borderRadius: 25,
+    width: '100%',
+    height: SIZES.button.height,
+  },
 };
 
 export default {

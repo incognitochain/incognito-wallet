@@ -298,11 +298,6 @@ class Node extends BaseScreen {
         await LocalDatabase.saveListDevices(listDevice);
       }
     }
-    
-    // console.log("==================node rewars", LogManager.parseJsonObjectToJsonString(nodeRewards));
-
-    // const rewards = !_.isEmpty(propRewards) ? propRewards : { [PRV_ID]: 0 };
-
 
     loadedDevices.push(index);
 
@@ -319,17 +314,13 @@ class Node extends BaseScreen {
               return token && { ...token, balance: value, displayBalance: convert.toHumanAmount(value, token.pDecimals) };
             })
             .value();
-          console.log('==================token', LogManager.parseJsonObjectToJsonString(data));
-          console.log('==================index', index);
 
           // Push to reward list
           data.forEach((element, index) => {
             let currentTokenExistingIndex = rewardsList?.map(function(e) { return e?.id; }).indexOf(element?.id);
             if (currentTokenExistingIndex === -1)   {
-              console.log('not found');
               rewardsList.push(element);
             } else {
-              console.log('found' + index);
               let currentBalance = rewardsList[currentTokenExistingIndex].balance || 0;
               currentBalance = currentBalance + (element?.balance || 0);
               rewardsList[currentTokenExistingIndex].displayBalance = convert.toHumanAmount(currentBalance, element?.pDecimals || 0);
@@ -339,7 +330,6 @@ class Node extends BaseScreen {
         }
       });
       this.setState({rewards: rewardsList});
-      console.log('==================balance', LogManager.parseJsonObjectToJsonString(rewardsList));
     });
 
   };
@@ -354,14 +344,12 @@ class Node extends BaseScreen {
     list = list.map(item => Device.getInstance(item));
 
     if (!isFetching && !_.isEmpty(list)) {
-      console.log('========================111111');
       this.setState({
         isFetching: true,
         isLoadMore: false,
         listDevice: list,
       }, this.getFullInfo);
     } else {
-      console.log('========================');
       this.setState({ listDevice: list });
     }
   };
@@ -504,8 +492,8 @@ class Node extends BaseScreen {
                   <Reward
                     key={id}
                     tokenId={id}
-                    containerItemStyle={{justifyContent: 'center', alignItems: 'center', alignContent: 'center'}}
-                    balanceStyle={{color: 'black', alignSelf: 'center', textAlign: 'center', fontSize: FONT.FONT_SIZES.avgLarge, fontFamily: FONT.NAME.semiBold}}
+                    containerItemStyle={style.balanceContainer}
+                    balanceStyle={style.balanceUpdate}
                     pDecimals={pDecimals}
                     symbol={symbol}
                     balance={balance}
@@ -530,7 +518,7 @@ class Node extends BaseScreen {
           )}
         >
           <FlatList
-            showsVerticalScrollIndicator
+            showsVerticalScrollIndicator={false}
             contentContainerStyle={[{ flexGrow: 1}]}
             style={style.list}
             data={listDevice}

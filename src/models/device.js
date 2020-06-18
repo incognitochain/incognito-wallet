@@ -87,6 +87,9 @@ export default class Device {
   get IsOnline() {
     return this.data.minerInfo.isOnline;
   }
+  get IsWorking() {
+    return this.data.minerInfo.Status === 'committee';
+  }
   setIsOnline(result) {
     this.data.minerInfo.isOnline = result;
   }

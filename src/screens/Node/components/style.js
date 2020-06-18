@@ -6,6 +6,12 @@ const style = StyleSheet.create({
     backgroundColor: COLORS.white,
     marginBottom: 15,
   },
+  containerDetail: {
+    backgroundColor: COLORS.white,
+    marginBottom: 15,
+    padding: 20,
+    paddingTop: 0
+  },
   row: {
     flexDirection: 'row',
     alignContent: 'center',
@@ -20,6 +26,7 @@ const style = StyleSheet.create({
   },
   itemRight: {
     marginLeft: 'auto',
+    paddingVertical: 5
   },
   statusContainer: {
     width: 14,
@@ -27,6 +34,37 @@ const style = StyleSheet.create({
     borderRadius: 7,
     marginEnd: 20,
   },  
+  dot: {
+    width: 6,
+    height: 6,
+    marginTop: 15,
+    borderRadius: 3,
+    backgroundColor: COLORS.lightGrey5,
+  },
+  activeDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    marginTop: 15,
+    backgroundColor: COLORS.blue6,
+  },
+  balance: {
+    fontFamily: FONT.NAME.specialRegular,
+    fontSize: 20,
+    color: COLORS.colorGreyBold,
+  },
+  balanceContainer: {
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    alignContent: 'center' 
+  },
+  balanceUpdate: {
+    color: 'black', 
+    alignSelf: 'center', 
+    textAlign: 'center', 
+    fontSize: FONT.FONT_SIZES.avgLarge, 
+    fontFamily: FONT.NAME.semiBold
+  },
   itemCenter: {
     marginLeft: 'auto',
     marginRight: 'auto',
