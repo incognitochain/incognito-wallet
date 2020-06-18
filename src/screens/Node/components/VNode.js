@@ -15,6 +15,7 @@ import NavigationService from '@src/services/NavigationService';
 import routeNames from '@src/router/routeNames';
 import BtnWithBlur from '@src/components/Button/BtnWithBlur';
 import { COLORS } from '@src/styles';
+import convert from '@src/utils/convert';
 import styles from './style';
 import Rewards from './Rewards';
 import Loader from './Loader';
@@ -160,6 +161,30 @@ class VNode extends React.Component {
 
     return <OptionMenu data={menu} icon={<Image source={moreIcon} />} />;
   }
+  getRewards = (rewards, allTokens) => {
+    var rewardsList = [];
+    const data = (_(Object.keys(rewards)) || [])
+      .map(id => {
+        const value = rewards[id];
+        const token = allTokens.find(token => token.id === id) || {};
+        return token && { ...token, balance: value, displayBalance: convert.toHumanAmount(value, token.pDecimals) };
+      })
+      .value();
+
+    // Push to reward list
+    data.forEach((element) => {
+      let currentTokenExistingIndex = rewardsList?.map(function (e) { return e?.id; }).indexOf(element?.id);
+      if (currentTokenExistingIndex === -1) {
+        rewardsList.push(element);
+      } else {
+        let currentBalance = rewardsList[currentTokenExistingIndex].balance || 0;
+        currentBalance = currentBalance + (element?.balance || 0);
+        rewardsList[currentTokenExistingIndex].displayBalance = convert.toHumanAmount(currentBalance, element?.pDecimals || 0);
+      }
+    });
+    return rewardsList;
+
+  }
 
   render() {
     const { item, allTokens, isFetching, onImportAccount, onStake, onUnstake, onWithdraw, onImport } = this.props;
@@ -187,7 +212,8 @@ class VNode extends React.Component {
                   onUnstake: onUnstake, 
                   onWithdraw: onWithdraw,
                   onStake: onStake,
-                  item: item,
+                  rewardsList: this.getRewards(item?.Rewards, allTokens),
+                  item: item?.toJSON(),
                   onImport: onImportAccount,
                   isUnstaking: item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking),
                   withdrawable: item?.IsOnline && item?.IsWorking,

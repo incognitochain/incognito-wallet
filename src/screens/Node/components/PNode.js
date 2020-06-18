@@ -241,7 +241,7 @@ class PNode extends React.Component {
                   onUnstake: onUnstake,
                   onWithdraw: onWithdraw,
                   onStake: onStake,
-                  item: item,
+                  item: item.toJSON(),
                   rewardsList: this.getRewards(item?.Rewards, allTokens),
                   isUnstaking: item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking),
                   withdrawable: item?.IsOnline && item?.IsWorking,

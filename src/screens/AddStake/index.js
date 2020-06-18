@@ -30,7 +30,7 @@ class AddStakeContainer extends BaseScreen {
     const { device } = params;
 
     this.state = {
-      device: Device.getInstance(device),
+      device,
       fee: MAX_FEE_PER_TX,
     };
   }

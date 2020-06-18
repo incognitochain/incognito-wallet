@@ -32,15 +32,15 @@ class NodeItemDetail extends Component {
     };
   }
   componentDidMount = () => {
-    this.getRewards(); 
+    this.getRewards();
   }
-  shouldComponentUpdate(){
+  shouldComponentUpdate() {
     return true;
   }
 
   getRewards = () => {
-    const {navigation} = this.props;
-    const {params} = navigation.state;
+    const { navigation } = this.props;
+    const { params } = navigation.state;
     const { allTokens, rewards } = params;
     var rewardsList = [];
     const data = (_(Object.keys(rewards)) || [])
@@ -62,8 +62,8 @@ class NodeItemDetail extends Component {
         rewardsList[currentTokenExistingIndex].displayBalance = convert.toHumanAmount(currentBalance, element?.pDecimals || 0);
       }
     });
-    
-    this.setState({ rewards: rewardsList }, ()=>{
+
+    this.setState({ rewards: rewardsList }, () => {
     });
 
   }
@@ -224,7 +224,7 @@ class NodeItemDetail extends Component {
 
   renderItemText = (text, value) => {
     return (
-      <View style={[styles.balanceContainer, theme.MARGIN.marginBottomDefault, {flexDirection: 'row', justifyContent: 'space-between'}]}>
+      <View style={[styles.balanceContainer, theme.MARGIN.marginBottomDefault, { flexDirection: 'row', justifyContent: 'space-between' }]}>
         <Text style={[theme.text.boldTextStyleMedium]}>{text}</Text>
         <Text style={[theme.text.boldTextStyleMedium]}>{value || ''}</Text>
       </View>
@@ -233,10 +233,10 @@ class NodeItemDetail extends Component {
   renderStatus = (text, value) => {
     const { canDropDown } = this.state;
     return (
-      <View style={[styles.balanceContainer, theme.MARGIN.marginBottomDefault, {flexDirection: 'row', justifyContent: 'space-between'}]}>
+      <View style={[styles.balanceContainer, theme.MARGIN.marginBottomDefault, { flexDirection: 'row', justifyContent: 'space-between' }]}>
         <Text style={[theme.text.boldTextStyleMedium]}>{text}</Text>
         <TouchableOpacity
-          style={[{ flexDirection: 'row'}, styles.balanceContainer]}
+          style={[{ flexDirection: 'row' }, styles.balanceContainer]}
           onPress={() => {
             this.setState({ canDropDown: !canDropDown });
           }}
@@ -279,7 +279,7 @@ class NodeItemDetail extends Component {
       stake,
       onImport,
       isOffline } = navigation.state.params;
-      
+
     let { rewards, canDropDown } = this.state;
     let shouldShowWithdraw = false;
     rewards.forEach(element => {
@@ -318,16 +318,16 @@ class NodeItemDetail extends Component {
           </Swiper>
         </View>
         <View style={[{ flexDirection: 'row' }, theme.MARGIN.marginTopAvg, theme.MARGIN.marginBottomDefault]}>
-          {shouldShowWithdraw ? this.renderBtn('Withdraw', ()=>onWithdraw(Device.getInstance(item))) : null}
-          {!hasAccount ? this.renderBtn('Import a keychain', ()=>onImport()) : 
-            stake? this.renderBtn('Stake', ()=>onStake(Device.getInstance(item))) : this.renderBtn('Stake required', ()=>onStake(Device.getInstance(item)))}
+          {shouldShowWithdraw ? this.renderBtn('Withdraw', () => onWithdraw(Device.getInstance(item))) : null}
+          {!hasAccount ? this.renderBtn('Import a keychain', () => onImport()) :
+            stake ? this.renderBtn('Stake required', () => onStake(Device.getInstance(item))) : null}
         </View>
         <View style={[theme.MARGIN.marginTopAvg]}>
           {this.renderItemText('Keychain', deviceName)}
           {this.renderItemText('IP', ip)}
           {isOffline ? this.renderStatus('Status', 'Offline') : null}
           {isOffline && canDropDown ? this.renderHint(ip) : null}
-          {stake ? this.renderUnstake(()=>onUnstake(item)) : null}
+          {!stake ? this.renderUnstake(() => onUnstake(Device.getInstance(item))) : null}
         </View>
       </View>
     );
