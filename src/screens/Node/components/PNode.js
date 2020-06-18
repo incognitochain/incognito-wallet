@@ -1,20 +1,17 @@
 import accountKey from '@assets/images/icons/account_key.png';
-import wifiOffline from '@assets/images/icons/offline_wifi_icon.png';
-import wifiOnline from '@assets/images/icons/online_wifi_icon.png';
 import unfollowTokenIcon from '@assets/images/icons/unfollowToken.png';
 import withdrawBlack from '@assets/images/icons/withdraw_black.png';
 import { ActivityIndicator, Button, Image, Text, TouchableOpacity, View } from '@components/core';
 import Toast from '@components/core/Toast/Toast';
 import OptionMenu from '@components/OptionMenu/OptionMenu';
-import FixModal from '@screens/Node/components/FixModal';
 import firmwareIcon from '@src/assets/images/icons/firmware.png';
+import convert from '@utils/convert';
 import moreIcon from '@src/assets/images/icons/more_icon.png';
 import { COLORS } from '@src/styles';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { MESSAGES } from '@src/constants';
-import LogManager from '@src/services/LogManager';
 import BtnStatus from '@src/components/Button/BtnStatus';
 import BtnWithBlur from '@src/components/Button/BtnWithBlur';
 import NavigationService from '@src/services/NavigationService';
@@ -30,10 +27,9 @@ class PNode extends React.Component {
       showUpdateFirmware: false,
     };
     this.removeDevice = _.debounce(props.onRemoveDevice, 100);
-    
+
   }
-  componentDidMount(){
-    const { item, isFetching, allTokens, onImportAccount, onStake, onUnstake } = this.props;
+  componentDidMount() {
   }
 
   getDescriptionStatus = () => {
@@ -190,36 +186,63 @@ class PNode extends React.Component {
     // Waiting - Default
     return COLORS.green;
   }
+
+  getRewards = (rewards, allTokens) => {
+    var rewardsList = [];
+    const data = (_(Object.keys(rewards)) || [])
+      .map(id => {
+        const value = rewards[id];
+        const token = allTokens.find(token => token.id === id) || {};
+        return token && { ...token, balance: value, displayBalance: convert.toHumanAmount(value, token.pDecimals) };
+      })
+      .value();
+
+    // Push to reward list
+    data.forEach((element) => {
+      let currentTokenExistingIndex = rewardsList?.map(function (e) { return e?.id; }).indexOf(element?.id);
+      if (currentTokenExistingIndex === -1) {
+        rewardsList.push(element);
+      } else {
+        let currentBalance = rewardsList[currentTokenExistingIndex].balance || 0;
+        currentBalance = currentBalance + (element?.balance || 0);
+        rewardsList[currentTokenExistingIndex].displayBalance = convert.toHumanAmount(currentBalance, element?.pDecimals || 0);
+      }
+    });
+    return rewardsList;
+
+  }
+
   render() {
     const { item, isFetching, allTokens, onImportAccount, onStake, onUnstake, onWithdraw } = this.props;
     const labelName = item.Name;
 
     // Check if device is unstaking, need to stake
     const unstakedPNode = item.Unstaked;
-    
+
     const hasStaked = item.Staked;
 
     // Check account not imported
     const hasAccount = item?.AccountName;
-    
+
     return (
       <View style={styles.container}>
         {isFetching ? <Loader /> : (
           <>
             <TouchableOpacity
               style={[styles.row]}
-              onPress={() => NavigationService.navigate(routeNames.NodeItemDetail, 
+              onPress={() => NavigationService.navigate(routeNames.NodeItemDetail,
                 {
-                  stake: !hasStaked && unstakedPNode, 
-                  hasAccount: hasAccount, 
-                  allTokens: allTokens, 
-                  deviceName: item.Name, 
-                  ip: item.Host, 
-                  rewards: item.Rewards, 
-                  onUnstake: onUnstake, 
+                  stake: !hasStaked && unstakedPNode,
+                  hasAccount: hasAccount,
+                  allTokens: allTokens,
+                  deviceName: item.Name,
+                  ip: item.Host,
+                  rewards: item.Rewards,
+                  onUnstake: onUnstake,
                   onWithdraw: onWithdraw,
                   onStake: onStake,
                   item: item,
+                  rewardsList: this.getRewards(item?.Rewards, allTokens),
                   isUnstaking: item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking),
                   withdrawable: item?.IsOnline && item?.IsWorking,
                   isOffline: !item?.IsOnline,

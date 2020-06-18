@@ -270,6 +270,7 @@ class NodeItemDetail extends Component {
   render() {
     const { navigation } = this.props;
     const { deviceName, ip, withdrawable,
+      rewardsList,
       onWithdraw,
       onUnstake,
       onStake,
@@ -301,7 +302,7 @@ class NodeItemDetail extends Component {
             key={`${new Date().getTime()}`}
           >
             {
-              (rewards).map(({ id, pDecimals, balance, symbol, isVerified }) => (
+              (rewardsList).map(({ id, pDecimals, balance, symbol, isVerified }) => (
                 <Reward
                   key={`${new Date().getTime()}`}
                   tokenId={id}
