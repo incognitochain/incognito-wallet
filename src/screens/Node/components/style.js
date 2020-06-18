@@ -122,6 +122,11 @@ const style = StyleSheet.create({
   disabled: {
     opacity: 0.6,
   },
+  balanceList: {
+    width: '100%', 
+    marginTop: 30, 
+    height: 70
+  }
 });
 
 export const rewardStyle = StyleSheet.create({

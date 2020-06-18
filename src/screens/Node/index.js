@@ -479,7 +479,7 @@ class Node extends BaseScreen {
         />
         <DialogLoader loading={loading} />
         {!loading && listDevice.length > 0 ? (
-          <View style={{width: '100%', marginTop: 30, height: 70}}>
+          <View style={style.balanceList}>
             <Swiper
               dotStyle={style.dot}
               activeDotStyle={style.activeDot}

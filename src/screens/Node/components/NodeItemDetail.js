@@ -292,7 +292,7 @@ class NodeItemDetail extends Component {
         <Header
           title="Node detail"
         />
-        <View style={{ width: '100%', marginTop: 30, height: 70 }}>
+        <View style={styles.balanceList}>
           <Swiper
             dotStyle={styles.dot}
             activeDotStyle={styles.activeDot}

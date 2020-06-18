@@ -121,6 +121,11 @@ const style = StyleSheet.create({
     fontSize: FONT.FONT_SIZES.avgLarge, 
     fontFamily: FONT.NAME.semiBold
   },
+  balanceList: {
+    width: '100%', 
+    marginTop: 30, 
+    height: 70
+  }
 });
 
 export default style;
