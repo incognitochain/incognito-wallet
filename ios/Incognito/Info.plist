@@ -2,91 +2,56 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key/>
-	<string/>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
-	<key>CFBundleDisplayName</key>
-	<string>${APP_DISPLAY_NAME}</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(MARKETING_VERSION)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>None</string>
-			<key>CFBundleURLSchemes</key>
-			<array/>
-		</dict>
-		<dict/>
-	</array>
-	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>CodePushDeploymentKey</key>
-	<string>$(CODEPUSH_KEY)</string>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>NSIncludesSubdomains</key>
-			<true/>
-			<key>NSTemporaryExceptionAllowsInsecureHTTPLoads </key>
-			<true/>
-			<key>localhost</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
-		</dict>
-	</dict>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>${PRODUCT_NAME} will need access to Apple Music for setting welcome theme sound.</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Bluetooth will be required for ${PRODUCT_NAME} to connect to the Badge printer hardware.</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Bluetooth will be required for ${PRODUCT_NAME} to connect to the Badge printer hardware.</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>${PRODUCT_NAME} requires access to Calendar in order to display greeting to visitors at the right time.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Need to access the camera to scan QR code</string>
+	<key></key>
+	<string></string>
 	<key>NSContactsUsageDescription</key>
 	<string>${PRODUCT_NAME} Contacts Usage</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>Enabling Face ID allows you quick and secure access to your account.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This will help Node find your home Wi-Fi</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Will you allow this app to always know your location?</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This will help Node find your home Wi-Fi</string>
-	<key>NSMotionUsageDescription</key>
-	<string>${PRODUCT_NAME} Motion Usage</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to save photos to your photo gallery</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UIRequiresFullScreen</key>
+	<true/>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CodePushDeploymentKey</key>
+	<string>$(CODEPUSH_KEY)</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Need to access the camera roll to detect QR code</string>
-	<key>NSSiriUsageDescription</key>
-	<string>${PRODUCT_NAME} Sỉri Usage</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Recognize speech</string>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Bluetooth will be required for ${PRODUCT_NAME} to connect to the Badge printer hardware.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This will help Node find your home Wi-Fi</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>CFBundleDisplayName</key>
+	<string>${APP_DISPLAY_NAME}</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This will help Node find your home Wi-Fi</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Need to access the camera to scan QR code</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Will you allow this app to always know your location?</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Bluetooth will be required for ${PRODUCT_NAME} to connect to the Badge printer hardware.</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Roboto_bold.ttf</string>
@@ -149,25 +114,59 @@
 		<string>Helvetica-Neue.otf</string>
 		<string>Helvetica-Neue-Bold.otf</string>
 		<string>Helvetica-Neue-Medium.otf</string>
-		<string>SFProDisplay-Semibold.ttf</string>
 	</array>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>remote-notification</string>
-	</array>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like to save photos to your photo gallery</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Recognize speech</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>armv7</string>
-	</array>
-	<key>UIRequiresFullScreen</key>
-	<true/>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<key>NSMotionUsageDescription</key>
+	<string>${PRODUCT_NAME} Motion Usage</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>${PRODUCT_NAME} will need access to Apple Music for setting welcome theme sound.</string>
+	<key>NSSiriUsageDescription</key>
+	<string>${PRODUCT_NAME} Sỉri Usage</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>${PRODUCT_NAME} requires access to Calendar in order to display greeting to visitors at the right time.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>NSTemporaryExceptionAllowsInsecureHTTPLoads </key>
+			<true/>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+			<key>NSIncludesSubdomains</key>
+			<true/>
+		</dict>
+	</dict>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Enabling Face ID allows you quick and secure access to your account.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>None</string>
+			<key>CFBundleURLSchemes</key>
+			<array/>
+		</dict>
+		<dict/>
+	</array>
 </dict>
 </plist>

@@ -316,7 +316,7 @@ const INPUT = {
 
 const BUTTON = {
   BLACK_TYPE: {
-    backgroundColor: COLORS.colorPrimary,
+    backgroundColor: COLORS.blue6,
     borderRadius: 25,
     width: '100%',
     height: SIZES.button.height,
