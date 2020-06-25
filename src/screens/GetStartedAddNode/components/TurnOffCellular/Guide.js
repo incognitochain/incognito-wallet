@@ -15,7 +15,7 @@ const Guide = () => (
       </Text>
       <Text style={[styles.guideLine]}>
         <Text style={styles.bold}>Step 2: </Text>
-          &nbsp;Turn off your cellular/mobile data
+          &nbsp;Turn off cellular/mobile data
       </Text>
     </View>
   </View>

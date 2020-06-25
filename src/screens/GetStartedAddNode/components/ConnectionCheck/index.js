@@ -26,7 +26,6 @@ class ConnectionCheck extends PureComponent {
             resizeMethod="resize"
           />
         </View>
-        <Guide />
         <View style={styles.footer}>
           <Button
             onPress={onNext}

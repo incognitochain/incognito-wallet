@@ -30,6 +30,7 @@ import Header from '@src/components/Header';
 import BtnInfo from '@src/components/Button/BtnInfo';
 import NavigationService from '@src/services/NavigationService';
 import { ScreenHeight } from '@src/utils/devices';
+import { BtnQuestionDefault } from '@src/components/Button';
 import ScanQRCode from './components/ScanQRCode';
 import { DialogNotify } from './components/BackUpAccountDialog';
 import styles from './styles';
@@ -355,7 +356,7 @@ class GetStartedAddNode extends BaseScreen {
     return (
       <View style={styles.container}>
         <Header
-          rightHeader={<BtnInfo onPress={()=>NavigationService.navigate(routeNames.NodeHelp)} />}
+          rightHeader={<BtnQuestionDefault onPress={()=>NavigationService.navigate(routeNames.NodeHelp)} />}
           title=""
           style={styles.header}
         />
