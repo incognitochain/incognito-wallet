@@ -22,7 +22,6 @@ const style = StyleSheet.create({
     fontSize: FONT.SIZE.medium,
     color: COLORS.colorPrimary,
     textAlign: 'left',
-    height: 20,
   },
   itemRight: {
     marginLeft: 'auto',

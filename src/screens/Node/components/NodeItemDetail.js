@@ -287,7 +287,6 @@ class NodeItemDetail extends Component {
         shouldShowWithdraw = true;
       }
     });
-    console.log('Reward list: ' + LogManager.parseJsonObjectToJsonString(rewardsList));
     return (
       <View style={styles.containerDetail}>
         <Header
