@@ -8,10 +8,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     padding: scaleInApp(20),
+    paddingTop: 0,
     flexDirection: 'column',
   },
   item: {
-    marginVertical: scaleInApp(10)
+    marginVertical: scaleInApp(5)
   },
   errorText: {
     ...TextStyle.minimizeText,
@@ -29,8 +30,8 @@ const styles = StyleSheet.create({
     marginVertical: scaleInApp(10),
     marginTop: 25,
     ...TextStyle.bigText,
-    ...FontStyle.medium,
-    width: '75%',
+    ...FontStyle.bold,
+    width: '90%',
     alignSelf: 'center',
     color: '#101111',
     textAlign: 'center',

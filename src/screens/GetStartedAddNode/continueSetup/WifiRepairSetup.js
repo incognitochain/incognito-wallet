@@ -24,6 +24,7 @@ import LogManager from '@src/services/LogManager';
 import ModalConnectWifi from '@src/components/Modal/ModalConnection/ModalConnectWifi';
 import { ScreenHeight, ScreenWidth } from '@src/utils/devices';
 import { LineView } from '@src/components/Line';
+import theme from '@src/styles/theme';
 import styles from './styles';
 
 export const TAG = 'SetupWifi';
@@ -109,7 +110,6 @@ class WifiRepairSetup extends PureComponent {
 
     return (
       <View>
-        <Text style={[styles.title2, { textAlign: 'left', marginLeft: 20, marginTop: 40, marginBottom: 20 }]}>Wi-Fi</Text>
         <Input
           underlineColorAndroid="transparent"
           containerStyle={item}
@@ -378,6 +378,7 @@ class WifiRepairSetup extends PureComponent {
               this.handleNext();
             }
           }}
+          style={[theme.BUTTON.BLACK_TYPE]}
           title={steps.length > 0 ? 'Retry' : 'Next'}
         />
       </View>
@@ -440,7 +441,7 @@ class WifiRepairSetup extends PureComponent {
     return (
       <View>
         <ScrollView>
-          <Text style={styles.title2}>Enter your home WiFi detail</Text>
+          <Text style={styles.title2}>{'Connecting Node\nto your home WiFi'}</Text>
           {steps.length > 0 ? this.renderLogs() : this.renderContent()}
           <Text style={styles.errorText}>{rootCauseMessage}</Text>
           {this.renderFooter()}

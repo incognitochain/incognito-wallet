@@ -7,6 +7,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withNavigationFocus } from 'react-navigation';
 import LocalDatabase from '@src/utils/LocalDatabase';
+import Header from '@src/components/Header';
+import { BtnQuestionDefault } from '@src/components/Button';
+import NavigationService from '@src/services/NavigationService';
 import { DialogNotify } from '../components/BackUpAccountDialog';
 import styles from './styles';
 import WifiRepairSetup from './WifiRepairSetup';
@@ -47,7 +50,7 @@ class RepairingSetupNode extends BaseScreen {
   getAccountByName = async () => {
     let accountQRCode = await LocalDatabase.getAccountWithQRCode();
     let account = await getAccountByName(JSON.parse(accountQRCode));
-    this.setState({account: account});
+    this.setState({ account: account });
   }
 
   handleFinish = () => {
@@ -68,8 +71,8 @@ class RepairingSetupNode extends BaseScreen {
 
   renderStep() {
     const { hotspotSSID, account } = this.state;
-    const {navigation} = this.props;
-    const {verifyProductCode} = navigation.state.params;
+    const { navigation } = this.props;
+    const { verifyProductCode } = navigation.state.params;
     console.log(verifyProductCode);
     return (
       <WifiRepairSetup
@@ -85,8 +88,11 @@ class RepairingSetupNode extends BaseScreen {
     const { success, step } = this.state;
     return (
       <View style={styles.container}>
+        <Header
+          title="Continue setup"
+          rightHeader={<BtnQuestionDefault onPress={() => { NavigationService.navigate(routeNames.NodeHelp); }} />}
+        />
         <DialogNotify visible={success} onClose={this.handleFinish} />
-        <StepIndicator stepCount={2} currentPage={step} />
         {this.renderStep()}
       </View>
     );
