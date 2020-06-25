@@ -15,6 +15,7 @@ import { change as rfOnChangeValue, focus } from 'redux-form';
 import { sendInReceiversSelector } from '@src/redux/selectors/receivers';
 import { HEADER_TITLE_RECEIVERS } from '@src/redux/types/receivers';
 import { estimateFeeSelector } from '@src/components/EstimateFee/EstimateFee.selector';
+import { withNavigation } from 'react-navigation';
 import {
   selectedPrivacySeleclor,
   sharedSeleclor,
@@ -269,4 +270,4 @@ SendCryptoContainer.propTypes = {
 export default connect(
   mapState,
   mapDispatch,
-)(SendCryptoContainer);
+)(withNavigation(SendCryptoContainer));

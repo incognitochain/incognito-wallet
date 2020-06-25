@@ -43,10 +43,6 @@ const withCalculateOutput = WrappedComp => (props) => {
   };
 
   const getQuote = async (inputToken, outputToken, value, id) => {
-    if (gettingQuote) {
-      return;
-    }
-
     try {
       setGettingQuote(true);
 
@@ -91,6 +87,7 @@ const withCalculateOutput = WrappedComp => (props) => {
     if (inputToken && outputToken && inputValue) {
       if (inputToken.address && outputToken.address) {
         const debounceId = v4();
+        setGettingQuote(true);
         debouncedGetQuote(inputToken, outputToken, inputValue, debounceId);
         currentDebounceId = debounceId;
       } else {
@@ -100,6 +97,7 @@ const withCalculateOutput = WrappedComp => (props) => {
 
     if (inputToken && outputToken && !inputValue) {
       debouncedGetQuote.cancel();
+      setGettingQuote(false);
       currentDebounceId = v4();
     }
 

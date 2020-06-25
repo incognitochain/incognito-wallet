@@ -15,11 +15,13 @@ import SelectToken from '@src/components/HeaderRight/SelectToken';
 import { CONSTANT_COMMONS } from '@src/constants';
 import LoadingContainer from '@src/components/LoadingContainer';
 import { ExHandler, CustomError, ErrorCode } from '@src/services/exception';
+
 import { compose } from 'recompose';
 import { withLayout_2 } from '@components/Layout';
 import Header from '@components/Header';
 import { SearchIcon } from '@src/components/Icons';
 import sourceSearchIcon from '@assets/images/icons/search_icon.png';
+import LogManager from '@src/services/LogManager';
 import styles, { containerStyle as styled } from './style';
 import PappError from './PappError';
 import PappView from './PappView';
@@ -119,13 +121,14 @@ class PappViewContainer extends Component {
   handleSelectPrivacyToken = tokenID => {
     try {
       if (typeof tokenID === 'string') {
-        const { supportTokenIds } = this.state;
+        // const { supportTokenIds } = this.state;
 
-        if (!supportTokenIds.includes(tokenID)) {
-          throw new CustomError(ErrorCode.papp_the_token_is_not_supported);
-        }
+        // New requirement: No need to check logic include in token privacy
+        // UraNashel
+        // if (!supportTokenIds.includes(tokenID)) {
+        //   throw new CustomError(ErrorCode.papp_the_token_is_not_supported);
+        // }
         const selectedPrivacy = this.getPrivacyToken(tokenID);
-
         if (selectedPrivacy) {
           this.reloadBalance(tokenID);
           this.setHeaderData({ selectedPrivacy });
@@ -166,6 +169,7 @@ class PappViewContainer extends Component {
     const {navigation} = this.props;
     let isBlocked = navigation.getParam('url');
     const { isSending, searchText, loading, selectedPrivacy, supportTokenIds, url } = this.state;
+    const {tokens} = this.props;
     let content = null;
     if (!url) {
       content = <Empty />;
@@ -191,6 +195,7 @@ class PappViewContainer extends Component {
     return (
       <View style={styled.container}>
         <Header
+          placeHolder="Enter a pApp address"
           isNormalSearch
           canSearch={!isBlocked}
           title={url ? `${url}`: 'Enter a pApp address'}
@@ -199,8 +204,9 @@ class PappViewContainer extends Component {
             let tempSearchText = searchText;
             if (tempSearchText.replace(' ', '') != '') {
               // Check if string is url
-              let indexOfHttp = tempSearchText?.indexOf('https://');
-              if (indexOfHttp === -1) {
+              let indexOfHttps = tempSearchText?.indexOf('https://');
+              let indexOfHttp = tempSearchText?.indexOf('http://');
+              if (indexOfHttp === -1 && indexOfHttps === -1) {
                 // InCorrect
                 tempSearchText = 'https://' + tempSearchText;
               }
@@ -214,6 +220,7 @@ class PappViewContainer extends Component {
           rightHeader={(
             <View style={styles.chooseTokenIcon}>
               <SelectToken
+                tokens={tokens}
                 onSelect={this.handleSelectPrivacyToken}
                 selectedPrivacy={selectedPrivacy}
                 supportTokenIds={supportTokenIds}
@@ -241,6 +248,7 @@ const mapState = state => ({
   account: accountSeleclor.defaultAccount(state),
   wallet: state.wallet,
   tokens: tokenSeleclor.followed(state),
+  followed: tokenSeleclor.followingTokenSelector,
   selectPrivacyByTokenID: selectedPrivacySeleclor.getPrivacyDataByTokenID(
     state,
   ),

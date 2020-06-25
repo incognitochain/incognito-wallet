@@ -20,7 +20,6 @@ import Tooltip from '@src/components/Tooltip/Tooltip';
 import { COLORS } from '@src/styles';
 import isNaN from 'lodash/isNaN';
 import { TouchableOpacity } from '@src/components/core';
-import { useBackHandler } from '@src/components/UseEffect';
 import {
   styled,
   styledHook,
@@ -218,7 +217,6 @@ const RightHeader = () => {
 const Wallet = () => {
   const navigation = useNavigation();
   const onGoBack = () => navigation.navigate(routeNames.Home);
-  useBackHandler({ onGoBack });
   return (
     <View style={[styled.container]}>
       <Header

@@ -61,16 +61,21 @@ const enhance = (WrappedComp) => (props) => {
       renderTx: true,
     },
   ];
+
+  const handleToggleModal = async () =>
+    await dispatch(
+      actionToggleModal({
+        visible: false,
+        data: null,
+        onBack: () => navigation.navigate(routeNames.WalletDetail),
+      }),
+    );
+
   const onBack = async () => {
     navigation.navigate(routeNames.WalletDetail);
     await new Promise.all([
       dispatch(actionInitEstimateFee()),
-      dispatch(
-        actionToggleModal({
-          visible: false,
-          data: null,
-        }),
-      ),
+      handleToggleModal(),
     ]);
   };
 
@@ -83,12 +88,7 @@ const enhance = (WrappedComp) => (props) => {
         keySave: keySaveAddressBook,
         headerTitle: 'Save address',
       });
-      dispatch(
-        actionToggleModal({
-          visible: false,
-          data: null,
-        }),
-      );
+      handleToggleModal();
     } catch (error) {
       new ExHandler(error).showErrorToast();
     }

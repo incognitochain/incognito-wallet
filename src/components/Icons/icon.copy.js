@@ -5,7 +5,7 @@ import srcCopy from '@src/assets/images/icons/copy.png';
 const styled = StyleSheet.create({
   container: {
     width: 20,
-    height: 18,
+    height: 20,
   },
 });
 

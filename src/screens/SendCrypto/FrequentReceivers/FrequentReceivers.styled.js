@@ -1,9 +1,9 @@
-import {StyleSheet} from 'react-native';
-import {FONT, COLORS} from '@src/styles';
+import { StyleSheet } from 'react-native';
+import { FONT, COLORS } from '@src/styles';
 
 export const styled = StyleSheet.create({
   container: {
-    padding: 20,
+    flex: 1,
   },
   input: {
     marginTop: 20,
@@ -24,15 +24,17 @@ export const styled = StyleSheet.create({
 
 export const styledModal = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.lightGrey6,
     flex: 1,
-    padding: 20,
-    position: 'relative',
-    zIndex: 100,
+  },
+  wrapper: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: 25,
   },
 });
 
-export const emptyListStyled = StyleSheet.create({
+export const notFoundStyled = StyleSheet.create({
   container: {
     justifyContent: 'center',
     flex: 1,
@@ -43,11 +45,11 @@ export const emptyListStyled = StyleSheet.create({
     alignItems: 'center',
   },
   notFound: {
-    color: COLORS.lightGrey1,
-    fontFamily: FONT.NAME.regular,
-    fontSize: FONT.SIZE.regular,
-    lineHeight: FONT.SIZE.regular + 6,
-    marginTop: 10,
+    color: COLORS.colorGreyBold,
+    fontFamily: FONT.NAME.medium,
+    fontSize: FONT.SIZE.medium,
+    lineHeight: FONT.SIZE.medium + 4,
+    marginTop: 20,
   },
   notFoundImg: {
     width: 194,
@@ -62,12 +64,7 @@ export const emptyListStyled = StyleSheet.create({
 
 export const listStyled = StyleSheet.create({
   container: {
-    borderRadius: 8,
-    backgroundColor: COLORS.white,
-    marginVertical: 5,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    paddingVertical: 10
+    flex: 1,
   },
   all: {
     color: COLORS.black,
@@ -78,32 +75,24 @@ export const listStyled = StyleSheet.create({
   },
 });
 export const itemStyled = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.lightGrey5,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: COLORS.white,
-  },
   hook: {
     flex: 1,
-    paddingHorizontal: 20,
-    width: '98%',
+    backgroundColor: COLORS.white,
+    paddingVertical: 15,
+    paddingHorizontal: 25,
   },
   name: {
     color: COLORS.black,
     fontFamily: FONT.NAME.medium,
-    fontSize: FONT.SIZE.regular,
-    lineHeight: FONT.SIZE.regular + 6,
+    fontSize: FONT.SIZE.superMedium,
+    lineHeight: FONT.SIZE.superMedium + 4,
+    marginBottom: 10,
   },
   address: {
-    color: COLORS.lightGrey1,
-    fontFamily: FONT.NAME.regular,
-    fontSize: FONT.SIZE.small,
-    lineHeight: FONT.SIZE.regular + 6,
-    marginTop: 1,
+    color: COLORS.colorGreyBold,
+    fontFamily: FONT.NAME.medium,
+    fontSize: FONT.SIZE.medium,
+    lineHeight: FONT.SIZE.medium + 4,
   },
   lastChild: {
     borderBottomColor: 'transparent',

@@ -5,7 +5,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  BackHandler,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import LoadingContainer from '@src/components/LoadingContainer';
@@ -30,13 +29,6 @@ class TxHistoryDetailContainer extends Component {
 
   componentDidMount() {
     this.loadHistoryData();
-    this.backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.onGoBack,
-    );
-  }
-  componentWillUnmount() {
-    this.backHandler.remove();
   }
 
   loadHistoryData = () => {

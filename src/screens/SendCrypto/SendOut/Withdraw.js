@@ -43,6 +43,8 @@ import format from '@src/utils/format';
 import floor from 'lodash/floor';
 import Receipt from '@src/components/Receipt';
 import { actionFetchFeeByMax } from '@src/components/EstimateFee/EstimateFee.actions';
+import routeNames from '@src/router/routeNames';
+import { withNavigation } from 'react-navigation';
 import style from './style';
 
 export const formName = 'withdraw';
@@ -136,6 +138,7 @@ class Withdraw extends React.Component {
       rfReset,
       handleCentralizedWithdraw,
       handleDecentralizedWithdraw,
+      navigation,
     } = this.props;
     const disabledForm = this.shouldDisabledSubmit();
     if (disabledForm) {
@@ -173,7 +176,6 @@ class Withdraw extends React.Component {
         res = await handleCentralizedWithdraw(payload);
       }
       if (res) {
-        await rfReset(formName);
         await actionToggleModal({
           visible: true,
           data: (
@@ -193,7 +195,9 @@ class Withdraw extends React.Component {
               }}
             />
           ),
+          onBack: () => navigation.navigate(routeNames.WalletDetail),
         });
+        await rfReset(formName);
       }
     } catch (e) {
       console.log('error', e);
@@ -293,8 +297,6 @@ class Withdraw extends React.Component {
       return validator.combinedAURAddress;
     } else if (externalSymbol === CONSTANT_COMMONS.CRYPTO_SYMBOL.ZIL) {
       return validator.combinedZILAddress;
-    } else if (externalSymbol === CONSTANT_COMMONS.CRYPTO_SYMBOL.XMR) {
-      return validator.combinedXMRAddress;
     }
     // default
     return validator.combinedUnknownAddress;
@@ -337,6 +339,31 @@ class Withdraw extends React.Component {
     const maxAmountText = await actionFetchFeeByMax();
     rfChange(formName, 'amount', maxAmountText);
     rfFocus(formName, 'amount');
+  };
+
+  renderMemo = () => {
+    const { selectedPrivacy } = this.props;
+    if (selectedPrivacy?.isBep2Token || selectedPrivacy?.currencyType === 4) {
+      return (
+        <View style={style.memoContainer}>
+          <Field
+            component={InputQRField}
+            name="memo"
+            label="Memo (optional)"
+            placeholder="Enter a memo"
+            style={style.input}
+            validate={memoMaxLength}
+            maxLength={125}
+            inputStyle={style.memoInput}
+          />
+          <Text style={style.memoText}>
+            * For withdrawals to wallets on exchanges (e.g. Binance, etc.),
+            enter your memo to avoid loss of funds.
+          </Text>
+        </View>
+      );
+    }
+    return null;
   };
 
   render() {
@@ -417,25 +444,7 @@ class Withdraw extends React.Component {
                   address.
                 </Text>
               )}
-              {selectedPrivacy?.isBep2Token ||
-                (selectedPrivacy?.currencyType === 4 && (
-                  <View style={style.memoContainer}>
-                    <Field
-                      component={InputQRField}
-                      name="memo"
-                      label="Memo (optional)"
-                      placeholder="Enter a memo"
-                      style={style.input}
-                      validate={memoMaxLength}
-                      maxLength={125}
-                      inputStyle={style.memoInput}
-                    />
-                    <Text style={style.memoText}>
-                      * For withdrawals to wallets on exchanges (e.g. Binance,
-                      etc.), enter your memo to avoid loss of funds.
-                    </Text>
-                  </View>
-                ))}
+              {this.renderMemo()}
               <EstimateFee
                 amount={
                   isFormValid && !shouldBlockETHWrongAddress ? amount : null
@@ -513,7 +522,9 @@ const mapDispatch = {
   actionFetchFeeByMax,
 };
 
-export default connect(
-  mapState,
-  mapDispatch,
-)(Withdraw);
+export default withNavigation(
+  connect(
+    mapState,
+    mapDispatch,
+  )(Withdraw),
+);

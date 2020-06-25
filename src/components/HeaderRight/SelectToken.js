@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { tokenSeleclor, accountSeleclor } from '@src/redux/selectors';
 import { COLORS } from '@src/styles';
-import { View, Container, Modal, TouchableOpacity } from '../core';
+import { View, Container, Modal, TouchableOpacity, ScrollView } from '../core';
 import CryptoIcon from '../CryptoIcon';
 import { tokenInfoStyle } from './style';
 import SimpleInfo from '../SimpleInfo';
@@ -19,23 +19,24 @@ class TokenInfo extends Component {
   }
 
   renderListToken = () => {
-    const { tokens, account, supportTokenIds } = this.props;
+    const { tokens, account } = this.props;
 
-    const supportTokens = tokens?.filter(token => supportTokenIds?.includes(token.id));
+    // No need to filter supportToken, get all of them
+    // const supportTokens = tokens?.filter(token => supportTokenIds?.includes(token.id));
 
-    if ((!supportTokens || supportTokens.length === 0) && !account) {
+    if ((!tokens || tokens.length === 0) && !account) {
       return <SimpleInfo text='There has no token to display' />;
     }
 
     return (
-      <Container>
+      <ScrollView>
         <FollowingTokenList
           account={account}
-          tokens={supportTokens}
+          tokens={tokens}
           onSelectToken={this.handleSelectToken}
           excludeTokenIds={[]}
         />
-      </Container>
+      </ScrollView>
     );
   };
 

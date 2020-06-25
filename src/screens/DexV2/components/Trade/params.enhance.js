@@ -14,8 +14,9 @@ const withParams = WrappedComp => (props) => {
 
   const { pair, inputBalance, inputText } = props;
 
+
   React.useEffect(() => {
-    if (filled || _.isEmpty(pair) || inputBalance === null || !inputText) {
+    if (filled || _.isEmpty(pair) || inputBalance === null) {
       return;
     }
 
@@ -38,6 +39,10 @@ const withParams = WrappedComp => (props) => {
         onChangeOutputToken(outputToken);
       }
 
+      if (!inputText) {
+        return;
+      }
+
       if (outputValue) {
         const minimumAmount = _.floor(outputValue / MIN_PERCENT);
         const inputValue = calculateInputValue(pair, inputToken, minimumAmount, outputToken);
@@ -47,7 +52,7 @@ const withParams = WrappedComp => (props) => {
     }
 
     setFilled(true);
-  }, [pair, inputBalance, inputText]);
+  }, [pair, inputBalance, inputText, inputTokenId, outputTokenId]);
 
   return (
     <WrappedComp

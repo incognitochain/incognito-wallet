@@ -5,13 +5,11 @@ import { BtnQuestionDefault } from '@src/components/Button';
 import PropTypes from 'prop-types';
 import { TokenBasic as Token } from '@src/components/Token';
 import { FlatList } from '@src/components/core/FlatList';
-import { useBackHandler } from '@src/components/UseEffect';
 import { styled } from './Shield.styled';
 import withShield from './Shield.enhance';
 
 const Shield = (props) => {
   const { data, handleWhyShield, handleShield } = props;
-  useBackHandler();
   return (
     <View style={styled.container}>
       <Header

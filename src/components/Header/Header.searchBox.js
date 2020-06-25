@@ -31,6 +31,7 @@ const SearchBox = (props) => {
         onChangeText={props?.onChange}
         onBlur={props?.onSubmit}
         autoFocus
+        placeholder={props?.placeHolder || ''}
         onSubmitEditting={props?.onSubmit}
       />
     );

@@ -27,9 +27,9 @@ export default StyleSheet.create({
     color: COLORS.black,
   },
   desc: {
-    fontFamily: FONT.NAME.regular,
-    fontSize: FONT.SIZE.regular,
-    lineHeight: FONT.SIZE.regular + 12,
+    fontFamily: FONT.NAME.medium,
+    fontSize: FONT.SIZE.medium,
+    lineHeight: FONT.SIZE.medium + 4,
     color: COLORS.colorGreyBold,
   },
   topGroup: {

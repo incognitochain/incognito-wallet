@@ -10,6 +10,7 @@ const style = StyleSheet.create({
     width: ScreenWidth,
     marginLeft: -25, // Cheat sheet
     minHeight: 500,
+    paddingBottom: 50
   },
   headerRight: {
     paddingHorizontal: 10,
@@ -29,6 +30,30 @@ const style = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  navigation: {
+    position: 'absolute', 
+    bottom: 0, 
+    left: 0, 
+    height: 50, 
+    width: ScreenWidth, 
+    flexDirection: 'row', 
+    paddingLeft: 10, 
+    marginLeft: -25,
+    backgroundColor: 'white'
+  },
+  back: {
+    height: 70, 
+    width: 50, 
+    justifyContent: 'center', 
+    alignContent: 'center', 
+    alignItems: 'center', 
+    marginEnd: 5
+  },
+  rightContainer: {
+    flexDirection: 'row', 
+    flex: 1, 
+    justifyContent: 'flex-end'
+  }
 });
 
 export const requestSendTxStyle = {

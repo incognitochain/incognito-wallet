@@ -1,17 +1,10 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { UTILS } from '@src/styles';
+import { View } from 'react-native';
 import PropTypes from 'prop-types';
 import { TouchableOpacity } from '@src/components/core';
 import { Name, Symbol, Amount, Follow } from './Token';
 import withToken from './Token.enhance';
 import { styled } from './Token.styled';
-
-const _styled = StyleSheet.create({
-  styledName: {
-    maxWidth: UTILS.screenWidth() / 2,
-  },
-});
 
 const TokenBasic = (props) => {
   const { onPress, style, showBalance, shouldShowFollowed } = props;
@@ -19,14 +12,14 @@ const TokenBasic = (props) => {
     <TouchableOpacity onPress={onPress}>
       <View style={[styled.container, style]}>
         <View style={[styled.extra, styled.extraTop]}>
-          <Name styledName={_styled.styledName} {...props} />
+          <Name {...props} />
           {showBalance && (
             <Amount {...{ ...props, customStyle: styled.boldText }} />
           )}
           {shouldShowFollowed && <Follow {...props} />}
         </View>
         <View style={styled.extra}>
-          <Symbol />
+          <Symbol {...props} />
         </View>
       </View>
     </TouchableOpacity>

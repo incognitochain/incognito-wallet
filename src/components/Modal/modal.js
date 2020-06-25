@@ -19,7 +19,7 @@ const styled = StyleSheet.create({
   },
 });
 const ModalComponent = () => {
-  const { visible, data, shouldCloseModalWhenTapOverlay } = useSelector(
+  const { visible, data, shouldCloseModalWhenTapOverlay, onBack } = useSelector(
     modalSelector,
   );
   const {
@@ -30,7 +30,13 @@ const ModalComponent = () => {
   const dispatch = useDispatch();
   const handleToggle = async () =>
     shouldCloseModalWhenTapOverlay ? await dispatch(actionToggleModal()) : null;
-  const onRequestClose = async () => await dispatch(actionToggleModal());
+  const onRequestClose = async () => {
+    await dispatch(actionToggleModal());
+
+    if (typeof onBack === 'function') {
+      onBack();
+    }
+  };
   return (
     <Modal
       presentationStyle="overFullScreen"

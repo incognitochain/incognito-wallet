@@ -1,84 +1,40 @@
+/* eslint-disable import/no-cycle */
 import React from 'react';
-import {useNavigationParam, useNavigation} from 'react-navigation-hooks';
-import {ExHandler} from '@src/services/exception';
-import {validateNotEmpty} from '@src/shared/components/input/input.utils';
+import { useNavigationParam, useNavigation } from 'react-navigation-hooks';
+import { ExHandler } from '@src/services/exception';
 import routeNames from '@src/router/routeNames';
-import {Toast} from '@src/components/core';
-import {isFieldExist} from '@src/screens/SendCrypto/FrequentReceivers/FrequentReceivers.utils';
-import {useSelector, useDispatch} from 'react-redux';
-import {receiversSelector} from '@src/redux/selectors/receivers';
-import {actionCreate, actionUpdate} from '@src/redux/actions/receivers';
-import {compose} from 'recompose';
-import {withHeaderTitle} from '@src/components/Hoc';
+import { Toast } from '@src/components/core';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionCreate, actionUpdate } from '@src/redux/actions/receivers';
+import { compose } from 'recompose';
+import { withLayout_2 } from '@src/components/Layout';
+import { formValueSelector, isValid, change } from 'redux-form';
+import { Keyboard } from 'react-native';
+import { receiversSelector } from '@src/redux/selectors/receivers';
+import { CONSTANT_KEYS } from '@src/constants';
+import { formName } from './FrequentReceivers.form';
 
-export const initInputName = {
-  value: '',
-  validated: {
-    error: false,
-    message: '',
-  },
-};
-
-export const initInputAddress = {
-  value: '',
-  validated: {
-    error: false,
-    message: '',
-  },
-};
-
-const enhance = WrappedComp => props => {
+const enhance = (WrappedComp) => (props) => {
   const action = useNavigationParam('action') || 'create';
   const info = useNavigationParam('info');
   const keySave = useNavigationParam('keySave');
-  const {receivers} = useSelector(receiversSelector)[keySave];
+  const headerTitle = useNavigationParam('headerTitle');
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const {toAddress = '', name = ''} = info;
-  const [state, setState] = React.useState({
-    inputName: {...initInputName},
-    inputAddr: {...initInputAddress},
-    saved: false,
-  });
-  const {inputName, inputAddr, saved} = state;
-  const onCreateReceiver = async () => {
+  const { toAddress = '', name = '' } = info;
+  const isUpdate = action === 'update';
+  const titleBtnSubmit = isUpdate ? 'Save changes' : 'Save to address book';
+  const isFormValid = useSelector((state) => isValid(formName)(state));
+  const selector = formValueSelector(formName);
+  const nameInput = useSelector((state) => selector(state, 'name')) || '';
+  const accounts = useSelector(receiversSelector)[keySave]['receivers'] || [];
+  let shouldUpdate = nameInput !== name;
+  const disabledBtn = !isFormValid || (isUpdate && !shouldUpdate);
+  const onCreateReceiver = async ({ name, address }) => {
     try {
-      const nameReceiver = inputName.value.trim();
-      const addressReceiver = toAddress.trim();
-      const valName = validateNotEmpty(nameReceiver);
-      const validNameExist = isFieldExist(
-        'name',
-        nameReceiver,
-        'Name is exist!',
-        receivers,
-      );
-      const validAddrExist = isFieldExist(
-        'address',
-        addressReceiver,
-        'Address is exist!',
-        receivers,
-      );
-      if (valName.error) {
-        return await setState({
-          ...state,
-          inputName: {...inputName, validated: valName},
-        });
-      }
-      if (validNameExist.error) {
-        return await setState({
-          ...state,
-          inputName: {...inputName, validated: validNameExist},
-        });
-      }
-      if (validAddrExist.error) {
-        return await setState({
-          ...state,
-          inputAddr: {...inputAddr, validated: validAddrExist},
-        });
-      }
       const receiver = {
-        name: nameReceiver,
-        address: addressReceiver,
+        name,
+        address,
       };
       await dispatch(
         actionCreate({
@@ -96,94 +52,68 @@ const enhance = WrappedComp => props => {
     }
   };
 
-  const onUpdateReceiver = async () => {
+  const onUpdateReceiver = async ({ name, address }) => {
     try {
-      const nameReceiver = inputName.value.trim();
-      const addressReceiver = toAddress.trim();
-      const valName = validateNotEmpty(nameReceiver);
-      const validNameExist = isFieldExist(
-        'name',
-        nameReceiver,
-        'Name is exist!',
-        receivers,
-      );
-      if (valName.error) {
-        return await setState({
-          ...state,
-          inputName: {...inputName, validated: valName},
-        });
+      // Check if name is existing, return dialog message
+      let shouldBreakIfDuplicate = false;
+      accounts.forEach(element => {
+        if (element?.name === name) {
+          shouldBreakIfDuplicate = true;
+          return new ExHandler({}, 'This name is already existed').showErrorToast();
+        }
+      });
+      if (!shouldBreakIfDuplicate) {
+        const receiver = {
+          name,
+          address,
+        };
+        await dispatch(
+          actionUpdate({
+            keySave,
+            receiver,
+          }),
+        );
+        Toast.showInfo('Updated!');
+        return navigation.pop();
+      } else {
+        return new ExHandler({}, 'This name is already existed').showErrorToast();
       }
-      if (validNameExist.error) {
-        return await setState({
-          ...state,
-          inputName: {...inputName, validated: validNameExist},
-        });
-      }
-      const receiver = {
-        name: nameReceiver,
-        address: addressReceiver,
-      };
-      await dispatch(
-        actionUpdate({
-          keySave,
-          receiver,
-        }),
-      );
-      Toast.showInfo('Updated!');
-      return navigation.goBack();
     } catch (error) {
-      new ExHandler(error).showErrorToast();
+      new ExHandler(error?.message || error).showErrorToast();
     }
   };
 
-  const onSaveReceiver = async () => {
+  const onSaveReceiver = async (data) => {
+    if (disabledBtn) {
+      return;
+    }
+    Keyboard.dismiss();
     if (action === 'update') {
-      return onUpdateReceiver();
+      return onUpdateReceiver(data);
     }
-    return onCreateReceiver();
+    return onCreateReceiver(data);
   };
-  const onChangeText = value =>
-    setState({
-      ...state,
-      inputName: {
-        value,
-        validated: {...initInputName.validated},
-      },
-    });
-  const initData = async () => {
-    try {
-      await setState({
-        ...state,
-        inputName: {
-          ...inputName,
-          value: name,
-        },
-        inputAddr: {
-          ...inputAddr,
-          value: toAddress,
-        },
-      });
-    } catch (error) {
-      new ExHandler(error).showErrorToast();
-    }
-  };
+
   React.useEffect(() => {
-    initData();
-  }, [info]);
+    if (isUpdate) {
+      dispatch(change(formName, 'name', name));
+    }
+    dispatch(change(formName, 'address', toAddress));
+  }, [toAddress]);
   return (
     <WrappedComp
       {...{
         ...props,
         onSaveReceiver,
-        inputName,
-        inputAddr,
-        saved,
-        toAddress,
-        onChangeText,
-        action,
+        headerTitle,
+        disabledBtn,
+        titleBtnSubmit,
       }}
     />
   );
 };
 
-export default compose(withHeaderTitle, enhance);
+export default compose(
+  withLayout_2,
+  enhance,
+);

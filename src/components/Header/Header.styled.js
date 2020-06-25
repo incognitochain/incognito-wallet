@@ -27,4 +27,5 @@ export const styledHeaderTitle = StyleSheet.create({
     color: COLORS.colorGreyMedium,
     maxWidth: '100%',
   },
+  containerTitle: {},
 });

@@ -119,7 +119,7 @@ const withPin = (WrappedComp) =>
     handleAppStateChange = async (nextAppState) => {
       const { pin, navigation } = this.props;
       const { appState } = this.state;
-      if (appState.match(/inactive|background/) && nextAppState === 'active') {
+      if (appState.match(/background/) && nextAppState === 'active') {
         AppUpdater.update();
         if (pin && !WithdrawHistory.withdrawing) {
           navigation?.navigate(routeNames.AddPin, { action: 'login' });

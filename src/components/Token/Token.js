@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View, ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
-import withToken, { TokenContext } from '@src/components/Token/Token.enhance';
+import withToken from '@src/components/Token/Token.enhance';
 import { TokenVerifiedIcon } from '@src/components/Icons';
 import format from '@src/utils/format';
 import floor from 'lodash/floor';
@@ -105,7 +105,7 @@ export const ChangePrice = (props) => {
 };
 
 const Price = (props) => {
-  const { pricePrv = 0, change = '0' } = props;
+  const { pricePrv = 0 } = props;
   return (
     <View style={styled.priceContainer}>
       <NormalText
@@ -113,7 +113,6 @@ const Price = (props) => {
         hasPSymbol
         style={styled.bottomText}
       />
-      <ChangePrice change={change} />
     </View>
   );
 };
@@ -148,18 +147,18 @@ export const Amount = (props) => {
   );
 };
 
-export const Symbol = () => {
-  const { tokenProps } = React.useContext(TokenContext);
+export const Symbol = (props) => {
   const {
     symbol = '',
     networkName = '',
     isErc20Token = false,
     isBep2Token = false,
-  } = tokenProps;
+    styledSymbol = null,
+  } = props;
   return (
     <NormalText
       allowFontScaling={false}
-      style={styled.bottomText}
+      style={[styled.bottomText, styledSymbol]}
       text={`${symbol} ${
         isErc20Token || isBep2Token ? `(${networkName})` : ''
       }`}
@@ -209,8 +208,13 @@ export const Follow = (props) => {
 };
 
 const Token = (props) => {
-  const { handleRemoveToken = null, swipable = false, pricePrv } = props;
-  const pairWithPrv = pricePrv !== 0;
+  const {
+    handleRemoveToken = null,
+    swipable = false,
+    pricePrv,
+    isMainCrypto,
+  } = props;
+  const pairWithPrv = pricePrv !== 0 && !isMainCrypto;
   let TokenComponent = pairWithPrv ? (
     <TokenPairPRV {...props} />
   ) : (

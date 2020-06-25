@@ -121,14 +121,15 @@ export default StyleSheet.create({
   txField: {
     paddingRight: 10,
     paddingLeft: 10,
+    fontFamily: FONT.NAME.specialRegular,
     fontSize: 18,
-    fontFamily: FONT.NAME.regular,
+    lineHeight: 23,
     width: width * 0.8,
-    height: 45,
     borderColor: 'white',
     borderBottomColor: 'gray',
     borderWidth: 0.5,
     borderRadius: 0,
+    paddingBottom: 10
   },
   btnRetryDeposit: {
     height: '100%',

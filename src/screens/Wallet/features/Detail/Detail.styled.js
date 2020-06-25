@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { FONT, COLORS, UTILS } from '@src/styles';
 
+const maxWidth = UTILS.screenWidth() - 190;
+
 export const styled = StyleSheet.create({
   container: { flex: 1 },
   btnTrade: {
@@ -18,8 +20,8 @@ export const styled = StyleSheet.create({
     width: 30,
     alignItems: 'center',
   },
-  headerTitleStyle: {
-    maxWidth: UTILS.deviceWidth() / 2,
+  styledContainerHeaderTitle: {
+    maxWidth,
   },
 });
 

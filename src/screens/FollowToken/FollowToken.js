@@ -7,7 +7,6 @@ import routeNames from '@src/router/routeNames';
 import { useNavigation } from 'react-navigation-hooks';
 import { TouchableOpacity } from '@src/components/core';
 import { FlatList } from '@src/components/core/FlatList';
-import { useBackHandler } from '@src/components/UseEffect';
 import { styled } from './FollowToken.styled';
 import withFollowToken from './FollowToken.enhance';
 
@@ -51,7 +50,6 @@ const ListToken = (props) => {
 };
 
 const FollowToken = (props) => {
-  useBackHandler();
   return (
     <View style={styled.container}>
       <Header title="Add a coin" canSearch />

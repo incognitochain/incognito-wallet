@@ -1,11 +1,13 @@
 import React, { PureComponent, Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, WebView, Modal } from '@src/components/core';
+import { View, WebView, Modal, TouchableOpacity } from '@src/components/core';
 import SimpleInfo from '@src/components/SimpleInfo';
 import convertUtil from '@src/utils/convert';
 import { ExHandler, CustomError, ErrorCode } from '@src/services/exception';
 import { CONSTANT_COMMONS } from '@src/constants';
 import LogManager from '@src/services/LogManager';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { COLORS } from '@src/styles';
 import Validator from './sdk/validator';
 import RequestSendTx from './RequestSendTx';
 import { APPSDK, ERRORSDK, CONSTANTSDK } from './sdk';
@@ -73,7 +75,7 @@ class PappView extends Component {
     if (nextProps?.url != prevState?.url && nextProps?.url?.replace(' ', '') != '') {
       return {
         url: nextProps?.url || 'https://incscan.io',
-        hasWebViewError: isLoaded && false, 
+        hasWebViewError: isLoaded && false,
       };
     }
     const { selectedPrivacy, supportTokenIds, tokens } = nextProps;
@@ -81,7 +83,7 @@ class PappView extends Component {
 
     const listSupportedToken = getListSupportedToken(supportTokenIds, tokens);
     isLoaded && updateDataToPapp({ selectedPrivacy, listSupportedToken });
-    
+
     return null;
   }
 
@@ -150,20 +152,23 @@ class PappView extends Component {
       new Validator('onWebViewData payload', payload).required().string();
 
       const [command, data] = payload?.split('|');
-      new Validator('onWebViewData command', command).required().string();
-      new Validator('onWebViewData data', data).string();
+      if (command) {
+        new Validator('onWebViewData command', command).required().string();
+      }
+      if (data) {
+        new Validator('onWebViewData data', data).string();
+        const parsedData = JSON.parse(data);
 
-      const parsedData = JSON.parse(data);
-
-      switch (command) {
-      case CONSTANTSDK.COMMANDS.SEND_TX:
-        this.onRequestSendTx(parsedData);
-        break;
-      case CONSTANTSDK.COMMANDS.SELECT_PRIVACY_TOKEN_BY_ID:
-        this.onSdkSelectPrivacyById(parsedData?.tokenID);
-        break;
-      case CONSTANTSDK.COMMANDS.SET_LIST_SUPPORT_TOKEN_BY_ID:
-        this.onSdkSetSupportListTokenById(parsedData?.tokenIds);
+        switch (command) {
+        case CONSTANTSDK.COMMANDS.SEND_TX:
+          this.onRequestSendTx(parsedData);
+          break;
+        case CONSTANTSDK.COMMANDS.SELECT_PRIVACY_TOKEN_BY_ID:
+          this.onSdkSelectPrivacyById(parsedData?.tokenID);
+          break;
+        case CONSTANTSDK.COMMANDS.SET_LIST_SUPPORT_TOKEN_BY_ID:
+          this.onSdkSetSupportListTokenById(parsedData?.tokenIds);
+        }
       }
     } catch (e) {
       new ExHandler(e, 'The pApp occured an error. Please try again.').showErrorToast();
@@ -202,6 +207,17 @@ class PappView extends Component {
     this.webviewInstance?.reload();
   }
 
+  renderBottomBar = () => {
+    return (
+      <View style={styles.navigation}>
+        <View style={{flexDirection: 'row', flex: 1}}>
+          <TouchableOpacity onPress={()=>this.onGoBack()} style={styles.back}>
+            <Ionicons name="ios-arrow-back" size={30} color={COLORS.colorGreyBold} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
   render() {
     const { modalData, hasWebViewError } = this.state;
     const { url } = this.state;
@@ -226,12 +242,20 @@ class PappView extends Component {
           containerStyle={styles.webview}
           source={{ uri: url }}
           allowsBackForwardNavigationGestures
+          onLoad={
+            e => {
+              // Update the state so url changes could be detected by React and we could load the mainUrl.
+              this.setState({url:  e.nativeEvent.url});
+            }
+          }
+          bounces
           cacheEnabled={false}
           cacheMode='LOAD_NO_CACHE'
           onError={this.onLoadPappError}
           onLoadEnd={this.onPappLoaded}
           onMessage={this.onWebViewData}
         />
+        {!hasWebViewError ? this.renderBottomBar() : null}
         <Modal visible={!!modalData}>
           {modalData}
         </Modal>

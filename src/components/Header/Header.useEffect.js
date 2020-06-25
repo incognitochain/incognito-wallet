@@ -25,7 +25,9 @@ export const useSearchBox = (props) => {
     if (!isEmpty(keySearch)) {
       return await setState({ ...initialState, result: handleFilter() });
     }
-    await initData();
+    if (!isEmpty(data)) {
+      return await initData();
+    }
   };
   React.useEffect(() => {
     filterData();

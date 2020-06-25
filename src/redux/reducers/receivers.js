@@ -29,7 +29,7 @@ export default (state = initialState, action) => {
       return state;
     }
     if (exist) {
-      throw Error('User exist!');
+      throw new Error('User exist!');
     }
     return {
       ...state,

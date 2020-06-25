@@ -10,16 +10,21 @@ import { ButtonBasic } from '@src/components/Button';
 
 const styled = StyleSheet.create({
   container: {
+    minWidth: 80,
+    maxWidth: 120,
+  },
+  btnStyle: {
     backgroundColor: COLORS.colorGrey,
     height: 40,
     paddingHorizontal: 15,
-    maxWidth: 120,
+    width: '100%',
   },
   name: {
-    marginRight: 5,
     fontFamily: FONT.NAME.medium,
-    fontSize: FONT.NORMALIZE(FONT.FONT_SIZES.regular - 1),
+    fontSize: 15,
+    lineHeight: 19,
     color: COLORS.black,
+    marginRight: 5,
   },
   hook: {
     flexDirection: 'row',
@@ -34,18 +39,20 @@ const BtnSelectAccount = () => {
   const onNavSelectAccount = () =>
     navigation.navigate(routeNames.SelectAccount);
   return (
-    <ButtonBasic
-      onPress={onNavSelectAccount}
-      customContent={(
-        <View style={styled.hook}>
-          <Text numberOfLines={1} style={styled.name} ellipsizeMode="tail">
-            {account?.accountName}
-          </Text>
-          <Ionicons name="ios-arrow-down" color={COLORS.black} size={13} />
-        </View>
-      )}
-      btnStyle={styled.container}
-    />
+    <View style={styled.container}>
+      <ButtonBasic
+        onPress={onNavSelectAccount}
+        customContent={
+          <View style={styled.hook}>
+            <Text numberOfLines={1} style={styled.name} ellipsizeMode="tail">
+              {account?.accountName}
+            </Text>
+            <Ionicons name="ios-arrow-down" color={COLORS.black} size={13} />
+          </View>
+        }
+        btnStyle={styled.btnStyle}
+      />
+    </View>
   );
 };
 

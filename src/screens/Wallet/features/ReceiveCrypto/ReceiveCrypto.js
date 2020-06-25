@@ -10,7 +10,6 @@ import { CopiableTextDefault as CopiableText } from '@src/components/CopiableTex
 import { TouchableOpacity } from '@src/components/core';
 import { useNavigation } from 'react-navigation-hooks';
 import routeNames from '@src/router/routeNames';
-import { useBackHandler } from '@src/components/UseEffect';
 import withReceiveCrypto from './ReceiveCrypto.enhance';
 
 export const homeStyle = StyleSheet.create({
@@ -35,7 +34,6 @@ const ReceiveCrypto = () => {
   const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
   const address = selectedPrivacy?.paymentAddress;
   const navigation = useNavigation();
-  useBackHandler();
   if (!selectedPrivacy) return <LoadingContainer />;
   return (
     <View style={homeStyle.container}>

@@ -4,7 +4,6 @@ import { Container, ScrollView, Text } from '@components/core/index';
 import QrCodeAddress from '@components/QrCodeAddress/index';
 import { homeStyle } from './style';
 
-
 class ReceiveCrypto extends React.Component {
   render() {
     const { selectedPrivacy } = this.props;

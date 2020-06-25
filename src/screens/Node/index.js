@@ -154,25 +154,42 @@ class Node extends BaseScreen {
   }
 
   checkIfVerifyCodeIsExisting = async () => {
+    // Check if the current list is existing
+    // Check next qrcode === current qrcode with verifyProductCode
+    // No need to show
+    let list = (await LocalDatabase.getListDevices()) || [];
+    let shouldContinue = true;
     let verifyProductCode = await LocalDatabase.getVerifyCode();
-    console.log('Verify code in Home node ' + verifyProductCode);
-    if (verifyProductCode && verifyProductCode != '') {
+    list.forEach(element => {
+      if (element?.verify_code === verifyProductCode) {
+        if (element?.product_name && element?.product_name != '') {
+          // If existed, return, no need to show popup
+          shouldContinue = false;
+        }
+      }
+    });
+    if (shouldContinue) {
       console.log('Verify code in Home node ' + verifyProductCode);
-      let result = await NodeService.verifyProductCode(verifyProductCode);
-      console.log('Verifing process check code in Home node to API: ' + LogManager.parseJsonObjectToJsonString(result));
-      if (result && result?.verify_code === verifyProductCode) {
-        Alert.alert(
-          'Something stopped unexpectedly',
-          'Please resume setup to bring Node online',
-          [
-            { text: 'Back', onPress: () => this.goToScreen(routeNames.Home) },
-            { text: 'Resume', onPress: () => { this.goToScreen(routeNames.RepairingSetupNode, { isRepairing: true, verifyProductCode: verifyProductCode }); } },
-          ],
-          { cancelable: false }
-        );
+      if (verifyProductCode && verifyProductCode != '') {
+        console.log('Verify code in Home node ' + verifyProductCode);
+        let result = await NodeService.verifyProductCode(verifyProductCode);
+        console.log('Verifing process check code in Home node to API: ' + LogManager.parseJsonObjectToJsonString(result));
+        if (result && result?.verify_code === verifyProductCode) {
+          Alert.alert(
+            'Something stopped unexpectedly',
+            'Please resume setup to bring Node online',
+            [
+              { text: 'Back', onPress: () => this.goToScreen(routeNames.Home) },
+              { text: 'Resume', onPress: () => { this.goToScreen(routeNames.RepairingSetupNode, { isRepairing: true, verifyProductCode: verifyProductCode }); } },
+            ],
+            { cancelable: false }
+          );
+        }
+      } else {
+        // Force eventhough the same
+        LocalDatabase.saveVerifyCode('');
       }
     } else {
-      // Force eventhough the same
       LocalDatabase.saveVerifyCode('');
     }
   }

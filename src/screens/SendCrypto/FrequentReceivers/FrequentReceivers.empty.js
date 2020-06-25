@@ -1,22 +1,21 @@
 import React from 'react';
-import {View, StyleSheet, Image, Text} from 'react-native';
+import { View, StyleSheet, Image, Text } from 'react-native';
 import srcEmpty from '@src/assets/images/icons/address_book_empty.png';
-import {FONT, COLORS} from '@src/styles';
+import { FONT, COLORS } from '@src/styles';
 
 const styled = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: COLORS.lightGrey6,
   },
   title: {
-    fontFamily: FONT.NAME.regular,
+    fontFamily: FONT.NAME.medium,
     fontSize: FONT.SIZE.medium,
-    lineHeight: FONT.SIZE.medium + 10,
-    color: COLORS.lightGrey1,
+    lineHeight: FONT.SIZE.medium + 4,
+    color: COLORS.colorGreyBold,
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: 30,
   },
   imgEmpty: {
     width: 180,

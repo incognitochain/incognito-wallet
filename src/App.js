@@ -16,6 +16,8 @@ import { PersistGate } from 'redux-persist/integration/react';
 import NetInfo from '@react-native-community/netinfo';
 import { Linking, Text } from 'react-native';
 import ModalConnection from './components/Modal/ModalConnection';
+import LocalDatabase from './utils/LocalDatabase';
+import { MAIN_WEBSITE } from './constants/config';
 
 const isShowDeviceLog = false;
 const { store, persistor } = configureStore();
@@ -39,6 +41,8 @@ const App = () => {
   const [currentNetworkConnectedState, setCurrentNetworkConnectedState] = useState(true);
 
   useEffect(() => {
+    // Init recursive main website
+    resetMainCommunity();
     // Notification
     initNotification();
     Text.defaultProps = Text.defaultProps || {};
@@ -46,6 +50,11 @@ const App = () => {
     // Network state change
     listenNetworkChanges();
   }, []);
+
+  const resetMainCommunity = async () => {
+    // Init default website in community
+    await LocalDatabase.setUriWebviewCommunity(MAIN_WEBSITE);
+  };
 
   const listenNetworkChanges = () => {
     // Add event listener for network state changes

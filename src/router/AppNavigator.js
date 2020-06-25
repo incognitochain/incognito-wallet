@@ -19,9 +19,7 @@ import AddPIN from '@src/screens/AddPIN';
 import PriceChartCrypto from '@src/screens/PriceChartCrypto';
 import { navigationOptionsHandler } from '@src/utils/router';
 import Dex from '@screens/Dex';
-import FrequentReceivers, {
-  FrequentReceiversForm,
-} from '@src/screens/SendCrypto/FrequentReceivers';
+
 import Notification from '@src/screens/Notification';
 import NodeHelp from '@screens/NodeHelp';
 import BuyNodeScreen from '@screens/BuyNodeScreen';
@@ -29,8 +27,8 @@ import StakeHistory from '@screens/StakeHistory';
 import StakeRecoverAccount from '@screens/Stake/features/RecoverAccount';
 import StakeHistoryDetail from '@screens/StakeHistory/features/Detail';
 import PaymentBuyNodeScreen from '@src/screens/PaymentBuyNodeScreen';
-import ROUTE_NAMES from './routeNames';
 import { getRoutesNoHeader } from './routeNoHeader';
+import ROUTE_NAMES from './routeNames';
 
 const RouteNoHeader = getRoutesNoHeader();
 
@@ -49,12 +47,6 @@ const AppNavigator = createStackNavigator(
       title: 'pDex',
       header: () => null,
     }),
-    [ROUTE_NAMES.FrequentReceiversForm]: navigationOptionsHandler(
-      FrequentReceiversForm,
-    ),
-    [ROUTE_NAMES.FrequentReceivers]: navigationOptionsHandler(
-      FrequentReceivers,
-    ),
     [ROUTE_NAMES.Notification]: navigationOptionsHandler(Notification),
     [ROUTE_NAMES.pApps]: navigationOptionsHandler(pApps),
     [ROUTE_NAMES.NodeHelp]: navigationOptionsHandler(NodeHelp, {
@@ -76,7 +68,7 @@ const AppNavigator = createStackNavigator(
       },
     ),
     [ROUTE_NAMES.WhySend]: navigationOptionsHandler(WhySend, {
-      title: 'Send',
+      header: () => null
     }),
     [ROUTE_NAMES.WhyReceive]: navigationOptionsHandler(WhyReceive, {
       title: 'Receive',
@@ -101,6 +93,14 @@ const AppNavigator = createStackNavigator(
       PaymentBuyNodeScreen,
       { title: 'Payment' },
     ),
+    [ROUTE_NAMES.Node]: navigationOptionsHandler(Node,{ header: () => null }),
+    [ROUTE_NAMES.AddNode]: navigationOptionsHandler(AddNode, { title: 'Add Node' }),
+    [ROUTE_NAMES.LinkDevice]: navigationOptionsHandler(LinkDevice, { title: 'Link Device' }),
+    [ROUTE_NAMES.AddStake]: navigationOptionsHandler(AddStake, { title: 'Stake' }),
+    [ROUTE_NAMES.Unstake]: navigationOptionsHandler(Unstake, { title: 'Unstake' }),
+    [ROUTE_NAMES.AddSelfNode]: navigationOptionsHandler(AddSelfNode, { title: 'Virtual Node' }),
+    [ROUTE_NAMES.GetStaredAddNode]: navigationOptionsHandler(GetStartedAddNode, { title: 'null' }),
+    [ROUTE_NAMES.RepairingSetupNode]: navigationOptionsHandler(RepairingSetupNode, { title: 'Continue setup' }),
     ...RouteNoHeader,
   },
   {

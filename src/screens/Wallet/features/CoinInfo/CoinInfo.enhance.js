@@ -7,7 +7,7 @@ import { compose } from 'recompose';
 import { withLayout_2 } from '@src/components/Layout';
 import { useNavigation } from 'react-navigation-hooks';
 import format from '@src/utils/format';
-import { CONSTANT_CONFIGS } from '@src/constants';
+import { CONSTANT_CONFIGS, CONSTANT_COMMONS } from '@src/constants';
 import routeNames from '@src/router/routeNames';
 
 const enhance = (WrappedComp) => (props) => {
@@ -16,6 +16,7 @@ const enhance = (WrappedComp) => (props) => {
   });
   const { info } = state;
   const navigation = useNavigation();
+  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
   const {
     tokenId,
     isVerified,
@@ -27,7 +28,19 @@ const enhance = (WrappedComp) => (props) => {
     networkName,
     externalSymbol,
     symbol,
-  } = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  } = selectedPrivacy;
+  const getNetworkName = () => {
+    if (selectedPrivacy?.isErc20Token) {
+      return 'Ethereum network (ERC20)';
+    }
+    if (selectedPrivacy?.isBep2Token) {
+      return 'Binance network (BEP2)';
+    }
+    if (externalSymbol === CONSTANT_COMMONS.CRYPTO_SYMBOL.BNB) {
+      return 'Binance network';
+    }
+    return `${networkName} network`;
+  };
   const infosFactories = [
     {
       label: 'Balance',
@@ -35,7 +48,7 @@ const enhance = (WrappedComp) => (props) => {
     },
     {
       label: 'Origin',
-      value: `${networkName} network`,
+      value: getNetworkName(),
     },
     {
       label: 'Original Ticker',

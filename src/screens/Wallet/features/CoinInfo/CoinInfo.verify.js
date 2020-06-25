@@ -5,7 +5,6 @@ import Header from '@src/components/Header';
 import { FONT, COLORS } from '@src/styles';
 import { useSelector } from 'react-redux';
 import { selectedPrivacySeleclor } from '@src/redux/selectors';
-import { useBackHandler } from '@src/components/UseEffect';
 import LinkingService from '@src/services/linking';
 
 const styled = StyleSheet.create({
@@ -14,9 +13,9 @@ const styled = StyleSheet.create({
   },
   text: {
     marginBottom: 30,
-    fontFamily: FONT.NAME.medium,
+    fontFamily: FONT.NAME.specialMedium,
     fontSize: FONT.SIZE.medium,
-    lineHeight: FONT.SIZE.medium + 9,
+    lineHeight: FONT.SIZE.medium + 4,
     color: COLORS.colorGreyBold,
   },
   sub: {
@@ -30,7 +29,6 @@ const styled = StyleSheet.create({
 
 const CoinInfoVerify = () => {
   const { isVerified } = useSelector(selectedPrivacySeleclor.selectedPrivacy);
-  useBackHandler();
   return (
     <View style={styled.container}>
       <Header

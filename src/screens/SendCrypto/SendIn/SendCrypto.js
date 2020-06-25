@@ -40,6 +40,7 @@ import Receipt from '@src/components/Receipt';
 import { CONSTANT_KEYS } from '@src/constants';
 import { actionFetchFeeByMax } from '@src/components/EstimateFee/EstimateFee.actions';
 import format from '@src/utils/format';
+import ROUTES_NAME from '@routers/routeNames';
 import { homeStyle } from './style';
 
 export const formName = 'sendCrypto';
@@ -134,6 +135,7 @@ class SendCrypto extends React.Component {
       selectedPrivacy,
       actionToggleModal,
       rfReset,
+      navigation,
     } = this.props;
     const disabledForm = this.shouldDisabledSubmit();
     const { fee, feeUnit } = feeData;
@@ -158,7 +160,6 @@ class SendCrypto extends React.Component {
         originalAmount: _originalAmount,
       });
       if (res) {
-        await rfReset(formName);
         await actionToggleModal({
           visible: true,
           data: (
@@ -180,7 +181,9 @@ class SendCrypto extends React.Component {
               }}
             />
           ),
+          onBack: () => navigation.navigate(ROUTES_NAME.WalletDetail)
         });
+        await rfReset(formName);
       }
     } catch (e) {
       if (e.message === MESSAGES.NOT_ENOUGH_NETWORK_FEE) {
@@ -277,7 +280,7 @@ class SendCrypto extends React.Component {
                 component={InputQRField}
                 name="toAddress"
                 label="To"
-                placeholder="Enter address"
+                placeholder="Enter an Incognito address"
                 validate={validator.combinedIncognitoAddress}
                 showNavAddrBook
                 onOpenAddressBook={onShowFrequentReceivers}
@@ -343,6 +346,7 @@ SendCrypto.propTypes = {
   rfReset: PropTypes.func.isRequired,
   actionToggleModal: PropTypes.func.isRequired,
   actionFetchFeeByMax: PropTypes.func.isRequired,
+  navigation: PropTypes.object.isRequired,
 };
 
 const mapState = (state) => ({

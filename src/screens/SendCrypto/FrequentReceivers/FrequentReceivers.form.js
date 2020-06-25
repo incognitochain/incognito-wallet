@@ -1,77 +1,85 @@
+/* eslint-disable import/no-cycle */
 import React from 'react';
-import {View, Text} from 'react-native';
-import {TextInput} from '@src/shared/components/input';
-import {Button} from '@src/components/core';
+import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import {COLORS} from '@src/styles';
-import {styled} from './FrequentReceivers.styled';
+import Header from '@src/components/Header';
+import { Field } from 'redux-form';
+import {
+  InputField,
+  validator,
+  createForm,
+} from '@src/components/core/reduxForm';
+import { ButtonBasic } from '@src/components/Button';
 import withForm from './FrequentReceivers.withForm';
 
-const Form = props => {
-  const {
-    onSaveReceiver,
-    inputName,
-    toAddress,
-    onChangeText,
-    inputAddr,
-    action,
-  } = props;
-  const isUpdate = action === 'update';
+const styled = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  form: {
+    flex: 1,
+    marginTop: 15,
+  },
+  submitBtn: {
+    marginTop: 50,
+  },
+});
+
+export const formName = 'formFrequentReceivers';
+
+const isRequired = validator.required();
+
+const FormDt = createForm(formName);
+
+const Form = (props) => {
+  const { headerTitle, titleBtnSubmit, onSaveReceiver, disabledBtn } = props;
   return (
     <View style={styled.container}>
-      <TextInput
-        labelStyle={styled.label}
-        containerStyled={styled.input}
-        label="Name"
-        autoFocus
-        placeholder={'Type receiver\'s name'}
-        value={inputName.value}
-        validated={inputName.validated}
-        onChangeText={onChangeText}
-        maxLength={50}
-      />
-      <TextInput
-        labelStyle={styled.label}
-        containerStyled={styled.input}
-        label="Address"
-        value={toAddress}
-        editable={false}
-        validated={inputAddr.validated}
-        style={{
-          color: COLORS.lightGrey1,
-        }}
-      />
-      <Button
-        title={isUpdate ? 'Save changes' : 'Save to address book'}
-        onPress={onSaveReceiver}
-        style={{
-          marginTop: 50,
-        }}
-      />
+      <Header title={headerTitle} />
+      <FormDt style={styled.form}>
+        {({ handleSubmit }) => (
+          <View>
+            <Field
+              componentProps={{
+                style: {
+                  marginTop: 0,
+                },
+              }}
+              component={InputField}
+              placeholder="Name"
+              name="name"
+              label="Name"
+              validate={isRequired}
+              maxLength={50}
+            />
+            <Field
+              component={InputField}
+              label="Address"
+              name="address"
+              placeholder="Address"
+              validate={isRequired}
+              componentProps={{
+                canEditable: false,
+              }}
+            />
+            <ButtonBasic
+              title={titleBtnSubmit}
+              btnStyle={styled.submitBtn}
+              onPress={handleSubmit(onSaveReceiver)}
+              disabled={disabledBtn}
+            />
+          </View>
+        )}
+      </FormDt>
     </View>
   );
 };
 
 Form.propTypes = {
+  headerTitle: PropTypes.string.isRequired,
   onSaveReceiver: PropTypes.func.isRequired,
-  inputName: PropTypes.shape({
-    value: PropTypes.string.isRequired,
-    validated: PropTypes.shape({
-      error: PropTypes.bool.isRequired,
-      message: PropTypes.string.isRequired,
-    }),
-  }).isRequired,
-  inputAddr: PropTypes.shape({
-    value: PropTypes.string.isRequired,
-    validated: PropTypes.shape({
-      error: PropTypes.bool.isRequired,
-      message: PropTypes.string.isRequired,
-    }),
-  }).isRequired,
-  saved: PropTypes.bool.isRequired,
-  toAddress: PropTypes.string.isRequired,
-  onChangeText: PropTypes.func.isRequired,
-  action: PropTypes.string.isRequired,
+  disabledBtn: PropTypes.bool.isRequired,
+  titleBtnSubmit: PropTypes.string.isRequired,
 };
 
 export default withForm(Form);

@@ -23,7 +23,6 @@ import { CONSTANT_COMMONS } from '@src/constants';
 import { isGettingBalance as isGettingTokenBalanceSelector } from '@src/redux/selectors/token';
 import { isGettingBalance as isGettingMainCryptoBalanceSelector } from '@src/redux/selectors/account';
 import { ScrollView } from '@src/components/core';
-import { useBackHandler } from '@src/components/UseEffect';
 import withDetail from './Detail.enhance';
 import {
   styled,
@@ -32,13 +31,10 @@ import {
   historyStyled,
 } from './Detail.styled';
 
-const RightHeader = () => {
+const RightHeader = ({ hasTradeBtn }) => {
   const navigation = useNavigation();
   const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
-  if (
-    !selectedPrivacy?.pairWithPrv ||
-    selectedPrivacy?.tokenId === CONSTANT_COMMONS.PRV.id
-  ) {
+  if (!hasTradeBtn) {
     return null;
   }
   return (
@@ -120,12 +116,12 @@ const History = (props) => {
     <View style={historyStyled.container}>
       <ScrollView
         nestedScrollEnabled
-        refreshControl={
+        refreshControl={(
           <RefreshControl
             refreshing={isFetching}
             onRefresh={handleLoadHistory}
           />
-        }
+        )}
       >
         {selectedPrivacy?.isToken && <HistoryToken />}
         {selectedPrivacy?.isMainCrypto && <MainCryptoHistory />}
@@ -153,7 +149,9 @@ const Detail = (props) => {
       : isGettingTokenBalance.length > 0 || !token;
   const onGoBack = () => navigation.navigate(routeNames.Wallet);
   const onNavTokenInfo = () => navigation.navigate(routeNames.CoinInfo);
-  useBackHandler({ onGoBack });
+  const hasTradeBtn =
+    selected?.pairWithPrv && selected?.tokenId !== CONSTANT_COMMONS.PRV.id;
+
   return (
     <View style={styled.container}>
       <Header
@@ -161,20 +159,22 @@ const Detail = (props) => {
         customHeaderTitle={
           <BtnInfo onPress={onNavTokenInfo} style={styled.btnInfo} />
         }
-        rightHeader={<RightHeader />}
+        rightHeader={<RightHeader hasTradeBtn={hasTradeBtn} />}
         onGoBack={onGoBack}
-        titleStyled={styled.headerTitleStyle}
+        styledContainerHeaderTitle={
+          hasTradeBtn && styled.styledContainerHeaderTitle
+        }
       />
       <ScrollView
         contentContainerStyle={{
           flex: 1,
         }}
-        refreshControl={
+        refreshControl={(
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleLoadHistory}
           />
-        }
+        )}
         nestedScrollEnabled
       >
         <Balance />
@@ -191,6 +191,14 @@ Detail.propTypes = {
 
 History.propTypes = {
   handleLoadHistory: PropTypes.func.isRequired,
+};
+
+RightHeader.defaultProps = {
+  hasTradeBtn: false,
+};
+
+RightHeader.propTypes = {
+  hasTradeBtn: PropTypes.bool,
 };
 
 export default withDetail(Detail);

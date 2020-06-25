@@ -59,7 +59,7 @@ export const combineHistory = (
         decimals,
         pDecimals,
         status: h?.status,
-        fee: h?.amountNativeToken,
+        fee: h?.feeNativeToken,
         feePToken: h?.feePToken,
       });
     });

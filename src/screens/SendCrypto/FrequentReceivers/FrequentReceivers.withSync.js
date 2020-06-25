@@ -1,6 +1,6 @@
 import React from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
-import {listAccount} from '@src/redux/selectors/account';
+import {listAccountSelector} from '@src/redux/selectors/account';
 import {useSelector, useDispatch} from 'react-redux';
 import {ExHandler} from '@src/services/exception';
 import {actionCreate, actionSyncSuccess} from '@src/redux/actions/receivers';
@@ -8,6 +8,8 @@ import LoadingContainer from '@src/components/LoadingContainer';
 import {useNavigationParam} from 'react-navigation-hooks';
 import {CONSTANT_KEYS} from '@src/constants';
 import {receiversSelector} from '@src/redux/selectors/receivers';
+import { searchBoxConfig } from '@src/components/Header/Header.searchBox';
+import { reset } from 'redux-form';
 
 const enhance = WrappedComp => props => {
   const [state, setState] = React.useState({
@@ -15,11 +17,11 @@ const enhance = WrappedComp => props => {
     isFetched: false,
   });
   const dispatch = useDispatch();
-  const accounts = useSelector(listAccount);
+  const accounts = useSelector(listAccountSelector);
   const keySave = useNavigationParam('keySave');
   const {sync = false} = useSelector(receiversSelector)[keySave];
   const shouldSyncData =
-    keySave === CONSTANT_KEYS.REDUX_STATE_RECEIVERS_IN_NETWORK && !sync;
+    keySave === CONSTANT_KEYS.REDUX_STATE_RECEIVERS_IN_NETWORK;
   const syncData = async () => {
     try {
       const isAccListEmpty = accounts.length === 0;
@@ -65,6 +67,7 @@ const enhance = WrappedComp => props => {
   };
 
   React.useEffect(() => {
+    dispatch(reset(searchBoxConfig.form));
     if (shouldSyncData) {
       syncReceivers();
     }

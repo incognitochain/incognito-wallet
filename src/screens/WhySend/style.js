@@ -7,13 +7,13 @@ const style = StyleSheet.create({
   },
   text: {
     color: COLORS.lightGrey1,
-    lineHeight: 26,
+    lineHeight: 20,
     letterSpacing: 0.5
   },
   title: {
     ...FONT.STYLE.bold,
     marginTop: 20,
-    lineHeight: 26,
+    lineHeight: 23,
   },
 });
 

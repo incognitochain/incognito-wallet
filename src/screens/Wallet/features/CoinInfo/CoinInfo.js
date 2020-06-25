@@ -8,24 +8,29 @@ import PropTypes from 'prop-types';
 import { COLORS, UTILS } from '@src/styles';
 import { TokenBasic } from '@src/components/Token';
 import { BtnInfo } from '@src/components/Button';
-import { useBackHandler } from '@src/components/UseEffect';
+import { useNavigation } from 'react-navigation-hooks';
+import routeNames from '@src/router/routeNames';
 import withCoinInfo from './CoinInfo.enhance';
 import { styled } from './CoinInfo.styled';
 
 const InfoItem = ({ label, value, copyable, link, onlyLabel, labelStyle }) => {
-  const renderComponent = () => (
+  const renderComponent = (numberOfLinesValue) => (
     <View style={styled.infoContainer}>
       {!!label && (
         <Text
           numberOfLines={1}
-          ellipsizeMode="tail"
+          ellipsizeMode="middle"
           style={[styled.label, labelStyle]}
         >
           {label}
         </Text>
       )}
       {!!value && (
-        <Text numberOfLines={1} ellipsizeMode="middle" style={styled.value}>
+        <Text
+          numberOfLines={numberOfLinesValue || 1}
+          ellipsizeMode="middle"
+          style={styled.value}
+        >
           {value}
         </Text>
       )}
@@ -56,7 +61,7 @@ const InfoItem = ({ label, value, copyable, link, onlyLabel, labelStyle }) => {
       </TouchableOpacity>
     );
   }
-  return renderComponent();
+  return renderComponent(2);
 };
 
 const CoinInfo = (props) => {
@@ -66,10 +71,15 @@ const CoinInfo = (props) => {
     isVerified,
     handlePressVerifiedInfo,
   } = props;
-  useBackHandler();
+  const navigation = useNavigation();
+  const onGoBack = () => navigation.navigate(routeNames.WalletDetail);
   return (
     <View style={styled.container}>
-      <Header title="Coin info" titleStyled={styled.headerTitleStyle} />
+      <Header
+        title="Coin info"
+        titleStyled={styled.headerTitleStyle}
+        onGoBack={onGoBack}
+      />
       <View style={styled.wrapper}>
         <ScrollView>
           <TokenBasic
@@ -79,7 +89,10 @@ const CoinInfo = (props) => {
               maxWidth: '100%',
             }}
             styledName={{
-              maxWidth: UTILS.deviceWidth(),
+              maxWidth: '100%',
+            }}
+            styledSymbol={{
+              maxWidth: '100%',
             }}
           />
           <View style={styled.infoContainer}>

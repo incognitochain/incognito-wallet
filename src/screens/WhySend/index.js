@@ -1,19 +1,21 @@
 import React from 'react';
 import { Text, ScrollView } from '@src/components/core';
+import Header from '@src/components/Header';
 import styles from './style';
 
 const WhySend = () => {
   return (
     <ScrollView style={styles.container}>
+      <Header title="When to use Send ?" />
       <Text style={styles.title}>
-        What does in-network mean?
+      Use Send to transfer assets to another Incognito address
       </Text>
-      <Text style={styles.text}>
-        When you send in-network, you’re sending pCoins (pBTC, pETH, etc.) to another Incognito address. All Incognito addresses follow this format: 12xxxxxetc.
+      <Text includeFontPadding={false} style={styles.text}>
+        Incognito addresses all begin with 12. All parties involved are anonymous, and the transaction is privacy-protected from start to finish.
       </Text>
-      <Text style={styles.title}>What does out-network mean? </Text>
-      <Text style={styles.text}>
-        When you send out-network, you’re sending to a wallet outside the Incognito network – for example, an Ethereum wallet beginning with 0x. This is considered a withdrawal from the network, and will convert your pCoins to Coins (pETH -&gt; ETH). From your end, the transaction is anonymous. On the receiver’s end, it will show up on its respective block explorer, with an address that is not linked to you.
+      <Text style={styles.title}>Want to send assets to an external address?</Text>
+      <Text includeFontPadding={false} style={styles.text}>
+        Use the Unshield function on the main Assets screen to exit the Incognito network. Unshielding turns your assets public again.
       </Text>
     </ScrollView>
   );

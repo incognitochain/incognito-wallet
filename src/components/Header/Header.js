@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, BackHandler } from 'react-native';
 import { BtnCircleBack } from '@src/components/Button';
 import PropTypes from 'prop-types';
-import { useNavigation } from 'react-navigation-hooks';
+import { useFocusEffect, useNavigation } from 'react-navigation-hooks';
 import { BtnSelectAccount } from '@screens/SelectAccount';
 import debounce from 'lodash/debounce';
 import { TouchableOpacity } from '@src/components/core';
@@ -21,20 +21,25 @@ export const HeaderTitle = () => {
     titleStyled,
     canSearch,
     customHeaderTitle,
+    styledContainerHeaderTitle,
   } = headerProps;
   const Title = () => (
-    <View style={styledHeaderTitle.container}>
-      <Text
-        style={[
-          styledHeaderTitle.title,
-          canSearch && styledHeaderTitle.searchStyled,
-          titleStyled,
-        ]}
-        numberOfLines={1}
-        ellipsizeMode="tail"
+    <View style={[styledHeaderTitle.container]}>
+      <View
+        style={[styledHeaderTitle.containerTitle, styledContainerHeaderTitle]}
       >
-        {title}
-      </Text>
+        <Text
+          style={[
+            styledHeaderTitle.title,
+            canSearch && styledHeaderTitle.searchStyled,
+            titleStyled,
+          ]}
+          numberOfLines={1}
+        >
+          {title}
+        </Text>
+      </View>
+
       {customHeaderTitle && customHeaderTitle}
     </View>
   );
@@ -65,16 +70,31 @@ const Header = ({
   isNormalSearch,
   onTextSearchChange,
   customHeaderTitle,
+  styledContainerHeaderTitle,
+  placeHolder,
 }) => {
   const { goBack } = useNavigation();
   const handleGoBack = () =>
     typeof onGoBack === 'function' ? onGoBack() : goBack();
   const _handleGoBack = debounce(handleGoBack, 100);
+
+  useFocusEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        _handleGoBack();
+        return true;
+      },
+    );
+    return () => backHandler.remove();
+  });
+
   const renderHeaderTitle = () => {
     if (toggleSearch) {
       if (isNormalSearch) {
         return (
           <SearchBox
+            placeHolder={placeHolder || ''}
             onSubmit={isNormalSearch ? onSubmit : () => {}}
             onChange={(text) =>
               isNormalSearch ? onTextSearchChange(text) : () => {}
@@ -99,6 +119,7 @@ const Header = ({
           toggleSearch,
           onHandleSearch,
           customHeaderTitle,
+          styledContainerHeaderTitle,
         },
       }}
     >
@@ -127,6 +148,8 @@ Header.defaultProps = {
   onTextSearchChange: () => {},
   isNormalSearch: false,
   customHeaderTitle: null,
+  styledContainerHeaderTitle: null,
+  placeHolder: ''
 };
 Header.propTypes = {
   title: PropTypes.string.isRequired,
@@ -143,5 +166,7 @@ Header.propTypes = {
   onTextSearchChange: PropTypes.func,
   isNormalSearch: PropTypes.bool,
   customHeaderTitle: PropTypes.element,
+  styledContainerHeaderTitle: PropTypes.any,
+  placeHolder: PropTypes.string,
 };
 export default withHeader(React.memo(Header));
