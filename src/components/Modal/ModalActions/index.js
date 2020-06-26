@@ -19,7 +19,7 @@ const ModalActions = ({title, subTitle, btnTitle, isVisible, btnSetting, onPress
       <View style={[styles.container, { backgroundColor: 'white', padding: 20, paddingBottom: 30, paddingTop: 30 }, theme.SHADOW.normal]}>
         <View style={[styles.contentContainer, {flex: 7}]}>
           <Text style={[theme.text.headerTextStyle, theme.text.alignCenterText, theme.MARGIN.marginTopDefault]}>{`${title ?? ''}`}</Text>
-          <Text style={[theme.text.largeTitleSize, theme.MARGIN.marginTopDefault, theme.text.alignCenterText]}>{`${subTitle ?? ''}`}</Text>
+          <Text style={[theme.text.largeTitleSize, theme.MARGIN.marginTopDefault, theme.text.alignCenterText, { color: COLORS.colorGreyBold,}]}>{`${subTitle ?? ''}`}</Text>
         </View>
         <View style={[styles.contentContainer, {flex: 3}]}>
           <View style={[theme.FLEX.rowSpaceBetween, theme.FLEX.fullWidth]}>

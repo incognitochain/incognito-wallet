@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types';
-import { ButtonExtension, Text, View } from '@components/core';
+import { ButtonExtension, Text, View, TouchableOpacity } from '@components/core';
 import React from 'react';
 import Dialog, { DialogContent } from 'react-native-popup-dialog';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { COLORS } from '@src/styles';
+import theme from '@src/styles/theme';
 import styles from './styles';
 
 export const DialogNotify = React.memo(({ visible, onClose })=>{
@@ -23,10 +26,13 @@ export const DialogNotify = React.memo(({ visible, onClose })=>{
         </View>
         <ButtonExtension
           titleStyle={styles.textTitleButton}
-          buttonStyle={styles.dialog_button}
+          buttonStyle={[styles.dialog_button, theme.BUTTON.BLACK_TYPE]}
           onPress={onClose}
           title="OK"
         />
+        <TouchableOpacity style={styles.close} onPress={onClose}>
+          <Ionicons name="ios-close-circle" size={20} color={COLORS.colorGreyBold} />
+        </TouchableOpacity>
       </DialogContent>
     </Dialog>
   );
