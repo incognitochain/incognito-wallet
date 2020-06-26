@@ -1,5 +1,6 @@
 import { Text, View } from '@components/core';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import React from 'react';
 import formatUtils from '@src/utils/format';
 import { PRV } from '@src/services/wallet/tokenService';
@@ -18,7 +19,7 @@ const formatBalance = (balanceCurrent, pDecimals) => {
     pDecimals,
     maxDigit,
   );
-  return totalBalanceCurrent;
+  return _.round(totalBalanceCurrent, 9);
 };
 const Reward = ({ symbol, pDecimals, balance, isDefault, balanceStyle, containerItemStyle }) => (
   <View style={rewardStyle.container}>
