@@ -27,7 +27,7 @@ import { onClickView } from '@utils/ViewUtil';
 import _ from 'lodash';
 import PropTypes, { node } from 'prop-types';
 import React from 'react';
-import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
+import { FlatList, RefreshControl, ScrollView, View , Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import LogManager from '@src/services/LogManager';
@@ -42,6 +42,7 @@ import ModalBandWidth from '@src/components/Modal/ModalBandWidth';
 import WelcomeSetupNode from './components/WelcomeSetupNode';
 import style from './style';
 import Reward from './components/Reward';
+
 
 export const TAG = 'Node';
 let allTokens = [PRV];
@@ -521,10 +522,11 @@ class Node extends BaseScreen {
               activeDotStyle={style.activeDot}
               showsPagination
               loop
+              paginationStyle={{ top: Platform.OS === 'android' ? 50 : 30}}
               horizontal
             >
               {
-                rewards.map(({ id, pDecimals, balance, symbol, isVerified }) => (
+                [...rewards, ...rewards].map(({ id, pDecimals, balance, symbol, isVerified }) => (
                   <Reward
                     key={id}
                     tokenId={id}

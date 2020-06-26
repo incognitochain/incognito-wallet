@@ -96,12 +96,16 @@ const style = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
+    margin: 10,
+    marginTop: 10,
     backgroundColor: COLORS.lightGrey5,
   },
   activeDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
+    marginTop: 10,
+    margin: 10,
     backgroundColor: COLORS.blue6,
   },
   balance: {

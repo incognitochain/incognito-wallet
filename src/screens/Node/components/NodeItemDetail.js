@@ -19,6 +19,7 @@ import Swiper from 'react-native-swiper';
 import convert from '@utils/convert';
 import theme from '@src/styles/theme';
 import Device from '@src/models/device';
+import { Platform } from 'react-native';
 import styles from './style';
 import Reward from './Reward';
 
@@ -298,6 +299,7 @@ class NodeItemDetail extends Component {
             activeDotStyle={styles.activeDot}
             showsPagination
             loop={false}
+            paginationStyle={{ top: Platform.OS === 'android' ? 50 : 30}}
             horizontal
             removeClippedSubviews={false}
             key={new Date().getTime()}
