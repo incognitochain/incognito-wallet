@@ -37,6 +37,8 @@ import convert from '@utils/convert';
 import NavigationService from '@src/services/NavigationService';
 import theme from '@src/styles/theme';
 import { FONT } from '@src/styles';
+import ModalActions from '@src/components/Modal/ModalActions';
+import ModalBandWidth from '@src/components/Modal/ModalBandWidth';
 import WelcomeSetupNode from './components/WelcomeSetupNode';
 import style from './style';
 import Reward from './components/Reward';
@@ -110,7 +112,7 @@ const updateBeaconInfo = async (listDevice) => {
 
   return Promise.all(promises);
 };
-
+var oldVerifyProductCode = '';
 class Node extends BaseScreen {
   constructor(props) {
     super(props);
@@ -124,7 +126,8 @@ class Node extends BaseScreen {
       loading: false,
       showWelcomeSetupNode: false,
       dialogVisible: false,
-      rewards: []
+      rewards: [],
+      showModalMissingSetup: false,
     };
     this.dialogbox = React.createRef();
     this.renderNode = this.renderNode.bind(this);
@@ -175,15 +178,8 @@ class Node extends BaseScreen {
         let result = await NodeService.verifyProductCode(verifyProductCode);
         console.log('Verifing process check code in Home node to API: ' + LogManager.parseJsonObjectToJsonString(result));
         if (result && result?.verify_code === verifyProductCode) {
-          Alert.alert(
-            'Something stopped unexpectedly',
-            'Please resume setup to bring Node online',
-            [
-              { text: 'Back', onPress: () => this.goToScreen(routeNames.Home) },
-              { text: 'Resume', onPress: () => { this.goToScreen(routeNames.RepairingSetupNode, { isRepairing: true, verifyProductCode: verifyProductCode }); } },
-            ],
-            { cancelable: false }
-          );
+          oldVerifyProductCode = verifyProductCode;
+          this.setState({showModalMissingSetup: true});
         }
       } else {
         // Force eventhough the same
@@ -459,7 +455,28 @@ class Node extends BaseScreen {
       />
     );
   }
-
+  renderModalActionsForNodePrevSetup = () => {
+    const {showModalMissingSetup} = this.state;
+    return (
+      <ModalActions
+        isVisible={showModalMissingSetup}
+        title="Something stopped unexpectedly"
+        btnTitle="Back"
+        btnSetting='Resume'
+        subTitle="Please resume setup to bring Node online"
+        onPress={() => {
+          this.setState({ showModalMissingSetup: false });
+          this.goToScreen(routeNames.RepairingSetupNode, { isRepairing: true, verifyProductCode: oldVerifyProductCode });
+        }}
+        onPressFirst={() => {
+          this.setState({ showModalMissingSetup: false });
+          setTimeout(()=>{
+            this.goToScreen(routeNames.Home);  
+          }, 200);
+        }}
+      />
+    );
+  }
   render() {
     const {
       listDevice,
@@ -484,6 +501,7 @@ class Node extends BaseScreen {
             onAddVNode={this.handleAddVirtualNodePress}
             onAddPNode={this.handleAddNodePress}
           />
+          {this.renderModalActionsForNodePrevSetup()}
         </ScrollView>
       );
     }
@@ -547,9 +565,10 @@ class Node extends BaseScreen {
             title="Get a Node"
             onPress={() => { this.goToScreen(routeNames.BuyNodeScreen); }}
           />
-
+          {this.renderModalActionsForNodePrevSetup()}
         </ScrollView>
         <WelcomeSetupNode visible={showWelcomeSetupNode} onClose={this.closeWelcomeSetupNode} />
+        
       </View>
     );
   }
