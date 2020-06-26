@@ -516,6 +516,7 @@ class Node extends BaseScreen {
         {!loading && listDevice.length > 0 ? (
           <View style={style.balanceList}>
             <Swiper
+              key={`${new Date().getTime()}`}
               dotStyle={style.dot}
               activeDotStyle={style.activeDot}
               showsPagination
