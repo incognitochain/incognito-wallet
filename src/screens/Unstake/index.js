@@ -1,20 +1,21 @@
-import React, {PureComponent} from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import {ActivityIndicator} from '@components/core/index';
+import { connect } from 'react-redux';
+import { ActivityIndicator } from '@components/core/index';
+import Header from '@src/components/Header';
 import UnstakeVNode from './UnstakeVNode';
 import UnstakePNode from './UnstakePNode';
 
 class UnstakeContainer extends PureComponent {
   constructor(props) {
     super(props);
-    const { navigation }= props;
+    const { navigation } = props;
     const { params } = navigation.state;
     const { device } = params;
-    
+
     this.state = {
       device
-    }; 
+    };
   }
 
   handleCompleteUnstake = async () => {
@@ -32,20 +33,26 @@ class UnstakeContainer extends PureComponent {
 
     if (device.IsPNode && !device.Unstaked) {
       return (
-        <UnstakePNode
-          device={device}
-          wallet={wallet}
-          onFinish={this.handleCompleteUnstake}
-        />
+        <>
+          <Header title="Unstake" />
+          <UnstakePNode
+            device={device}
+            wallet={wallet}
+            onFinish={this.handleCompleteUnstake}
+          />
+        </>
       );
     }
 
     return (
-      <UnstakeVNode
-        device={device}
-        wallet={wallet}
-        onFinish={this.handleCompleteUnstake}
-      />
+      <>
+        <Header title="Unstake" />
+        <UnstakeVNode
+          device={device}
+          wallet={wallet}
+          onFinish={this.handleCompleteUnstake}
+        />
+      </>
     );
   }
 }

@@ -15,6 +15,7 @@ import Device from '@models/device';
 import routeNames from '@routers/routeNames';
 import config from '@src/constants/config';
 import { MAX_FEE_PER_TX } from '@src/components/EstimateFee/EstimateFee.utils';
+import Header from '@src/components/Header';
 import style from './styles';
 import AddStake from './AddStake';
 
@@ -122,6 +123,7 @@ class AddStakeContainer extends BaseScreen {
     const account = device.Account;
     return (
       <View style={style.container}>
+        <Header title="Stake" />
         <AddStake
           account={account}
           navigation={navigation}

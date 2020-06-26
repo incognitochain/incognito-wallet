@@ -36,7 +36,7 @@ const style = StyleSheet.create({
   dot: {
     width: 6,
     height: 6,
-    marginTop: 15,
+    marginTop: 20,
     borderRadius: 3,
     backgroundColor: COLORS.lightGrey5,
   },
@@ -44,7 +44,7 @@ const style = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    marginTop: 15,
+    marginTop: 20,
     backgroundColor: COLORS.blue6,
   },
   balance: {
