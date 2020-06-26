@@ -6,6 +6,7 @@ import _ from 'lodash';
 import convert from '@utils/convert';
 import {PRV_ID} from '@screens/Dex/constants';
 import {PRV} from '@services/wallet/tokenService';
+import { Platform } from 'react-native';
 import { rewardStyle } from './style';
 import Reward from './Reward';
 
@@ -36,6 +37,7 @@ const Rewards = ({ rewards: propRewards, allTokens, item, isDefault }) => {
         activeDotStyle={rewardStyle.activeDot}
         showsPagination
         loop
+        paginationStyle={{ top: Platform.OS === 'android' ? 50 : 30}}
         horizontal
         key={`${item.ProductId}-${data.length}`}
       >

@@ -19,6 +19,10 @@ const formatBalance = (balanceCurrent, pDecimals) => {
     pDecimals,
     maxDigit,
   );
+  let res = _.round(totalBalanceCurrent, 9);
+  if (_.isNaN(res)) {
+    return 0;
+  }
   return _.round(totalBalanceCurrent, 9);
 };
 const Reward = ({ symbol, pDecimals, balance, isDefault, balanceStyle, containerItemStyle }) => (
