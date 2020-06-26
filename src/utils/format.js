@@ -123,7 +123,33 @@ const formatWithNotation = (number, noOfDigits = 2) => {
 
   return number;
 };
-
+const formatWithNumOfPDecimal = (balanceCurrent, pDecimals) => {
+  let maxDigit = 2;
+  if (balanceCurrent <= 1000000000000000) {
+    maxDigit = 4;
+  }
+  if (balanceCurrent <= 100000000000000) {
+    maxDigit = 5;
+  }
+  if (balanceCurrent <= 10000000000000) {
+    maxDigit = 6;
+  }
+  if (balanceCurrent <= 1000000000000) {
+    maxDigit = 7;
+  }
+  if (balanceCurrent <= 100000000000) {
+    maxDigit = 8;
+  }
+  if (balanceCurrent <= 10000000000) {
+    maxDigit = 9;
+  }
+  let totalBalanceCurrent = balance(
+    balanceCurrent,
+    pDecimals,
+    maxDigit,
+  );
+  return totalBalanceCurrent;
+};
 export default {
   amount,
   amountFull,
@@ -132,6 +158,7 @@ export default {
   toMiliSecond,
   toFixed,
   number,
+  formatWithNumOfPDecimal,
   numberWithNoGroupSeparator,
   amountCreator,
   balance,

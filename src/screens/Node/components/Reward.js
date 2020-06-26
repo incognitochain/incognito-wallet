@@ -7,23 +7,11 @@ import { rewardStyle } from './style';
 
 const formatBalance = (balanceCurrent, pDecimals) => {
   let maxDigit = 2;
-  if (balanceCurrent <= 1000000000000000) {
-    maxDigit = 4;
-  }
-  if (balanceCurrent <= 100000000000000) {
-    maxDigit = 5;
-  }
-  if (balanceCurrent <= 10000000000000) {
-    maxDigit = 6;
-  }
-  if (balanceCurrent <= 1000000000000) {
-    maxDigit = 7;
-  }
-  if (balanceCurrent <= 100000000000) {
-    maxDigit = 8;
-  }
-  if (balanceCurrent <= 10000000000) {
+  if (balanceCurrent <= 1) {
     maxDigit = 9;
+  }
+  if (balanceCurrent > 1) {
+    maxDigit = 6;
   }
   let totalBalanceCurrent = formatUtils.balance(
     balanceCurrent,
@@ -37,11 +25,11 @@ const Reward = ({ symbol, pDecimals, balance, isDefault, balanceStyle, container
     <View style={[{ flexDirection: 'row' }, containerItemStyle]}>
       {isDefault && isDefault ? (
         <Text style={[rewardStyle.balance, balanceStyle]} numberOfLines={1}>
-          {symbol === PRV?.symbol ? 'ℙ' : symbol}{formatBalance(formatUtils.amount(balance, pDecimals))}
+          {symbol === PRV?.symbol ? 'ℙ' : symbol}{formatBalance(formatUtils.amount(balance, pDecimals, true))}
         </Text>
       ) : (
         <Text style={[rewardStyle.balance, balanceStyle]} numberOfLines={1}>
-          {formatBalance(formatUtils.amount(balance, pDecimals))}{symbol === PRV?.symbol ? 'ℙ' : symbol}
+          {formatBalance(formatUtils.amount(balance, pDecimals, true))}{symbol === PRV?.symbol ? 'ℙ' : symbol}
         </Text>
       )}
     </View>

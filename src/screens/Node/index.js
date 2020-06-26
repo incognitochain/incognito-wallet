@@ -318,7 +318,7 @@ class Node extends BaseScreen {
       var rewardsList = [];
       // Set reward
       listDevice.forEach((element, index) => {
-        let rewards = !_.isEmpty(element?.minerInfo?.rewards) ? element?.minerInfo?.rewards : { [PRV_ID] : 0};
+        let rewards = !_.isEmpty(element?.Rewards) ? element?.Rewards : { [PRV_ID] : 0};
         if (rewards) {
           const data = (_(Object.keys(rewards)) || [])
             .map(id => {
@@ -543,7 +543,7 @@ class Node extends BaseScreen {
         <ScrollView
           contentContainerStyle={{ flex: 1 }}
           nestedScrollEnabled
-          showsVerticalScrollIndicator
+          showsVerticalScrollIndicator={false}
           refreshControl={(
             <RefreshControl
               onRefresh={this.handleRefresh}
