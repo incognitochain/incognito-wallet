@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-unused-styles */
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
@@ -26,9 +27,6 @@ const ModalBandWidth = ({title, subTitle, btnTitle, isVisible, btnSetting, onPre
             <Button style={[theme.BUTTON.BLACK_TYPE]} onPress={onPressSetting} title={btnTitle ?? ''} textContainerStyle={{ width: ScreenWidth * 0.8 * 0.35 }} />
           </View>
         </View>
-        <TouchableOpacity style={styles.close} onPress={onPress}>
-          <Ionicons name="ios-close-circle" size={20} color={COLORS.colorGreyBold} />
-        </TouchableOpacity>
       </View>
       
     </Modal>

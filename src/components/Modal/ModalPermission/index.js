@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-unused-styles */
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modal';
@@ -26,9 +27,6 @@ const ModalPermission = ({ title, subTitle, btnTitle, btnDismiss, isVisible, onP
             <Button onPress={onPressDismiss} title={btnDismiss ?? 'OK'} textContainerStyle={{ width: ScreenWidth * 0.8 * 0.2 }} style={[theme.BUTTON.BLACK_TYPE, { height: 50, width: ScreenWidth * 0.8 * 0.25 }]} />
           </View>
         </View>
-        <TouchableOpacity style={styles.close} onPress={onPressDismiss}>
-          <Ionicons name="ios-close-circle" size={20} color={COLORS.colorGreyBold} />
-        </TouchableOpacity>
       </View>
     </Modal>
   );
