@@ -275,6 +275,11 @@ const IMAGES = {
     height: ScreenWidth * 0.22,
     borderRadius: BORDER_RADIUS.avatar,
   },
+  node: {
+    width: ScreenWidth,
+    height: ScreenWidth * 0.5,
+    borderRadius: BORDER_RADIUS.avatar,
+  },
 };
 
 const RECT = {

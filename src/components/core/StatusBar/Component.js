@@ -62,7 +62,8 @@ const {
   FrequentReceiversForm,
   WhySend,
   RepairingSetupNode,
-  AddStake
+  AddStake,
+  BuyNodeScreen
 } = routeNames;
 
 const whiteScreens = [
@@ -117,7 +118,8 @@ const whiteScreens = [
   FrequentReceivers,
   FrequentReceiversForm,
   RepairingSetupNode,
-  AddStake
+  AddStake,
+  BuyNodeScreen
 ];
 const blue2Screens = [];
 const blue1Screens = [Node];

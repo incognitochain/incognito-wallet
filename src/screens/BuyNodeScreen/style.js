@@ -26,6 +26,13 @@ const style = StyleSheet.create({
     top: '50%',
     bottom: '50%',
   },
+  incBtn: {
+    borderRadius: 15, 
+    alignItems: 'center', 
+    padding: 2,
+    paddingLeft: 15, 
+    paddingEnd: 15, 
+  },
   halfInput: {
     width: (ScreenWidth - 40) / 2 - 15,
   },
@@ -38,8 +45,6 @@ const style = StyleSheet.create({
     alignSelf: 'center'
   },
   containerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     width: '100%',
     alignItems: 'center'
   },

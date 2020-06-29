@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Animated, RefreshControl, TouchableOpacity } from 'react-native';
 import { Text, Button, View, Image, ScrollView, ActivityIndicator } from '@components/core';
-import nodeImg from '@src/assets/images/node_buy.png';
+import nodeImg from '@src/assets/images/node/buy_node_s.png';
 import { selectedPrivacySeleclor, accountSeleclor } from '@src/redux/selectors';
 import theme from '@src/styles/theme';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -25,12 +25,13 @@ import { actionToggleModal } from '@src/components/Modal';
 import AccountModal from '@src/components/Modal/AccountModal/modal.account';
 import { CONSTANT_CONFIGS } from '@src/constants';
 import { ScreenWidth } from '@src/utils/devices';
+import Header from '@src/components/Header';
 import styles from './style';
 
 
 const dataCountry = require('../../assets/rawdata/country.json');
 
-const TOP_MOTTO_HEADER = 'Node is the simplest way to power the Incognito network and earn crypto. Just plug it in to get started.';
+const TOP_MOTTO_HEADER = 'A beautiful plug and play device that protects the world from surveillance. Power privacy for people. Earn crypto.';
 const MOTTO_HEADER = 'As a Node owner, you:';
 const MOTTO =
   `•  Protect people from the dangers of surveillance.
@@ -134,12 +135,12 @@ const BuyNodeScreen = () => {
   const renderNodeImgAndPrice = () => {
     return (
       <View style={[styles.containerHeader, theme.MARGIN.marginTopDefault]}>
-        <View style={{ flexDirection: 'row', alignContent: 'center', alignItems: 'center' }}>
-          <Image style={[theme.IMAGES.avatar, theme.SHADOW.imageAvatar]} resizeMode="contain" source={nodeImg} />
-          <Text style={[theme.text.regularTextStyle, theme.MARGIN.marginLeftDefault]}> Node </Text>
+        <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
+          <Text style={[theme.text.boldTextStyleMedium]}>Node</Text>
+          <Text style={theme.text.boldTextStyleMedium}>{`$${price}`}</Text>
         </View>
-        <View>
-          <Text style={theme.text.regularTextStyle}>{`$${price}`}</Text>
+        <View style={{marginTop: 20}}>
+          <Image style={[theme.IMAGES.node, theme.SHADOW.imageAvatar]} resizeMode="contain" source={nodeImg} />
         </View>
       </View>
     );
@@ -148,40 +149,41 @@ const BuyNodeScreen = () => {
     return (
       <View style={theme.MARGIN.marginTopDefault}>
         <Text style={[theme.MARGIN.marginBottomDefault, theme.text.regularTextMotto]}>{TOP_MOTTO_HEADER}</Text>
-        <Text style={[theme.MARGIN.marginBottomDefault, theme.text.mediumText]}>{MOTTO_HEADER}</Text>
-        <Text style={theme.text.regularTextMotto}>{MOTTO}</Text>
       </View>
     );
   };
 
   const renderActionSheet = () => {
     return (
-      <View style={[theme.FLEX.rowSpaceBetween, theme.FLEX.fullWidth, theme.MARGIN.marginTopDefault]}>
-        <Text style={[theme.MARGIN.marginRightDefault, theme.text.mediumText, theme.FLEX.alignViewSelfCenter]}>Select quantity</Text>
-        <View style={theme.FLEX.rowSpaceBetween}>
-          <TouchableOpacity
-            style={theme.MARGIN.marginRightDefault}
-            disabled={currentQuantity == 1}
-            onPress={() => {
-              if (currentQuantity - 1 > 0) {
-                setCurrentQuantity(currentQuantity - 1);
-              }
-            }}
-          >
-            <AntDesign name="minuscircle" size={25} color={currentQuantity === 1 ? COLORS.lightGrey15 : COLORS.blue} />
-          </TouchableOpacity>
-          <Text style={[theme.text.boldTextStyleMedium, theme.FLEX.alignViewSelfCenter]}>{`${currentQuantity}`}</Text>
-          <TouchableOpacity
-            style={theme.MARGIN.marginLeftDefault}
-            disabled={currentQuantity == 5}
-            onPress={() => {
-              if (currentQuantity + 1 <= 5) {
-                setCurrentQuantity(currentQuantity + 1);
-              }
-            }}
-          >
-            <AntDesign name="pluscircle" size={25} color={currentQuantity === 5 ? COLORS.lightGrey15 : COLORS.blue} />
-          </TouchableOpacity>
+      <View>
+        <Text style={[theme.MARGIN.marginRightDefault, theme.text.boldTextStyleMedium]}>Select quantity</Text>
+        <View style={[theme.FLEX.rowSpaceBetween, theme.FLEX.fullWidth, theme.MARGIN.marginTopDefault]}>
+          <Text style={[theme.text.boldTextStyleLarge, theme.FLEX.alignViewSelfCenter]}>{`${currentQuantity < 10 ? `0${currentQuantity}` : `${currentQuantity}`}`}</Text>
+          <View style={theme.FLEX.rowSpaceBetween}>
+            <TouchableOpacity
+              style={[theme.MARGIN.marginRightDefault, styles.incBtn, {backgroundColor: currentQuantity === 1 ? COLORS.colorGreyLight : COLORS.colorGreyBold}]}
+              disabled={currentQuantity == 1}
+              onPress={() => {
+                if (currentQuantity - 1 > 0) {
+                  setCurrentQuantity(currentQuantity - 1);
+                }
+              }}
+            >
+              <AntDesign name="minus" size={25} color={COLORS.colorPrimary} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[{backgroundColor: currentQuantity === 5 ? COLORS.colorGreyLight : COLORS.colorGreyBold}, styles.incBtn]}
+              disabled={currentQuantity == 5}
+              onPress={() => {
+                if (currentQuantity + 1 <= 5) {
+                  setCurrentQuantity(currentQuantity + 1);
+                }
+              }}
+            >
+              <AntDesign name="plus" size={25} color={COLORS.colorPrimary} />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     );
@@ -258,7 +260,7 @@ const BuyNodeScreen = () => {
         <LineView color={COLORS.colorGrey} style={theme.MARGIN.marginTopDefault} />
         <View style={[theme.FLEX.rowSpaceBetween]}>
           <View style={{ justifyContent: 'center', alignContent: 'center', }}>
-            <Text style={[theme.text.mediumText, { marginTop: 5 }]}>Payment</Text>
+            <Text style={[theme.text.boldTextStyleMedium, { marginTop: 5 }]}>Payment</Text>
             <View style={[theme.FLEX.rowSpaceBetween]}>
               <Button
                 style={{ backgroundColor: 'white', marginLeft: -10 }}
@@ -663,6 +665,7 @@ const BuyNodeScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Header title="Buy Node" />
       <ScrollView
         refreshControl={(
           <RefreshControl
@@ -678,7 +681,7 @@ const BuyNodeScreen = () => {
         )}
         showsVerticalScrollIndicator={false}
         ref={scrollViewRef}
-        containerContentStyle={styles.container}
+        // containerContentStyle={styles.container}
         // I want to scroll into current focusing container for better UX
         onContentSizeChange={(contentWidth, contentHeight) => { showContactForShipping && scrollViewRef?.current?.scrollTo({ y: 600, animated: true }); }}
       >

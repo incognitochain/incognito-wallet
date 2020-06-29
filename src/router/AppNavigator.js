@@ -74,8 +74,7 @@ const AppNavigator = createStackNavigator(
       title: 'Receive',
     }),
     [ROUTE_NAMES.BuyNodeScreen]: navigationOptionsHandler(BuyNodeScreen, {
-      headerTitleStyle: { alignSelf: 'center' },
-      title: 'Buy Node',
+      header: ()=>null,
     }),
     [ROUTE_NAMES.Node]: navigationOptionsHandler(Node, { header: () => null, }),
     [ROUTE_NAMES.AddNode]: navigationOptionsHandler(AddNode, { header: () => null, }),

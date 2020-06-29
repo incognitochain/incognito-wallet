@@ -91,7 +91,7 @@ const TokenCustomSelect = ({ onSelect, size, style, iconStyle, customListPToken,
         style={[styles.select, style]}
         icon={(
           <View style={[styles.iconContainer, iconStyle]}>
-            <Icon name="chevron-down" size={size} type="material-community" color={COLORS.primary} />
+            <Icon name="chevron-down" size={size} type="material-community" color={COLORS.colorGreyLight} />
           </View>
         )}
       />
