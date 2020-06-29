@@ -31,6 +31,7 @@ import BtnInfo from '@src/components/Button/BtnInfo';
 import NavigationService from '@src/services/NavigationService';
 import { ScreenHeight } from '@src/utils/devices';
 import { BtnQuestionDefault } from '@src/components/Button';
+import ModalActions from '@src/components/Modal/ModalActions';
 import ScanQRCode from './components/ScanQRCode';
 import { DialogNotify } from './components/BackUpAccountDialog';
 import styles from './styles';
@@ -47,7 +48,7 @@ const CONNECTION_STATUS = {
 };
 
 const MINIMUM_BANDWIDTH = 0.3;
-
+var oldVerifyProductCode = '';
 class GetStartedAddNode extends BaseScreen {
   constructor(props) {
     super(props);
@@ -62,6 +63,7 @@ class GetStartedAddNode extends BaseScreen {
       errPermission: '',
       isErrPermission: false,
       showBandWidthModal: false,
+      showModalMissingSetup: false,
     };
   }
 
@@ -237,19 +239,11 @@ class GetStartedAddNode extends BaseScreen {
   scanQrCodeComplete = async ({ qrCode, account, hotspotSSID }) => {
     if (this.state.step === 1) { //QRCode
       let verifyProductCode = await LocalDatabase.getVerifyCode();
-      console.log(verifyProductCode);
       if (verifyProductCode && verifyProductCode !== '') {
         let result = await NodeService.verifyProductCode(verifyProductCode);
         if (result && result?.verify_code === verifyProductCode) {
-          Alert.alert(
-            'Something stopped unexpectedly',
-            'Please resume setup to bring Node online',
-            [
-              { text: 'Back', onPress: () => this.goToScreen(routeNames.Home) },
-              { text: 'Resume', onPress: () => { this.goToScreen(routeNames.RepairingSetupNode, { isRepairing: true, verifyProductCode: verifyProductCode }); } },
-            ],
-            { cancelable: false }
-          );
+          oldVerifyProductCode = verifyProductCode;
+          this.setState({showModalMissingSetup: true});
         } else {
           if (account && account?.ValidatorKey && account?.PaymentAddress) {
             this.setState({ qrCode, account, hotspotSSID }, this.nextScreen);
@@ -291,12 +285,7 @@ class GetStartedAddNode extends BaseScreen {
 
     this.setState({ step: step });
     if (!isConnected || !connectable || !wifiName || wifiName.includes('Node') || wifiName === '') {
-      Alert.alert('Could not connect', 'There seems to be an issue with your WiFi connection. Please try again or switch to a different network if available', [
-        {
-          text: 'Go to device settings',
-          onPress: () => { Linking.openURL('App-Prefs:root=WIFI'); }
-        }
-      ]);
+      this.setState({showBandWidthModal: true});
     }
   }
 
@@ -350,7 +339,28 @@ class GetStartedAddNode extends BaseScreen {
       alert(messageErr);
     }
   };
-
+  renderModalActionsForNodePrevSetup = () => {
+    const {showModalMissingSetup} = this.state;
+    return (
+      <ModalActions
+        isVisible={showModalMissingSetup}
+        title="Something stopped unexpectedly"
+        btnTitle="Back"
+        btnSetting='Resume'
+        subTitle="Please resume setup to bring Node online"
+        onPress={() => {
+          this.setState({ showModalMissingSetup: false });
+          this.goToScreen(routeNames.RepairingSetupNode, { isRepairing: true, verifyProductCode: oldVerifyProductCode });
+        }}
+        onPressFirst={() => {
+          this.setState({ showModalMissingSetup: false });
+          setTimeout(()=>{
+            this.goToScreen(routeNames.Home);  
+          }, 200);
+        }}
+      />
+    );
+  }
   render() {
     const { success, step, isErrPermission, errPermission, bandWidth, showBandWidthModal } = this.state;
     return (

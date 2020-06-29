@@ -14,7 +14,7 @@ const style = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    alignContent: 'center',
+    justifyContent: 'flex-start',
   },
   itemLeft: {
     marginRight: 'auto',

@@ -250,9 +250,7 @@ class PNode extends React.Component {
                 })}
             >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <View style={{ height: 20, justifyContent: 'center' }}>
-                  <BtnStatus backgroundColor={this.getColorStatus(item)} />
-                </View>
+                <BtnStatus backgroundColor={this.getColorStatus(item)} />
                 <View>
                   <Text style={[styles.itemLeft]}>Node {labelName || '-'}</Text>
                   {isFetching ? <ActivityIndicator size="large" /> : <Rewards isDefault item={item} rewards={item.Rewards} allTokens={allTokens} />}

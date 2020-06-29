@@ -15,7 +15,7 @@ import { COLORS } from '@src/styles';
 // Ui change immediately
 const ModalActions = ({title, subTitle, btnTitle, isVisible, btnSetting, onPress, onPressFirst, uri }) => {
   return (
-    <Modal isVisible={isVisible} animationIn="slideInLeft" animationOut="slideOutLeft" animationInTiming={800} animationOutTiming={1000}>
+    <Modal isVisible={isVisible} animationIn="fadeIn" animationOut="fadeOut" animationInTiming={800} animationOutTiming={1000}>
       <View style={[styles.container, { backgroundColor: 'white', padding: 20, paddingBottom: 30, paddingTop: 30 }, theme.SHADOW.normal]}>
         <View style={[styles.contentContainer, {flex: 7}]}>
           <Text style={[theme.text.headerTextStyle, theme.text.alignCenterText, theme.MARGIN.marginTopDefault]}>{`${title ?? ''}`}</Text>

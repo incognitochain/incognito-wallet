@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 
 const styled = StyleSheet.create({
   btnStyle: {
-    height: 32,
-    justifyContent: 'center',
+    height: 30,
+    marginTop: 3,
   },
   statusContainer: {
     width: 14,
