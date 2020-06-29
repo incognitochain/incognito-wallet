@@ -489,8 +489,11 @@ class WifiSetup extends PureComponent {
       })
       .catch(async err => {
         await LocalDatabase.saveVerifyCode(verifyNewCode);
-        this.setState({ loading: false });
         this.addStep({ name: 'Could not setup Node WiFi ', isSuccess: false });
+        // Cheating testing
+        setTimeout(()=>{
+          this.setState({ loading: false });
+        }, 1000);
         return verifyNewCode;
       });
     return verifyNewCode;

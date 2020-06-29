@@ -6,20 +6,18 @@ export default StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     padding: 20,
+    paddingTop: 0,
     backgroundColor: COLORS.lightGrey14,
   },
   card: {
-    padding: 35,
-    backgroundColor: COLORS.white,
-    shadowOpacity: 1,
-    shadowRadius: 4,
-    shadowColor: '#DCDDDD',
-    shadowOffset: { height: 2, width: 0 },
+    padding: 10,
+    paddingEnd: 10,
+    paddingLeft: 10,
   },
   title: {
     fontSize: 18,
     marginBottom: 20,
-    ...FONT.STYLE.medium,
+    ...FONT.STYLE.bold,
   },
   row: {
     flexDirection: 'row',
@@ -27,6 +25,7 @@ export default StyleSheet.create({
   },
   itemRight: {
     marginLeft: 'auto',
+    ...FONT.STYLE.bold,
   },
   field: {
     color: COLORS.lightGrey1,
@@ -35,7 +34,7 @@ export default StyleSheet.create({
     marginTop: 40,
   },
   buy: {
-    marginTop: 55,
+    marginTop: 20,
   },
   desc: {
     color: COLORS.lightGrey9,

@@ -61,7 +61,8 @@ const {
   FrequentReceivers,
   FrequentReceiversForm,
   WhySend,
-  RepairingSetupNode
+  RepairingSetupNode,
+  AddStake
 } = routeNames;
 
 const whiteScreens = [
@@ -115,7 +116,8 @@ const whiteScreens = [
   CoinInfoVerify,
   FrequentReceivers,
   FrequentReceiversForm,
-  RepairingSetupNode
+  RepairingSetupNode,
+  AddStake
 ];
 const blue2Screens = [];
 const blue1Screens = [Node];
