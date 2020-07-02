@@ -225,6 +225,10 @@ class Exception {
         return `${MESSAGES.PENDING_TX} (${ERROR.PENDING_TX}) (${CODES.NOT_ENOUGH_COIN})`;
       }
 
+      if (this?.exception?.code?.toLowerCase().includes('api_error')) {
+        return `${this.message} (${this.exception.code})`;
+      }
+
       return `${defaultMessage || MESSAGES.GENERAL} (${this.exception.code})`;
     } catch (error) {
       return error.message;

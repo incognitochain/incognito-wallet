@@ -66,7 +66,7 @@ export default {
 
     const decision_rate = Number(decimals) ? 10 ** Number(decimals) : 1;
     if (round) {
-      return Math.round(amount * decision_rate);
+      return Math.floor(amount * decision_rate);
     }
 
     return amount * decision_rate;

@@ -34,7 +34,7 @@ const style = StyleSheet.create({
     position: 'absolute', 
     bottom: 0, 
     left: 0, 
-    height: 50, 
+    height: 70, 
     width: ScreenWidth, 
     flexDirection: 'row', 
     paddingLeft: 10, 
@@ -43,11 +43,11 @@ const style = StyleSheet.create({
   },
   back: {
     height: 70, 
-    width: 50, 
+    width: '25%', 
     justifyContent: 'center', 
     alignContent: 'center', 
     alignItems: 'center', 
-    marginEnd: 5
+    paddingBottom: 10,
   },
   rightContainer: {
     flexDirection: 'row', 

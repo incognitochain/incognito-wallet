@@ -7,13 +7,18 @@ const style = StyleSheet.create({
   },
   text: {
     color: COLORS.lightGrey1,
-    lineHeight: 20,
-    letterSpacing: 0.5
+    fontFamily: FONT.NAME.specialMedium,
+    fontSize: FONT.SIZE.medium,
+    lineHeight: FONT.SIZE.medium + 4,
+    marginBottom: 22,
   },
   title: {
-    ...FONT.STYLE.bold,
-    marginTop: 20,
-    lineHeight: 23,
+    fontFamily: FONT.NAME.specialBold,
+    fontSize: FONT.SIZE.superMedium,
+    lineHeight: FONT.SIZE.superMedium + 4,
+    color: COLORS.black,
+    marginBottom: 5,
+    marginTop: 20
   },
 });
 

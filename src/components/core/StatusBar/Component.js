@@ -6,8 +6,6 @@ import DeviceInfo from 'react-native-device-info';
 import routeNames from '@src/router/routeNames';
 
 const {
-  GetStarted,
-  Game,
   Wizard,
   Node,
   Dex,
@@ -38,7 +36,7 @@ const {
   UnShieldModal,
   pApp,
   TxHistoryDetail,
-  GetStaredAddNode, 
+  GetStaredAddNode,
   ImportAccount,
   CreateAccount,
   ExportAccount,
@@ -67,7 +65,6 @@ const {
 } = routeNames;
 
 const whiteScreens = [
-  Game,
   AddPin,
   Community,
   Home,
@@ -115,17 +112,18 @@ const whiteScreens = [
   CoinInfo,
   Keychain,
   CoinInfoVerify,
-  FrequentReceivers,
   FrequentReceiversForm,
   RepairingSetupNode,
   AddStake,
-  BuyNodeScreen
+  BuyNodeScreen,
+];
+const dark4Screens = [
+  FrequentReceivers,
 ];
 const blue2Screens = [];
 const blue1Screens = [Node];
 const dark2Screen = [Dex, DexHistory, DexHistoryDetail];
 const blackScreen = [Wizard];
-const linearScreen = [Stake];
 
 const isIOS = Platform.OS === 'ios';
 const isIphoneX = DeviceInfo.hasNotch();
@@ -140,11 +138,9 @@ const StatusBar = React.memo(({ currentScreen }) => {
   let backgroundColor;
   let textColor;
 
-  if (linearScreen.includes(currentScreen)) {
-    return null;
-  } else if (whiteScreens.includes(currentScreen)) {
-    backgroundColor = COLORS.white;
-    textColor = 'dark-content';
+  if (dark4Screens.includes(currentScreen)) {
+    backgroundColor = COLORS.dark4;
+    textColor = 'light-content';
   } else if (blue2Screens.includes(currentScreen)) {
     backgroundColor = COLORS.blue2;
     textColor = 'light-content';
@@ -158,8 +154,8 @@ const StatusBar = React.memo(({ currentScreen }) => {
     backgroundColor = COLORS.black;
     textColor = 'light-content';
   } else {
-    backgroundColor = COLORS.dark4;
-    textColor = 'light-content';
+    backgroundColor = COLORS.white;
+    textColor = 'dark-content';
   }
 
   if (!isIOS) {

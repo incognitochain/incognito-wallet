@@ -70,6 +70,8 @@ const TRACK_LOG_EVENT_STATUS = {
 
 const YEAR_SECONDS = 365 * 24 * 60 * 60;
 
+const PRV_SPECIAL_SYMBOL = 'ℙ';
+
 export default {
   // old varibles, maybe remove later
   STAKING_TYPES: {
@@ -143,4 +145,5 @@ export default {
     symbol: 'pUSDT',
   },
   YEAR_SECONDS,
+  PRV_SPECIAL_SYMBOL,
 };

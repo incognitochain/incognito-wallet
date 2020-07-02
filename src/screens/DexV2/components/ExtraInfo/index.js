@@ -5,7 +5,7 @@ import stylesheet from './style';
 
 
 const ExtraInfo = (props) => {
-  const { left, right, style } = props;
+  const { left, right, style, rightStyle } = props;
 
   const LeftWrapper = typeof left === 'object' ? View : Text;
   const RightWrapper = typeof right === 'object' ? View : Text;
@@ -16,7 +16,7 @@ const ExtraInfo = (props) => {
       <RightWrapper
         numberOfLines={1}
         ellipsizeMode='tail'
-        style={[stylesheet.text, stylesheet.textRight, style]}
+        style={[stylesheet.text, stylesheet.textRight, style, rightStyle]}
       >
         {right}
       </RightWrapper>
@@ -32,12 +32,15 @@ ExtraInfo.propTypes = {
   right: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.element,
+    PropTypes.number,
   ]).isRequired,
   style: PropTypes.object,
+  rightStyle: PropTypes.object,
 };
 
 ExtraInfo.defaultProps = {
   style: null,
+  rightStyle: null,
 };
 
 export default ExtraInfo;

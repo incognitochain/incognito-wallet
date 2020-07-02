@@ -95,8 +95,6 @@ const AccountSection = ({
       }
 
       await switchAccount(account?.name);
-
-      Toast.showInfo(`Switched to keychain "${account?.name}"`);
     } catch (e) {
       new ExHandler(
         e,

@@ -25,7 +25,7 @@ const withChangeInput = WrappedComp => (props) => {
   };
 
   React.useEffect(() => {
-    if (fee && feeToken && inputText) {
+    if (feeToken && inputText) {
       const number = convertUtil.toNumber(inputText);
       if (!_.isNaN(number) && number > 0) {
         const originalAmount = convertUtil.toOriginalAmount(number, inputToken.pDecimals, inputToken.pDecimals !== 0);

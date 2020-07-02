@@ -77,5 +77,15 @@ export default {
   AddressBookForm: 'AddressBookForm',
   CoinInfo: 'CoinInfo',
   Keychain: 'Keychain',
-  CoinInfoVerify: 'CoinInfoVerify'
+  CoinInfoVerify: 'CoinInfoVerify',
+  PoolV2: 'PoolV2',
+  PoolV2Help: 'PoolV2Help',
+  PoolV2ProvideSelectCoin: 'PoolV2ProvideSelectCoin',
+  PoolV2ProvideInput: 'PoolV2ProvideInput',
+  PoolV2ProvideConfirm: 'PoolV2ProvideConfirm',
+  PoolV2WithdrawSelectCoin: 'PoolV2WithdrawSelectCoin',
+  PoolV2WithdrawRewards: 'PoolV2WithdrawRewards',
+  PoolV2WithdrawProvision: 'PoolV2WithdrawProvision',
+  PoolV2History: 'PoolV2History',
+  PoolV2HistoryDetail: 'PoolV2HistoryDetail',
 };

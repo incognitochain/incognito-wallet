@@ -11,10 +11,12 @@ const withValidate = WrappedComp => (props) => {
     inputText,
     inputFee,
     feeToken,
+    inputMin,
   } = props;
   const validate = () => {
     try {
       const newValue = inputText;
+      const min = _.isNumber(inputMin) ? inputMin : MIN_INPUT;
       let number = convertUtil.toNumber(inputText);
       if (!newValue || newValue.length === 0) {
         setError('');
@@ -22,14 +24,14 @@ const withValidate = WrappedComp => (props) => {
         if (inputFee) {
           setError(MESSAGES.GREATER(inputFee, inputToken.pDecimals));
         } else {
-          setError(MESSAGES.GREATER(MIN_INPUT, inputToken.pDecimals));
+          setError(MESSAGES.GREATER(min, inputToken.pDecimals));
         }
       } else {
         number = convertUtil.toOriginalAmount(number, inputToken.pDecimals, inputToken.pDecimals !== 0);
         if (inputFee && number <= inputFee) {
           setError(MESSAGES.GREATER(inputFee, inputToken.pDecimals));
-        } else if (number <= MIN_INPUT) {
-          setError(MESSAGES.GREATER(MIN_INPUT, inputToken.pDecimals));
+        } else if (number <= min) {
+          setError(MESSAGES.GREATER(min, inputToken.pDecimals));
         } else if (!Number.isInteger(number)) {
           setError(MESSAGES.MUST_BE_INTEGER);
         } else if (inputBalance !== null && inputFee !== null && number > inputBalance) {

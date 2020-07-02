@@ -34,9 +34,9 @@ const style = StyleSheet.create({
   },
   navigation: {
     position: 'absolute', 
-    bottom: 15, 
+    bottom: 0, 
     left: 0, 
-    height: 70, 
+    height: 75, 
     width: '100%', 
     flexDirection: 'row', 
     backgroundColor: 'white'
@@ -47,7 +47,8 @@ const style = StyleSheet.create({
     justifyContent: 'center', 
     alignContent: 'center', 
     alignItems: 'center', 
-    marginEnd: 5
+    marginEnd: 5,
+    paddingBottom: 10
   },
   rightContainer: {
     flexDirection: 'row', 

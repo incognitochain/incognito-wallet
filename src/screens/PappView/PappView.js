@@ -210,9 +210,18 @@ class PappView extends Component {
   renderBottomBar = () => {
     return (
       <View style={styles.navigation}>
-        <View style={{flexDirection: 'row', flex: 1}}>
-          <TouchableOpacity onPress={()=>this.onGoBack()} style={styles.back}>
+        <View style={{ flexDirection: 'row', flex: 1 }}>
+          <TouchableOpacity onPress={() => this.onGoBack()} style={styles.back}>
             <Ionicons name="ios-arrow-back" size={30} color={COLORS.colorGreyBold} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => this.onGoForward()} style={styles.back}>
+            <Ionicons name="ios-arrow-forward" size={30} color={COLORS.colorGreyBold} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.back}>
+            {/* <SimpleLineIcons name="home" size={25} color={COLORS.colorGreyBold} /> */}
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => this.onReload()} style={styles.back}>
+            <Ionicons name="ios-refresh" size={30} color={COLORS.colorGreyBold} />
           </TouchableOpacity>
         </View>
       </View>
@@ -245,7 +254,7 @@ class PappView extends Component {
           onLoad={
             e => {
               // Update the state so url changes could be detected by React and we could load the mainUrl.
-              this.setState({url:  e.nativeEvent.url});
+              this.setState({ url: e.nativeEvent.url });
             }
           }
           bounces

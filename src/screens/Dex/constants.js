@@ -55,17 +55,6 @@ export const PRIORITY_LIST = [
   BIG_COINS.ZIL,
 ];
 export const WAIT_TIME = 30000;
-export const SHORT_WAIT_TIME = 3000;
-export const STEPS = [
-  { percent: 10, step: 'Sending input token to account 1...' },
-  { percent: 20, step: 'Checking balance account 1...' },
-  { percent: 30, step: 'Trading...' },
-  { percent: 50, step: 'Checking balance account 1...' },
-  { percent: 60, step: 'Sending output token to account 2...' },
-  { percent: 70, step: 'Checking balance account 2...' },
-  { percent: 80, step: 'Sending token your account...' },
-  { percent: 90, step: 'Removing shadow accounts...' }
-];
 export const MESSAGES = {
   BALANCE_INSUFFICIENT: 'Your balance is insufficient.',
   NEGATIVE_NUMBER: 'Please enter an amount greater than 0.',
@@ -86,6 +75,7 @@ export const MESSAGES = {
   NOT_ENOUGH_NETWORK_FEE: 'Your balance is currently insufficient. Please adjust your fee settings and try again.',
   NOT_ENOUGH_PRV_NETWORK_FEE: 'Please top up enough PRV to cover the fee.',
   NOT_ENOUGH_BALANCE_TO_TRADE: (symbol) => `You don't have enough ${symbol} to complete this trade. Please make a deposit.`,
+  NOT_ENOUGH_BALANCE: (symbol) => `You don't have enough ${symbol}. Please make a deposit.`,
   DEPOSIT: 'deposit',
   WITHDRAW: 'withdraw',
   TRADE: 'trade',
@@ -117,10 +107,7 @@ export const MILLISECOND = 1;
 export const SECOND = 1000 * MILLISECOND;
 export const MINUTE = 60 * SECOND;
 export const MIN_INPUT = 1;
-export const MIN_VALUE = 100;
 export const MAX_WAITING_TIME = 5 * MINUTE;
 export const MULTIPLY = 2;
 export const REMOVE_LIQUIDITY_TX_SIZE = 20;
 export const LIMIT_HISTORY = 5;
-export const MIN_CANCEL_VALUE = 1;
-export const MAX_LENGTH = 20;

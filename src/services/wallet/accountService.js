@@ -85,12 +85,7 @@ export default class Account {
   }
 
   static async removeAccount(privateKeyStr, passPhrase, wallet) {
-    try {
-      const result = wallet.removeAccount(privateKeyStr, passPhrase);
-      return result;
-    } catch (e) {
-      return e;
-    }
+    return wallet.removeAccount(privateKeyStr, passPhrase);
   }
 
   // paymentInfos = [{ paymentAddressStr: toAddress, amount: amount}];
@@ -100,27 +95,20 @@ export default class Account {
     // await Wallet.resetProgressTx();
     // console.log('Wallet.ProgressTx: ', Wallet.ProgressTx);
     const indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
-
-    console.log('Account', account);
-
     // create and send constant
     let result;
-    try {
-      const infoStr = ![undefined, null].includes(info) ? JSON.stringify(info) : undefined;
-      result = await wallet.MasterAccount.child[
-        indexAccount
-      ].createAndSendNativeToken(paymentInfos, fee, isPrivacy, infoStr);
+    const infoStr = ![undefined, null].includes(info) ? JSON.stringify(info) : undefined;
+    result = await wallet.MasterAccount.child[
+      indexAccount
+    ].createAndSendNativeToken(paymentInfos, fee, isPrivacy, infoStr);
 
-      console.log(
-        'Spendingcoin after sendConstant: ',
-        wallet.MasterAccount.child[indexAccount].spendingCoins
-      );
+    console.log(
+      'Spendingcoin after sendConstant: ',
+      wallet.MasterAccount.child[indexAccount].spendingCoins
+    );
 
-      // save wallet
-      await saveWallet(wallet);
-    } catch (e) {
-      throw e;
-    }
+    // save wallet
+    await saveWallet(wallet);
     await Wallet.resetProgressTx();
     return result;
   }
@@ -360,20 +348,13 @@ export default class Account {
   /**
    *
    * @param {string} tokenID
-   * @param {string} accountName
-   * @param {object} wallet
+   * @param paymentAddrStr
    * @param {bool} isGetAll
-   * @returns {map[TokenID] : number}
+   * @returns {object}
    */
-  static async getRewardAmount(tokenID, paymentAddrStr,isGetAll = false) {
+  static async getRewardAmount(tokenID, paymentAddrStr, isGetAll = false) {
     if(_.isEmpty(paymentAddrStr)) throw new CustomError(ErrorCode.payment_address_empty,{name:'payment address is empty'});
-    let result = null;
-    try {
-      result = await AccountWallet?.getRewardAmount(paymentAddrStr,isGetAll,tokenID);
-    } catch (e) {
-      throw e;
-    }
-    return result;
+    return await AccountWallet?.getRewardAmount(paymentAddrStr,isGetAll,tokenID);
   }
 
   /**
@@ -474,23 +455,19 @@ export default class Account {
    * @param {object} wallet
    */
   static async getListTokenHasBalance(account, wallet) {
-    try {
-      if (!account) throw new Error('Account is required');
+    if (!account) throw new Error('Account is required');
 
-      const accountWallet = wallet.getAccountByName(account.name);
+    const accountWallet = wallet.getAccountByName(account.name);
 
-      if (accountWallet) {
-        const list = await accountWallet.getAllPrivacyTokenBalance();
+    if (accountWallet) {
+      const list = await accountWallet.getAllPrivacyTokenBalance();
 
-        return list?.map(tokenData => ({
-          amount: tokenData?.Balance,
-          id: tokenData?.TokenID,
-        })) || [];
-      } else {
-        throw new Error('Can not get list coin has balance of non-existed account');
-      }
-    } catch (e) {
-      throw e;
+      return list?.map(tokenData => ({
+        amount: tokenData?.Balance,
+        id: tokenData?.TokenID,
+      })) || [];
+    } else {
+      throw new Error('Can not get list coin has balance of non-existed account');
     }
   }
 

@@ -12,7 +12,10 @@ const RoundCornerButton = ({ style, titleStyle, ...props }) => (
 );
 
 RoundCornerButton.propTypes = {
-  style: PropTypes.object,
+  style: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+  ]),
   titleStyle: PropTypes.object,
 };
 

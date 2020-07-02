@@ -12,13 +12,12 @@ const withEstimateFee = WrappedComp => (props) => {
 
   const estimateFee = () => {
     if (inputToken.id !== COINS.PRV_ID && outputToken?.id !== COINS.PRV_ID) {
-      const prvFee = MAX_DEX_FEE;
-      setFee(prvFee);
+      setFee(MAX_DEX_FEE);
       setFeeToken(COINS.PRV);
       return;
     }
 
-    const prvPair = pairs.find(item =>
+    const prvPair = (pairs || []).find(item =>
       item.keys.includes(inputToken.id) &&
       item.keys.includes(COINS.PRV_ID) &&
       item[COINS.PRV_ID] > 10000 * 1e9

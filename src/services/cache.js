@@ -1,5 +1,11 @@
 const caches = {};
 
+export const KEYS = {
+  PoolConfig: 'pool-configs',
+  PoolUserData: (paymentAddress) => `pool-data-${paymentAddress}`,
+  PoolHistory: (paymentAddress) => `pool-history-${paymentAddress}`,
+};
+
 /**
  * Cache data
  * @param key
@@ -13,6 +19,13 @@ export function cache(key, data, expiredTime) {
   };
 }
 
+/**
+ *
+ * @param {string} key should be a key of KEYS dictionary above
+ * @param {Promise} promise
+ * @param {number} expiredTime in ms
+ * @returns {Promise<*>}
+ */
 export async function cachePromise(key, promise, expiredTime = 40000) {
   const cachedData = getCache(key);
 

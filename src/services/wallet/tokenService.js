@@ -93,8 +93,6 @@ export default class Token {
     info,
   ) {
     await Wallet.resetProgressTx();
-    console.log('SEND PRIVACY CUSTOM TOKEN!!!!!!!');
-
     const { TokenSymbol, TokenName, TokenAmount } = submitParam;
 
     if (typeof TokenSymbol !== 'string' || TokenSymbol.trim() === '') throw new Error('TokenSymbol is invalid');
@@ -205,17 +203,6 @@ export default class Token {
 
   static getPrivacyTokens() {
     return getTokenInfo();
-  }
-
-  static async getNormalTokens() {
-    try {
-      const data = await listCustomTokens();
-      const tokens = data.listCustomToken || [];
-
-      return tokens && tokens.map(tokenModel.fromJson);
-    } catch (e) {
-      throw e;
-    }
   }
 
   static getFollowingTokens({ account, wallet }) {
