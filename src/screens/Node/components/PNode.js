@@ -16,6 +16,7 @@ import BtnStatus from '@src/components/Button/BtnStatus';
 import BtnWithBlur from '@src/components/Button/BtnWithBlur';
 import NavigationService from '@src/services/NavigationService';
 import routeNames from '@src/router/routeNames';
+import { Alert } from 'react-native';
 import styles from './style';
 import Rewards from './Rewards';
 import Loader from './Loader';
@@ -211,7 +212,21 @@ class PNode extends React.Component {
     return rewardsList;
 
   }
-
+  showDeleteAlert = () => {
+    const { item } = this.props;
+    Alert.alert('Warning', 'You want to delete this node?', 
+      [
+        {
+          text: 'OK',
+          onPress: () => { this.removeDevice(item); }
+        },
+        {
+          text: 'Cancel',
+          onPress: () => { }
+        },
+      ]
+    );
+  }
   render() {
     const { item, isFetching, allTokens, onImportAccount, onStake, onUnstake, onWithdraw } = this.props;
     const labelName = item.Name;
@@ -230,6 +245,11 @@ class PNode extends React.Component {
           <>
             <TouchableOpacity
               style={[styles.row]}
+              onLongPress={() => { 
+                if (global.isDebug()) {
+                  this.showDeleteAlert();
+                }
+              }}
               onPress={() => NavigationService.navigate(routeNames.NodeItemDetail,
                 {
                   stake: !hasStaked && unstakedPNode,
@@ -251,7 +271,7 @@ class PNode extends React.Component {
                 })}
             >
               <View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center'}}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }}>
                   <BtnStatus backgroundColor={this.getColorStatus(item)} />
                   <Text style={[styles.itemLeft]}>Node {labelName || '-'}</Text>
                 </View>
