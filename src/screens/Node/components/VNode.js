@@ -200,16 +200,16 @@ class VNode extends React.Component {
         {isFetching ? <Loader /> : (
           <>
             <TouchableOpacity
-              style={[styles.row]} 
-              onPress={() => NavigationService.navigate(routeNames.NodeItemDetail, 
+              style={[styles.row]}
+              onPress={() => NavigationService.navigate(routeNames.NodeItemDetail,
                 {
-                  stake: !hasStaked, 
-                  hasAccount: hasAccount, 
-                  allTokens: allTokens, 
-                  deviceName: item.Name, 
-                  ip: item.Host, 
-                  rewards: item.Rewards, 
-                  onUnstake: onUnstake, 
+                  stake: !hasStaked,
+                  hasAccount: hasAccount,
+                  allTokens: allTokens,
+                  deviceName: item.Name,
+                  ip: item.Host,
+                  rewards: item.Rewards,
+                  onUnstake: onUnstake,
                   onWithdraw: onWithdraw,
                   onStake: onStake,
                   rewardsList: this.getRewards(item?.Rewards, allTokens),
@@ -220,10 +220,12 @@ class VNode extends React.Component {
                   isOffline: !item?.IsOnline,
                 })}
             >
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <BtnStatus backgroundColor={this.getColorStatus(item)} />
-                <View>
+              <View >
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center'}}>
+                  <BtnStatus backgroundColor={this.getColorStatus(item)} />
                   <Text style={[styles.itemLeft]}>Node {labelName || '-'}</Text>
+                </View>
+                <View style={{marginLeft: 30}}>
                   {isFetching ? <ActivityIndicator size="large" /> : <Rewards isDefault item={item} rewards={item.Rewards} allTokens={allTokens} />}
                 </View>
               </View>

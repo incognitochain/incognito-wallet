@@ -249,10 +249,12 @@ class PNode extends React.Component {
                   onImport: onImportAccount,
                 })}
             >
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <BtnStatus backgroundColor={this.getColorStatus(item)} />
-                <View>
+              <View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center'}}>
+                  <BtnStatus backgroundColor={this.getColorStatus(item)} />
                   <Text style={[styles.itemLeft]}>Node {labelName || '-'}</Text>
+                </View>
+                <View style={{ marginLeft: 30 }}>
                   {isFetching ? <ActivityIndicator size="large" /> : <Rewards isDefault item={item} rewards={item.Rewards} allTokens={allTokens} />}
                 </View>
               </View>

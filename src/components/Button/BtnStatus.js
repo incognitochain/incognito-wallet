@@ -4,14 +4,17 @@ import PropTypes from 'prop-types';
 
 const styled = StyleSheet.create({
   btnStyle: {
-    height: 30,
-    marginTop: 3,
+    width: 30,
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
   },
   statusContainer: {
     width: 14,
     height: 14,
     borderRadius: 7,
-    marginEnd: 20,
+    marginEnd: 15,
+    alignSelf: 'center'
   },  
 });
 

@@ -321,9 +321,10 @@ class NodeItemDetail extends Component {
           </Swiper>
         </View>
         <View style={[{ flexDirection: 'row' }, theme.MARGIN.marginTopAvg, theme.MARGIN.marginBottomDefault]}>
-          {shouldShowWithdraw ? this.renderBtn('Withdraw', () => onWithdraw(Device.getInstance(item))) : null}
           {!hasAccount ? this.renderBtn('Import a keychain', () => onImport()) :
-            stake ? this.renderBtn('Stake required', () => onStake(Device.getInstance(item))) : null}
+            (shouldShowWithdraw ? this.renderBtn('Withdraw', () => onWithdraw(Device.getInstance(item))) : 
+              (stake ? this.renderBtn('Stake required', () => onStake(Device.getInstance(item))) : null))
+          }
         </View>
         <View style={[theme.MARGIN.marginTopAvg]}>
           {this.renderItemText('Keychain', deviceName)}
