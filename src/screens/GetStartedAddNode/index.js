@@ -393,7 +393,7 @@ class GetStartedAddNode extends BaseScreen {
         <ModalBandWidth
           isVisible={showBandWidthModal}
           uri={bandWidthPng}
-          title="Weak connection"
+          title="Could not connect"
           btnTitle="Go to Settings"
           btnSetting='OK'
           subTitle="There seems to be an issue with your WiFi connection. Please try again or switch to a different network if available"
