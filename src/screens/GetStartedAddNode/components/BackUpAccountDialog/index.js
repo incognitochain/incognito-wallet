@@ -30,9 +30,6 @@ export const DialogNotify = React.memo(({ visible, onClose })=>{
           onPress={onClose}
           title="OK"
         />
-        <TouchableOpacity style={styles.close} onPress={onClose}>
-          <Ionicons name="ios-close-circle" size={20} color={COLORS.colorGreyBold} />
-        </TouchableOpacity>
       </DialogContent>
     </Dialog>
   );

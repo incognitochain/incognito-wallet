@@ -34,7 +34,6 @@ class UnstakeContainer extends PureComponent {
     if (device.IsPNode && !device.Unstaked) {
       return (
         <>
-          <Header title="Unstake" />
           <UnstakePNode
             device={device}
             wallet={wallet}
@@ -46,7 +45,6 @@ class UnstakeContainer extends PureComponent {
 
     return (
       <>
-        <Header title="Unstake" />
         <UnstakeVNode
           device={device}
           wallet={wallet}

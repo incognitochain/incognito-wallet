@@ -210,6 +210,7 @@ class VNode extends React.Component {
                   ip: item.Host,
                   rewards: item.Rewards,
                   onUnstake: onUnstake,
+                  name: item?.AccountName,
                   onWithdraw: onWithdraw,
                   onStake: onStake,
                   rewardsList: this.getRewards(item?.Rewards, allTokens),

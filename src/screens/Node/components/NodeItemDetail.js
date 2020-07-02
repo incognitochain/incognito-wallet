@@ -276,6 +276,7 @@ class NodeItemDetail extends Component {
       onUnstake,
       onStake,
       item,
+      name,
       hasAccount,
       stake,
       onImport,
@@ -327,7 +328,7 @@ class NodeItemDetail extends Component {
           }
         </View>
         <View style={[theme.MARGIN.marginTopAvg]}>
-          {this.renderItemText('Keychain', deviceName)}
+          {this.renderItemText('Keychain', name)}
           {this.renderItemText('IP', ip)}
           {isOffline ? this.renderStatus('Status', 'Offline') : null}
           {isOffline && canDropDown ? this.renderHint(ip) : null}

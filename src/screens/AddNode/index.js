@@ -16,11 +16,6 @@ const listItems = [
     routeName: routeNames.GetStaredAddNode
   },
   {
-    title: 'Link existing device',
-    subTitle: 'Link existing or remove Node devices',
-    routeName: routeNames.LinkDevice
-  },
-  {
     title: 'Node Virtual',
     subTitle: 'Run a virtual node',
     routeName: routeNames.AddSelfNode
