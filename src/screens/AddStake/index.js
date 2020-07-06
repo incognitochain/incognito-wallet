@@ -18,6 +18,7 @@ import { MAX_FEE_PER_TX } from '@src/components/EstimateFee/EstimateFee.utils';
 import Header from '@src/components/Header';
 import style from './styles';
 import AddStake from './AddStake';
+import { BtnSelectAccount } from '../SelectAccount';
 
 export const TAG = 'AddStake';
 
@@ -116,14 +117,14 @@ class AddStakeContainer extends BaseScreen {
       this.setState({ isStaking: false });
     }
   };
-
+  
   render() {
     const { navigation, wallet } = this.props;
     const { device, amount, fee, isStaking, balance } = this.state;
     const account = device.Account;
     return (
       <View style={style.container}>
-        <Header title="Stake" />
+        <Header title="Stake" rightHeader={<BtnSelectAccount />}/>
         <AddStake
           account={account}
           navigation={navigation}
