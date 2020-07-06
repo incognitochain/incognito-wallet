@@ -79,7 +79,11 @@ export default class Server {
         if (result && result.length) {
           for (const s of result) {
             if (s.default) {
-              return s;
+              return {
+                address: s.id === 'testnet' ? 'http://192.168.1.80:9354' : s.address,
+                ...s,
+              };
+
             }
           }
         }

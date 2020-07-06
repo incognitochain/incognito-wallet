@@ -121,7 +121,7 @@ const dark4Screens = [
   FrequentReceivers,
 ];
 const blue2Screens = [];
-const blue1Screens = [Node];
+const blue1Screens = [];
 const dark2Screen = [Dex, DexHistory, DexHistoryDetail];
 const blackScreen = [Wizard];
 
