@@ -27,8 +27,8 @@ const style = StyleSheet.create({
     bottom: '50%',
   },
   incBtn: {
-    borderRadius: 15, 
-    alignItems: 'center', 
+    borderRadius: 15,
+    alignItems: 'center',
     justifyContent: 'center',
     height: 25,
     width: 25,
@@ -36,12 +36,20 @@ const style = StyleSheet.create({
   halfInput: {
     width: (ScreenWidth - 40) / 2 - 15,
   },
+  btnAdd: {
+    backgroundColor: COLORS.colorGrey,
+    height: 40,
+    paddingHorizontal: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20
+  },
   balance: {
-    fontSize: 16, 
-    fontFamily: FONT.NAME.regular, 
+    fontSize: 16,
+    fontFamily: FONT.NAME.regular,
     // width: ScreenWidth * 0.25, 
-    textAlign: 'right',  
-    alignContent: 'flex-end', 
+    textAlign: 'right',
+    alignContent: 'flex-end',
     alignSelf: 'center'
   },
   containerHeader: {
@@ -50,18 +58,18 @@ const style = StyleSheet.create({
     flexDirection: 'row'
   },
   wallet: {
-    flexDirection: 'row', 
+    flexDirection: 'row',
     height: 30,
     paddingLeft: 5,
     marginBottom: 10,
-    justifyContent: 'flex-end', 
+    justifyContent: 'flex-end',
     alignSelf: 'flex-end',
-    alignItems: 'center', 
+    alignItems: 'center',
     alignContent: 'flex-end'
   },
   iconDropDown: {
-    alignSelf: 'center', 
-    justifyContent: 'center', 
+    alignSelf: 'center',
+    justifyContent: 'center',
     height: 50,
     marginEnd: 10
   },

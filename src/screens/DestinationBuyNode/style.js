@@ -1,6 +1,7 @@
 import {StyleSheet} from 'react-native';
 import {COLORS, FONT} from '@src/styles';
 import font from '@src/styles/font';
+import { ScreenWidth } from '@src/utils/devices';
 
 const style = StyleSheet.create({
   container: {
@@ -34,6 +35,9 @@ const style = StyleSheet.create({
   },
   marginTop: {
     marginTop: 25,
+  },
+  halfInput: {
+    width: (ScreenWidth - 40) / 2 - 15,
   },
 });
 

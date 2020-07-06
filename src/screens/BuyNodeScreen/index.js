@@ -26,7 +26,7 @@ import AccountModal from '@src/components/Modal/AccountModal/modal.account';
 import { CONSTANT_CONFIGS } from '@src/constants';
 import { ScreenWidth } from '@src/utils/devices';
 import Header from '@src/components/Header';
-import { BtnInfo } from '@src/components/Button';
+import { BtnInfo, ButtonBasic } from '@src/components/Button';
 import BtnInformation from '@src/components/Button/BtnInformation';
 import BtnMoreInfo from '@src/components/Button/BtnMoreInfo';
 import styles from './style';
@@ -202,10 +202,31 @@ const BuyNodeScreen = () => {
       </View>
     );
   };
+  const renderDestination = (onPress) => {
+    return (
+      <View style={[theme.FLEX.fullWidth, theme.FLEX.rowSpaceBetween, theme.MARGIN.marginBottomSmall]}>
+        <Text style={[theme.text.defaultTextStyle, theme.FLEX.alignViewSelfCenter, theme.text.mediumTextBold]}>Destination</Text>
+        <TouchableOpacity onPress={onPress} style={styles.btnAdd}>
+          <Text style={[theme.text.mediumText, theme.FLEX.alignViewSelfCenter]}>Add</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+  
+  const updateAddress = (data) => {
+    setContactData({ ...contactData, 
+      email: data?.email,
+      phone: data?.phone, 
+      postalCode: data?.postalCode, 
+      lastName: data?.lastName, 
+      firstName: data?.firstName, 
+      countryCode: data?.countryCode, 
+      city: data?.city, 
+      region: data?.region});
+  };
 
   const renderTotal = () => {
     let countableToken = getCountCoinPayable();
-    console.log(LogManager.parseJsonObjectToJsonString(countableToken));
     return (
       <View
         style={theme.MARGIN.marginTopAvg}
@@ -213,10 +234,10 @@ const BuyNodeScreen = () => {
           event => setYTotal(event?.nativeEvent?.layout?.y || 0)
         }
       >
+        {renderDestination(()=>{NavigationService.navigate(routeNames.DestinationBuyNode, {updateAddress: (data) => updateAddress(data)});})}
         {renderTotalItem('Shipping', shippingFee === 0 ? 'FREE' : `$${shippingFee}`, theme.text.mediumTextBold, theme.text.mediumTextBold)}
         {renderTotalItem(`Ships ${shippingHour}`, '', theme.text.regularTextMotto)}
         {shippingFee > 0 ? renderTotalItem('Duties or taxed may be payable depending on your locality', '', theme.text.regularTextMotto) : null}
-        <LineView color={COLORS.white} style={theme.MARGIN.marginBottomDefault} />
         {renderTotalItem('Total', `${countableToken?.res} ${symbol}`, theme.text.mediumTextBold, theme.text.mediumTextBold)}
         {renderTotalItem('', ` 1 ${symbol} = $${countableToken?.priceUSDT}`, {}, theme.text.regularTextMotto)}
         <LineView color={COLORS.colorGrey} />

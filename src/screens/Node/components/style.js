@@ -58,11 +58,11 @@ const style = StyleSheet.create({
     alignContent: 'center' 
   },
   balanceUpdate: {
-    color: 'black', 
-    alignSelf: 'center', 
-    textAlign: 'center', 
-    fontSize: FONT.FONT_SIZES.avgLarge, 
-    fontFamily: FONT.NAME.semiBold
+    fontFamily: FONT.NAME.specialMedium,
+    fontSize: FONT.FONT_SIZES.veryLarge,
+    color: COLORS.black,
+    textAlign: 'center',
+    height: '100%',
   },
   itemCenter: {
     marginLeft: 'auto',
@@ -167,9 +167,10 @@ export const rewardStyle = StyleSheet.create({
   },
   balance: {
     fontFamily: FONT.NAME.specialRegular,
-    fontSize: 20,
+    fontSize: FONT.FONT_SIZES.medium,
     color: COLORS.colorGreyBold,
-    textAlign: 'center'
+    textAlign: 'center',
+    height: '100%',
   }
 });
 

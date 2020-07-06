@@ -325,7 +325,7 @@ class NodeItemDetail extends Component {
           {!hasAccount ? this.renderBtn('Import a keychain', () => onImport()) : (
             <>
               {shouldShowWithdraw ? this.renderBtn('Withdraw', () => onWithdraw(Device.getInstance(item))) : null}
-              {!stake ? this.renderBtn(shouldShowWithdraw ? 'Stake' : 'Stake required', () => onStake(Device.getInstance(item))) : null}
+              {stake ? this.renderBtn(shouldShowWithdraw ? 'Stake' : 'Stake required', () => onStake(Device.getInstance(item))) : null}
             </>
           )}
         </View>
