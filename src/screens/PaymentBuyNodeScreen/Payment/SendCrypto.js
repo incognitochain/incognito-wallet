@@ -384,7 +384,7 @@ class SendCrypto extends React.Component {
                 />
                 <Button
                   title="Send"
-                  style={homeStyle.submitBtn}
+                  style={[homeStyle.submitBtn, theme.BUTTON.BLACK_TYPE]}
                   disabled={this.shouldDisabledSubmit()}
                   onPress={handleSubmit(this.handleSend)}
                   {...generateTestId(SEND.SUBMIT_BUTTON)}

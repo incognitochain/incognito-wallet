@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Text, ScrollView, View, Button } from '@src/components/core';
 import Header from '@src/components/Header';
 import theme from '@src/styles/theme';
@@ -8,6 +8,8 @@ import { TextField } from 'react-native-material-textfield';
 import { Dropdown } from 'react-native-material-dropdown';
 import { ScreenWidth } from '@src/utils/devices';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useNavigationParam } from 'react-navigation-hooks';
+import LogManager from '@src/services/LogManager';
 import styles from './style';
 
 const EMAIL = 'email';
@@ -21,23 +23,24 @@ const DestinationBuyNode = () => {
   let cityRef = useRef();
   let postalCodeRef = useRef();
   let phoneRef = useRef();
-  let scrollViewRef = useRef();
-
   const [regions, setRegions] = useState([]);
-  const [shippingFee, setShippingFee] = useState(0);
-  const [price, setPrice] = useState(399);
-  const [shippingHour, setShippingHour] = useState('');
-
-  const [pTokenSupport, setPTokenSupport] = useState([]);
-  const [pTokenSupportsPartner, setPTokenSupportsPartner] = useState([]);
-
-  const [showContactForShipping, setShowContactForShipping] = useState(false);
-
-  const [currentQuantity, setCurrentQuantity] = useState(1);
   const [contactData, setContactData] = useState({});
 
   const [errTf, setErrTF] = useState({});
-
+  const updateAddressF = useNavigationParam('updateAddressF');
+  let data = useNavigationParam('data');
+  useEffect(()=>{
+    if (data) {
+      setContactData(data);
+      emailRef?.current?.setValue(data?.email);
+      firstNameRef?.current?.setValue(data?.firstName);
+      lastNameRef?.current?.setValue(data?.lastName);
+      addressRef?.current?.setValue(data?.address);
+      cityRef?.current?.setValue(data?.city);
+      postalCodeRef?.current?.setValue(data?.postalCode);
+      phoneRef?.current?.setValue(data?.phone);
+    }
+  }, []);
   const onFocusField = () => {
     let { errors = {} } = errTf;
 
@@ -58,6 +61,7 @@ const DestinationBuyNode = () => {
       if (dataCountry[i].value.includes(countryValue)) {
         let region = dataCountry[i].regions;
         await setRegions(region);
+        await setContactData({ ...contactData, country: countryValue,  region: region[0].value });
       }
     }
   };
@@ -77,20 +81,6 @@ const DestinationBuyNode = () => {
     setErrTF(prevError => ({ ...prevError, ...error }));
   };
 
-  // Update regions by country changes
-  const changeRegionsDataAndSetCountryCode = async (countryValue) => {
-    let countryCode = '';
-    for (let i = 0; i < dataCountry.length; i++) {
-      if (dataCountry[i].value === countryValue) {
-        await setContactData({ ...contactData, code: dataCountry[i].countryShortCode, country: dataCountry[i].value });
-        countryCode = dataCountry[i].countryShortCode;
-        let dataRegions = dataCountry[i].regions;
-        await setRegions(dataRegions);
-      }
-    }
-    return countryCode;
-  };
-
   const renderContactInformation = () => {
     return (
       <View
@@ -104,7 +94,6 @@ const DestinationBuyNode = () => {
           onChangeText={async (value) => {
             await setContactData({ ...contactData, country: value, region: '' });
             await updateRegionByCountryName(value);
-            let code = await changeRegionsDataAndSetCountryCode(value);
           }}
         />
         <Dropdown
@@ -250,24 +239,23 @@ const DestinationBuyNode = () => {
 
   // Disable button process for better behavior
   const shouldDisableButtonProcess = () => {
-    return showContactForShipping && !(contactData.email &&
-      contactData.firstName &&
-      contactData.lastName &&
-      contactData.address &&
-      contactData.country &&
-      contactData.postalCode);
+    return (!contactData.email ||
+      !contactData.firstName ||
+      !contactData.address ||
+      !contactData.lastName ||
+      !contactData.address ||
+      !contactData.country ||
+      !contactData.postalCode);
   };
 
   return (
     <View style={styles.container}>
       <Header title="Destination" />
-      <KeyboardAwareScrollView extraScrollHeight={50} extraHeight={50} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 50}}>
+      <KeyboardAwareScrollView extraScrollHeight={100} extraHeight={50} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 50}}>
         {renderContactInformation()}
         <Button
           title="Add destination"
-          onPress={async () => {
-            
-          }}
+          onPress={()=>updateAddressF(contactData)}
           style={[theme.MARGIN.marginTopDefault, theme.BUTTON.BLACK_TYPE]}
           disabled={shouldDisableButtonProcess()}
         />

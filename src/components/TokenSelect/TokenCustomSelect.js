@@ -24,11 +24,6 @@ const generateMenu = (tokens, onSelect) => {
     .forEach(token => {
       newMenu.push({
         id: token.TokenID,
-        icon: (
-          <View style={{ marginTop: 8 }}>
-            <CryptoIcon tokenId={token.TokenID} size={30} />
-          </View>
-        ),
         label: <VerifiedText text={token?.PSymbol || token?.Symbol || ''} isVerified={token.Verified} />,
         desc: <TokenNetworkName id={token.TokenID} />,
         handlePress: onSelect,
@@ -89,11 +84,11 @@ const TokenCustomSelect = ({ onSelect, size, style, iconStyle, customListPToken,
         isDropDown
         toggleStyle={toggleStyle}
         style={[styles.select, style]}
-        icon={(
-          <View style={[styles.iconContainer, iconStyle]}>
-            <Icon name="chevron-down" size={size} type="material-community" color={COLORS.colorGreyLight} />
-          </View>
-        )}
+        // icon={(
+        //   <View style={[styles.iconContainer, iconStyle]}>
+        //     <Icon name="chevron-down" size={size} type="material-community" color={COLORS.colorGreyLight} />
+        //   </View>
+        // )}
       />
     </View>
   );

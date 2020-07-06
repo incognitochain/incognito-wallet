@@ -6,13 +6,13 @@ import { generateTestId } from '@utils/misc';
 import { SEND } from '@src/constants/elements';
 import styles from './style';
 
-const CurrentBalance = ({ amount, symbol, select, tokenId, containerStyle, hideBalanceTitle, tokenStyle, balanceStyle }) => (
+const CurrentBalance = ({ amount, symbol, select, tokenId, containerStyle, hideBalanceTitle, tokenStyle, balanceStyle, selectContainer }) => (
   <View style={[styles.container, containerStyle]}>
     {hideBalanceTitle && hideBalanceTitle ? null : <Text style={[styles.desc, containerStyle]}>Current balance</Text>}
     <View style={styles.balanceContainer}>
-      <Text style={[styles.balance, balanceStyle]} numberOfLines={1} ellipsizeMode='tail' {...generateTestId(SEND.BALANCE)}>{amount}</Text>
-      <View style={select ? styles.selectContainer : null}>
-        {select ? <CryptoIcon key={tokenId} tokenId={tokenId} size={22} /> : null}
+      {hideBalanceTitle ? null : <Text style={[styles.balance, balanceStyle]} numberOfLines={1} ellipsizeMode='tail' {...generateTestId(SEND.BALANCE)}>{amount}</Text>}
+      <View style={select ? [styles.selectContainer, selectContainer] : null}>
+        {select && !hideBalanceTitle? <CryptoIcon key={tokenId} tokenId={tokenId} size={22} /> : null}
         <Text {...generateTestId(SEND.TOKEN_SYMBOL)} style={[styles.balanceSymbol, select ? styles.selectText : null, tokenStyle]} numberOfLines={1} ellipsizeMode='tail'>{symbol}</Text>
         {select ? select : null}
       </View>
@@ -28,7 +28,8 @@ CurrentBalance.defaultProps = {
   hideBalanceTitle: false,
   containerStyle: {},
   tokenStyle: {},
-  balanceStyle: {}
+  balanceStyle: {},
+  selectContainer: {}
 };
 
 CurrentBalance.propTypes = {
@@ -40,6 +41,7 @@ CurrentBalance.propTypes = {
   containerStyle: PropTypes.object,
   tokenStyle: PropTypes.object,
   balanceStyle: PropTypes.object,
+  selectContainer: PropTypes.object,
 };
 
 export default CurrentBalance;

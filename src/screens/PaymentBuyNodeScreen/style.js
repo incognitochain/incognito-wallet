@@ -3,10 +3,11 @@ import { COLORS } from '@src/styles';
 
 const style = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.lightGrey6,
+    backgroundColor: COLORS.white,
     paddingHorizontal: 20,
     paddingVertical: 30,
     height: '100%',
+    paddingTop: 0
   },
   content: {
     backgroundColor: COLORS.white,

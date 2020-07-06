@@ -11,6 +11,7 @@ import { PRV_ID } from '@screens/Dex/constants';
 import KeepAwake from 'react-native-keep-awake';
 import { COLORS, FONT } from '@src/styles';
 import { Dashed } from '@src/components/Line';
+import { Header } from '@src/components';
 import Payment from './Payment';
 import styles from './style';
 
@@ -70,6 +71,7 @@ const PaymentBuyNodeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Header title="Payment" />
       <View style={styles.content}>
         <View style={styles.modes}>
           {modePaymentDevice.slice(0, 1)?.map(item => (

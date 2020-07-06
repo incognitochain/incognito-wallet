@@ -61,7 +61,8 @@ const {
   WhySend,
   RepairingSetupNode,
   AddStake,
-  BuyNodeScreen
+  BuyNodeScreen,
+  PaymentBuyNodeScreen
 } = routeNames;
 
 const whiteScreens = [
@@ -116,6 +117,7 @@ const whiteScreens = [
   RepairingSetupNode,
   AddStake,
   BuyNodeScreen,
+  PaymentBuyNodeScreen
 ];
 const dark4Screens = [
   FrequentReceivers,

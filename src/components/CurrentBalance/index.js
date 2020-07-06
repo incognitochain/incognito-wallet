@@ -5,7 +5,7 @@ import { selectedPrivacySeleclor } from '@src/redux/selectors';
 import formatUtil from '@src/utils/format';
 import CurrentBalance from './CurrentBalance';
 
-const CurrentBalanceContainer = ({ selectedPrivacy, symbol, select, hideBalanceTitle, containerStyle, isNestedCurrentBalance, tokenStyle, balanceStyle }) => {
+const CurrentBalanceContainer = ({ selectedPrivacy, symbol, select, hideBalanceTitle, containerStyle, isNestedCurrentBalance, tokenStyle, balanceStyle, selectContainer }) => {
   if (!selectedPrivacy) return null;
   return (
     <CurrentBalance
@@ -17,6 +17,7 @@ const CurrentBalanceContainer = ({ selectedPrivacy, symbol, select, hideBalanceT
       amount={formatUtil.amount(selectedPrivacy?.amount, selectedPrivacy?.pDecimals)}
       symbol={selectedPrivacy?.externalSymbol ||  selectedPrivacy?.symbol || symbol}
       select={select}
+      selectContainer={selectContainer}
       tokenId={selectedPrivacy.tokenId}
     />
   );

@@ -94,7 +94,7 @@ const AppNavigator = createStackNavigator(
     }),
     [ROUTE_NAMES.PaymentBuyNodeScreen]: navigationOptionsHandler(
       PaymentBuyNodeScreen,
-      { title: 'Payment' },
+      { header: () => null },
     ),
     [ROUTE_NAMES.Node]: navigationOptionsHandler(Node,{ header: () => null }),
     [ROUTE_NAMES.AddNode]: navigationOptionsHandler(AddNode, { header: () => null }),
