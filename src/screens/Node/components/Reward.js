@@ -6,35 +6,35 @@ import formatUtils from '@src/utils/format';
 import { PRV } from '@src/services/wallet/tokenService';
 import { rewardStyle } from './style';
 
-const formatBalance = (balanceCurrent, pDecimals) => {
-  let maxDigit = 2;
-  if (balanceCurrent <= 1) {
-    maxDigit = 9;
-  }
-  if (balanceCurrent > 1) {
-    maxDigit = 6;
-  }
-  let totalBalanceCurrent = formatUtils.balance(
-    balanceCurrent,
-    pDecimals,
-    maxDigit,
-  );
-  let res = _.round(totalBalanceCurrent, 9);
-  if (_.isNaN(res)) {
-    return 0;
-  }
-  return _.round(totalBalanceCurrent, 9);
-};
+// const formatBalance = (balanceCurrent, pDecimals) => {
+//   let maxDigit = 2;
+//   if (balanceCurrent <= 1) {
+//     maxDigit = 9;
+//   }
+//   if (balanceCurrent > 1) {
+//     maxDigit = 6;
+//   }
+//   let totalBalanceCurrent = formatUtils.balance(
+//     balanceCurrent,
+//     pDecimals,
+//     maxDigit,
+//   );
+//   let res = _.round(totalBalanceCurrent, 9);
+//   if (_.isNaN(res)) {
+//     return 0;
+//   }
+//   return _.round(totalBalanceCurrent, 9);
+// };
 const Reward = ({ symbol, pDecimals, balance, isDefault, balanceStyle, containerItemStyle }) => (
   <View style={rewardStyle.container}>
     <View style={[{ flexDirection: 'row' }, containerItemStyle]}>
       {isDefault && isDefault ? (
         <Text style={[rewardStyle.balance, balanceStyle]} numberOfLines={1}>
-          {symbol === PRV?.symbol ? 'ℙ' : symbol}{formatBalance(formatUtils.amount(balance, pDecimals, true))}
+          {symbol === PRV?.symbol ? 'ℙ' : symbol}{(formatUtils.amount(balance, pDecimals, true))}
         </Text>
       ) : (
         <Text style={[rewardStyle.balance, balanceStyle]} numberOfLines={1}>
-          {formatBalance(formatUtils.amount(balance, pDecimals, true))}{symbol === PRV?.symbol ? 'ℙ' : symbol}
+          {(formatUtils.amount(balance, pDecimals, true))}{symbol === PRV?.symbol ? 'ℙ' : symbol}
         </Text>
       )}
     </View>

@@ -338,12 +338,13 @@ class Node extends BaseScreen {
               let currentBalance = rewardsList[currentTokenExistingIndex].balance || 0;
               currentBalance = currentBalance + (element?.balance || 0);
               rewardsList[currentTokenExistingIndex].displayBalance = convert.toHumanAmount(currentBalance, element?.pDecimals || 0);
+              rewardsList[currentTokenExistingIndex].balance = currentBalance;
             }
           });
-            
+          this.setState({rewards: rewardsList});      
         }
       });
-      this.setState({rewards: rewardsList});
+      
     });
 
   };
