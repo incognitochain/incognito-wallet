@@ -597,12 +597,6 @@ const BuyNodeScreen = () => {
     );
   };
 
-  const headerHeight = scrollY.interpolate({
-    inputRange: [yTotal - 50, yTotal],
-    outputRange: [HEADER_MIN_HEIGHT, HEADER_MAX_HEIGHT],
-    extrapolate: 'clamp',
-  });
-
   // Get count of token payable
   const getCountCoinPayable = () => {
     let subTotal = (price + shippingFee) * currentQuantity;
@@ -647,7 +641,7 @@ const BuyNodeScreen = () => {
           {renderActionSheet()}
           {renderPayment()}
           {renderTotal()}
-          {showContactForShipping && renderContactInformation()}
+          {renderContactInformation()}
           {renderButtonProcess()}
 
           {loading && <ActivityIndicator style={theme.FLEX.absoluteIndicator} />}
