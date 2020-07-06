@@ -289,6 +289,7 @@ class NodeItemDetail extends Component {
         shouldShowWithdraw = true;
       }
     });
+    const isUnstaking = item.StakerAddress ? item.IsUnstaking : (item.Staked && item.Unstaking);
     return (
       <View style={styles.containerDetail}>
         <Header
@@ -325,7 +326,7 @@ class NodeItemDetail extends Component {
           {!hasAccount ? this.renderBtn('Import a keychain', () => onImport()) : (
             <>
               {shouldShowWithdraw ? this.renderBtn('Withdraw', () => onWithdraw(Device.getInstance(item))) : null}
-              {stake ? this.renderBtn(shouldShowWithdraw ? 'Stake' : 'Stake required', () => onStake(Device.getInstance(item))) : null}
+              {stake && !isUnstaking ? this.renderBtn(shouldShowWithdraw ? 'Stake' : 'Stake required', () => onStake(Device.getInstance(item))) : null}
             </>
           )}
         </View>
@@ -334,7 +335,7 @@ class NodeItemDetail extends Component {
           {this.renderItemText('IP', ip)}
           {isOffline ? this.renderStatus('Status', 'Offline') : null}
           {isOffline && canDropDown ? this.renderHint(ip) : null}
-          {!stake && hasAccount ? this.renderUnstake(() => onUnstake(Device.getInstance(item))) : null}
+          {!stake && hasAccount && !isUnstaking ? this.renderUnstake(() => onUnstake(Device.getInstance(item))) : null}
         </View>
       </View>
     );

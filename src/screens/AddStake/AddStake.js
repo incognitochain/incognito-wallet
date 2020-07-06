@@ -9,6 +9,8 @@ import formatUtils from '@src/utils/format';
 import convert from '@src/utils/convert';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '@src/styles';
+import NavigationService from '@src/services/NavigationService';
+import routeNames from '@src/router/routeNames';
 import styles from './styles';
 
 const pDecimals = CONSTANT_COMMONS.DECIMALS.MAIN_CRYPTO_CURRENCY;
@@ -33,13 +35,20 @@ class AddStake extends BaseScreen {
   }
 
   renderBuy() {
-    const { amount, onBuy, fee } = this.props;
+    const { amount, fee } = this.props;
     const formatAmount = formatUtils.amount(amount, pDecimals);
     return (
       <View style={styles.buy}>
         <Text style={[styles.desc, styles.firstLine]}>You need {formatAmount} PRV + {formatUtils.amount(fee, pDecimals)} {symbol} to stake this node.</Text>
         <Text style={styles.desc}>Please make sure you also have enough to cover the network fee.</Text>
-        <Button style={[styles.button, theme.BUTTON.BLACK_TYPE]} title="Buy PRV" onPress={onBuy} />
+        <Button
+          style={[styles.button, theme.BUTTON.BLACK_TYPE]}
+          title="Buy PRV"
+          onPress={()=>NavigationService.navigate(routeNames.Trade, {
+            inputTokenId: CONSTANT_COMMONS.PRV.id,
+            outputTokenId: CONSTANT_COMMONS.USDT.id,
+          })}
+        />
       </View>
     );
   }
