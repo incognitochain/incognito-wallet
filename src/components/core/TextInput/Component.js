@@ -5,6 +5,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Keyboard,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { COLORS } from '@src/styles';
@@ -53,7 +54,7 @@ const TextInput = ({
   function handleClear() {
     const { onChangeText } = props;
     textInput.current.clear();
-
+    Keyboard.dismiss();
     if (onChangeText) {
       onChangeText('');
     }

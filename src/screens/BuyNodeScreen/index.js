@@ -26,7 +26,11 @@ import AccountModal from '@src/components/Modal/AccountModal/modal.account';
 import { CONSTANT_CONFIGS } from '@src/constants';
 import { ScreenWidth } from '@src/utils/devices';
 import Header from '@src/components/Header';
+import { BtnInfo } from '@src/components/Button';
+import BtnInformation from '@src/components/Button/BtnInformation';
+import BtnMoreInfo from '@src/components/Button/BtnMoreInfo';
 import styles from './style';
+import { BtnSelectAccount } from '../SelectAccount';
 
 
 const dataCountry = require('../../assets/rawdata/country.json');
@@ -133,14 +137,16 @@ const BuyNodeScreen = () => {
   };
 
   const renderNodeImgAndPrice = () => {
+    let subTotal = (price + shippingFee) * currentQuantity;
     return (
       <View style={[styles.containerHeader, theme.MARGIN.marginTopDefault]}>
-        <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
-          <Text style={[theme.text.boldTextStyleMedium]}>Node</Text>
-          <Text style={theme.text.boldTextStyleMedium}>{`$${price}`}</Text>
-        </View>
-        <View style={{marginTop: 20}}>
+        <View>
           <Image style={[theme.IMAGES.node, theme.SHADOW.imageAvatar]} resizeMode="contain" source={nodeImg} />
+        </View>
+        <View style={{ width: '100%' }}>
+          <Text style={theme.text.boldTextStyleLarge}>{`$${price}`}</Text>
+          <Text style={theme.text.regularTextMotto}>1 year warranty</Text>
+          <Text style={theme.text.regularTextMotto}>30-day returns</Text>
         </View>
       </View>
     );
@@ -155,10 +161,9 @@ const BuyNodeScreen = () => {
 
   const renderActionSheet = () => {
     return (
-      <View>
-        <Text style={[theme.MARGIN.marginRightDefault, theme.text.boldTextStyleMedium]}>Select quantity</Text>
-        <View style={[theme.FLEX.rowSpaceBetween, theme.FLEX.fullWidth, theme.MARGIN.marginTopDefault]}>
-          <Text style={[theme.text.boldTextStyleLarge, theme.FLEX.alignViewSelfCenter]}>{`${currentQuantity < 10 ? `0${currentQuantity}` : `${currentQuantity}`}`}</Text>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', alignContent:'center', alignItems: 'center'}}>
+        <Text style={[theme.text.boldTextStyleMedium]}>Quantity</Text>
+        <View style={[theme.FLEX.rowSpaceBetween]}>
           <View style={theme.FLEX.rowSpaceBetween}>
             <TouchableOpacity
               style={[theme.MARGIN.marginRightDefault, styles.incBtn, {backgroundColor: currentQuantity === 1 ? COLORS.colorGreyLight : COLORS.colorGreyBold}]}
@@ -169,9 +174,9 @@ const BuyNodeScreen = () => {
                 }
               }}
             >
-              <AntDesign name="minus" size={25} color={COLORS.colorPrimary} />
+              <AntDesign name="minus" size={20} color={COLORS.white} />
             </TouchableOpacity>
-
+            <Text style={[theme.text.boldTextStyleLarge, theme.MARGIN.marginRightDefault]}>{`${currentQuantity < 10 ? `0${currentQuantity}` : `${currentQuantity}`}`}</Text>
             <TouchableOpacity
               style={[{backgroundColor: currentQuantity === 5 ? COLORS.colorGreyLight : COLORS.colorGreyBold}, styles.incBtn]}
               disabled={currentQuantity == 5}
@@ -181,7 +186,7 @@ const BuyNodeScreen = () => {
                 }
               }}
             >
-              <AntDesign name="plus" size={25} color={COLORS.colorPrimary} />
+              <AntDesign name="plus" size={20} color={COLORS.white} />
             </TouchableOpacity>
           </View>
         </View>
@@ -199,21 +204,21 @@ const BuyNodeScreen = () => {
   };
 
   const renderTotal = () => {
-    let subTotal = (price + shippingFee) * currentQuantity;
     let countableToken = getCountCoinPayable();
+    console.log(LogManager.parseJsonObjectToJsonString(countableToken));
     return (
-      <View onLayout={
-        event => setYTotal(event?.nativeEvent?.layout?.y || 0)
-      }
+      <View
+        style={theme.MARGIN.marginTopAvg}
+        onLayout={
+          event => setYTotal(event?.nativeEvent?.layout?.y || 0)
+        }
       >
-        <LineView color={COLORS.colorGrey} />
-        {renderTotalItem('Subtotal', `$${subTotal.toFixed(2)}`, theme.text.regularTextMotto)}
-        {renderTotalItem('Shipping', shippingFee === 0 ? 'FREE' : `$${shippingFee}`, theme.text.regularTextMotto)}
+        {renderTotalItem('Shipping', shippingFee === 0 ? 'FREE' : `$${shippingFee}`, theme.text.mediumTextBold, theme.text.mediumTextBold)}
         {renderTotalItem(`Ships ${shippingHour}`, '', theme.text.regularTextMotto)}
-        {shippingFee > 0 ? renderTotalItem('This does not include any potential duties or taxes that will vary depending on your locality.', '', theme.text.regularTextMotto) : null}
-        <LineView color={COLORS.colorGrey} style={theme.MARGIN.marginBottomDefault} />
-        {renderTotalItem('Total', `$${subTotal.toFixed(2)}`, theme.text.regularTextMotto, theme.text.mediumText)}
-        {renderTotalItem(`Pay with ${symbol}`, `${countableToken} ${symbol}`, theme.text.mediumText)}
+        {shippingFee > 0 ? renderTotalItem('Duties or taxed may be payable depending on your locality', '', theme.text.regularTextMotto) : null}
+        <LineView color={COLORS.white} style={theme.MARGIN.marginBottomDefault} />
+        {renderTotalItem('Total', `${countableToken?.res} ${symbol}`, theme.text.mediumTextBold, theme.text.mediumTextBold)}
+        {renderTotalItem('', ` 1 ${symbol} = $${countableToken?.priceUSDT}`, {}, theme.text.regularTextMotto)}
         <LineView color={COLORS.colorGrey} />
       </View>
     );
@@ -256,65 +261,30 @@ const BuyNodeScreen = () => {
 
   const renderPayment = () => {
     return (
-      <View>
-        <LineView color={COLORS.colorGrey} style={theme.MARGIN.marginTopDefault} />
-        <View style={[theme.FLEX.rowSpaceBetween]}>
-          <View style={{ justifyContent: 'center', alignContent: 'center', }}>
-            <Text style={[theme.text.boldTextStyleMedium, { marginTop: 5 }]}>Payment</Text>
-            <View style={[theme.FLEX.rowSpaceBetween]}>
-              <Button
-                style={{ backgroundColor: 'white', marginLeft: -10 }}
-                title="(More options)"
-                titleStyle={[theme.text.defaultTextStyle, { color: COLORS.primary }]}
-                onPress={() => {
-                  linkingService.openUrl(`${CONSTANT_CONFIGS.NODE_URL}`);
-                }}
-              />
-
-            </View>
+      <View style={[theme.FLEX.rowSpaceBetween, theme.MARGIN.marginTopAvg]}>
+        <Text style={[theme.text.boldTextStyleMedium, { marginTop: 5 }]}>Pay with privacy coins</Text>
+        <View style={{width: ScreenWidth * 0.4}}>
+          <View style={styles.wallet}>
+            <BtnSelectAccount />
           </View>
-          <View>
-            <View>
-              <TouchableOpacity
-                style={styles.wallet}
-                onPress={() => {
-                  dispatch(
-                    actionToggleModal({
-                      data: <AccountModal onSelectAccount={(account) => {
-                        setCurrentAccount(account);
-                      }}
-                      />,
-                      visible: true,
-                    }),
-                  );
-                }}
-              >
-                <Text style={[theme.text.defaultTextStyle]}>{currentAccount !== '' ? `${currentAccount?.name}` : 'Choose another wallet'}</Text>
-                <View>
-                  <Icon name="chevron-down" size={30} type="material-community" color={COLORS.primary} />
-                </View>
-              </TouchableOpacity>
-            </View>
-            <CurrentBalance
-              balanceStyle={styles.balance}
-              tokenStyle={{ fontSize: FONT.SIZE.regular }}
-              isNestedCurrentBalance
-              containerStyle={{
-                marginHorizontal: 0,
-                paddingHorizontal: 0,
-                justifyContent: 'flex-end',
-                alignItems: 'flex-end',
-              }}
-              hideBalanceTitle
-              select={
-                (
-                  <TokenCustomSelect iconStyle={{ width: 100, paddingLeft: 50, }} customListPToken={pTokenSupport} onSelect={handleSelectToken} />
-                )
-              }
-            />
-          </View>
+          <CurrentBalance
+            balanceStyle={styles.balance}
+            tokenStyle={{ fontSize: FONT.SIZE.regular }}
+            isNestedCurrentBalance
+            containerStyle={{
+              marginHorizontal: 0,
+              paddingHorizontal: 0,
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end',
+            }}
+            hideBalanceTitle
+            select={
+              (
+                <TokenCustomSelect iconStyle={{ width: 100, paddingLeft: 50, }} customListPToken={pTokenSupport} onSelect={handleSelectToken} />
+              )
+            }
+          />
         </View>
-
       </View>
     );
   };
@@ -610,7 +580,7 @@ const BuyNodeScreen = () => {
   const renderButtonProcess = () => {
     return (
       <Button
-        title={showContactForShipping ? 'Complete your order' : 'Continue to payment'}
+        title={showContactForShipping ? 'Confirm purchase' : 'Add destination'}
         onPress={async () => {
           if (!showContactForShipping) {
             // Show contact section
@@ -621,7 +591,7 @@ const BuyNodeScreen = () => {
             onPaymentProcess();
           }
         }}
-        style={theme.MARGIN.marginTopDefault}
+        style={[theme.MARGIN.marginTopDefault, theme.BUTTON.BLACK_TYPE]}
         disabled={shouldDisableButtonProcess()}
       />
     );
@@ -637,35 +607,21 @@ const BuyNodeScreen = () => {
   const getCountCoinPayable = () => {
     let subTotal = (price + shippingFee) * currentQuantity;
     let result = 0;
+    let priceUSDT = 0;
     for (let i = 0; i < pTokenSupport.length; i++) {
       if (currentTokenId === pTokenSupport[i]?.TokenID) {
         let priceUSD = pTokenSupport[i]?.PriceUsd;
+        priceUSDT = priceUSD;
         result = (subTotal / priceUSD).toFixed(4);
         break;
       }
     }
-    return parseFloat(result);
-  };
-
-  const renderFloatingPriceView = () => {
-    let subTotal = (price + shippingFee) * currentQuantity;
-    let countableToken = getCountCoinPayable();
-    return (
-      <Animated.View style={[styles.header, theme.SHADOW.normal, { height: showContactForShipping ? headerHeight : 0 }]}>
-        {showContactForShipping ? (
-          <View style={styles.bar}>
-            {renderTotalItem('Shipping', shippingFee === 0 ? 'FREE' : `$${shippingFee}`)}
-            {renderTotalItem('Total', `$${subTotal.toFixed(2)}`, {}, theme.text.mediumText)}
-            {renderTotalItem(`Pay with ${symbol}`, `${countableToken} ${symbol}`, theme.text.mediumText)}
-          </View>
-        ) : null}
-      </Animated.View>
-    );
+    return {res: parseFloat(result), priceUSDT: priceUSDT};
   };
 
   return (
     <View style={styles.container}>
-      <Header title="Buy Node" />
+      <Header title="Get Node" rightHeader={<BtnMoreInfo onPress={()=>{NavigationService.navigate(routeNames.NodeBuyHelp); }} />} />
       <ScrollView
         refreshControl={(
           <RefreshControl

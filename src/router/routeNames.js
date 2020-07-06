@@ -88,4 +88,6 @@ export default {
   PoolV2WithdrawProvision: 'PoolV2WithdrawProvision',
   PoolV2History: 'PoolV2History',
   PoolV2HistoryDetail: 'PoolV2HistoryDetail',
+  NodeBuyHelp: 'NodeBuyHelp',
+  DestinationBuyNode: 'DestinationBuyNode'
 };

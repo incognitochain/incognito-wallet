@@ -7,6 +7,8 @@ import AddStake from '@src/screens/AddStake';
 import Unstake from '@src/screens/Unstake';
 import AddSelfNode from '@src/screens/AddSelfNode';
 import LinkDevice from '@screens/LinkDevice';
+import NodeBuyHelp from '@screens/NodeBuyHelp';
+import DestinationBuyNode from '@screens/DestinationBuyNode';
 import HeaderBar from '@src/components/HeaderBar';
 import GetStartedAddNode from '@src/screens/GetStartedAddNode';
 import NodeItemDetail from '@src/screens/Node/components/NodeItemDetail';
@@ -85,6 +87,8 @@ const AppNavigator = createStackNavigator(
     [ROUTE_NAMES.GetStaredAddNode]: navigationOptionsHandler(GetStartedAddNode, { header: () => null,}),
     [ROUTE_NAMES.RepairingSetupNode]: navigationOptionsHandler(RepairingSetupNode, { header: () => null }),
     [ROUTE_NAMES.NodeItemDetail]: navigationOptionsHandler(NodeItemDetail, { header: () => null }),
+    [ROUTE_NAMES.NodeBuyHelp]: navigationOptionsHandler(NodeBuyHelp, { header: () => null }),
+    [ROUTE_NAMES.DestinationBuyNode]: navigationOptionsHandler(DestinationBuyNode, { header: () => null }),
     [ROUTE_NAMES.PriceChartCrypto]: navigationOptionsHandler(PriceChartCrypto, {
       title: 'Price chart',
     }),

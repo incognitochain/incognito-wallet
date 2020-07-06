@@ -276,7 +276,7 @@ const IMAGES = {
     borderRadius: BORDER_RADIUS.avatar,
   },
   node: {
-    width: ScreenWidth,
+    width: ScreenWidth/2,
     height: ScreenWidth * 0.5,
     borderRadius: BORDER_RADIUS.avatar,
   },

@@ -29,9 +29,9 @@ const style = StyleSheet.create({
   incBtn: {
     borderRadius: 15, 
     alignItems: 'center', 
-    padding: 2,
-    paddingLeft: 15, 
-    paddingEnd: 15, 
+    justifyContent: 'center',
+    height: 25,
+    width: 25,
   },
   halfInput: {
     width: (ScreenWidth - 40) / 2 - 15,
@@ -39,22 +39,20 @@ const style = StyleSheet.create({
   balance: {
     fontSize: 16, 
     fontFamily: FONT.NAME.regular, 
-    width: ScreenWidth * 0.25, 
+    // width: ScreenWidth * 0.25, 
     textAlign: 'right',  
     alignContent: 'flex-end', 
     alignSelf: 'center'
   },
   containerHeader: {
     width: '100%',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexDirection: 'row'
   },
   wallet: {
     flexDirection: 'row', 
     height: 30,
     paddingLeft: 5,
-    borderRadius: 8, 
-    borderColor: COLORS.lightGrey11,
-    borderWidth: 0.5,
     marginBottom: 10,
     justifyContent: 'flex-end', 
     alignSelf: 'flex-end',
