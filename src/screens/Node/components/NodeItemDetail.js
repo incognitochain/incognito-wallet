@@ -322,10 +322,12 @@ class NodeItemDetail extends Component {
           </Swiper>
         </View>
         <View style={[{ flexDirection: 'row' }, theme.MARGIN.marginTopAvg, theme.MARGIN.marginBottomDefault]}>
-          {!hasAccount ? this.renderBtn('Import a keychain', () => onImport()) :
-            (shouldShowWithdraw ? this.renderBtn('Withdraw', () => onWithdraw(Device.getInstance(item))) : 
-              (stake ? this.renderBtn('Stake required', () => onStake(Device.getInstance(item))) : null))
-          }
+          {!hasAccount ? this.renderBtn('Import a keychain', () => onImport()) : (
+            <>
+              {shouldShowWithdraw ? this.renderBtn('Withdraw', () => onWithdraw(Device.getInstance(item))) : null}
+              {!stake ? this.renderBtn(shouldShowWithdraw ? 'Stake' : 'Stake required', () => onStake(Device.getInstance(item))) : null}
+            </>
+          )}
         </View>
         <View style={[theme.MARGIN.marginTopAvg]}>
           {this.renderItemText('Keychain', name)}
