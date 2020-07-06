@@ -332,7 +332,7 @@ class NodeItemDetail extends Component {
           {this.renderItemText('IP', ip)}
           {isOffline ? this.renderStatus('Status', 'Offline') : null}
           {isOffline && canDropDown ? this.renderHint(ip) : null}
-          {!stake ? this.renderUnstake(() => onUnstake(Device.getInstance(item))) : null}
+          {!stake && hasAccount ? this.renderUnstake(() => onUnstake(Device.getInstance(item))) : null}
         </View>
       </View>
     );

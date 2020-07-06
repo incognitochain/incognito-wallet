@@ -40,7 +40,7 @@ class VNode extends React.Component {
       return COLORS.orange;
     }
     // Online
-    if (item?.IsOnline && item?.IsWorking) {
+    if (item?.IsWorking) {
       return COLORS.blue4;
     }
     // Offline
@@ -210,7 +210,6 @@ class VNode extends React.Component {
 
     // Check account not imported
     const hasAccount = item?.AccountName;
-
     return (
       <View style={styles.container}>
         {isFetching ? <Loader /> : (
