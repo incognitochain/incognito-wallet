@@ -50,7 +50,8 @@ const BuyNodeScreen = () => {
   const [loading, setLoading] = useState(false);
   const [regions, setRegions] = useState([]);
   const [shippingFee, setShippingFee] = useState(0);
-  const [price, setPrice] = useState(399);
+  const [price, setPrice] = useState(0);
+  const [priceDefault, setPriceDefault] = useState(0);
   const [shippingHour, setShippingHour] = useState('');
   const [currentTokenId, setCurrentTokenId] = useState('0000000000000000000000000000000000000000000000000000000000000004');
   const [pTokenSupport, setPTokenSupport] = useState([]);
@@ -79,6 +80,7 @@ const BuyNodeScreen = () => {
     setDataDefault();
     setDefaultTokenId();
     getSystemConfig();
+    getSystemPrice();
   }, []);
 
   const setDataDefault = () => {
@@ -99,6 +101,7 @@ const BuyNodeScreen = () => {
           let resPTokenSupportsPartner = JSON.parse(data?.BuyNodePTokensPartner);
           setPTokenSupportsPartner(resPTokenSupportsPartner);
           getPTokenList(resPTokenSupportsPartner);
+          getSystemPrice();
         }
         if (data?.MinerShipInfo) {
           let minerShipInfo = data?.MinerShipInfo;
@@ -109,9 +112,22 @@ const BuyNodeScreen = () => {
         console.log('Could not get system config for buying device' + err.message);
       });
   };
+  // Get token system config
+  const getSystemPrice = async () => {
+    APIService.getSystemPrice()
+      .then(data => {
+        if (data && typeof data === 'number') {
+          setPriceDefault(data || 0);
+          setPrice(data || 0);
+        }
+      })
+      .catch((err) => {
+        console.log('Could not get system config for buying device' + err.message);
+      });
+  };
 
   // Get all pToken for internal app, only accept with these coins
-  const getPTokenList = async (resPTokenSupportsPartner) => {
+  const getPTokenList = async (resPTokenSupportsPartner = []) => {
     APIService.getPTokenSupportForBuyingDevice()
       .then(data => {
         let res = data;
@@ -132,7 +148,7 @@ const BuyNodeScreen = () => {
           <Image style={[theme.IMAGES.node, theme.SHADOW.imageAvatar]} resizeMode="contain" source={nodeImg} />
         </View>
         <View style={{ width: '100%' }}>
-          <Text style={theme.text.boldTextStyleLarge}>{`$${price}`}</Text>
+          <Text style={theme.text.boldTextStyleLarge}>{`$${subTotal}`}</Text>
           <Text style={theme.text.regularTextMotto}>1 year warranty</Text>
           <Text style={theme.text.regularTextMotto}>30-day returns</Text>
         </View>
@@ -203,9 +219,23 @@ const BuyNodeScreen = () => {
       </View>
     );
   };
-  
-  const updateAddress = (data) => {
-    setContactData({ ...contactData, 
+
+  const getShippingFee = async (data) => {
+    let region = data.region ?? regions[0]?.value;
+    await APIService.getShippingFee(data.countryCode || '', data.countryCode || '', data.countryCode || '', region || '', data.address || '')
+      .then(val => {
+        if (val && val?.Result) {
+          setShippingFee(val?.Result?.ShippingFee || 0);
+
+          // Update price specified
+          checkSelectedTokenIdAndUpdateDynamicPrice(pTokenSupport, pTokenSupportsPartner, tokenId);
+        }
+      });
+  };
+
+  const updateAddress = async (data) => {
+    setRegions(data?.region);
+    await setContactData({ ...contactData, 
       email: data?.email,
       phone: data?.phone, 
       postalCode: data?.postalCode, 
@@ -215,6 +245,7 @@ const BuyNodeScreen = () => {
       city: data?.city, 
       address: data?.address,
       region: data?.region});
+    getShippingFee(data);
   };
 
   const renderTotal = () => {
@@ -287,8 +318,7 @@ const BuyNodeScreen = () => {
         setPrice(Number(pTokenSupportsPartner[j]?.Price || 0));
         break;
       } else {
-        // Set price default
-        setPrice(399);
+        setPrice(priceDefault);
       }
     }
   };

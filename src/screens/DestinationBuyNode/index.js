@@ -61,7 +61,7 @@ const DestinationBuyNode = () => {
       if (dataCountry[i].value.includes(countryValue)) {
         let region = dataCountry[i].regions;
         await setRegions(region);
-        await setContactData({ ...contactData, country: countryValue,  region: region[0].value });
+        await setContactData({ ...contactData, country: countryValue, countryCode: dataCountry[i].countryShortCode, region: region[0].value });
       }
     }
   };

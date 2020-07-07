@@ -629,4 +629,8 @@ export default class APIService {
   static async getSystemConfig() {
     return http.get('system/configs');
   }
+  // Get system price
+  static async getSystemPrice() {
+    return http.get('order/price');
+  }
 }
