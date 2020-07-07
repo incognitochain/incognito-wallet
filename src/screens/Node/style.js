@@ -119,11 +119,11 @@ const style = StyleSheet.create({
     alignContent: 'center' 
   },
   balanceUpdate: {
-    color: 'black', 
-    alignSelf: 'center', 
-    textAlign: 'center', 
-    fontSize: FONT.FONT_SIZES.avgLarge, 
-    fontFamily: FONT.NAME.semiBold
+    fontFamily: FONT.NAME.specialRegular,
+    fontSize: FONT.SIZE.veryLarge,
+    color: COLORS.black,
+    textAlign: 'center',
+    height: '100%',
   },
   balanceList: {
     width: '100%', 

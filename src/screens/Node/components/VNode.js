@@ -40,7 +40,7 @@ class VNode extends React.Component {
       return COLORS.orange;
     }
     // Online
-    if (item?.IsWorking) {
+    if (item?.IsOnline && item?.IsWorking) {
       return COLORS.blue4;
     }
     // Offline
