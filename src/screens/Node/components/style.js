@@ -58,8 +58,8 @@ const style = StyleSheet.create({
     alignContent: 'center' 
   },
   balanceUpdate: {
-    fontFamily: FONT.NAME.specialMedium,
-    fontSize: FONT.FONT_SIZES.veryLarge,
+    fontFamily: FONT.NAME.specialRegular,
+    fontSize: FONT.SIZE.veryLarge,
     color: COLORS.black,
     textAlign: 'center',
     height: '100%',
