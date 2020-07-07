@@ -318,17 +318,15 @@ class GetStartedAddNode extends BaseScreen {
       );
     }
 
-    if (step === 4) {
-      return (
-        <WifiSetup
-          onNext={this.handleSetupComplete}
-          setStep={this.setStep}
-          qrCode={qrCode}
-          account={account}
-          hotspotSSID={hotspotSSID}
-        />
-      );
-    }
+    return (
+      <WifiSetup
+        onNext={this.handleSetupComplete}
+        setStep={this.setStep}
+        qrCode={qrCode}
+        account={account}
+        hotspotSSID={hotspotSSID}
+      />
+    );
   }
 
   openSettingApp = () => {
