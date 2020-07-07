@@ -204,25 +204,7 @@ class NodeItemDetail extends Component {
 
     return <OptionMenu data={menu} icon={<Image source={moreIcon} />} />;
   }
-  // Only for test
-  getColorStatus = (item) => {
-    const isUnstaking = item?.StakerAddress ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
-    // Unstaking
-    if (isUnstaking) {
-      return COLORS.orange;
-    }
-    // Online
-    if (item?.IsWorking) {
-      return COLORS.blue4;
-    }
-    // Offline
-    if (!item?.IsOnline) {
-      return COLORS.lightGrey1;
-    }
-    // Waiting - Default
-    return COLORS.green;
-  }
-
+ 
   renderItemText = (text, value) => {
     return (
       <View style={[styles.balanceContainer, theme.MARGIN.marginBottomDefault, { flexDirection: 'row', justifyContent: 'space-between' }]}>
@@ -289,7 +271,8 @@ class NodeItemDetail extends Component {
         shouldShowWithdraw = true;
       }
     });
-    const isUnstaking = item.StakerAddress ? item.IsUnstaking : (item.Staked && item.Unstaking);
+    let device = Device.getInstance(item);
+    const isUnstaking = device.StakerAddress ? device.IsUnstaking : (device.Staked && device.Unstaking);
     return (
       <View style={styles.containerDetail}>
         <Header
@@ -325,8 +308,8 @@ class NodeItemDetail extends Component {
         <View style={[{ flexDirection: 'row' }, theme.MARGIN.marginTopAvg, theme.MARGIN.marginBottomDefault]}>
           {!hasAccount ? this.renderBtn('Import a keychain', () => onImport()) : (
             <>
-              {shouldShowWithdraw ? this.renderBtn('Withdraw', () => onWithdraw(Device.getInstance(item))) : null}
-              {stake && !isUnstaking ? this.renderBtn(shouldShowWithdraw ? 'Stake' : 'Stake required', () => onStake(Device.getInstance(item))) : null}
+              {shouldShowWithdraw ? this.renderBtn('Withdraw', () => onWithdraw(device)) : null}
+              {stake && !isUnstaking ? this.renderBtn(shouldShowWithdraw ? 'Stake' : 'Stake required', () => onStake(device)) : null}
             </>
           )}
         </View>
@@ -335,7 +318,7 @@ class NodeItemDetail extends Component {
           {this.renderItemText('IP', ip)}
           {isOffline ? this.renderStatus('Status', 'Offline') : null}
           {isOffline && canDropDown ? this.renderHint(ip) : null}
-          {!stake && hasAccount && !isUnstaking ? this.renderUnstake(() => onUnstake(Device.getInstance(item))) : null}
+          {!stake && hasAccount && !isUnstaking ? this.renderUnstake(() => onUnstake(device)) : null}
         </View>
       </View>
     );
