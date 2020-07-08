@@ -169,7 +169,7 @@ const BuyNodeScreen = () => {
       <View style={{flexDirection: 'row', justifyContent: 'space-between', alignContent:'center', alignItems: 'center'}}>
         <Text style={[theme.text.boldTextStyleMedium]}>Quantity</Text>
         <View style={[theme.FLEX.rowSpaceBetween]}>
-          <View style={theme.FLEX.rowSpaceBetween}>
+          <View style={[theme.FLEX.rowSpaceBetween, {justifyContent: 'center', alignItems: 'center'}]}>
             <TouchableOpacity
               style={[theme.MARGIN.marginRightDefault, styles.incBtn, {backgroundColor: currentQuantity === 1 ? COLORS.colorGreyLight : COLORS.colorGreyBold}]}
               disabled={currentQuantity == 1}
