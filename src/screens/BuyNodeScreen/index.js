@@ -52,6 +52,7 @@ const BuyNodeScreen = () => {
   const [shippingFee, setShippingFee] = useState(0);
   const [price, setPrice] = useState(0);
   const [priceDefault, setPriceDefault] = useState(0);
+  const [pricePromotion, setPricePromotion] = useState(0);
   const [shippingHour, setShippingHour] = useState('');
   const [currentTokenId, setCurrentTokenId] = useState('0000000000000000000000000000000000000000000000000000000000000004');
   const [pTokenSupport, setPTokenSupport] = useState([]);
@@ -119,6 +120,7 @@ const BuyNodeScreen = () => {
         if (data && typeof data === 'number') {
           setPriceDefault(data || 0);
           setPrice(data || 0);
+          setPricePromotion(data || 0);
         }
       })
       .catch((err) => {
@@ -141,14 +143,13 @@ const BuyNodeScreen = () => {
   };
 
   const renderNodeImgAndPrice = () => {
-    let subTotal = (price + shippingFee) * currentQuantity;
     return (
       <View style={[styles.containerHeader, theme.MARGIN.marginTopDefault]}>
         <View>
           <Image style={[theme.IMAGES.node, theme.SHADOW.imageAvatar]} resizeMode="contain" source={nodeImg} />
         </View>
         <View style={{ width: '100%' }}>
-          <Text style={theme.text.boldTextStyleLarge}>{`$${subTotal}`}</Text>
+          <Text style={theme.text.boldTextStyleLarge}>{`$${priceDefault}`}</Text>
           <Text style={theme.text.regularTextMotto}>1 year warranty</Text>
           <Text style={theme.text.regularTextMotto}>30-day returns</Text>
         </View>
@@ -316,9 +317,11 @@ const BuyNodeScreen = () => {
         IDTokenDAI = pTokenSupportsPartner[j]?.ID;
         // Set price
         setPrice(Number(pTokenSupportsPartner[j]?.Price || 0));
+        setPriceDefault(Number(pTokenSupportsPartner[j]?.Price || 0));
         break;
       } else {
         setPrice(priceDefault);
+        setPriceDefault(pricePromotion);
       }
     }
   };
@@ -415,7 +418,7 @@ const BuyNodeScreen = () => {
 
   // Get count of token payable
   const getCountCoinPayable = () => {
-    let subTotal = (price + shippingFee) * currentQuantity;
+    let subTotal = (priceDefault + shippingFee) * currentQuantity;
     let result = 0;
     let priceUSDT = 0;
     for (let i = 0; i < pTokenSupport.length; i++) {
