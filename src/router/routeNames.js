@@ -89,5 +89,6 @@ export default {
   PoolV2History: 'PoolV2History',
   PoolV2HistoryDetail: 'PoolV2HistoryDetail',
   NodeBuyHelp: 'NodeBuyHelp',
-  DestinationBuyNode: 'DestinationBuyNode'
+  DestinationBuyNode: 'DestinationBuyNode',
+  NodeItemsHelp: 'NodeItemsHelp'
 };

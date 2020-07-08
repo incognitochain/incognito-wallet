@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, View, Text, ActivityIndicator } from '@src/components/core';
+import { TouchableOpacity, View, Text, ActivityIndicator, ScrollView } from '@src/components/core';
 import { useNavigationParam } from 'react-navigation-hooks';
 import ROUTES_NAME from '@routers/routeNames';
 import { useDispatch, useSelector } from 'react-redux';
@@ -72,7 +72,7 @@ const PaymentBuyNodeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Header title="Payment" />
-      <View style={styles.content}>
+      <ScrollView style={styles.content}>
         <View style={styles.modes}>
           {modePaymentDevice.slice(0, 1)?.map(item => (
             <TouchableOpacity
@@ -93,7 +93,7 @@ const PaymentBuyNodeScreen = ({ navigation }) => {
           reloading={reloading}
         />
         <KeepAwake />
-      </View>
+      </ScrollView>
     </View>
   );
 };

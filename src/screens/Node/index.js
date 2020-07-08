@@ -165,8 +165,10 @@ class Node extends BaseScreen {
     let shouldContinue = true;
     let verifyProductCode = await LocalDatabase.getVerifyCode();
     list.forEach(element => {
-      if (element?.verify_code === verifyProductCode) {
-        if (element?.product_name && element?.product_name != '') {
+      if (!element?.verify_code || element?.verify_code === '') {
+        shouldContinue = false;
+      } else if (element?.verify_code === verifyProductCode) {
+        if (element?.product_id && element?.product_id != '') {
           // If existed, return, no need to show popup
           shouldContinue = false;
         }

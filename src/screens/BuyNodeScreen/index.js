@@ -333,7 +333,7 @@ const BuyNodeScreen = () => {
         <View style={{width: ScreenWidth * 0.4, flexDirection: 'row', justifyContent: 'flex-end',  alignItems: 'center'}}>
           <CurrentBalance
             balanceStyle={styles.balance}
-            tokenStyle={{ fontSize: FONT.SIZE.regular }}
+            tokenStyle={[{ fontSize: FONT.FONT_SIZES.superMedium, marginRight: -30 }, theme.text.boldTextStyleMedium]}
             isNestedCurrentBalance
             selectContainer={{
               borderWidth: 0,
@@ -357,6 +357,13 @@ const BuyNodeScreen = () => {
           <AntDesign name="right" size={18} />
         </View>
       </View>
+    );
+  };
+  const renderPaymentMore = () => {
+    return (
+      <TouchableOpacity onPress={()=>{linkingService.openUrl(`${CONSTANT_CONFIGS.NODE_URL}`);}} style={[theme.FLEX.rowSpaceBetween, theme.MARGIN.marginTopDefault]}>
+        <Text style={[theme.text.boldTextStyleMedium, {color: COLORS.blue4}]}>See more currencies</Text>
+      </TouchableOpacity>
     );
   };
 
@@ -441,6 +448,7 @@ const BuyNodeScreen = () => {
             refreshing={false}
             onRefresh={() => {
               getSystemConfig();
+              getSystemPrice();
             }}
           />
         )}
@@ -459,6 +467,7 @@ const BuyNodeScreen = () => {
           {renderMotto()}
           {renderActionSheet()}
           {renderPayment()}
+          {renderPaymentMore()}
           {renderTotal()}
           {renderButtonProcess()}
 

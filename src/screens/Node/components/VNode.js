@@ -39,14 +39,16 @@ class VNode extends React.Component {
     if (isUnstaking) {
       return COLORS.orange;
     }
-    // Online
-    if (item?.IsWorking) {
-      return COLORS.blue4;
-    }
+    
     // Offline
-    if (!item?.IsOnline) {
+    if (!item?.IsOnline || item?.IsOnline === 0 || !item.Staked) {
       return COLORS.lightGrey1;
     }
+    // Online
+    if (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0) {
+      return COLORS.blue4;
+    }
+    
     // Waiting - Default
     return COLORS.green;
   }

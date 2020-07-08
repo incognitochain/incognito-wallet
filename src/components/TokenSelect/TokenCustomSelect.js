@@ -81,14 +81,13 @@ const TokenCustomSelect = ({ onSelect, size, style, iconStyle, customListPToken,
         placeholder="Name or Symbol"
         onSearch={handleSearch}
         onClose={handleClearSearch}
-        isDropDown
         toggleStyle={toggleStyle}
         style={[styles.select, style]}
-        // icon={(
-        //   <View style={[styles.iconContainer, iconStyle]}>
-        //     <Icon name="chevron-down" size={size} type="material-community" color={COLORS.colorGreyLight} />
-        //   </View>
-        // )}
+        icon={(
+          <View style={[styles.iconContainer, iconStyle]}>
+            <Icon name="chevron-down" size={size} type="material-community" color={COLORS.transparent} />
+          </View>
+        )}
       />
     </View>
   );

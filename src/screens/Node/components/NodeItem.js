@@ -120,7 +120,6 @@ class NodeItem extends React.Component {
       if (newKey && blsKey !== newKey) {
         blsKey = newKey;
       }
-
       if (newKey) {
         device.setIsOnline(MAX_RETRY);
       } else {

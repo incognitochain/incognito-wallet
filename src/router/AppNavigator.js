@@ -24,6 +24,7 @@ import Dex from '@screens/Dex';
 
 import Notification from '@src/screens/Notification';
 import NodeHelp from '@screens/NodeHelp';
+import NodeItemsHelp from '@screens/NodeItemsHelp';
 import BuyNodeScreen from '@screens/BuyNodeScreen';
 import StakeHistory from '@screens/StakeHistory';
 import StakeRecoverAccount from '@screens/Stake/features/RecoverAccount';
@@ -52,6 +53,9 @@ const AppNavigator = createStackNavigator(
     [ROUTE_NAMES.Notification]: navigationOptionsHandler(Notification),
     [ROUTE_NAMES.pApps]: navigationOptionsHandler(pApps),
     [ROUTE_NAMES.NodeHelp]: navigationOptionsHandler(NodeHelp, {
+      header: () => null
+    }),
+    [ROUTE_NAMES.NodeItemsHelp]: navigationOptionsHandler(NodeItemsHelp, {
       header: () => null
     }),
     [ROUTE_NAMES.StakeHistory]: navigationOptionsHandler(StakeHistory, {

@@ -20,8 +20,12 @@ import convert from '@utils/convert';
 import theme from '@src/styles/theme';
 import Device from '@src/models/device';
 import { Platform } from 'react-native';
-import styles from './style';
+import BtnInformation from '@src/components/Button/BtnInformation';
+import NavigationService from '@src/services/NavigationService';
+import routeNames from '@src/router/routeNames';
+import BtnMoreInfo from '@src/components/Button/BtnMoreInfo';
 import Reward from './Reward';
+import styles from './style';
 
 class NodeItemDetail extends Component {
   constructor(props) {
@@ -277,6 +281,7 @@ class NodeItemDetail extends Component {
       <View style={styles.containerDetail}>
         <Header
           title="Node detail"
+          rightHeader={<BtnMoreInfo onPress={()=>NavigationService.navigate(routeNames.NodeItemsHelp)} />}
         />
         <View style={styles.balanceList}>
           <Swiper
