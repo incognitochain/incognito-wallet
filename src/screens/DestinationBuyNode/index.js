@@ -100,7 +100,7 @@ const DestinationBuyNode = () => {
           inputContainerStyle={{ marginTop: 2 }}
           label='State'
           data={regions}
-          value={regions[0]?.value || ''}
+          value={contactData?.region || ''}
           onChangeText={async (value) => {
             await setContactData({ ...contactData, region: value });
           }}
