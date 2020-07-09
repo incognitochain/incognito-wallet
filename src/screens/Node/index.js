@@ -555,7 +555,7 @@ class Node extends BaseScreen {
                   activeDotStyle={style.activeDot}
                   showsPagination
                   loop
-                  paginationStyle={{ top: Platform.OS === 'android' ? 50 : 30}}
+                  paginationStyle={{ top: Platform.OS === 'android' ? 50 : 40}}
                   horizontal
                 >
                   {
