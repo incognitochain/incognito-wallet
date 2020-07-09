@@ -25,16 +25,16 @@ import { rewardStyle } from './style';
 //   }
 //   return _.round(totalBalanceCurrent, 9);
 // };
-const Reward = ({ symbol, pDecimals, balance, isDefault, balanceStyle, containerItemStyle }) => (
+const Reward = ({ symbol, pDecimals, balance, isDefault, balanceStyle, containerItemStyle, idDefault }) => (
   <View style={rewardStyle.container}>
     <View style={[{ flexDirection: 'row' }, containerItemStyle]}>
       {isDefault && isDefault ? (
         <Text style={[rewardStyle.balance, balanceStyle]} numberOfLines={1}>
-          {symbol === PRV?.symbol ? 'PRV' : symbol} {(formatUtils.amount(balance, pDecimals, true))}
+          {symbol === PRV?.symbol ? (idDefault ? 'PRV' : 'ℙ') : symbol} {(formatUtils.amount(balance, pDecimals, true))}
         </Text>
       ) : (
         <Text style={[rewardStyle.balance, balanceStyle]} numberOfLines={1}>
-          {(formatUtils.amount(balance, pDecimals, true))} {symbol === PRV?.symbol ? 'PRV' : symbol}
+          {(formatUtils.amount(balance, pDecimals, true))} {symbol === PRV?.symbol ? (idDefault ? 'PRV' : 'ℙ') : symbol}
         </Text>
       )}
     </View>

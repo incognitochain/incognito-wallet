@@ -556,6 +556,7 @@ class Node extends BaseScreen {
                         pDecimals={pDecimals}
                         symbol={symbol}
                         balance={balance}
+                        idDefault
                         isVerified={isVerified}
                       />
                     ))

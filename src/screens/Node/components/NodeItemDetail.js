@@ -303,6 +303,7 @@ class NodeItemDetail extends Component {
                   balanceStyle={styles.balanceUpdate}
                   pDecimals={pDecimals}
                   symbol={symbol}
+                  idDefault
                   balance={balance}
                   isVerified={isVerified}
                 />
