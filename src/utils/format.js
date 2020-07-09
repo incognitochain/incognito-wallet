@@ -21,7 +21,7 @@ const removeTrailingZeroes = (amountString) => {
   return formattedString;
 };
 
-const amountCreator = (maxDigits) => (amount, decimals, clipAmount = false) => {
+const amountCreator = (maxDigits) => (amount, decimals, clipAmount = false, shouldRoundLessThanZero) => {
   try {
     const fmt = {
       decimalSeparator: getDecimalSeparator(),
@@ -32,7 +32,7 @@ const amountCreator = (maxDigits) => (amount, decimals, clipAmount = false) => {
     let _maxDigits =  maxDigits;
 
     let _amount = convertUtil.toHumanAmount(amount, decimals);
-
+    
     if (clipAmount) {
       let maxDigits = _amount > 1 ? 4 : decimals;
       maxDigits = _amount > 1e3 ? 2 : maxDigits;
@@ -47,8 +47,10 @@ const amountCreator = (maxDigits) => (amount, decimals, clipAmount = false) => {
     if (!Number.isFinite(_amount)) throw new Error('Can not format invalid amount');
 
     // if amount is too small, do not round it
-    if (_amount > 0 && _amount < 1) {
-      _maxDigits = undefined;
+    if (!shouldRoundLessThanZero || shouldRoundLessThanZero === undefined) {
+      if (_amount > 0 && _amount < 1) {
+        _maxDigits = undefined;
+      }
     }
 
     return _amount ? removeTrailingZeroes(new BigNumber(_amount).toFormat(_maxDigits, BigNumber.ROUND_DOWN, fmt)) : 0;
@@ -60,6 +62,9 @@ const amountCreator = (maxDigits) => (amount, decimals, clipAmount = false) => {
 const amountFull = amountCreator();
 
 const amount = amountCreator(CONSTANT_COMMONS.AMOUNT_MAX_FRACTION_DIGITS);
+
+const amountClipedRewards = amountCreator(CONSTANT_COMMONS.AMOUNT_MAX_FRACTION_DIGITS_REWARDS);
+const amountClipedMaxRewards = amountCreator(CONSTANT_COMMONS.AMOUNT_MAX_FRACTION_DIGITS_MAX_REWARDS);
 
 const formatDateTime = (dateTime, formatPattern) => moment(dateTime).format(formatPattern || 'DD MMM hh:mm A');
 const toMiliSecond = (second) => second * 1000;
@@ -163,4 +168,6 @@ export default {
   amountCreator,
   balance,
   formatWithNotation,
+  amountClipedRewards,
+  amountClipedMaxRewards,
 };

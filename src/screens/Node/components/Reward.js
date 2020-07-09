@@ -6,35 +6,16 @@ import formatUtils from '@src/utils/format';
 import { PRV } from '@src/services/wallet/tokenService';
 import { rewardStyle } from './style';
 
-// const formatBalance = (balanceCurrent, pDecimals) => {
-//   let maxDigit = 2;
-//   if (balanceCurrent <= 1) {
-//     maxDigit = 9;
-//   }
-//   if (balanceCurrent > 1) {
-//     maxDigit = 6;
-//   }
-//   let totalBalanceCurrent = formatUtils.balance(
-//     balanceCurrent,
-//     pDecimals,
-//     maxDigit,
-//   );
-//   let res = _.round(totalBalanceCurrent, 9);
-//   if (_.isNaN(res)) {
-//     return 0;
-//   }
-//   return _.round(totalBalanceCurrent, 9);
-// };
 const Reward = ({ symbol, pDecimals, balance, isDefault, balanceStyle, containerItemStyle, idDefault }) => (
   <View style={rewardStyle.container}>
     <View style={[{ flexDirection: 'row' }, containerItemStyle]}>
       {isDefault && isDefault ? (
         <Text style={[rewardStyle.balance, balanceStyle]} numberOfLines={1}>
-          {symbol === PRV?.symbol ? (idDefault ? 'PRV' : 'ℙ') : symbol} {(formatUtils.amount(balance, pDecimals, true))}
+          {symbol === PRV?.symbol ? (idDefault ? 'PRV' : 'ℙ') : symbol} {(balance > 1? formatUtils.amountClipedRewards(balance, pDecimals, false, true) : formatUtils.amountClipedMaxRewards(balance, pDecimals, false, true))}
         </Text>
       ) : (
         <Text style={[rewardStyle.balance, balanceStyle]} numberOfLines={1}>
-          {(formatUtils.amount(balance, pDecimals, true))} {symbol === PRV?.symbol ? (idDefault ? 'PRV' : 'ℙ') : symbol}
+          {(balance > 1? formatUtils.amountClipedRewards(balance, pDecimals, false, true) : formatUtils.amountClipedMaxRewards(balance, pDecimals, false, true))} {symbol === PRV?.symbol ? (idDefault ? 'PRV' : 'ℙ') : symbol}
         </Text>
       )}
     </View>

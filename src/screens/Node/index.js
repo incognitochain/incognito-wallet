@@ -17,7 +17,7 @@ import {
 import format from '@src/utils/format';
 import Swiper from 'react-native-swiper';
 import tokenService, { PRV } from '@services/wallet/tokenService';
-import { MESSAGES } from '@src/constants';
+import { MESSAGES, CONSTANT_CONFIGS } from '@src/constants';
 import routeNames from '@src/router/routeNames';
 import APIService from '@src/services/api/miner/APIService';
 import COLORS from '@src/styles/colors';
