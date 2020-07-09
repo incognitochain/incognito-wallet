@@ -19,7 +19,7 @@ const NodeItemsHelp = () => {
   };
   return (
     <View style={styles.container}>
-      <Header title="How to manage your Nodes" />
+      <Header title="Get to know your Node" />
       <ScrollView>
         <View style={{ marginTop: 30 }}>
           <Text style={styles.text}>
