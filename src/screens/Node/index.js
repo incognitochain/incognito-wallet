@@ -512,7 +512,6 @@ class Node extends BaseScreen {
         <View style={style.container}>
           <Header
             title="Nodes"
-            rightHeader={<BtnAdd onPress={() => { NavigationService.navigate(routeNames.AddNode); }} />}
           />
           <WelcomeFirstTime onPressOk={()=>{this.onClearNetworkNextTime(); }} />
         </View>
