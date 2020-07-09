@@ -21,15 +21,6 @@ const Unstake = ({ device, fee, isUnstaking, balance, onUnstake }) => {
       <Header title="Unstake" />
       <View style={[theme.MARGIN.marginTopAvg]}>
         <Text style={styles.title}>Node {name}</Text>
-        <Text style={styles.title}>Account {account.AccountName}</Text>
-        <View style={styles.row}>
-          <Text style={styles.field}>Balance:</Text>
-          <Text style={styles.itemRight}>{formatUtils.amount(balance, pDecimals)} {symbol}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.field}>Fee</Text>
-          <Text style={styles.itemRight}>{formatUtils.amount(fee, pDecimals)} {symbol}</Text>
-        </View>
       </View>
       <View style={styles.buy}>
         <Text style={[styles.desc, styles.firstLine]}>{isUnstaking ? 'Unstaking may take up to 21 days. This Node will unstake the next time it is selected to earn.' : 'The unstaking process will complete the next time your Node is selected to work. This may take up to 21 days'}</Text>

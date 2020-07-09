@@ -134,14 +134,7 @@ class Node extends BaseScreen {
     };
     this.dialogbox = React.createRef();
     this.renderNode = this.renderNode.bind(this);
-    // Check cleared first time 
-    LocalDatabase.getNodeCleared().then(clearedNode => {
-      if (clearedNode == null || clearedNode == undefined) {
-        this.setState({showWelcome: true});
-      } else {
-        this.setState({showWelcome: false});
-      }
-    });
+   
   }
 
   hasShowWelcomeNode = false;
@@ -158,6 +151,15 @@ class Node extends BaseScreen {
         this.hasShowWelcomeNode = true;
         this.setState({ showWelcomeSetupNode: true });
       }
+      // Check cleared first time 
+      let clearedNode = await  LocalDatabase.getNodeCleared();
+      
+      if (clearedNode == null || clearedNode == undefined) {
+        this.setState({showWelcome: true});
+      } else {
+        this.setState({showWelcome: false});
+      }
+    
       // Check old product code
       this.checkIfVerifyCodeIsExisting();
       // Refresh newest
@@ -505,7 +507,17 @@ class Node extends BaseScreen {
       rewards,
       showWelcome
     } = this.state;
-
+    if (showWelcome) {
+      return (
+        <View style={style.container}>
+          <Header
+            title="Nodes"
+            rightHeader={<BtnAdd onPress={() => { NavigationService.navigate(routeNames.AddNode); }} />}
+          />
+          <WelcomeFirstTime onPressOk={()=>{this.onClearNetworkNextTime(); }} />
+        </View>
+      );
+    }
     if (!isFetching && _.isEmpty(listDevice)) {
       return (
         <ScrollView refreshControl={(
