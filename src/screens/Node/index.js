@@ -42,6 +42,7 @@ import ModalBandWidth from '@src/components/Modal/ModalBandWidth';
 import WelcomeSetupNode from './components/WelcomeSetupNode';
 import style from './style';
 import Reward from './components/Reward';
+import WelcomeFirstTime from './components/Welcome/WelcomeFirstTime';
 
 
 export const TAG = 'Node';
@@ -129,17 +130,28 @@ class Node extends BaseScreen {
       dialogVisible: false,
       rewards: [],
       showModalMissingSetup: false,
+      showWelcome: false,
     };
     this.dialogbox = React.createRef();
     this.renderNode = this.renderNode.bind(this);
+    // Check cleared first time 
+    LocalDatabase.getNodeCleared().then(clearedNode => {
+      if (clearedNode == null || clearedNode == undefined) {
+        this.setState({showWelcome: true});
+      } else {
+        this.setState({showWelcome: false});
+      }
+    });
   }
 
   hasShowWelcomeNode = false;
 
   async componentDidMount() {
-    const { navigation } = this.props;
-    this.listener = navigation.addListener('willFocus', () => {
+    
 
+    const { navigation } = this.props;
+    this.listener = navigation.addListener('willFocus', async () => {
+      
       const { setupNode } = navigation?.state?.params || this.props.navigation.dangerouslyGetParent()?.state?.params || {};
 
       if (setupNode && !this.hasShowWelcomeNode) {
@@ -479,13 +491,19 @@ class Node extends BaseScreen {
       />
     );
   }
+
+  onClearNetworkNextTime = async () => {
+    await LocalDatabase.setNodeCleared('1');
+    this.setState({showWelcome: false});
+  }
   render() {
     const {
       listDevice,
       isFetching,
       loading,
       showWelcomeSetupNode,
-      rewards
+      rewards,
+      showWelcome
     } = this.state;
 
     if (!isFetching && _.isEmpty(listDevice)) {
@@ -515,62 +533,66 @@ class Node extends BaseScreen {
           rightHeader={<BtnAdd onPress={() => { NavigationService.navigate(routeNames.AddNode); }} />}
         />
         <DialogLoader loading={loading} />
-        {!loading && listDevice.length > 0 ? (
-          <View style={style.balanceList}>
-            <Swiper
-              key={`${new Date().getTime()}`}
-              dotStyle={style.dot}
-              activeDotStyle={style.activeDot}
-              showsPagination
-              loop
-              paginationStyle={{ top: Platform.OS === 'android' ? 50 : 30}}
-              horizontal
+        {showWelcome ? <WelcomeFirstTime onPressOk={()=>{this.onClearNetworkNextTime(); }} /> : (
+          <>
+            {!loading && listDevice.length > 0 ? (
+              <View style={style.balanceList}>
+                <Swiper
+                  key={`${new Date().getTime()}`}
+                  dotStyle={style.dot}
+                  activeDotStyle={style.activeDot}
+                  showsPagination
+                  loop
+                  paginationStyle={{ top: Platform.OS === 'android' ? 50 : 30}}
+                  horizontal
+                >
+                  {
+                    rewards.map(({ id, pDecimals, balance, symbol, isVerified }) => (
+                      <Reward
+                        key={id}
+                        tokenId={id}
+                        containerItemStyle={style.balanceContainer}
+                        balanceStyle={style.balanceUpdate}
+                        pDecimals={pDecimals}
+                        symbol={symbol}
+                        balance={balance}
+                        isVerified={isVerified}
+                      />
+                    ))
+                  }
+                </Swiper>
+              </View>
+            ) : <DialogLoader loading={loading} /> }
+            <ScrollView
+              contentContainerStyle={{ flex: 1 }}
+              nestedScrollEnabled
+              showsVerticalScrollIndicator={false}
+              refreshControl={(
+                <RefreshControl
+                  onRefresh={this.handleRefresh}
+                  refreshing={isFetching}
+                  tintColor={COLORS.primary}
+                  colors={[COLORS.primary]}
+                />
+              )}
             >
-              {
-                rewards.map(({ id, pDecimals, balance, symbol, isVerified }) => (
-                  <Reward
-                    key={id}
-                    tokenId={id}
-                    containerItemStyle={style.balanceContainer}
-                    balanceStyle={style.balanceUpdate}
-                    pDecimals={pDecimals}
-                    symbol={symbol}
-                    balance={balance}
-                    isVerified={isVerified}
-                  />
-                ))
-              }
-            </Swiper>
-          </View>
-        ) : <DialogLoader loading={loading} /> }
-        <ScrollView
-          contentContainerStyle={{ flex: 1 }}
-          nestedScrollEnabled
-          showsVerticalScrollIndicator={false}
-          refreshControl={(
-            <RefreshControl
-              onRefresh={this.handleRefresh}
-              refreshing={isFetching}
-              tintColor={COLORS.primary}
-              colors={[COLORS.primary]}
-            />
-          )}
-        >
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={[{ flexGrow: 1}]}
-            style={style.list}
-            data={listDevice}
-            keyExtractor={item => String(item.ProductId)}
-            renderItem={this.renderNode}
-          />
-          <Button
-            style={[style.buyButton, theme.BUTTON.BLACK_TYPE]}
-            title="Get a Node"
-            onPress={() => { this.goToScreen(routeNames.BuyNodeScreen); }}
-          />
-          {this.renderModalActionsForNodePrevSetup()}
-        </ScrollView>
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={[{ flexGrow: 1}]}
+                style={style.list}
+                data={listDevice}
+                keyExtractor={item => String(item.ProductId)}
+                renderItem={this.renderNode}
+              />
+              <Button
+                style={[style.buyButton, theme.BUTTON.BLACK_TYPE]}
+                title="Get a Node"
+                onPress={() => { this.goToScreen(routeNames.BuyNodeScreen); }}
+              />
+              {this.renderModalActionsForNodePrevSetup()}
+            </ScrollView>
+          </>
+        )}
         <WelcomeSetupNode visible={showWelcomeSetupNode} onClose={this.closeWelcomeSetupNode} />
         
       </View>

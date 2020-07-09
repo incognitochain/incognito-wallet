@@ -30,11 +30,11 @@ const Reward = ({ symbol, pDecimals, balance, isDefault, balanceStyle, container
     <View style={[{ flexDirection: 'row' }, containerItemStyle]}>
       {isDefault && isDefault ? (
         <Text style={[rewardStyle.balance, balanceStyle]} numberOfLines={1}>
-          {symbol === PRV?.symbol ? 'ℙ' : symbol} {(formatUtils.amount(balance, pDecimals, true))}
+          {symbol === PRV?.symbol ? 'PRV' : symbol} {(formatUtils.amount(balance, pDecimals, true))}
         </Text>
       ) : (
         <Text style={[rewardStyle.balance, balanceStyle]} numberOfLines={1}>
-          {(formatUtils.amount(balance, pDecimals, true))} {symbol === PRV?.symbol ? 'ℙ' : symbol}
+          {(formatUtils.amount(balance, pDecimals, true))} {symbol === PRV?.symbol ? 'PRV' : symbol}
         </Text>
       )}
     </View>

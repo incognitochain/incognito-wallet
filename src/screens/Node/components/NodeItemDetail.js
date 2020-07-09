@@ -244,7 +244,7 @@ class NodeItemDetail extends Component {
   }
   renderUnstake = (onPress) => {
     return (
-      <TouchableOpacity style={[theme.MARGIN.marginBottomDefault]} onPress={onPress}>
+      <TouchableOpacity style={[theme.MARGIN.marginBottomDefault, {position: 'absolute', bottom: 20, left: 20}]} onPress={onPress}>
         <Text style={[theme.text.mediumTextMotto]}>Unstake this Node</Text>
       </TouchableOpacity>
     );
@@ -322,9 +322,9 @@ class NodeItemDetail extends Component {
           {this.renderItemText('Keychain', name)}
           {this.renderItemText('IP', ip)}
           {isOffline ? this.renderStatus('Status', 'Offline') : null}
-          {isOffline && canDropDown ? this.renderHint(ip) : null}
-          {!stake && hasAccount && !isUnstaking ? this.renderUnstake(() => onUnstake(device)) : null}
+          {isOffline && canDropDown ? this.renderHint(ip) : null} 
         </View>
+        {!stake && hasAccount && !isUnstaking ? this.renderUnstake(() => onUnstake(device)) : null}
       </View>
     );
   }

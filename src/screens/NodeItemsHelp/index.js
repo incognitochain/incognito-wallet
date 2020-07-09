@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, ScrollView, View } from '@src/components/core';
 import Header from '@src/components/Header';
+import { COLORS } from '@src/styles';
 import styles from './style';
 
 const NodeItemsHelp = () => {
@@ -32,10 +33,10 @@ const NodeItemsHelp = () => {
           <Text style={styles.text}>
             Each colored dot indicates the Node status
           </Text>
-          {renderItem('Your Node is currently working and earning.', 'blue')}
+          {renderItem('Your Node is currently working and earning.', COLORS.blue)}
           {renderItem('Your Node is online and waiting to be selected.', 'green')}
           {renderItem('Your Node is in the process of unstaking.', 'orange')}
-          {renderItem('Your Node is offline. Tap on it for instructions on how to bring it online again', 'grey')}
+          {renderItem('Your Node is not active. Tap on it for activation instructions.', COLORS.colorGreyBold)}
         </View>
         <View style={{ paddingBottom: 100, marginTop: 10 }}>
           <Text style={styles.title}>

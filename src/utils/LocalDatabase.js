@@ -23,6 +23,7 @@ export const KEY_SAVE = {
   UNISWAP_AIRDROP: '$uniswap_airdrop',
   SCREEN_STAKE_GUIDE: CONSTANT_KEYS.SCREEN_STAKE_GUIDE,
   WEBVIEW: '$webview',
+  NODECLEARED: '$node_cleared',
 };
 export default class LocalDatabase {
   static async getValue(key: String): String {
@@ -330,6 +331,15 @@ export default class LocalDatabase {
 
   static setUriWebviewCommunity = (value) => {
     return LocalDatabase.saveValue(KEY_SAVE.WEBVIEW, value);
+  };
+
+  // For node caching
+  static getNodeCleared = () => {
+    return LocalDatabase.getValue(KEY_SAVE.NODECLEARED);
+  };
+
+  static setNodeCleared = (value) => {
+    return LocalDatabase.saveValue(KEY_SAVE.NODECLEARED, value);
   };
 
 }

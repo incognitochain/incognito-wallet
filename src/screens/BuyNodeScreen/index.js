@@ -241,7 +241,8 @@ const BuyNodeScreen = () => {
       phone: data?.phone, 
       postalCode: data?.postalCode, 
       lastName: data?.lastName, 
-      firstName: data?.firstName, 
+      firstName: data?.firstName,
+      country: data?.country,
       countryCode: data?.countryCode, 
       city: data?.city, 
       address: data?.address,
@@ -361,7 +362,7 @@ const BuyNodeScreen = () => {
   };
   const renderPaymentMore = () => {
     return (
-      <TouchableOpacity onPress={()=>{linkingService.openUrl(`${CONSTANT_CONFIGS.NODE_URL}`);}} style={[theme.FLEX.rowSpaceBetween, theme.MARGIN.marginTopDefault]}>
+      <TouchableOpacity onPress={()=>{linkingService.openUrl(`${CONSTANT_CONFIGS.NODE_URL}`);}} style={[theme.FLEX.rowSpaceBetween]}>
         <Text style={[theme.text.boldTextStyleMedium, {color: COLORS.blue4}]}>See more currencies</Text>
       </TouchableOpacity>
     );

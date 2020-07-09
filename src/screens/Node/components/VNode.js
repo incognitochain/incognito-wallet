@@ -46,7 +46,7 @@ class VNode extends React.Component {
     }
     // Online
     if (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0) {
-      return COLORS.blue4;
+      return COLORS.blue;
     }
     
     // Waiting - Default

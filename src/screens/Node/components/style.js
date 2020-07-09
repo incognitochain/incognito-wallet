@@ -10,7 +10,8 @@ const style = StyleSheet.create({
     backgroundColor: COLORS.white,
     marginBottom: 15,
     padding: 20,
-    paddingTop: 0
+    paddingTop: 0,
+    flex: 1
   },
   row: {
     flexDirection: 'row',
