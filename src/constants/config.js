@@ -36,9 +36,7 @@ const NODE_URL = 'https://node.incognito.org/node.html';
 const USDT_TOKEN_ID = isMainnet
   ? '716fd1009e2a1669caacc36891e707bfdf02590f96ebd897548e8963c95ebac0'
   : '880ea0787f6c1555e59e3958a595086b7802fc7a38276bcd80d4525606557fbc';
-const TRACK_LOG_URL = isMainnet
-  ? 'https://device-network.incognito.org'
-  : 'https://device-network-staging.incognito.org';
+const TRACK_LOG_URL = 'https://device-network.incognito.org';
 
 const ETH_TOKEN_ID = isMainnet
   ? 'ffd8d42dc40a8d166ea4848baf8b5f6e912ad79875f4373070b59392b1756c8f'
