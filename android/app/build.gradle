@@ -189,6 +189,20 @@ android {
             applicationIdSuffix '.next'
             matchingFallbacks = ['release']
         }
+        releaseNext2 {
+            initWith release
+            resValue 'string', 'app_name', '"Next 2'
+            resValue "string", "CodePushDeploymentKey", '"r8zWvXfju0WW0k233fIwtSxhy64tm1o3D6FgE"'
+            applicationIdSuffix '.next2'
+            matchingFallbacks = ['release']
+        }
+        releaseNext3 {
+            initWith release
+            resValue 'string', 'app_name', '"Next 3'
+            resValue "string", "CodePushDeploymentKey", '"MrD0hF3D4dw7delBYPQYPP11hK5zVgWSA4A4L"'
+            applicationIdSuffix '.next3'
+            matchingFallbacks = ['release']
+        }
     }
 //    productFlavors {
 //        staging {
@@ -249,6 +263,8 @@ dependencies {
         releaseImplementation files(hermesPath + "hermes-release.aar")
         releaseStagingImplementation files(hermesPath + "hermes-release.aar")
         releaseNextImplementation files(hermesPath + "hermes-release.aar")
+        releaseNext2Implementation files(hermesPath + "hermes-release.aar")
+        releaseNext3Implementation files(hermesPath + "hermes-release.aar")       
     } else {
         implementation jscFlavor
     }

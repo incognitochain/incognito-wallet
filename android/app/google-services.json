@@ -264,6 +264,78 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:283351295312:android:04ff4dfbf4fbe4c5",
+        "android_client_info": {
+          "package_name": "com.incognito.wallet.next2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "283351295312-ji2r7prflp1tecphf61927qm5p5549l1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgN-I9Xq2IdAhPdgcNKv5t_pxMfqJkuHU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "283351295312-ji2r7prflp1tecphf61927qm5p5549l1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "283351295312-5sbsu7npl11rb1ebnp91vp75r5u5o588.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.incognito.wallet.next"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:283351295312:android:04ff4dfbf4fbe4c5",
+        "android_client_info": {
+          "package_name": "com.incognito.wallet.next3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "283351295312-ji2r7prflp1tecphf61927qm5p5549l1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgN-I9Xq2IdAhPdgcNKv5t_pxMfqJkuHU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "283351295312-ji2r7prflp1tecphf61927qm5p5549l1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "283351295312-5sbsu7npl11rb1ebnp91vp75r5u5o588.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.incognito.wallet.next"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:283351295312:android:7e4620e6e981dc8daaf855",
         "android_client_info": {
           "package_name": "com.incognito.wallet.debug"
@@ -298,42 +370,6 @@
         }
       }
     },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:283351295312:android:b8e525a8e643f16e",
-        "android_client_info": {
-          "package_name": "com.smartwallv3"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "283351295312-ji2r7prflp1tecphf61927qm5p5549l1.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAgN-I9Xq2IdAhPdgcNKv5t_pxMfqJkuHU"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "283351295312-ji2r7prflp1tecphf61927qm5p5549l1.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "283351295312-5sbsu7npl11rb1ebnp91vp75r5u5o588.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.incognito.wallet"
-              }
-            }
-          ]
-        }
-      }
-    }
   ],
   "configuration_version": "1"
 }

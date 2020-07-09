@@ -110,14 +110,14 @@ target 'Incognito' do
     end
 
     installer.pods_project.build_configurations.each do |config|
-      if config.name == 'Staging'
+      if config.name == 'Staging' || config.name == 'Next' || config.name == 'Next2' || config.name == 'Next3'
           config.build_settings['CONFIGURATION_TEMP_DIR'] = '$(PROJECT_TEMP_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)'
           config.build_settings['CONFIGURATION_BUILD_DIR'] = '$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)'
       end
     end
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
-          if config.name == 'Staging'
+          if config.name == 'Staging' || config.name == 'Next' || config.name == 'Next2' || config.name == 'Next3'
               config.build_settings['CONFIGURATION_TEMP_DIR'] = '$(PROJECT_TEMP_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)'
               config.build_settings['PODS_CONFIGURATION_BUILD_DIR'] = '${PODS_BUILD_DIR}/Release$(EFFECTIVE_PLATFORM_NAME)'
           end

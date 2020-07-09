@@ -122,6 +122,46 @@ jobs:
       - get_app_info
       - run: yarn deployIOS:next
       - run: curl -X POST -H 'Content-type:application/json' --data '{"text":"'"Deploy iOS $APP_VERSION next release successfully! $LAST_COMMIT_MESSAGE"'"}' $SLACK_HOOK
+  push_android_next2:
+    executor:
+      name: rn/linux_android
+    steps:
+      - attach_workspace:
+          at: .
+      - login_appcenter
+      - get_app_info
+      - run: yarn deployAndroid:next2
+      - run: curl -X POST -H "Content-type:application/json" --data '{"text":"'"Deploy Android $APP_VERSION next2 release successfully! $LAST_COMMIT_MESSAGE"'"}' $SLACK_HOOK
+  push_ios_next2:
+    executor:
+      name: rn/linux_android
+    steps:
+      - attach_workspace:
+          at: .
+      - login_appcenter
+      - get_app_info
+      - run: yarn deployIOS:next2
+      - run: curl -X POST -H 'Content-type:application/json' --data '{"text":"'"Deploy iOS $APP_VERSION next2 release successfully! $LAST_COMMIT_MESSAGE"'"}' $SLACK_HOOK
+  push_android_next3:
+    executor:
+      name: rn/linux_android
+    steps:
+      - attach_workspace:
+          at: .
+      - login_appcenter
+      - get_app_info
+      - run: yarn deployAndroid:next3
+      - run: curl -X POST -H "Content-type:application/json" --data '{"text":"'"Deploy Android $APP_VERSION next3 release successfully! $LAST_COMMIT_MESSAGE"'"}' $SLACK_HOOK
+  push_ios_next3:
+    executor:
+      name: rn/linux_android
+    steps:
+      - attach_workspace:
+          at: .
+      - login_appcenter
+      - get_app_info
+      - run: yarn deployIOS:next3
+      - run: curl -X POST -H 'Content-type:application/json' --data '{"text":"'"Deploy iOS $APP_VERSION next3 release successfully! $LAST_COMMIT_MESSAGE"'"}' $SLACK_HOOK
 orbs:
   rn: react-native-community/react-native@4.1.0
 version: 2.1
@@ -195,5 +235,37 @@ workflows:
             requires:
               - generate_data
         - push_ios_next:
+            requires:
+              - generate_data
+  push_next2:
+      jobs:
+        - checkout_code:
+            filters:
+              branches:
+                only:
+                  - next-release2
+        - generate_data:
+            requires:
+              - checkout_code
+        - push_android_next2:
+            requires:
+              - generate_data
+        - push_ios_next2:
+            requires:
+              - generate_data
+  push_next3:
+      jobs:
+        - checkout_code:
+            filters:
+              branches:
+                only:
+                  - next-release3
+        - generate_data:
+            requires:
+              - checkout_code
+        - push_android_next3:
+            requires:
+              - generate_data
+        - push_ios_next3:
             requires:
               - generate_data
