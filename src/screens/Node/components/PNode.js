@@ -17,6 +17,7 @@ import BtnWithBlur from '@src/components/Button/BtnWithBlur';
 import NavigationService from '@src/services/NavigationService';
 import routeNames from '@src/router/routeNames';
 import { Alert } from 'react-native';
+import LogManager from '@src/services/LogManager';
 import styles from './style';
 import Rewards from './Rewards';
 import Loader from './Loader';
@@ -172,13 +173,14 @@ class PNode extends React.Component {
   // Only for test
   getColorStatus = (item) => {
     const isUnstaking = item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
+    const unstakedPNode = item.Unstaked;
     // Unstaking
     if (isUnstaking) {
       return COLORS.orange;
     }
     
     // Offline
-    if (!item?.IsOnline || item?.IsOnline === 0 || !item.Staked) {
+    if (!item?.IsOnline || item?.IsOnline === 0 || (!item.Staked && unstakedPNode)) {
       return COLORS.lightGrey1;
     }
     
