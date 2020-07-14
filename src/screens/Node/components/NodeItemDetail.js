@@ -228,9 +228,9 @@ class NodeItemDetail extends Component {
             this.setState({ canDropDown: !canDropDown });
           }}
         >
-          <View style={{width: 12, height: 12, marginEnd: 5, borderRadius: 6, backgroundColor: color || 'white'}}/>
+          <View style={{width: 12, height: 12, marginEnd: 5, borderRadius: 6, backgroundColor: color || 'white'}} />
           <Text style={[theme.text.boldTextStyleMedium, theme.MARGIN.marginRightDefault]}>{value || ''}</Text>
-          <Ionicons name={canDropDown ? 'ios-arrow-up' : 'ios-arrow-down'} size={25} color={COLORS.colorPrimary} />
+          {value === 'Offline' && <Ionicons name={canDropDown ? 'ios-arrow-up' : 'ios-arrow-down'} size={25} color={COLORS.colorPrimary} />}
         </TouchableOpacity>
       </View>
     );
@@ -299,9 +299,9 @@ class NodeItemDetail extends Component {
       }
     });
     let device = Device.getInstance(item);
-    const isUnstaking = item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
+    // const isUnstaking = item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
     const unstakedPNode = item.Unstaked;
-    // const isUnstaking = device.StakerAddress ? device.IsUnstaking : (device.Staked && device.Unstaking);
+    const isUnstaking = device.StakerAddress ? device.IsUnstaking : (device.Staked && device.Unstaking);
     return (
       <View style={styles.containerDetail}>
         <Header
@@ -348,7 +348,8 @@ class NodeItemDetail extends Component {
           {this.renderItemText('Keychain', name)}
           {this.renderItemText('IP', ip)}
           {isOffline ? this.renderStatus('Status', 'Offline', 'grey') :
-            (!item?.IsOnline || item?.IsOnline === 0 || (!item.Staked && unstakedPNode) ? this.renderStatus('Status', 'Working', COLORS.blue6) : null)}
+            (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0) ? this.renderStatus('Status', 'Working', COLORS.blue6) : 
+              isUnstaking ? this.renderStatus('Status', 'Unstaking', 'orange') : this.renderStatus('Status', 'Another', 'green')}
           {isOffline && canDropDown ? this.renderHint(ip) : null} 
         </View>
         {!stake && hasAccount && !isUnstaking ? this.renderUnstake(() => onUnstake(device)) : null}

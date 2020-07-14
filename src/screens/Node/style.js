@@ -119,7 +119,7 @@ const style = StyleSheet.create({
     alignContent: 'center' 
   },
   balanceUpdate: {
-    fontFamily: FONT.NAME.specialRegular,
+    fontFamily: FONT.NAME.specialBold,
     fontSize: FONT.SIZE.veryLarge,
     color: COLORS.black,
     textAlign: 'center',
