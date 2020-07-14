@@ -10,6 +10,7 @@ import { getBalance as getTokenBalance } from '@src/redux/actions/token';
 import { PRV_ID } from '@screens/Dex/constants';
 import KeepAwake from 'react-native-keep-awake';
 import { COLORS, FONT } from '@src/styles';
+import SendForm from '@screens/SendCrypto/SendIn';
 import { Dashed } from '@src/components/Line';
 import { Header } from '@src/components';
 import Payment from './Payment';
@@ -92,6 +93,14 @@ const PaymentBuyNodeScreen = ({ navigation }) => {
           paymentDevice={paymentDevice}
           reloading={reloading}
         />
+        {/* <SendForm
+          navigation={navigation}
+          selectable={false}
+          selectedPrivacy={selectedPrivacy}
+          account={account}
+          wallet={wallet}
+          reloading={false}
+        /> */}
         <KeepAwake />
       </ScrollView>
     </View>

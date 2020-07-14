@@ -373,7 +373,7 @@ const BuyNodeScreen = () => {
     setLoading(true);
     APIService.checkOutOrder(
       contactData.email,
-      contactData.code,
+      contactData.countryCode,
       contactData.address,
       contactData.city,
       contactData.region,
@@ -384,6 +384,7 @@ const BuyNodeScreen = () => {
       contactData.firstName,
       contactData.lastName)
       .then(data => {
+        // console.log(LogManager.parseJsonObjectToJsonString(data));
         setLoading(false);
         NavigationService.navigate(routeNames.PaymentBuyNodeScreen, {
           'paymentDevice': {

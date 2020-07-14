@@ -35,13 +35,14 @@ class VNode extends React.Component {
   // Only for test
   getColorStatus = (item) => {
     const isUnstaking = item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
+    const unstakedPNode = item.Unstaked;
     // Unstaking
     if (isUnstaking) {
       return COLORS.orange;
     }
     
     // Offline
-    if (!item?.IsOnline || item?.IsOnline === 0 || !item.Staked) {
+    if (!item?.IsOnline || item?.IsOnline === 0 || (!item.Staked)) {
       return COLORS.lightGrey1;
     }
     // Online

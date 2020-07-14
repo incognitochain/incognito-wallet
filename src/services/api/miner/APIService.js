@@ -623,6 +623,7 @@ export default class APIService {
       TaxCountry: countryCode,
       Email: email,
     };
+    // console.log("Params get order: " + LogManager.parseJsonObjectToJsonString(params));
     return http.post('order/incognito/checkout', params);
   }
   // Get system config
