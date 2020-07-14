@@ -217,7 +217,7 @@ class NodeItemDetail extends Component {
       </View>
     );
   }
-  renderStatus = (text, value) => {
+  renderStatus = (text, value, color) => {
     const { canDropDown } = this.state;
     return (
       <View style={[styles.balanceContainer, theme.MARGIN.marginBottomDefault, { flexDirection: 'row', justifyContent: 'space-between' }]}>
@@ -228,6 +228,7 @@ class NodeItemDetail extends Component {
             this.setState({ canDropDown: !canDropDown });
           }}
         >
+          <View style={{width: 12, height: 12, marginEnd: 5, borderRadius: 6, backgroundColor: color || 'white'}}/>
           <Text style={[theme.text.boldTextStyleMedium, theme.MARGIN.marginRightDefault]}>{value || ''}</Text>
           <Ionicons name={canDropDown ? 'ios-arrow-up' : 'ios-arrow-down'} size={25} color={COLORS.colorPrimary} />
         </TouchableOpacity>
@@ -254,6 +255,28 @@ class NodeItemDetail extends Component {
       <Button onPress={onPress} title={title} buttonStyle={[{ flex: 1, margin: 2 }, theme.BUTTON.BLUE_TYPE]} />
     );
   }
+  // Only for test
+  getColorStatus = (item) => {
+    const isUnstaking = item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
+    const unstakedPNode = item.Unstaked;
+    // Unstaking
+    if (isUnstaking) {
+      return COLORS.orange;
+    }
+    
+    // Offline
+    if (!item?.IsOnline || item?.IsOnline === 0 || (!item.Staked && unstakedPNode)) {
+      return COLORS.lightGrey1;
+    }
+    
+    // Online
+    if (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0) {
+      return COLORS.blue;
+    }
+    
+    // Waiting - Default
+    return COLORS.green;
+  }
   render() {
     const { navigation } = this.props;
     const { deviceName, ip, withdrawable,
@@ -276,7 +299,9 @@ class NodeItemDetail extends Component {
       }
     });
     let device = Device.getInstance(item);
-    const isUnstaking = device.StakerAddress ? device.IsUnstaking : (device.Staked && device.Unstaking);
+    const isUnstaking = item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
+    const unstakedPNode = item.Unstaked;
+    // const isUnstaking = device.StakerAddress ? device.IsUnstaking : (device.Staked && device.Unstaking);
     return (
       <View style={styles.containerDetail}>
         <Header
@@ -295,7 +320,7 @@ class NodeItemDetail extends Component {
             key={new Date().getTime()}
           >
             {
-              (rewardsList).map(({ id, pDecimals, balance, symbol, isVerified }) => (
+              rewardsList.map(({ id, pDecimals, balance, symbol, isVerified }) => (
                 <Reward
                   key={new Date().getTime()}
                   tokenId={id}
@@ -322,7 +347,8 @@ class NodeItemDetail extends Component {
         <View style={[theme.MARGIN.marginTopAvg]}>
           {this.renderItemText('Keychain', name)}
           {this.renderItemText('IP', ip)}
-          {isOffline ? this.renderStatus('Status', 'Offline') : null}
+          {isOffline ? this.renderStatus('Status', 'Offline', 'grey') :
+            (!item?.IsOnline || item?.IsOnline === 0 || (!item.Staked && unstakedPNode) ? this.renderStatus('Status', 'Working', COLORS.blue6) : null)}
           {isOffline && canDropDown ? this.renderHint(ip) : null} 
         </View>
         {!stake && hasAccount && !isUnstaking ? this.renderUnstake(() => onUnstake(device)) : null}
