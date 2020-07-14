@@ -259,7 +259,7 @@ class NodeItemDetail extends Component {
       <View style={[theme.MARGIN.marginBottomDefault]}>
         <Text style={[theme.text.regularTextMotto]}>This Node is currently waiting to be selected to produce blocks and earn rewards. All Nodes have an equal chance of selection. Numbers may vary in the short-term, but will even out over time through random uniform distribution.</Text>
         <TouchableOpacity onPress={()=>linkingService.openUrl('https://incognito.org/t/lifecycle-of-a-validator-explanation/957')}>
-          <Text style={{color: COLORS.blue6}}>{'Learn more about the validator lifecycle here>'}</Text>
+          <Text style={{color: COLORS.blue6, marginTop: 20}}>{'Learn more about the validator lifecycle here>'}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -269,17 +269,17 @@ class NodeItemDetail extends Component {
       <View style={[theme.MARGIN.marginBottomDefault]}>
         <Text style={[theme.text.regularTextMotto]}>This Node will complete the unstaking process the next time it is randomly selected to work. As such, unstaking times will vary. This may take anywhere between 4 hours to 21 days.</Text>
         <TouchableOpacity onPress={()=>linkingService.openUrl('https://incognito.org/t/the-waiting-time-of-unstaking-process/933')}>
-          <Text style={{color: COLORS.blue6}}>{'Learn more about unstaking here >'}</Text>
+          <Text style={{color: COLORS.blue6, marginTop: 20}}>{'Learn more about unstaking here >'}</Text>
         </TouchableOpacity>
       </View>
     );
   }
   renderWorking = () => { 
     return (
-      <View style={[theme.MARGIN.marginBottomDefault]}>
+      <View style={[theme.MARGIN.marginTopDefault]}>
         <Text style={[theme.text.regularTextMotto]}>This Node is now working to validate transactions, create blocks, and earn rewards. It will continue to work and earn for at least 1 epoch (4 hours).</Text>
         <TouchableOpacity onPress={()=>linkingService.openUrl('https://incognito.org/t/lifecycle-of-a-validator-explanation/957')}>
-          <Text style={{color: COLORS.blue6, fontFamily: FONT.NAME.semiBold}}>{'Learn more about the validator lifecycle here >'}</Text>
+          <Text style={{color: COLORS.blue6, fontFamily: FONT.NAME.semiBold, marginTop: 20}}>{'Learn more about the validator lifecycle here >'}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -317,6 +317,53 @@ class NodeItemDetail extends Component {
     
     // Waiting - Default
     return COLORS.green;
+  }
+
+  renderStatusNode = (item) => {
+    const isUnstaking = item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
+    const unstakedPNode = item.Unstaked;
+    let isOffline  = (!item?.IsOnline || item?.IsOnline === 0 || (!item.Staked && unstakedPNode));
+    const isOnline = (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0);
+    const {canDropDown} = this.state;
+
+    const hasStaked = item.Staked;
+    const noNeedToShowForUnstaked = item?.IsVNode && !hasStaked || !item?.IsVNode && !hasStaked && unstakedPNode;
+    
+    if (noNeedToShowForUnstaked) {
+      return (
+        null
+      );
+    }
+    if (isOffline) {
+      return (
+        <>
+          {this.renderStatus('Status', 'Offline', 'grey')}
+          {!canDropDown && this.renderOffline(item?.Host, item?.IsVNode)}
+        </>
+      );
+    }
+    if (isOnline) {
+      return (
+        <>
+          {this.renderStatus('Status', 'Working', COLORS.blue6)}
+          {canDropDown && this.renderWorking(item?.Host, item?.IsVNode)}
+        </>
+      );
+    }
+    if (isUnstaking) {
+      return (
+        <>
+          {this.renderStatus('Status', 'Unstaking', 'orange')}
+          {canDropDown && this.renderUnstaking()}
+        </>
+      );
+    }
+    return (
+      <>
+        {this.renderStatus('Status', 'Waiting', 'green')}
+        {canDropDown && this.renderWaiting()}
+      </>
+    );
   }
   render() {
     const { navigation } = this.props;
@@ -389,13 +436,7 @@ class NodeItemDetail extends Component {
         <View style={[theme.MARGIN.marginTopAvg]}>
           {this.renderItemText('Keychain', name)}
           {this.renderItemText('IP', ip)}
-          {isOffline ? this.renderStatus('Status', 'Offline', 'grey') :
-            (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0) ? this.renderStatus('Status', 'Working', COLORS.blue6) : 
-              isUnstaking ? this.renderStatus('Status', 'Unstaking', 'orange') : this.renderStatus('Status', 'Waiting', 'green')}
-          {
-            (isOffline) ? (!canDropDown ? this.renderOffline(ip, device?.IsVNode) : null) :  
-              (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0 && canDropDown) ? this.renderWorking(ip, device?.IsVNode) :  
-                isUnstaking && canDropDown ? this.renderUnstaking() : this.renderWaiting()}
+          {this.renderStatusNode(device)}
         </View>
         {!stake && hasAccount && !isUnstaking ? this.renderUnstake(() => onUnstake(device)) : null}
       </View>
