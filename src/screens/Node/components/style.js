@@ -59,7 +59,7 @@ const style = StyleSheet.create({
     alignContent: 'center' 
   },
   balanceUpdate: {
-    fontFamily: FONT.NAME.specialRegular,
+    fontFamily: FONT.NAME.specialBold,
     fontSize: FONT.SIZE.veryLarge,
     color: COLORS.black,
     textAlign: 'center',
@@ -167,7 +167,7 @@ export const rewardStyle = StyleSheet.create({
     backgroundColor: COLORS.primary,
   },
   balance: {
-    fontFamily: FONT.NAME.specialRegular,
+    fontFamily: FONT.NAME.specialBold,
     fontSize: FONT.FONT_SIZES.medium,
     color: COLORS.colorGreyBold,
     textAlign: 'center',
