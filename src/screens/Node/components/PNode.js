@@ -271,7 +271,7 @@ class PNode extends React.Component {
                   rewardsList: this.getRewards(item?.Rewards, allTokens),
                   isUnstaking: item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking),
                   withdrawable: item?.IsOnline && item?.IsWorking,
-                  isOffline: !item?.IsOnline,
+                  isOffline: !item?.IsOnline || item?.IsOnline === 0 || (!item.Staked && unstakedPNode),
                   onImport: onImportAccount,
                 })}
             >
