@@ -4,8 +4,6 @@ import _ from 'lodash';
 import {Overlay} from 'react-native-elements';
 import {Button, ScrollView, View} from '@components/core';
 import FullScreenLoading from '@components/FullScreenLoading/index';
-import HeaderBar from '@components/HeaderBar/HeaderBar';
-import {COLORS} from '@src/styles';
 import {MAX_WAITING_TIME, MESSAGES, MIN_CANCEL_VALUE, SHORT_WAIT_TIME} from '@screens/Dex/constants';
 import {CONSTANT_COMMONS} from '@src/constants';
 import tokenService, {PRV} from '@services/wallet/tokenService';
@@ -17,6 +15,8 @@ import {connect} from 'react-redux';
 import {ExHandler} from '@services/exception';
 import AddPin from '@screens/AddPIN';
 import routeNames from '@routers/routeNames';
+import { Header } from '@src/components';
+import { withLayout_2 } from '@components/Layout/index';
 import TradeHistory from './TradeHistory';
 import WithdrawHistory from './WithdrawHistory';
 import DepositHistory from './DepositHistory';
@@ -25,11 +25,6 @@ import RemoveLiquidityHistory from './RemoveLiquidityHistory';
 import stylesheet from './style';
 
 const MAX_TRIED = MAX_WAITING_TIME / SHORT_WAIT_TIME;
-
-const options = {
-  title: 'Transaction details',
-  headerBackground: COLORS.dark2,
-};
 
 const HISTORY_TYPES = {
   [MESSAGES.DEPOSIT]: DepositHistory,
@@ -229,12 +224,8 @@ const DexHistoryDetail = ({ navigation, wallet, updateHistory, getHistoryStatus,
   };
 
   return(
-    <View>
-      <HeaderBar
-        index={2}
-        navigation={navigation}
-        scene={{ descriptor: { options } }}
-      />
+    <View style={stylesheet.flex}>
+      <Header title="Transaction details" />
       <ScrollView style={stylesheet.scrollView}>
         <History
           {...history}
@@ -292,4 +283,4 @@ DexHistoryDetail.propTypes = {
 export default connect(
   mapState,
   mapDispatch
-)(DexHistoryDetail);
+)(withLayout_2(DexHistoryDetail));

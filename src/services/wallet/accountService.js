@@ -158,7 +158,6 @@ export default class Account {
         },
       ];
 
-      console.debug('SEND PRV');
       return Account.createAndSendNativeToken(
         paymentInfos,
         Math.floor(nativeFee),

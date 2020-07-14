@@ -12,7 +12,17 @@ const RightIcon = () => <ArrowRightGreyIcon style={stylesheet.icon} />;
 const InputContainer = (props) => {
   const navigation = useNavigation();
 
-  const { token, onSelectToken, onChange, value, tokens, disabled, loading, placeholder } = props;
+  const {
+    token,
+    onSelectToken,
+    onChange,
+    value,
+    tokens,
+    disabled,
+    loading,
+    placeholder,
+    selectable,
+  } = props;
   const showSelectTokenScreen = () => {
     navigation.navigate(ROUTE_NAMES.TokenSelectScreen, {
       onSelectToken,
@@ -37,16 +47,25 @@ const InputContainer = (props) => {
           </Text>
         )}
         {!!loading && <ActivityIndicator />}
-        <TouchableOpacity onPress={showSelectTokenScreen} style={stylesheet.centerJustify}>
-          {token ? (
-            <View style={stylesheet.token}>
-              <Text style={stylesheet.bigText} isVerified={token.isVerified}>
-                {token.symbol}
-              </Text>
-              <RightIcon />
-            </View>
-          ) : <RightIcon />}
-        </TouchableOpacity>
+        {selectable ? (
+          <TouchableOpacity onPress={showSelectTokenScreen} style={stylesheet.centerJustify}>
+            {token ? (
+              <View style={stylesheet.token}>
+                <Text style={stylesheet.bigText} isVerified={token.isVerified}>
+                  {token.symbol}
+                </Text>
+                <RightIcon />
+              </View>
+            ) : <RightIcon />}
+          </TouchableOpacity>
+        ) : (
+          <View style={stylesheet.token}>
+            <Text style={stylesheet.bigText} isVerified={token.isVerified}>
+              {token.symbol}
+            </Text>
+            <View style={stylesheet.icon} />
+          </View>
+        )}
       </View>
     </View>
   );
@@ -59,6 +78,7 @@ InputContainer.defaultProps = {
   onChange: undefined,
   disabled: false,
   loading: false,
+  selectable: true,
 };
 
 InputContainer.propTypes = {
@@ -69,6 +89,7 @@ InputContainer.propTypes = {
   onChange: PropTypes.func,
   disabled: PropTypes.bool,
   loading: PropTypes.bool,
+  selectable: PropTypes.bool,
 };
 
 export default InputContainer;

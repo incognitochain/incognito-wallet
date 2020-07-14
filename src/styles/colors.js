@@ -57,6 +57,7 @@ const COLORS = {
 
   colorBlue: '#5995F0',
   green2: '#64A121',
+  green3: '#018775',
 };
 
 export default {

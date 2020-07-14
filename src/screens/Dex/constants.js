@@ -111,3 +111,6 @@ export const MAX_WAITING_TIME = 5 * MINUTE;
 export const MULTIPLY = 2;
 export const REMOVE_LIQUIDITY_TX_SIZE = 20;
 export const LIMIT_HISTORY = 5;
+export const MIN_CANCEL_VALUE = 1;
+export const SHORT_WAIT_TIME = 5000;
+export const IGNORED_ACCOUNTS = ['pdex', 'pdexwithdraw'];

@@ -7,7 +7,7 @@ import routeNames from '@src/router/routeNames';
 import { useSelector } from 'react-redux';
 import { wizardSelector } from '@src/screens/GetStarted/GetStarted.selector';
 
-const { Wizard, Node, Dex, DexHistory, DexHistoryDetail } = routeNames;
+const { Node, Wizard } = routeNames;
 
 const dark4Screens = [];
 const blue2Screens = [];
@@ -38,9 +38,6 @@ const StatusBar = React.memo(({ currentScreen }) => {
   } else if (blue1Screens.includes(currentScreen)) {
     backgroundColor = COLORS.blue1;
     textColor = 'light-content';
-  } else if (dark2Screen.includes(currentScreen)) {
-    backgroundColor = COLORS.dark2;
-    textColor = 'light-content';
   } else if (blackScreen.includes(currentScreen)) {
     backgroundColor = COLORS.black;
     textColor = 'light-content';
@@ -48,6 +45,7 @@ const StatusBar = React.memo(({ currentScreen }) => {
     backgroundColor = COLORS.white;
     textColor = 'dark-content';
   }
+  
   if (currentScreen === Wizard && isFetched) {
     backgroundColor = COLORS.white;
     textColor = 'dark-content';
