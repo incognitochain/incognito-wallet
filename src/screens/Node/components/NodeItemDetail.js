@@ -7,7 +7,7 @@ import Toast from '@components/core/Toast/Toast';
 import OptionMenu from '@components/OptionMenu/OptionMenu';
 import firmwareIcon from '@src/assets/images/icons/firmware.png';
 import moreIcon from '@src/assets/images/icons/more_icon.png';
-import { COLORS } from '@src/styles';
+import { COLORS, FONT } from '@src/styles';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -15,6 +15,7 @@ import { MESSAGES } from '@src/constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LogManager from '@src/services/LogManager';
 import Header from '@src/components/Header';
+import linkingService from '@src/services/linking';
 import Swiper from 'react-native-swiper';
 import convert from '@utils/convert';
 import theme from '@src/styles/theme';
@@ -211,7 +212,7 @@ class NodeItemDetail extends Component {
  
   renderItemText = (text, value) => {
     return (
-      <View style={[styles.balanceContainer, theme.MARGIN.marginBottomDefault, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+      <View style={[styles.balanceContainer, { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 30 }]}>
         <Text style={[theme.text.boldTextStyleMedium]}>{text}</Text>
         <Text style={[theme.text.boldTextStyleMedium]}>{value || ''}</Text>
       </View>
@@ -235,11 +236,51 @@ class NodeItemDetail extends Component {
       </View>
     );
   }
-  renderHint = (ip) => {
+  renderOffline = (ip, isVnode) => {
+    if (isVnode) {
+      return (
+        <View style={[theme.MARGIN.marginBottomDefault]}>
+          <Text style={[theme.text.regularTextMotto]}>{`1. Make sure your VPS at IP ${ip} is running`}</Text>
+          <Text style={[theme.text.regularTextMotto]}>{'2. SSH into your VPS and enter this command “sudo docker ps” to check if “inc_mainnet” and “eth_mainnet” are up. If you don’t see any of them, restart the Node with this command “sudo bash run.sh”. \n\nIf this issue persists, reach out to us at go@incognito.org'}</Text>
+        </View>
+      );
+    } 
     return (
       <View style={[theme.MARGIN.marginBottomDefault]}>
-        <Text style={[theme.text.regularTextMotto]}>{`1. Make sure your VPS at IP ${ip} is running`}</Text>
-        <Text style={[theme.text.regularTextMotto]}>{'2. Ssh into your VPS and run \'sudo docker ps\' to check if docker is running'}</Text>
+        <Text style={[theme.text.regularTextMotto]}>1. Make sure the blue light is on</Text>
+        <Text style={[theme.text.regularTextMotto]}>2. Make sure that your home WiFi is connected</Text>
+        <Text style={[theme.text.regularTextMotto]}>3. Power cycle the Node and wait a few minutes</Text>
+        <Text style={[theme.text.regularTextMotto]}>{'\nIf this issue persists, reach out to us at go@incognito.org'}</Text>
+      </View>
+    );
+  }
+  renderWaiting = () => { 
+    return (
+      <View style={[theme.MARGIN.marginBottomDefault]}>
+        <Text style={[theme.text.regularTextMotto]}>This Node is currently waiting to be selected to produce blocks and earn rewards. All Nodes have an equal chance of selection. Numbers may vary in the short-term, but will even out over time through random uniform distribution.</Text>
+        <TouchableOpacity onPress={()=>linkingService.openUrl('https://incognito.org/t/lifecycle-of-a-validator-explanation/957')}>
+          <Text style={{color: COLORS.blue6}}>{'Learn more about the validator lifecycle here>'}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+  renderUnstaking = () => { 
+    return (
+      <View style={[theme.MARGIN.marginBottomDefault]}>
+        <Text style={[theme.text.regularTextMotto]}>This Node will complete the unstaking process the next time it is randomly selected to work. As such, unstaking times will vary. This may take anywhere between 4 hours to 21 days.</Text>
+        <TouchableOpacity onPress={()=>linkingService.openUrl('https://incognito.org/t/the-waiting-time-of-unstaking-process/933')}>
+          <Text style={{color: COLORS.blue6}}>{'Learn more about unstaking here >'}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+  renderWorking = () => { 
+    return (
+      <View style={[theme.MARGIN.marginBottomDefault]}>
+        <Text style={[theme.text.regularTextMotto]}>This Node is now working to validate transactions, create blocks, and earn rewards. It will continue to work and earn for at least 1 epoch (4 hours).</Text>
+        <TouchableOpacity onPress={()=>linkingService.openUrl('https://incognito.org/t/lifecycle-of-a-validator-explanation/957')}>
+          <Text style={{color: COLORS.blue6, fontFamily: FONT.NAME.semiBold}}>{'Learn more about the validator lifecycle here >'}</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -299,6 +340,7 @@ class NodeItemDetail extends Component {
       }
     });
     let device = Device.getInstance(item);
+    console.log(device.toJSON());
     // const isUnstaking = item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
     const unstakedPNode = item.Unstaked;
     const isUnstaking = device.StakerAddress ? device.IsUnstaking : (device.Staked && device.Unstaking);
@@ -350,7 +392,10 @@ class NodeItemDetail extends Component {
           {isOffline ? this.renderStatus('Status', 'Offline', 'grey') :
             (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0) ? this.renderStatus('Status', 'Working', COLORS.blue6) : 
               isUnstaking ? this.renderStatus('Status', 'Unstaking', 'orange') : this.renderStatus('Status', 'Another', 'green')}
-          {isOffline && canDropDown ? this.renderHint(ip) : null} 
+          {canDropDown ?
+            isOffline ? this.renderOffline(ip, device?.IsVNode) :  
+              (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0) ? this.renderWorking(ip, device?.IsVNode) :  
+                isUnstaking ? this.renderUnstaking() : this.renderWaiting() : null}
         </View>
         {!stake && hasAccount && !isUnstaking ? this.renderUnstake(() => onUnstake(device)) : null}
       </View>
