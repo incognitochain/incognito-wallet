@@ -391,11 +391,11 @@ class NodeItemDetail extends Component {
           {this.renderItemText('IP', ip)}
           {isOffline ? this.renderStatus('Status', 'Offline', 'grey') :
             (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0) ? this.renderStatus('Status', 'Working', COLORS.blue6) : 
-              isUnstaking ? this.renderStatus('Status', 'Unstaking', 'orange') : this.renderStatus('Status', 'Another', 'green')}
-          {canDropDown ?
-            isOffline ? this.renderOffline(ip, device?.IsVNode) :  
+              isUnstaking ? this.renderStatus('Status', 'Unstaking', 'orange') : this.renderStatus('Status', 'Waiting', 'green')}
+          {
+            (isOffline) ? (canDropDown ? this.renderOffline(ip, device?.IsVNode) : null) :  
               (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0) ? this.renderWorking(ip, device?.IsVNode) :  
-                isUnstaking ? this.renderUnstaking() : this.renderWaiting() : null}
+                isUnstaking ? this.renderUnstaking() : this.renderWaiting()}
         </View>
         {!stake && hasAccount && !isUnstaking ? this.renderUnstake(() => onUnstake(device)) : null}
       </View>
