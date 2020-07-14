@@ -231,7 +231,7 @@ class NodeItemDetail extends Component {
         >
           <View style={{width: 12, height: 12, marginEnd: 5, borderRadius: 6, backgroundColor: color || 'white'}} />
           <Text style={[theme.text.boldTextStyleMedium, theme.MARGIN.marginRightDefault]}>{value || ''}</Text>
-          {value === 'Offline' && <Ionicons name={canDropDown ? 'ios-arrow-up' : 'ios-arrow-down'} size={25} color={COLORS.colorPrimary} />}
+          <Ionicons name={canDropDown ? 'ios-arrow-up' : 'ios-arrow-down'} size={25} color={COLORS.colorPrimary} />
         </TouchableOpacity>
       </View>
     );
@@ -393,9 +393,9 @@ class NodeItemDetail extends Component {
             (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0) ? this.renderStatus('Status', 'Working', COLORS.blue6) : 
               isUnstaking ? this.renderStatus('Status', 'Unstaking', 'orange') : this.renderStatus('Status', 'Waiting', 'green')}
           {
-            (isOffline) ? (canDropDown ? this.renderOffline(ip, device?.IsVNode) : null) :  
-              (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0) ? this.renderWorking(ip, device?.IsVNode) :  
-                isUnstaking ? this.renderUnstaking() : this.renderWaiting()}
+            (isOffline) ? (!canDropDown ? this.renderOffline(ip, device?.IsVNode) : null) :  
+              (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0 && canDropDown) ? this.renderWorking(ip, device?.IsVNode) :  
+                isUnstaking && canDropDown ? this.renderUnstaking() : this.renderWaiting()}
         </View>
         {!stake && hasAccount && !isUnstaking ? this.renderUnstake(() => onUnstake(device)) : null}
       </View>
