@@ -251,9 +251,9 @@ class PNode extends React.Component {
             <TouchableOpacity
               style={[styles.row]}
               onLongPress={() => { 
-                if (global.isDebug()) {
-                  this.showDeleteAlert();
-                }
+                // if (global.isDebug()) {
+                this.showDeleteAlert();
+                // }
               }}
               onPress={() => NavigationService.navigate(routeNames.NodeItemDetail,
                 {
