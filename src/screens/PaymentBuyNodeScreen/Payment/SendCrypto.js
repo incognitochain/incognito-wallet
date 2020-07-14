@@ -42,6 +42,7 @@ import { actionFetchFeeByMax } from '@src/components/EstimateFee/EstimateFee.act
 import format from '@src/utils/format';
 import ROUTES_NAME from '@routers/routeNames';
 import theme from '@src/styles/theme';
+import CurrentBalance from '@components/CurrentBalance';
 import { homeStyle } from './style';
 
 export const formName = 'sendCrypto';
@@ -280,6 +281,7 @@ class SendCrypto extends React.Component {
     } = this.props;
     return (
       <View style={homeStyle.container}>
+        <CurrentBalance />
         <Form>
           {({ handleSubmit }) => (
             <View>
@@ -291,11 +293,12 @@ class SendCrypto extends React.Component {
                 component={InputMaxValueField}
                 name="amount"
                 placeholder="0.0"
-                label="Amount"
+                label="Payment amount"
                 componentProps={{
                   keyboardType: 'decimal-pad',
                   onPressMax: this.onPressMax,
                   editable: false,
+                  disableMaxBtn: true,
                 }}
                 validate={this.getAmountValidator()}
                 {...generateTestId(SEND.AMtOUNT_INPUT)}
@@ -313,7 +316,7 @@ class SendCrypto extends React.Component {
                   editable: false,
                 }}
                 placeholder="Add a note (optional)"
-                label="Memo"
+                label="PaymentID"
                 maxLength={500}
                 validate={descriptionMaxBytes}
                 {...generateTestId(SEND.MEMO_INPUT)}

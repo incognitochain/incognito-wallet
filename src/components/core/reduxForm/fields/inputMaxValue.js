@@ -20,6 +20,7 @@ const renderCustomField = ({
   input,
   meta,
   maxValue,
+  disableMaxBtn,
   onPressMax = null,
   ...props
 }) => {
@@ -38,7 +39,7 @@ const renderCustomField = ({
       onRef={ref => {
         inputRef = ref;
       }}
-      prependView={(
+      prependView={disableMaxBtn ? null : (
         <BtnInfinite
           style={styled.btn}
           onPress={() => {
@@ -65,6 +66,7 @@ const InputMaxValueField = createField({
 renderCustomField.defaultProps = {
   maxValue: null,
   onPressMax: null,
+  disableMaxBtn: false,
 };
 
 renderCustomField.propTypes = {
@@ -72,6 +74,7 @@ renderCustomField.propTypes = {
   meta: PropTypes.object.isRequired,
   maxValue: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   onPressMax: PropTypes.func,
+  disableMaxBtn: PropTypes.bool,
 };
 
 export default InputMaxValueField;
