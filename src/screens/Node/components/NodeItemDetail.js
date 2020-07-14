@@ -345,7 +345,7 @@ class NodeItemDetail extends Component {
     if (isOnline) {
       return (
         <>
-          {this.renderStatus('Status', 'Working', COLORS.blue6)}
+          {this.renderStatus('Status', 'Working', COLORS.blue)}
           {canDropDown && this.renderWorking(item?.Host, item?.IsVNode)}
         </>
       );
