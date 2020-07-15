@@ -9,7 +9,7 @@ import { ExHandler } from '@services/exception';
 import tokenService from '@services/wallet/tokenService';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import LoadingContainer from '@components/LoadingContainer';
 import { change as rfOnChangeValue, focus } from 'redux-form';
 import routeNames from '@src/router/routeNames';
@@ -36,15 +36,14 @@ import {
   actionAddStorageData,
   actionRemoveStorageData,
 } from '@screens/UnShield';
+import ErrorBoundary from '@src/components/ErrorBoundary';
+import { compose } from 'recompose';
 import Withdraw, { formName } from './Withdraw';
 
-const delay = (ms) => new Promise((rs) => setTimeout(rs, ms));
-
 class WithdrawContainer extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
   }
-
   async componentDidMount() {
     const {
       selectedPrivacy,
@@ -250,11 +249,7 @@ class WithdrawContainer extends Component {
 
   handleDecentralizedWithdraw = async (payload = {}) => {
     try {
-      const {
-        selectedPrivacy,
-        actionAddStorageData,
-        actionRemoveStorageData,
-      } = this.props;
+      const { selectedPrivacy, addStorageData, removeStorageData } = this.props;
       const { amount, originalAmount, remoteAddress } = payload;
       const tx = await this.handleBurningToken(payload);
       const data = {
@@ -269,14 +264,14 @@ class WithdrawContainer extends Component {
         isErc20Token: selectedPrivacy?.isErc20Token,
         externalSymbol: selectedPrivacy?.externalSymbol,
       };
-      await actionAddStorageData({
+      await addStorageData({
         keySave: KEY_SAVE.WITHDRAWAL_DATA_DECENTRALIZED,
         tx: data,
       });
-      await delay(1000000);
-      await withdraw(data);
-      await actionRemoveStorageData(data?.burningTxId);
-      return tx;
+      throw new Error('withdraw fail!');
+      // await withdraw(data);
+      // await removeStorageData(data?.burningTxId);
+      // return tx;
     } catch (e) {
       throw e;
     }
@@ -369,9 +364,27 @@ WithdrawContainer.propTypes = {
   focus: PropTypes.func.isRequired,
   actionAddStorageData: PropTypes.func.isRequired,
   actionRemoveStorageData: PropTypes.func.isRequired,
+  addStorageData: PropTypes.func.isRequired,
+  removeStorageData: PropTypes.func.isRequired,
 };
 
-export default connect(
-  mapState,
-  mapDispatch,
+const enhance = (WrappedComp) => (props) => {
+  const dispatch = useDispatch();
+  const addStorageData = async (payload) =>
+    await dispatch(actionAddStorageData(payload));
+  const removeStorageData = async (payload) =>
+    await dispatch(actionRemoveStorageData(payload));
+  return (
+    <ErrorBoundary>
+      <WrappedComp {...{ ...props, addStorageData, removeStorageData }} />
+    </ErrorBoundary>
+  );
+};
+
+export default compose(
+  enhance,
+  connect(
+    mapState,
+    mapDispatch,
+  ),
 )(WithdrawContainer);

@@ -7,8 +7,6 @@ import withFCM from '@src/screens/Notification/Notification.withFCM';
 import withWallet from '@screens/Wallet/features/Home/Wallet.enhance';
 import { useSelector, useDispatch, connect } from 'react-redux';
 import { useIsFocused } from 'react-navigation-hooks';
-import { KEY_SAVE } from '@utils/LocalDatabase';
-import { withdraw } from '@services/api/withdraw';
 import { withLayout_2 } from '@src/components/Layout';
 import APIService from '@src/services/api/miner/APIService';
 import { accountSeleclor } from '@src/redux/selectors';
@@ -19,44 +17,25 @@ import { WithdrawHistory } from '@models/dexHistory';
 import routeNames from '@src/router/routeNames';
 import AddPin from '@screens/AddPIN';
 import PropTypes from 'prop-types';
-import {
-  unShieldStorageDataSelector,
-  actionRemoveStorageData,
-} from '@screens/UnShield';
 import { useBackHandler } from '@src/components/UseEffect';
 import { homeSelector } from './Home.selector';
 import { actionFetch as actionFetchHomeConfigs } from './Home.actions';
 import Airdrop from './features/Airdrop';
 
 const enhance = (WrappedComp) => (props) => {
-  const { getFollowingToken, clearWallet, fetchData } = props;
+  const {
+    getFollowingToken,
+    clearWallet,
+    fetchData,
+    tryLastWithdrawal,
+  } = props;
   const { categories, headerTitle, isFetching } = useSelector(homeSelector);
   const isFocused = useIsFocused();
   const wallet = useSelector((state) => state?.wallet);
   const defaultAccount = useSelector(accountSeleclor.defaultAccountSelector);
-  const txs = useSelector(unShieldStorageDataSelector)(
-    KEY_SAVE.WITHDRAWAL_DATA_DECENTRALIZED,
-  );
+
   const dispatch = useDispatch();
-  const tryLastWithdrawal = async () => {
-    try {
-      txs.forEach(async (tx) => {
-        if (tx) {
-          await new Promise.all([
-            withdraw(tx),
-            dispatch(
-              actionRemoveStorageData({
-                keySave: KEY_SAVE.WITHDRAWAL_DATA_DECENTRALIZED,
-                burningTxId: tx?.burningTxId,
-              }),
-            ),
-          ]);
-        }
-      });
-    } catch (e) {
-      console.log('error', e);
-    }
-  };
+
   const getHomeConfiguration = async () => {
     try {
       await dispatch(actionFetchHomeConfigs());

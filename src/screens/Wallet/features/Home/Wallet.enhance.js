@@ -18,6 +18,12 @@ import routeNames from '@src/router/routeNames';
 import { Toast } from '@src/components/core';
 import { actionInit as actionInitEstimateFee } from '@components/EstimateFee/EstimateFee.actions';
 import { isGettingBalance as isGettingBalanceSelector } from '@src/redux/selectors/shared';
+import {
+  unShieldStorageDataSelector,
+  actionRemoveStorageData,
+} from '@src/screens/UnShield';
+import { KEY_SAVE } from '@src/utils/LocalDatabase';
+import { withdraw } from '@src/services/api/withdraw';
 
 export const WalletContext = React.createContext({});
 
@@ -26,6 +32,9 @@ const enhance = (WrappedComp) => (props) => {
   const tokens = useSelector(tokenSeleclor.tokensFollowedSelector);
   const wallet = useSelector((state) => state?.wallet);
   const isGettingBalance = useSelector(isGettingBalanceSelector);
+  const txs = useSelector(unShieldStorageDataSelector)(
+    KEY_SAVE.WITHDRAWAL_DATA_DECENTRALIZED,
+  );
   const dispatch = useDispatch();
   const [state, setState] = React.useState({
     isReloading: false,
@@ -95,6 +104,25 @@ const enhance = (WrappedComp) => (props) => {
       duration: 500,
     });
   };
+  const tryLastWithdrawal = async () => {
+    try {
+      txs.forEach(async (tx) => {
+        if (tx) {
+          await new Promise.all([
+            withdraw(tx),
+            dispatch(
+              actionRemoveStorageData({
+                keySave: KEY_SAVE.WITHDRAWAL_DATA_DECENTRALIZED,
+                burningTxId: tx?.burningTxId,
+              }),
+            ),
+          ]);
+        }
+      });
+    } catch (e) {
+      console.log('error', e);
+    }
+  };
   return (
     <ErrorBoundary>
       <WalletContext.Provider
@@ -123,6 +151,7 @@ const enhance = (WrappedComp) => (props) => {
             handleRemoveToken,
             clearWallet,
             getFollowingToken,
+            tryLastWithdrawal,
           }}
         />
       </WalletContext.Provider>

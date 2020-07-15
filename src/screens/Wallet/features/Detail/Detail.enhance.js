@@ -11,8 +11,10 @@ import {
 import { selectedPrivacySeleclor } from '@src/redux/selectors';
 import { useIsFocused } from 'react-navigation-hooks';
 import { defaultAccountNameSelector } from '@src/redux/selectors/account';
+import withWallet from '@screens/Wallet/features/Home/Wallet.enhance';
 
 const enhance = (WrappedComp) => (props) => {
+  const { tryLastWithdrawal } = props;
   const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
   const token = useSelector(
     selectedPrivacySeleclor.selectedPrivacyByFollowedSelector,
@@ -34,6 +36,7 @@ const enhance = (WrappedComp) => (props) => {
   };
   React.useEffect(() => {
     if (isFocused && selectedPrivacy?.tokenId) {
+      tryLastWithdrawal();
       handleLoadHistory();
     }
   }, [selectedPrivacy?.tokenId, token?.id, isFocused, account]);
@@ -46,5 +49,6 @@ const enhance = (WrappedComp) => (props) => {
 
 export default compose(
   withLayout_2,
+  withWallet,
   enhance,
 );
