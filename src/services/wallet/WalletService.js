@@ -61,17 +61,23 @@ export async function loadWallet(passphrase) {
     server.password
   );
 
-  try {
-    Wallet.ShardNumber = await getMaxShardNumber();
-  } catch (e) {
-    console.log(e);
-  }
+  Wallet.ShardNumber = 8;
 
   const wallet = new Wallet();
   wallet.Storage = storage;
 
   await wallet.loadWallet(passphrase);
 
+  const accounts = wallet.MasterAccount.child;
+  for (const account of accounts) {
+    try {
+      await account.loadAccountCached(storage);
+    } catch (e) {
+      console.debug('LOAD ACCOUNTS CACHE ERROR', e);
+      await account.clearCached();
+      await account.saveAccountCached(storage);
+    }
+  }
   return wallet?.Name ? wallet : false;
 }
 

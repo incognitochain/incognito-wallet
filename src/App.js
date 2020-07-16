@@ -1,3 +1,4 @@
+import 'react-native-console-time-polyfill';
 import codePush from 'react-native-code-push';
 import AppScreen from '@src/components/AppScreen';
 import { StatusBar, Toast } from '@src/components/core';
@@ -9,15 +10,14 @@ import ROUTE_NAMES from '@src/router/routeNames';
 import { notificationInitialize } from '@src/services/notification';
 import NavigationService from '@src/services/NavigationService';
 import React, { useEffect, useState } from 'react';
-import 'react-native-console-time-polyfill';
 import { Provider } from 'react-redux';
 import AppUpdater from '@components/AppUpdater/index';
 import { PersistGate } from 'redux-persist/integration/react';
 import NetInfo from '@react-native-community/netinfo';
 import { Linking, Text } from 'react-native';
-import ModalConnection from './components/Modal/ModalConnection';
-import LocalDatabase from './utils/LocalDatabase';
 import { MAIN_WEBSITE } from './constants/config';
+import LocalDatabase from './utils/LocalDatabase';
+import ModalConnection from './components/Modal/ModalConnection';
 
 const isShowDeviceLog = false;
 const { store, persistor } = configureStore();
@@ -62,7 +62,7 @@ const App = () => {
       console.log('Connection type', state.type);
       console.log('Is connected?', state.isConnected);
 
-      // I want to do this here because of 
+      // I want to do this here because of
       // the state change from none => yes => It will check again and show overlay 1 time before set it to only first time veryly
       if (currentNetworkConnectedState === state?.isConnected) {
         setCurrentNetworkConnectedState(currentNetworkConnectedState);
@@ -112,6 +112,7 @@ const App = () => {
             onPressOk={() => listenNetworkChanges()}
           />
         </AppScreen>
+        {/*<Timer />*/}
       </PersistGate>
     </Provider>
   );
