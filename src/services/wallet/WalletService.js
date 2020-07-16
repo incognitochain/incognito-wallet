@@ -68,15 +68,19 @@ export async function loadWallet(passphrase) {
 
   await wallet.loadWallet(passphrase);
 
-  const accounts = wallet.MasterAccount.child;
-  for (const account of accounts) {
-    try {
-      await account.loadAccountCached(storage);
-    } catch (e) {
-      console.debug('LOAD ACCOUNTS CACHE ERROR', e);
-      await account.clearCached();
-      await account.saveAccountCached(storage);
+  try {
+    const accounts = wallet.MasterAccount.child;
+    for (const account of accounts) {
+      try {
+        await account.loadAccountCached(storage);
+      } catch (e) {
+        console.debug('LOAD ACCOUNT CACHE ERROR', e);
+        await account.clearCached();
+        await account.saveAccountCached(storage);
+      }
     }
+  } catch (e) {
+    console.debug('LOAD ACCOUNTS CACHE ERROR', e);
   }
   return wallet?.Name ? wallet : false;
 }
