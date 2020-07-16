@@ -46,11 +46,14 @@ const amountCreator = (maxDigits) => (
       let maxDigits = decimals;
       if (_amount > 0 && _amount < 1 && !!decimalDigits) {
         maxDigits = 5;
-      } else if (_amount > 1) {
+      }
+      if (_amount > 1) {
         maxDigits = 4;
-      } else if (_amount > 1e3) {
+      }
+      if (_amount > 1e3) {
         maxDigits = 2;
-      } else if (_amount > 1e5) {
+      }
+      if (_amount > 1e5) {
         maxDigits = 0;
       }
       if (decimals) {

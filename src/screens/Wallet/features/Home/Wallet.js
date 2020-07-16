@@ -127,6 +127,7 @@ const Balance = () => {
         hasPSymbol
         stylePSymbol={styledBalance.pSymbol}
         containerStyle={styledBalance.balanceContainer}
+        size="large"
       />
       <Text style={styledBalance.title}>Shielded Balance</Text>
     </View>
@@ -146,6 +147,7 @@ const FollowToken = () => {
           followed.length === 0 && styledToken.lastChild,
         ]}
         onPress={() => handleSelectToken(CONSTANT_COMMONS.PRV_TOKEN_ID)}
+        showGettingBalance
       />
       {followed.map((token, index) => (
         <Token
@@ -159,6 +161,7 @@ const FollowToken = () => {
           handleRemoveToken={() => handleRemoveToken(token?.id)}
           swipable
           removable
+          showGettingBalance
         />
       ))}
     </View>
@@ -184,12 +187,12 @@ const Extra = () => {
     <View style={extraStyled.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        refreshControl={(
+        refreshControl={
           <RefreshControl
             refreshing={isReloading}
             onRefresh={() => fetchData(true)}
           />
-        )}
+        }
       >
         <Balance />
         <GroupButton />

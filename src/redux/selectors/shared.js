@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { CONSTANT_COMMONS } from '@src/constants';
-import { fromPairs, floor } from 'lodash';
+import { fromPairs } from 'lodash';
 import {
   pTokensSelector,
   internalTokensSelector,
@@ -11,23 +11,18 @@ import { selectedPrivacySeleclor } from '@src/redux/selectors';
 import uniqBy from 'lodash/uniqBy';
 import isNaN from 'lodash/isNaN';
 import convert from '@src/utils/convert';
-import {
-  isGettingBalance as isGettingBalanceAccount,
-  defaultAccountName,
-  defaultAccountBalanceSelector,
-} from './account';
+import { defaultAccountName, defaultAccountBalanceSelector } from './account';
 
 export const isGettingBalance = createSelector(
   isGettingBalanceToken,
-  isGettingBalanceAccount,
+  (state) => state?.account?.isGettingBalance,
   defaultAccountName,
   (tokens, accounts, defaultAccountName) => {
-    return [
-      ...(accounts?.includes(defaultAccountName)
-        ? [CONSTANT_COMMONS.PRV_TOKEN_ID]
-        : []),
-      ...tokens,
-    ];
+    const isLoadingAccountBalance = accounts?.includes(defaultAccountName);
+    const result = [...tokens];
+    return isLoadingAccountBalance
+      ? [...result, CONSTANT_COMMONS.PRV.id]
+      : result;
   },
 );
 

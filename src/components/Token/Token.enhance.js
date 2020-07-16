@@ -6,14 +6,13 @@ import PropTypes from 'prop-types';
 
 export const TokenContext = React.createContext();
 
-const enhance = WrappedComp => props => {
+const enhance = (WrappedComp) => (props) => {
   const { tokenId } = props;
   const token = useSelector(selectedPrivacySeleclor.getPrivacyDataByTokenID)(
     tokenId,
   );
-  const isGettingBalance = useSelector(
-    sharedSeleclor.isGettingBalance,
-  ).includes(tokenId);
+  const gettingBalance = useSelector(sharedSeleclor.isGettingBalance);
+  const isGettingBalance = gettingBalance.includes(tokenId);
   const tokenProps = {
     ...props,
     ...token,

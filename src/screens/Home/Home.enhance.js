@@ -23,6 +23,7 @@ import {
   unShieldStorageDataSelector,
   actionRemoveStorageData,
 } from '@screens/UnShield';
+import { useBackHandler } from '@src/components/UseEffect';
 import { homeSelector } from './Home.selector';
 import { actionFetch as actionFetchHomeConfigs } from './Home.actions';
 import Airdrop from './features/Airdrop';
@@ -82,6 +83,8 @@ const enhance = (WrappedComp) => (props) => {
       new ExHandler(e);
     }
   };
+
+  useBackHandler({});
 
   React.useEffect(() => {
     if (wallet) {
