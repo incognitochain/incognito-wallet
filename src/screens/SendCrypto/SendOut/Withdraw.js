@@ -375,6 +375,7 @@ class Withdraw extends React.Component {
       rfFocus,
       onShowFrequentReceivers,
       rfChange,
+      saveTxToLocal,
     } = this.props;
     const { externalSymbol, isErc20Token } = selectedPrivacy || {};
     const addressValidator = this.getAddressValidator(
@@ -467,7 +468,15 @@ class Withdraw extends React.Component {
                 onPress={handleSubmit(this.handleSubmit)}
                 {...generateTestId(SEND.SUBMIT_BUTTON)}
               />
-              {submitting && <LoadingTx />}
+              {submitting && (
+                <LoadingTx
+                  text={
+                    saveTxToLocal
+                      ? 'Save tx to local success, you have 15s'
+                      : ''
+                  }
+                />
+              )}
             </View>
           )}
         </Form>

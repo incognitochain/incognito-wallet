@@ -38,11 +38,15 @@ import {
 } from '@screens/UnShield';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { compose } from 'recompose';
+import Util from '@src/utils/Util';
 import Withdraw, { formName } from './Withdraw';
 
 class WithdrawContainer extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      saveTxToLocal: false,
+    };
   }
   async componentDidMount() {
     const {
@@ -268,10 +272,14 @@ class WithdrawContainer extends Component {
         keySave: KEY_SAVE.WITHDRAWAL_DATA_DECENTRALIZED,
         tx: data,
       });
-      throw new Error('withdraw fail!');
-      // await withdraw(data);
-      // await removeStorageData(data?.burningTxId);
-      // return tx;
+      await this.setState({ saveTxToLocal: true });
+      await Util.delay(15);
+      await withdraw(data);
+      await removeStorageData({
+        keySave: KEY_SAVE.WITHDRAWAL_DATA_DECENTRALIZED,
+        burningTxId: data?.burningTxId,
+      });
+      return tx;
     } catch (e) {
       throw e;
     }
@@ -299,6 +307,7 @@ class WithdrawContainer extends Component {
 
   render() {
     const { selectedPrivacy, estimateFee } = this.props;
+    const { saveTxToLocal } = this.state;
     if (!estimateFee.init || !selectedPrivacy) {
       return <LoadingContainer />;
     }
@@ -309,6 +318,7 @@ class WithdrawContainer extends Component {
           onShowFrequentReceivers: this.onShowFrequentReceivers,
           handleCentralizedWithdraw: this.handleCentralizedWithdraw,
           handleDecentralizedWithdraw: this.handleDecentralizedWithdraw,
+          saveTxToLocal,
         }}
       />
     );
