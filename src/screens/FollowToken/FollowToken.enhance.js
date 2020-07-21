@@ -8,6 +8,7 @@ import { useSearchBox } from '@src/components/Header';
 import { handleFilterTokenByKeySearch } from '@src/components/Token';
 import uniqBy from 'lodash/uniqBy';
 import withTokenSelect from '@src/components/TokenSelect/TokenSelect.enhance';
+import { actionLogEvent } from '@screens/Performance';
 import {
   actionAddFollowToken,
   actionRemoveFollowToken,
@@ -22,6 +23,11 @@ const enhance = (WrappedComp) => (props) => {
   });
   const handleToggleFollowToken = async (token) => {
     try {
+      await dispatch(
+        actionLogEvent({
+          restart: true,
+        }),
+      );
       if (!token?.isFollowed) {
         await dispatch(actionAddFollowToken(token?.tokenId));
       } else {
@@ -29,6 +35,12 @@ const enhance = (WrappedComp) => (props) => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      await dispatch(
+        actionLogEvent({
+          desc: 'Toggle follow token',
+        }),
+      );
     }
   };
 

@@ -17,6 +17,7 @@ import {
 } from '@src/redux/selectors/account';
 import { Toast, TouchableOpacity } from '@src/components/core';
 import { ExHandler } from '@src/services/exception';
+import { actionLogEvent } from '@screens/Performance';
 import includes from 'lodash/includes';
 import debounce from 'lodash/debounce';
 import { styled, itemStyled } from './SelectAccount.styled';
@@ -34,6 +35,11 @@ const AccountItem = ({ accountName, PaymentAddress }) => {
       if (switchingAccount) {
         return;
       }
+      await dispatch(
+        actionLogEvent({
+          restart: true,
+        }),
+      );
       await dispatch(actionSwitchAccountFetching());
       navigation.pop();
       if (accountName === defaultAccountName) {
@@ -48,6 +54,11 @@ const AccountItem = ({ accountName, PaymentAddress }) => {
       ).showErrorToast();
     } finally {
       await dispatch(actionSwitchAccountFetched());
+      await dispatch(
+        actionLogEvent({
+          desc: 'Swtich account',
+        }),
+      );
     }
   };
   const Component = () => (

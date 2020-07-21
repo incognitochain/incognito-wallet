@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 import { DEX } from '@src/utils/dex';
 import accountService from '@src/services/wallet/accountService';
 import { actionInit } from '@src/screens/Notification';
+import { actionLogEvent } from '@screens/Performance';
 import { actionFetch as actionFetchHomeConfigs } from '@screens/Home/Home.actions';
 import GetStarted from './GetStarted';
 
@@ -34,7 +35,7 @@ class GetStartedContainer extends Component {
     this.initApp();
   }
 
-  onError = msg => this.setState({ errorMsg: msg });
+  onError = (msg) => this.setState({ errorMsg: msg });
 
   goHome = async () => {
     try {
@@ -44,7 +45,7 @@ class GetStartedContainer extends Component {
 
       let accounts = await wallet.listAccount();
 
-      if (!accounts.find(item => item.AccountName === DEX.MAIN_ACCOUNT)) {
+      if (!accounts.find((item) => item.AccountName === DEX.MAIN_ACCOUNT)) {
         const firstAccount = accounts[0];
         await accountService.createAccount(
           DEX.MAIN_ACCOUNT,
@@ -53,10 +54,10 @@ class GetStartedContainer extends Component {
         );
       }
 
-      if (!accounts.find(item => item.AccountName === DEX.WITHDRAW_ACCOUNT)) {
+      if (!accounts.find((item) => item.AccountName === DEX.WITHDRAW_ACCOUNT)) {
         accounts = await wallet.listAccount();
         const dexMainAccount = accounts.find(
-          item => item.AccountName === DEX.MAIN_ACCOUNT,
+          (item) => item.AccountName === DEX.MAIN_ACCOUNT,
         );
         await accountService.createAccount(
           DEX.WITHDRAW_ACCOUNT,
@@ -99,19 +100,35 @@ class GetStartedContainer extends Component {
   };
 
   initApp = async () => {
-    const { loadPin, actionFetchHomeConfigs } = this.props;
+    const { loadPin, actionFetchHomeConfigs, actionLogEvent } = this.props;
     try {
+      await actionLogEvent({ restart: true });
       await loadPin();
+      await actionLogEvent({
+        desc: 'load pin',
+      });
       this.setState({ isInitialing: true });
       const serverLocalList = (await serverService.get()) ?? [];
+      await actionLogEvent({
+        desc: 'get server service',
+      });
       const { getPTokenList, getInternalTokenList } = this.props;
       await login();
+      await actionLogEvent({
+        desc: 'login',
+      });
       await actionFetchHomeConfigs();
+      await actionLogEvent({
+        desc: 'get home configs',
+      });
       try {
         const [pTokens] = await new Promise.all([
           await getPTokenList(),
           await getInternalTokenList(),
         ]);
+        await actionLogEvent({
+          desc: 'get pToken + internal list',
+        });
         await this.setState({ pTokens });
       } catch (e) {
         throw new CustomError(ErrorCode.getStarted_load_token_failed, {
@@ -121,19 +138,30 @@ class GetStartedContainer extends Component {
 
       if (!serverLocalList || serverLocalList.length === 0) {
         await serverService.setDefaultList();
+        await actionLogEvent({
+          desc: 'server services set default lisi',
+        });
       }
 
       const wallet = await this.getExistedWallet();
-
+      await actionLogEvent({
+        desc: 'get exited wallet',
+      });
       // loaded wallet & then continue to Wallet screen
       if (!wallet) {
         this.setState({ isCreating: true });
         // create new Wallet
         await this.handleCreateNew();
+        await actionLogEvent({
+          desc: 'create new wallet',
+        });
       }
 
       this.setState({ isInitialing: false, isCreating: false });
-      this.goHome();
+      await this.goHome();
+      await actionLogEvent({
+        desc: 'go home',
+      });
     } catch (e) {
       this.setState({ isInitialing: false, isCreating: false });
       this.onError(
@@ -225,9 +253,10 @@ const mapDispatch = {
   loadPin,
   initNotification: actionInit,
   actionFetchHomeConfigs,
+  actionLogEvent,
 };
 
-const mapState = state => ({
+const mapState = (state) => ({
   account: accountSeleclor.defaultAccount(state),
   pin: state.pin.pin,
 });
