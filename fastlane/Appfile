@@ -1,0 +1,11 @@
+app_identifier("com.incognito.wallet") # The bundle identifier of your app
+apple_id("developer@incognito.org") # Your Apple email address
+
+json_key_file("play_store.json")
+package_name("com.incognito.wallet") # e.g. com.krausefx.app
+
+itc_team_id("120256460") # App Store Connect Team ID
+team_id("G63A8CY3DS") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile

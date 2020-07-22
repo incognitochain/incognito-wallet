@@ -9,3 +9,4 @@ PASS_HOSPOT=$PASS_HOSPOT
 
 # Generate android keystore file
 echo $KEYSTORE | base64 -di | tee android/app/wallet-app-release-key.keystore
+echo $PLAY_STORE_JSON | base64 -di | tee play_store.json
