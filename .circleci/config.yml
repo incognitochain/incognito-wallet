@@ -142,6 +142,9 @@ jobs:
           at: .
       - get_app_info
       - run: bundle install
+      - run: |
+          cd ios
+          pod install
       - run: bundle exec fastlane ios release
       - run: chmod +x .circleci/slack-upload.sh
       - run: cp Incognito.ipa ./$APP_VERSION.ipa
