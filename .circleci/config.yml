@@ -146,6 +146,8 @@ jobs:
           cd ios
           pod install
       - run: bundle exec fastlane ios release
+      - run: brew update
+      - run: brew install watchman
       - run: chmod +x .circleci/slack-upload.sh
       - run: cp Incognito.ipa ./$APP_VERSION.ipa
       - run: curl -X POST -H 'Content-type:application/json' --data '{"text":"'"Push iOS $APP_VERSION to the app store successfully!"'"}' $SLACK_HOOK
