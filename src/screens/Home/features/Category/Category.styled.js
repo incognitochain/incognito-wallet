@@ -11,4 +11,9 @@ export const styled = StyleSheet.create({
     fontFamily: FONT.NAME.bold,
     color: COLORS.black,
   },
+  hook: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
 });

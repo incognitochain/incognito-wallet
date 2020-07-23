@@ -34,6 +34,7 @@ import AddressBookForm from '@src/screens/AddressBook/AddressBook.form';
 import CoinInfo from '@screens/Wallet/features/CoinInfo';
 import Keychain from '@src/screens/Setting/features/Keychain';
 import CoinInfoVerify from '@src/screens/Wallet/features/CoinInfo/CoinInfo.verify';
+import News from '@screens/News';
 import FrequentReceivers, {
   FrequentReceiversForm,
 } from '@src/screens/SendCrypto/FrequentReceivers';
@@ -43,7 +44,6 @@ import {
   PoolV2Provide,
   PoolV2Withdraw,
 } from '@src/screens/PoolV2';
-import GetStarted from '@src/screens/GetStarted';
 import routeNames from './routeNames';
 
 const routes = [
@@ -235,10 +235,10 @@ const routes = [
     screen: PoolV2History.HistoryDetail,
     name: routeNames.PoolV2HistoryDetail,
   },
-  // {
-  //   screen: GetStarted,
-  //   name: routeNames.GetStarted,
-  // },
+  {
+    name: routeNames.News,
+    screen: News,
+  },
 ];
 
 export const getRoutesNoHeader = () =>

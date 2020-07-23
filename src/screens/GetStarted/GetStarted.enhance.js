@@ -20,6 +20,7 @@ import { useNavigation, useIsFocused } from 'react-navigation-hooks';
 import { useMigrate } from '@src/components/UseEffect/useMigrate';
 import storageService from '@src/services/storage';
 import { LoadingContainer } from '@src/components/core';
+import { actionFetch as actionFetchProfile } from '@screens/Profile';
 import { wizardSelector } from './GetStarted.selector';
 import { actionToggleShowWizard } from './GetStarted.actions';
 
@@ -138,11 +139,12 @@ const enhance = (WrappedComp) => (props) => {
       await setState({ ...state, isInitialing: true });
       dispatch(actionFetchHomeConfigs());
       dispatch(getInternalTokenList());
+      await login();
       const [servers] = await new Promise.all([
         serverService.get(),
         dispatch(getPTokenList()),
-        login(),
         dispatch(loadPin()),
+        dispatch(actionFetchProfile()),
       ]);
       if (!servers || servers?.length === 0) {
         await serverService.setDefaultList();

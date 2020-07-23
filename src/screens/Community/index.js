@@ -25,19 +25,18 @@ const Community = ({ navigation, isFocused }) => {
   const [loading, setLoading] = useState(true);
   const [backable, setBackable] = useState(false);
   const [url, setUrl] = useState('');
-
   useEffect(() => {
     if (isFocused) {
       const { uri: _uri } = navigation?.state?.params || {};
-
       if (_uri) {
         webViewRef?.current?.injectJavaScript(`location.href = '${_uri}';`);
         navigation?.setParams({ uri: null });
+        return setUrl(_uri);
       }
     }
     // Check if the cache is existing
     LocalDatabase.getUriWebviewCommunity()
-      .then(val => {
+      .then((val) => {
         if (val) {
           var pattern = /^((http|https|ftp):\/\/)/;
           if (!pattern.test(url)) {
@@ -49,14 +48,13 @@ const Community = ({ navigation, isFocused }) => {
           setUrl(MAIN_WEBSITE);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         setUrl(MAIN_WEBSITE);
       });
     if (url === 'about:blank') {
       setUrl(MAIN_WEBSITE);
     }
   }, []);
-
 
   const goBack = () => {
     webViewRef?.current?.goBack();
@@ -80,7 +78,7 @@ const Community = ({ navigation, isFocused }) => {
   const goHome = async () => {
     setUrl(MAIN_WEBSITE);
     await LocalDatabase.setUriWebviewCommunity(MAIN_WEBSITE);
-    setTimeout(()=>{
+    setTimeout(() => {
       webViewRef?.current?.reload();
     }, 750);
   };
@@ -93,10 +91,18 @@ const Community = ({ navigation, isFocused }) => {
     return (
       <View style={styles.navigation}>
         <TouchableOpacity onPress={() => goBack()} style={styles.back}>
-          <Ionicons name="ios-arrow-back" size={30} color={COLORS.colorGreyBold} />
+          <Ionicons
+            name="ios-arrow-back"
+            size={30}
+            color={COLORS.colorGreyBold}
+          />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => goForward()} style={styles.back}>
-          <Ionicons name="ios-arrow-forward" size={30} color={COLORS.colorGreyBold} />
+          <Ionicons
+            name="ios-arrow-forward"
+            size={30}
+            color={COLORS.colorGreyBold}
+          />
         </TouchableOpacity>
         <TouchableOpacity style={styles.back}>
           {/* <SimpleLineIcons name="home" size={25} color={COLORS.colorGreyBold} /> */}
@@ -110,7 +116,7 @@ const Community = ({ navigation, isFocused }) => {
 
   return (
     <View style={styles.container}>
-      <Header title='Community' style={{ paddingLeft: 20 }} />
+      <Header title="Community" style={{ paddingLeft: 20 }} />
       <WebView
         key={`${url} ${new Date().getTime()}`}
         startInLoadingState

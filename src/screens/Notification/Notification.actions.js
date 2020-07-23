@@ -11,13 +11,31 @@ import {
 import { CONSTANT_EVENTS } from '@src/constants';
 import { logEvent } from '@services/firebase';
 import { actionToggleModal } from '@src/components/Modal';
+import { delay, mappingData } from './Notification.utils';
 import {
+  ACTION_FETCHING,
+  ACTION_FETCHED,
+  ACTION_FETCH_FAIL,
+  ACTION_LOAD_MORE,
+  ACTION_READ_ALL,
+  ACTION_DELETE,
+  ACTION_READ,
   ACTION_INIT,
+  ACTION_REFRESH,
+  ACTION_HAS_NOTI,
+  ACTION_UPDATE_RECENTLY,
 } from './Notification.constant';
 import {
+  dataNotificationsSelector,
+  notificationSelector,
+} from './Notification.selector';
+import {
+  apiGetListNotifications,
+  apiDeleteNotification,
+  apiUpdateNotification,
+  apiUpdateAllNotifications,
   apiInitNotifications,
 } from './Notification.services';
-import { delay } from './Notification.utils';
 
 export const actionInit = () => async (dispatch, getState) => {
   try {
@@ -126,7 +144,7 @@ export const actionNavigate = (item, navigation) => async (
         );
         await dispatch(
           actionSwitchAccount(
-            accountUpdated?.AccountName || accountUpdated?.name,
+              accountUpdated?.AccountName || accountUpdated?.name,
           ),
         );
       }
@@ -139,5 +157,126 @@ export const actionNavigate = (item, navigation) => async (
     }
   } catch (error) {
     new ExHandler(error).showErrorToast();
+  }
+};
+
+export const actionRefresh = () => ({
+  type: ACTION_REFRESH,
+});
+
+export const actionFetching = () => ({
+  type: ACTION_FETCHING,
+});
+
+export const actionFetched = (payload) => ({
+  type: ACTION_FETCHED,
+  payload,
+});
+
+export const actionFetchFail = () => ({
+  type: ACTION_FETCH_FAIL,
+});
+
+export const actionLoadmore = () => ({
+  type: ACTION_LOAD_MORE,
+});
+
+export const actionReadAll = (payload) => ({
+  type: ACTION_READ_ALL,
+  payload,
+});
+
+export const actionDelete = (payload) => ({
+  type: ACTION_DELETE,
+  payload,
+});
+
+export const actionRead = (payload) => ({
+  type: ACTION_READ,
+  payload,
+});
+
+export const actionHasNoti = (payload) => ({
+  type: ACTION_HAS_NOTI,
+  payload,
+});
+
+export const actionUpdateRecently = (payload) => ({
+  type: ACTION_UPDATE_RECENTLY,
+  payload,
+});
+
+export const actionFetchRead = (item) => async (dispatch) => {
+  try {
+    const payload = await apiUpdateNotification(item);
+    if (payload) {
+      return await dispatch(actionRead(item));
+    }
+  } catch (error) {
+    new ExHandler(error).showErrorToast();
+  }
+};
+
+export const actionFetchReadAll = () => async (dispatch) => {
+  try {
+    const payload = await apiUpdateAllNotifications();
+    if (payload) {
+      return await dispatch(actionReadAll(payload));
+    }
+  } catch (error) {
+    new ExHandler(error).showErrorToast();
+  }
+};
+
+export const actionFetchDelete = (item) => async (dispatch) => {
+  try {
+    const payload = await apiDeleteNotification(item);
+    if (payload) {
+      return await dispatch(actionDelete(item));
+    }
+  } catch (error) {
+    new ExHandler(error).showErrorToast();
+  }
+};
+
+export const actionFetch = (data = { loadmore: false }) => async (
+  dispatch,
+  getState,
+) => {
+  try {
+    const state = getState();
+    const { isFetching } = notificationSelector(state);
+    if (isFetching) {
+      return;
+    }
+    await dispatch(actionFetching());
+    const {
+      page: pageCurrent,
+      limit,
+      list: oldList,
+    } = dataNotificationsSelector(state);
+    const { loadmore } = data;
+    const page = loadmore ? pageCurrent : 1;
+    const { List, IsReadAll } = await apiGetListNotifications({
+      page,
+      limit,
+    });
+    const over = List.length < limit;
+    const list = loadmore
+      ? [...oldList, ...mappingData(List)]
+      : [...mappingData(List)];
+    await dispatch(
+      actionFetched({
+        list: [...new Set(list)],
+        over,
+        isReadAll: IsReadAll === 'true' || IsReadAll === true,
+        page,
+      }),
+    );
+  } catch (error) {
+    console.log('error', error);
+    // await dispatch(actionFetchFail());
+    // new ExHandler(error).showErrorToast();
+    // throw new Error(error);
   }
 };

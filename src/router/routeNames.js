@@ -83,4 +83,5 @@ export default {
   PoolV2WithdrawProvision: 'PoolV2WithdrawProvision',
   PoolV2History: 'StakeHistory',
   PoolV2HistoryDetail: 'StakeHistoryDetail',
+  News: 'News'
 };
