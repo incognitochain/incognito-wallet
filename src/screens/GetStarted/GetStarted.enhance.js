@@ -21,12 +21,23 @@ import { useMigrate } from '@src/components/UseEffect/useMigrate';
 import storageService from '@src/services/storage';
 import { LoadingContainer } from '@src/components/core';
 import { actionFetch as actionFetchProfile } from '@screens/Profile';
-import { wizardSelector } from './GetStarted.selector';
-import { actionToggleShowWizard } from './GetStarted.actions';
+import { actionFetchNews } from '@screens/News';
+import { KEYS } from '@src/constants/keys';
+import {
+  wizardSelector,
+  isFollowedDefaultPTokensSelector,
+} from './GetStarted.selector';
+import {
+  actionToggleShowWizard,
+  actionToggleFollowDefaultPTokens,
+} from './GetStarted.actions';
 
 const enhance = (WrappedComp) => (props) => {
   const { isFetching, isFetched } = useSelector(wizardSelector);
   const pin = useSelector((state) => state?.pin?.pin);
+  const isFollowedDefaultPTokensMainnet = useSelector(
+    isFollowedDefaultPTokensSelector,
+  );
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const initialState = {
@@ -39,7 +50,7 @@ const enhance = (WrappedComp) => (props) => {
   });
   const { errorMsg, isInitialing, isCreating } = state;
 
-  const getDataWillMigrate = async () => {
+  const handleMigrateWizard = async () => {
     try {
       if (!isFetching && isFetched) {
         return;
@@ -51,7 +62,32 @@ const enhance = (WrappedComp) => (props) => {
         await dispatch(actionToggleShowWizard({ isFetched: !!isDisplayed }));
       }
     } catch (error) {
-      console.log(error);
+      console.debug(error);
+    }
+  };
+
+  const handleMigrateFollowToken = async () => {
+    try {
+      if (isFollowedDefaultPTokensMainnet) {
+        await dispatch(
+          actionToggleFollowDefaultPTokens({
+            keySave: KEYS.IS_FOLLOW_DEFAULT_PTOKENS,
+          }),
+        );
+      }
+    } catch (error) {
+      console.debug(error);
+    }
+  };
+
+  const getDataWillMigrate = async () => {
+    try {
+      await new Promise.all([
+        handleMigrateWizard(),
+        handleMigrateFollowToken(),
+      ]);
+    } catch (error) {
+      console.debug(error);
     }
   };
 
@@ -145,6 +181,7 @@ const enhance = (WrappedComp) => (props) => {
         dispatch(getPTokenList()),
         dispatch(loadPin()),
         dispatch(actionFetchProfile()),
+        dispatch(actionFetchNews()),
       ]);
       if (!servers || servers?.length === 0) {
         await serverService.setDefaultList();
