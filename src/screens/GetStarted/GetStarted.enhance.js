@@ -195,7 +195,7 @@ const enhance = (WrappedComp) => (props) => {
     } catch (e) {
       errorMessage = new ExHandler(
         e,
-        'Sorry, something went wrong while opening the wallet. Please check your connection or re-install the application and try again.',
+        'Sorry, something went wrong while\nopening the wallet.\nPlease check your connection or re-install the application and try again.\n',
       )?.writeLog()?.message;
     } finally {
       await setState({
