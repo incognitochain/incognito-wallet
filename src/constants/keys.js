@@ -1,6 +1,6 @@
 const isMainnet = global.isMainnet ?? true;
 const prefix_network = 'testnet';
-const KEYS = {
+export const KEYS = {
   PASSPHRASE_KEY: '$password',
   DEFAULT_ACCOUNT_NAME: '$DEFAULT_ACCOUNT_NAME',
   DISPLAYED_WIZARD: '$DISPLAYED_WIZARD',
@@ -26,6 +26,7 @@ const KEYS = {
   PROVIDE_TXS: '$PROVIDE_TXS',
   WITHDRAWAL_DATA_DECENTRALIZED: '$WITHDRAWAL_DATA_DECENTRALIZED',
   SHOW_WIZARD: '$SHOW_WIZARD',
+  IS_FOLLOW_DEFAULT_PTOKENS: '$IS_FOLLOW_DEFAULT_PTOKENS',
 };
 
 const KEYS_TESTNET = {
@@ -53,6 +54,7 @@ const KEYS_TESTNET = {
   PROVIDE_TXS: `${prefix_network}_$PROVIDE_TXS`,
   WITHDRAWAL_DATA_DECENTRALIZED: `${prefix_network}_$WITHDRAWAL_DATA_DECENTRALIZED`,
   SHOW_WIZARD: `${prefix_network}_$SHOW_WIZARD`,
+  IS_FOLLOW_DEFAULT_PTOKENS: `${prefix_network}_$IS_FOLLOW_DEFAULT_PTOKENS`,
 };
 
 const PASSPHRASE_KEY_REVERVE = isMainnet

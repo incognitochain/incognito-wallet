@@ -12,5 +12,11 @@ export const wizardSelector = createSelector(
 
 export const isFollowDefaultPTokensSelector = createSelector(
   getStartedSelector,
-  (getStarted) => getStarted?.isFollowedDefaultPTokens,
+  (getStarted) => (keySave) =>
+    getStarted?.followDefaultPTokens[keySave] || false,
+);
+
+export const isFollowedDefaultPTokensSelector = createSelector(
+  getStartedSelector,
+  (getStarted) => !!getStarted?.isFollowedDefaultPTokens,
 );
