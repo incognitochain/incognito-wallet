@@ -21,7 +21,6 @@ import { useMigrate } from '@src/components/UseEffect/useMigrate';
 import storageService from '@src/services/storage';
 import { LoadingContainer } from '@src/components/core';
 import { actionFetch as actionFetchProfile } from '@screens/Profile';
-import { actionFetchNews } from '@screens/News';
 import { KEYS } from '@src/constants/keys';
 import {
   wizardSelector,
@@ -181,7 +180,6 @@ const enhance = (WrappedComp) => (props) => {
         dispatch(getPTokenList()),
         dispatch(loadPin()),
         dispatch(actionFetchProfile()),
-        dispatch(actionFetchNews()),
       ]);
       if (!servers || servers?.length === 0) {
         await serverService.setDefaultList();
