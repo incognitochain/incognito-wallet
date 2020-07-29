@@ -6,14 +6,9 @@ import { COLORS } from '@src/styles';
 const colors = {
   'Incognito': COLORS.black,
   'Kyber': COLORS.green,
-  'Uniswap': COLORS.pink,
 };
 
 const Powered = ({ network }) => {
-  if (!network) {
-    return null;
-  }
-
   return (
     <ExtraInfo
       left=""

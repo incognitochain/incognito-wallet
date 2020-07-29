@@ -2,13 +2,14 @@ import {
   ACTION_FETCHING_NEWS,
   ACTION_FETCHED_NEWS,
   ACTION_FETCH_FAIL_NEWS,
+  ACTION_CHECK_UNREAD_NEWS,
 } from './News.constant';
 
 const initialState = {
   isFetching: false,
   isFetched: false,
   data: [],
-  isReadAll: false,
+  isReadAll: 0,
 };
 
 export default (state = initialState, action) => {
@@ -20,13 +21,12 @@ export default (state = initialState, action) => {
     };
   }
   case ACTION_FETCHED_NEWS: {
-    const { data, isReadAll } = action.payload;
+    const { data } = action.payload;
     return {
       ...state,
       isFetching: false,
       isFetched: true,
-      data,
-      isReadAll,
+      data: [...data],
     };
   }
   case ACTION_FETCH_FAIL_NEWS: {
@@ -34,6 +34,12 @@ export default (state = initialState, action) => {
       ...state,
       isFetched: false,
       isFetching: false,
+    };
+  }
+  case ACTION_CHECK_UNREAD_NEWS: {
+    return {
+      ...state,
+      isReadAll: action.payload,
     };
   }
   default:

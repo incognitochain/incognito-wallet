@@ -10,7 +10,7 @@ const isMainnet = global.isMainnet ?? true;
 export const MAIN_WEBSITE = 'https://we.incognito.org';
 
 const API_BASE_URL = isMainnet
-  ? 'https://api.incognito.org'
+  ? 'https://api-service.incognito.org'
   : 'https://staging-api-service.incognito.org';
 const API_BASE_URL2 = isMainnet
   ? 'https://device-network.incognito.org/'

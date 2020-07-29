@@ -2,6 +2,7 @@ import {
   ACTION_FETCHING_NEWS,
   ACTION_FETCHED_NEWS,
   ACTION_FETCH_FAIL_NEWS,
+  ACTION_CHECK_UNREAD_NEWS,
 } from './News.constant';
 import {
   apiGetNews,
@@ -25,8 +26,6 @@ export const actionFetchFailNews = () => ({
 });
 
 export const actionFetchNews = () => async (dispatch, getState) => {
-  let data = [];
-  let isReadAll = false;
   const state = getState();
   try {
     const { isFetching } = newsSelector(state);
@@ -34,31 +33,22 @@ export const actionFetchNews = () => async (dispatch, getState) => {
       return;
     }
     await dispatch(actionFetchingNews());
-    const [news, unread] = await new Promise.all([
-      apiGetNews(),
-      apiCheckUnreadNews(),
-    ]);
-    data = news;
-    isReadAll = unread === 0;
-    await dispatch(
-      actionFetchedNews({
-        data,
-        isReadAll,
-      }),
-    );
+    const data = await apiGetNews();
+    await dispatch(actionCheckUnreadNews());
+    await dispatch(actionFetchedNews({ data }));
   } catch (error) {
     await dispatch(actionFetchFailNews());
     throw new Error(error);
   }
 };
 
-export const actionReadNews = (id) => async (dispatch) => {
+export const actionReadNews = (id) => async () => {
   try {
     await apiReadNews({ id });
   } catch (error) {
     console.log(error);
   } finally {
-    dispatch(actionFetchNews());
+    // dispatch(actionFetchNews()); // Now no need anymore.
   }
 };
 
@@ -69,5 +59,17 @@ export const actionRemoveNews = (id) => async (dispatch) => {
     console.log(error);
   } finally {
     dispatch(actionFetchNews());
+  }
+};
+
+export const actionCheckUnreadNews = () => async (dispatch) => {
+  try {
+    const unread = await apiCheckUnreadNews();    
+    dispatch({
+      type: ACTION_CHECK_UNREAD_NEWS,
+      payload: unread,
+    });
+  } catch (error) {
+    console.debug(error);
   }
 };

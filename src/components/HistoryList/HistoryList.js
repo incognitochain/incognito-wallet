@@ -84,7 +84,7 @@ const getTypeData = (type, history) => {
     balanceDirection = '-';
     break;
   case CONSTANT_COMMONS.HISTORY.TYPE.DEPOSIT:
-    typeText = history?.depositAddress ? 'Deposit' : 'Receive';
+    typeText = history?.userPaymentAddress ? 'Deposit' : 'Receive';
     balanceColor = COLORS.green;
     balanceDirection = '+';
     break;

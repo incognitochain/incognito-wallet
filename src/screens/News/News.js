@@ -5,6 +5,7 @@ import Header from '@src/components/Header';
 import PropTypes from 'prop-types';
 import { camelCaseKeys } from '@src/utils';
 import { ScrollView } from '@src/components/core';
+import { useFocusEffect } from 'react-navigation-hooks';
 import withNews from './News.enhance';
 import { newsSelector } from './News.selector';
 import { LAYOUT_TYPE } from './News.constant';
@@ -12,6 +13,7 @@ import { styled } from './News.styled';
 import ListNews from './News.listNews';
 import { handleShouldRenderCategory } from './News.utils';
 import { userIdSelector } from '../Profile';
+
 
 const Title = React.memo(({ title, parentCatId }) => {
   if (!title) {
@@ -35,7 +37,7 @@ const ListCats = ({ listCats }) => {
 };
 
 const Category = (props) => {
-  const { category, firstChild, lastChild } = props;
+  const { category, firstChild, lastChild, lastNewsID } = props;
   const userId = useSelector(userIdSelector);
   const _category = camelCaseKeys(category);
   const {
@@ -44,13 +46,13 @@ const Category = (props) => {
     listCats,
     parentCatId,
     type,
-    layoutType,
+    layoutType,    
   } = _category;
   const shouldRenderCategory = handleShouldRenderCategory(_category, userId);
   const renderChild = () => {
     switch (layoutType) {
     case LAYOUT_TYPE.root: {
-      return <ListNews listNews={listNews} type={type} />;
+      return <ListNews listNews={listNews} type={type} lastNewsID={lastNewsID} />;
     }
     case LAYOUT_TYPE.child: {
       return <ListCats listCats={listCats} />;
@@ -78,9 +80,16 @@ const Category = (props) => {
 
 const News = (props) => {
   const { handleFetchNews } = props;
-  const { data, isFetching } = useSelector(newsSelector);
+  const { data, isFetching } = useSelector(newsSelector);  
+  const lastNewsID = props?.navigation.getParam('lastNewsID', 0);  
+  
+  useFocusEffect(
+    React.useCallback(() => {
+      handleFetchNews();
+    }, []),
+  );
   return (
-    <View style={styled.container}>
+    <View style={styled.container}>      
       <Header title="Bulletin" style={styled.header} />
       <ScrollView
         style={styled.scrollview}
@@ -92,11 +101,12 @@ const News = (props) => {
           data
             .sort((a, b) => a?.Type - b?.Type)
             .map((category, index, arr) => (
-              <Category
+              <Category                
                 category={category}
                 firstChild={index === 0}
                 lastChild={index === arr.length - 1}
                 key={category?.ID}
+                lastNewsID={lastNewsID}
               />
             ))}
       </ScrollView>

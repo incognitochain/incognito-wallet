@@ -15,9 +15,9 @@ const withOldHistories = WrappedComp => (props) => {
       .filter(item => item.type !== MESSAGES.TRADE)
       .map(item => ({
         ...item,
-        outputToken: item.outputToken.replace(/^p/g, ''),
-        inputToken: item.inputToken.replace(/^p/g, ''),
-        networkFeeUnit: item.networkFeeUnit.replace(/^p/g, ''),
+        outputToken: item.outputToken?.replace(/^p/g, ''),
+        inputToken: item.inputToken?.replace(/^p/g, ''),
+        networkFeeUnit: item.networkFeeUnit?.replace(/^p/g, ''),
       }));
     const promises = await oldHistories.map(item => dispatch(getHistoryStatus(item)));
     const histories = await Promise.all(promises)

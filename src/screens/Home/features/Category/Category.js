@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import { styled } from './Category.styled';
 import withCategory from './Category.enhance';
 
+// eslint-disable-next-line react/prop-types
 const Title = React.memo(({ title }) => (
   <Text style={styled.title} numberOfLines={1} ellipsizeMode="tail">
     {title}
@@ -20,16 +21,16 @@ const Category = (props) => {
   const { title, buttons, interactionById, isDisabled, firstChild } = props;
   const { isReadAll } = useSelector(newsSelector);
   const navigation = useNavigation();
-  const handleNavNotification = () => navigation.navigate(routeNames.News);
+  const handleNavNotification = () => navigation.navigate(routeNames.News, {'lastNewsID': isReadAll});
   const renderTitle = () => {
     const titleComp = <Title title={title} />;
     if (!firstChild) {
       return titleComp;
     }
     return (
-      <View style={styled.hook}>
+      <View style={styled.hook}>        
         {titleComp}
-        {isReadAll ? (
+        {isReadAll == 0 ? (
           <BtnNotification onPress={handleNavNotification} />
         ) : (
           <BtnHasNotification onPress={handleNavNotification} />

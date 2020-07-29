@@ -27,6 +27,12 @@ export const styled = StyleSheet.create({
 });
 
 export const listNewsStyled = StyleSheet.create({
+
+  highlights: {
+    backgroundColor: '#D9F4FF',
+    padding: 15
+  },
+
   hook: {
     flexDirection: 'row',
     alignItems: 'center',

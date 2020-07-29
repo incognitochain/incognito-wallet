@@ -60,13 +60,12 @@ export const tradePKyber = ({
   sellAmount,
   buyTokenAddress,
   expectAmount,
-  protocol,
 }) => {
   return http.post('/uniswap/execute', {
     'SrcTokens': sellTokenAddress,
     'SrcQties': sellAmount,
     'DestTokens': buyTokenAddress,
-    'DappAddress': protocol?.toLowerCase() === 'uniswap' ? TRADING.UNISWAP_TRADE_ADDRESS : TRADING.KYBER_TRADE_ADDRESS,
+    'DappAddress': TRADING.KYBER_TRADE_ADDRESS,
     'DepositId': depositId,
     'ExpectAmount': expectAmount,
   });

@@ -132,7 +132,6 @@ const withTrade = WrappedComp => (props) => {
       buyTokenAddress: outputToken.address,
       expectAmount: quote.expectedRate?.toFixed(0),
       depositId: depositId,
-      protocol: quote.protocol,
     };
 
     await TradeKyberAPI(data);

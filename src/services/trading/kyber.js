@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {CONSTANT_COMMONS, TRADING} from '@src/constants';
 import TradingToken from '@models/tradingToken';
 import TradingQuote from '@models/tradingQuote';
@@ -10,7 +9,7 @@ import BigNumber from 'bignumber.js';
  * @returns {Promise<Array<TradingToken>>}
  */
 export async function getKyberTokens() {
-  const data = await http.get('uniswap/tokens');
+  const data = await http.get('uniswap/listKyberTokens');
 
   return data.map(item => new TradingToken({
     id: item.ID,
@@ -35,18 +34,16 @@ export async function getKyberQuote({sellToken, sellAmount, buyToken}) {
   let buyAddress = buyToken.address;
 
   if (sellToken.symbol === CONSTANT_COMMONS.CRYPTO_SYMBOL.ETH) {
-    sellAddress = '0x0000000000000000000000000000000000000000';
+    sellAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
   }
 
   if (buyToken.symbol === CONSTANT_COMMONS.CRYPTO_SYMBOL.ETH) {
-    buyAddress = '0x0000000000000000000000000000000000000000';
+    buyAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
   }
 
-  const url = `uniswap/rate?SrcToken=${sellAddress}&DestToken=${buyAddress}&Amount=${sellAmount}`;
-  const rates = await http.get(url);
-  const bestRate = _.maxBy(rates.ListRate, rate => rate.ExpectedRate);
-
-  const {ExpectedRate, SlippageRate} = bestRate;
+  const url = `uniswap/getKyberRate?SrcToken=${sellAddress}&DestToken=${buyAddress}&Amount=${sellAmount}`;
+  const data = await http.get(url);
+  const {ExpectedRate, SlippageRate} = data;
 
   const originalSellAmount = BigNumber(sellAmount)
     .dividedBy(BigNumber(10).pow(sellToken.decimals));
@@ -63,7 +60,6 @@ export async function getKyberQuote({sellToken, sellAmount, buyToken}) {
     .multipliedBy(BigNumber(10).pow(buyToken.decimals));
 
   return new TradingQuote({
-    protocol: bestRate.DappName,
     price: originalPrice.toString(),
     amount,
     minimumAmount,
