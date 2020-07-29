@@ -32,7 +32,6 @@ function addSubscriber(callback) {
 // Add a request interceptor
 instance.interceptors.request.use(
   config => {
-    console.debug('CONFIG', config.baseURL);
     return {
       ...config,
       headers: {
@@ -55,15 +54,6 @@ instance.interceptors.response.use(
   errorData => {
     const errResponse = errorData?.response;
     const originalRequest = errorData?.config;
-    if (errorData?.message?.toLowerCase() === 'network error') {
-      if (instance.defaults.baseURL !== CONSTANT_CONFIGS.API_PRODUCTION_IP) {
-        instance.defaults.baseURL = global.isMainnet ? CONSTANT_CONFIGS.API_PRODUCTION_IP : instance.defaults.baseURL;
-        originalRequest.baseURL = instance.defaults.baseURL;
-        originalRequest.url = originalRequest.url.replace(CONSTANT_CONFIGS.API_BASE_URL, originalRequest.baseURL);
-        return instance(originalRequest);
-      }
-    }
-
     // can not get response, alert to user
     if (errorData?.isAxiosError && !errResponse) {
       return new ExHandler(

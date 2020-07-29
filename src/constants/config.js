@@ -12,7 +12,6 @@ export const MAIN_WEBSITE = 'https://we.incognito.org';
 const API_BASE_URL = isMainnet
   ? 'https://api.incognito.org'
   : 'https://staging-api-service.incognito.org';
-const API_PRODUCTION_IP = 'http://34.83.247.39';
 const API_BASE_URL2 = isMainnet
   ? 'https://device-network.incognito.org/'
   : 'https://device-network-staging.incognito.org/';
@@ -74,5 +73,4 @@ export default {
   TESTNET_FULLNODE,
   HOME_CONFIG_DATA,
   API_BASE_URL2,
-  API_PRODUCTION_IP,
 };
