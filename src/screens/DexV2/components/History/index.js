@@ -33,7 +33,7 @@ const History = ({
   // eslint-disable-next-line react/prop-types
   const renderHistoryItem = ({ item }) => (
     <TouchableOpacity key={item.id} style={styles.historyItem} onPress={() => viewDetail(item)}>
-      <Text style={styles.buttonTitle}>{item.type}</Text>
+      <Text style={styles.buttonTitle}>{item.type}   <Text style={styles.content}>#{item.id}</Text></Text>
       <View style={styles.row}>
         <Text style={[styles.content, styles.ellipsis]} numberOfLines={1}>{item.description}</Text>
         <View style={[styles.row, styles.center]}>

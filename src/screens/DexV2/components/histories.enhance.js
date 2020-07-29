@@ -15,7 +15,7 @@ const withHistories = WrappedComp => (props) => {
     reload();
   }, []));
 
-  const { accounts, pairTokens } = props;
+  const { accounts, tokens } = props;
 
   const reload = () => {
     if (!loading) {
@@ -28,11 +28,10 @@ const withHistories = WrappedComp => (props) => {
   };
 
   const loadHistories = async () => {
-    if (!_.isEmpty(accounts) && !_.isEmpty(pairTokens)) {
+    if (!_.isEmpty(accounts) && !_.isEmpty(tokens)) {
       try {
         setLoading(true);
-        const limit = histories.length <= LIMIT * page ? histories.length || LIMIT : LIMIT;
-        const newData = await getHistories(accounts, pairTokens, page, limit);
+        const newData = await getHistories(accounts, tokens, page, LIMIT);
         const newIds = newData.map(item => item.id);
         const mergedData = _(newData)
           .concat(histories.filter(item => !newIds.includes(item.id)))
@@ -51,7 +50,9 @@ const withHistories = WrappedComp => (props) => {
 
   const loadMore = () => {
     if (!loading) {
-      setPage(page + 1);
+      const isFullPage = (histories || []).length % LIMIT === 0;
+      const nextPage = Math.floor(histories.length / LIMIT) + (isFullPage ? 1 : 0);
+      setPage(nextPage);
     }
   };
 
@@ -59,7 +60,7 @@ const withHistories = WrappedComp => (props) => {
     if (!loading) {
       loadHistories();
     }
-  }, [accounts, pairTokens, page]);
+  }, [accounts, tokens, page]);
 
   return (
     <WrappedComp

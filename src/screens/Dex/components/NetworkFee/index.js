@@ -18,7 +18,7 @@ class NetworkFee extends React.PureComponent {
         <Text style={[style.feeTitle]}>Network Fee:</Text>
         {!fee ?
           <ActivityIndicator size="small" style={mainStyle.textRight} /> :
-          <Text style={[style.fee, style.textRight, style.ellipsis]} numberOfLines={1}>{formatUtil.amountFull(fee, PRV.pDecimals)} {PRV.symbol}</Text>
+          <Text style={[style.fee, style.textRight, style.ellipsis]} numberOfLines={1}>{formatUtil.amountFull(fee, PRV.pDecimals)} {PRV?.symbol}</Text>
         }
       </View>
     );

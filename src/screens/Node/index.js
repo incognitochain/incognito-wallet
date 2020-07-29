@@ -151,31 +151,43 @@ class Node extends BaseScreen {
     let list = (await LocalDatabase.getListDevices()) || [];
     let verifyProductCode = await LocalDatabase.getVerifyCode();
     let deviceList = [];
+    let verifyCodeList = [];
     list.forEach(element => {
       deviceList.push(element?.product_name);
+      verifyCodeList.push(element?.verify_code);
     });
     console.log('Verify code in Home node ' + verifyProductCode);
     if (verifyProductCode && verifyProductCode != '') {
       console.log('Verify code in Home node ' + verifyProductCode);
       let result = await NodeService.verifyProductCode(verifyProductCode);
       console.log('Verifing process check code in Home node to API: ' + LogManager.parseJsonObjectToJsonString(result));
-      if (result && result?.verify_code === verifyProductCode && !deviceList?.includes(result?.product_name)) { // VerifyCode the same and product_name in list
+      // We also add tracking log
+      await APIService.trackLog({
+        action: 'tracking_node_devices', message: 'Tracking node devices info for better supportable', rawData: JSON.stringify({
+          deviceList: deviceList || [],
+          verifyProductCode: verifyProductCode || 'Empty',
+          list: list,
+          result: result || {}
+        }), status: 1
+      });
+      
+      if (result && result?.verify_code && result?.verify_code === verifyProductCode) { // VerifyCode the same and product_name in list
         Alert.alert(
           'Something stopped unexpectedly',
           'Please resume setup to bring Node online',
           [
             { text: 'Back', onPress: () => this.goToScreen(routeNames.Home) },
+            { text: 'Skip', onPress: () => {} },
             { text: 'Resume', onPress: () => { this.goToScreen(routeNames.RepairingSetupNode, { isRepairing: true, verifyProductCode: verifyProductCode }); } },
           ],
           { cancelable: false }
         );
-      } else {
-        LocalDatabase.saveVerifyCode('');
       }
     } else {
       // Force eventhough the same
       LocalDatabase.saveVerifyCode('');
     }
+
   }
 
   componentWillUnmount() {

@@ -131,7 +131,6 @@ const History = (props) => {
 };
 
 const Detail = (props) => {
-  const { handleLoadHistory } = props;
   const navigation = useNavigation();
   const selected = useSelector(selectedPrivacySeleclor.selectedPrivacy);
   const { isFetching } = useSelector(tokenSeleclor.historyTokenSelector);
@@ -165,22 +164,9 @@ const Detail = (props) => {
           hasTradeBtn && styled.styledContainerHeaderTitle
         }
       />
-      <ScrollView
-        contentContainerStyle={{
-          flex: 1,
-        }}
-        refreshControl={(
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleLoadHistory}
-          />
-        )}
-        nestedScrollEnabled
-      >
-        <Balance />
-        <GroupButton />
-        <History {...{ ...props, refreshing }} />
-      </ScrollView>
+      <Balance />
+      <GroupButton />
+      <History {...{ ...props, refreshing }} />
     </View>
   );
 };

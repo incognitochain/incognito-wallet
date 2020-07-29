@@ -1,8 +1,9 @@
-import { Text, View, Button } from '@src/components/core';
+import { Text, View } from '@src/components/core';
 import { ActivityIndicator, Animated } from 'react-native';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { UTILS } from '@src/styles';
+import { ButtonBasic } from '@src/components/Button';
 import withGetStarted from './GetStarted.enhance';
 import style from './style';
 
@@ -46,12 +47,15 @@ class GetStarted extends Component {
               ? 'Generating your keychain...\nGive it a few seconds.'
               : 'Entering incognito mode\nfor your crypto...'}
           </Text>
-
           {errorMsg && (
             <Text style={[style.errorMsg, style.centerText]}>{errorMsg}</Text>
           )}
           {errorMsg && (
-            <Button style={style.retryBtn} title="Retry" onPress={onRetry} />
+            <ButtonBasic
+              btnStyle={style.retryBtn}
+              title="Retry"
+              onPress={onRetry}
+            />
           )}
         </View>
       </View>

@@ -9,6 +9,10 @@ import setting from '@screens/Setting/Setting.reducer';
 import addressBook from '@screens/AddressBook/AddressBook.reducer';
 import unShield from '@screens/UnShield/UnShield.reducer';
 import getStarted from '@screens/GetStarted/GetStarted.reducer';
+import performance from '@screens/Performance/Performance.reducer';
+import navigation from '@screens/Navigation/Navigation.reducer';
+import profile from '@screens/Profile/Profile.reducer';
+import news from '@screens/News/News.reducer';
 import wallet from './wallet';
 import account from './account';
 import server from './server';
@@ -41,7 +45,11 @@ const rootReducer = reduceReducers(
     setting,
     addressBook,
     unShield,
-    getStarted
+    getStarted,
+    performance,
+    navigation,
+    news,
+    profile,
   }),
   globalReducer,
 );

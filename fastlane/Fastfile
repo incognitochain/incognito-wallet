@@ -1,0 +1,45 @@
+fastlane_version '2.53.1'
+
+before_all do
+  ensure_git_branch(
+    branch: 'store'
+  )
+end
+
+platform :ios do
+   desc 'Fetch certificates and provisioning profiles'
+
+   lane :release do
+     setup_circle_ci
+     match(type: 'appstore', readonly: true)
+     build_app(
+       workspace: './ios/Incognito.xcworkspace',
+       scheme: 'Incognito',
+       export_method: "app-store",
+           export_options: {
+             provisioningProfiles: {
+               "com.incognito.wallet" => "match AppStore com.incognito.wallet"
+             }
+           },
+       export_xcargs: "-allowProvisioningUpdates"
+     )
+     upload_to_app_store(
+       submit_for_review: false,
+       force: true
+     )
+   end
+end
+
+platform :android do
+  desc 'Build the Android application.'
+  lane :release do
+   gradle(
+     task: 'assemble',
+     build_type: 'Release',
+     project_dir: 'android/'
+   )
+   upload_to_play_store(
+     release_status: 'draft',
+   )
+  end
+end

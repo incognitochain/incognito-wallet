@@ -293,7 +293,7 @@ class Pool extends React.Component {
       Privacy: true,
       TokenID: token.id,
       TokenName: token.name,
-      TokenSymbol: token.symbol,
+      TokenSymbol: token?.symbol,
       TokenAmount: amount,
       TokenFee: 0,
       PDecimals: token.pDecimals,
@@ -352,7 +352,7 @@ class Pool extends React.Component {
     const { inputToken, inputValue, outputToken, outputValue, inputFee, outputFee, adding } = this.state;
     const pa = account.PaymentAddress;
     const timestamp = new Date().getTime().toString();
-    const pairId = `${pa.slice(0, 6)}-${inputToken.symbol}-${outputToken.symbol}-${timestamp}`;
+    const pairId = `${pa.slice(0, 6)}-${inputToken?.symbol}-${outputToken?.symbol}-${timestamp}`;
     let newHistory;
 
     console.debug('ADD LIQUIDITY', inputFee, outputFee, inputValue, outputValue, pairId);

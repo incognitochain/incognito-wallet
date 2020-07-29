@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 import { persistReducer } from 'redux-persist';
+import { CONSTANT_KEYS } from '@src/constants';
 import {
   ACTION_SHOW_WIZARD_FETCHING,
   ACTION_SHOW_WIZARD_FETCHED,
@@ -13,7 +14,10 @@ const initialState = {
     isFetching: true,
     isFetched: false,
   },
-  isFollowedDefaultPTokens: false,
+  followDefaultPTokens: {
+    [CONSTANT_KEYS.IS_FOLLOW_DEFAULT_PTOKENS]: false,
+  },
+  isFollowedDefaultPTokens: false
 };
 
 const getStartedReducer = (state = initialState, action) => {
@@ -49,9 +53,13 @@ const getStartedReducer = (state = initialState, action) => {
     };
   }
   case ACTION_TOGGLE_FOLLOW_DEFAULT_PTOKENS: {
+    const { keySave } = action.payload;
     return {
       ...state,
-      isFollowedDefaultPTokens: true,
+      followDefaultPTokens: {
+        ...state.followDefaultPTokens,
+        [keySave]: true,
+      },
     };
   }
   default:
@@ -62,7 +70,7 @@ const getStartedReducer = (state = initialState, action) => {
 const persistConfig = {
   key: 'getStarted',
   storage: AsyncStorage,
-  whitelist: ['showWizard', 'isFollowedDefaultPTokens'],
+  whitelist: ['showWizard', 'followDefaultPTokens', 'isFollowedDefaultPTokens'],
   stateReconciler: autoMergeLevel2,
 };
 

@@ -31,3 +31,4 @@ export { default as InputWithMax } from './InputWithMax';
 export { default as RoundCornerButton } from './RoundCornerButton';
 export { default as KeyboardAwareScrollView } from './KeyboardAwareScrollView';
 export { default as LoadingContainer } from './LoadingContainer';
+export { default as FlexView } from './FlexView';

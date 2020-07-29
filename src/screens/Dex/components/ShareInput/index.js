@@ -77,7 +77,7 @@ class ShareInput extends React.Component {
                       <VerifiedText
                         isVerified={item.token1.isVerified}
                         style={modalStyle.tokenSymbol}
-                        text={`${item.token1.name} (${item.token1.symbol})`}
+                        text={`${item.token1.name} (${item.token1?.symbol})`}
                       />
                     </View>
                     <View style={mainStyle.twoColumns}>
@@ -119,7 +119,7 @@ class ShareInput extends React.Component {
             tokenId={pair.token1.id}
             size={22}
           />
-          <Text style={modalStyle.tokenInfo}>{pair.token1.symbol}</Text>
+          <Text style={modalStyle.tokenInfo}>{pair.token1?.symbol}</Text>
         </View>
         <View style={stylesheet.token}>
           <CryptoIcon
@@ -127,7 +127,7 @@ class ShareInput extends React.Component {
             tokenId={pair.token2.id}
             size={22}
           />
-          <Text style={modalStyle.tokenInfo}>{pair.token2.symbol}</Text>
+          <Text style={modalStyle.tokenInfo}>{pair.token2?.symbol}</Text>
         </View>
       </View>
     );

@@ -13,6 +13,5 @@ export const commonStyled = StyleSheet.create({
     fontSize: FONT.SIZE.small,
     lineHeight: FONT.SIZE.small + 4,
     color: COLORS.white,
-    marginTop: 6,
   },
 });

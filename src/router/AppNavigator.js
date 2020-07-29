@@ -89,7 +89,7 @@ const AppNavigator = createStackNavigator(
     ...RouteNoHeader,
   },
   {
-    initialRouteName: ROUTE_NAMES.GetStarted,
+    initialRouteName: ROUTE_NAMES.Home,
     defaultNavigationOptions: ({ navigation }) => {
       const { routeName } = navigation.state;
       // You can do whatever you like here to pick the title based on the route name

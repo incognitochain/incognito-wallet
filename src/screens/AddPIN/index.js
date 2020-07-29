@@ -1,8 +1,7 @@
 import React from 'react';
-import { Animated, BackHandler, Easing } from 'react-native';
+import { Animated, BackHandler, Easing, AppState } from 'react-native';
 import TouchID from 'react-native-touch-id';
 import PropTypes from 'prop-types';
-import { debounce } from 'lodash';
 import { View, Text, TouchableOpacity, Image } from '@src/components/core';
 import { connect } from 'react-redux';
 import { updatePin } from '@src/redux/actions/pin';
@@ -30,23 +29,29 @@ const optionalConfigObject = {
   passcodeFallback: false, // iOS - allows the device to fall back to using the passcode, if faceid/touch is not available. this does not mean that if touchid/faceid fails the first few times it will revert to passcode, rather that if the former are not enrolled, then it will use the passcode.
 };
 
+const initialState = {
+  pin1: '',
+  pin2: '',
+  nextPin: false,
+  bioSupportedType: null,
+  action: null,
+  appState: '',
+};
+
 class AddPIN extends React.Component {
   static waiting = false;
 
   constructor(props) {
     super(props);
-
     const { action } = props.navigation?.state?.params;
-    
     this.state = {
-      pin1: '',
-      pin2: '',
-      nextPin: false,
-      bioSupportedType: null,
+      ...initialState,
       action,
     };
     this.animatedValue = new Animated.Value(0);
   }
+
+  resetPin = () => this.setState({ ...initialState });
 
   componentDidMount() {
     this.backHandler = BackHandler.addEventListener(
@@ -54,11 +59,25 @@ class AddPIN extends React.Component {
       this.handleBackPress,
     );
     this.checkTouchSupported();
+    AppState.addEventListener('change', this.handleAppStateChange);
   }
 
   componentWillUnmount() {
     this.backHandler.remove();
+    this.resetPin();
+    AppState.removeEventListener('change', this.handleAppStateChange);
   }
+
+  handleAppStateChange = async (nextAppState) => {
+    const { appState } = this.state;
+    if (
+      appState.match(/inactive|background|active/) &&
+      nextAppState === 'active'
+    ) {
+      this.setState({ pin1: '', pin2: '' });
+    }
+    await this.setState({ appState: nextAppState });
+  };
 
   handleAnimation = () => {
     Animated.sequence([

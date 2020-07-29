@@ -79,7 +79,7 @@ class AddBep2Token extends Component {
               ) : null}
             </View>
             <Button
-              title="Add manually"
+              title="Add coin"
               style={styles.submitBtn}
               onPress={handleSubmit(onAdd)}
               isAsync

@@ -19,6 +19,7 @@ export default function configureStore(preloadedState) {
       'unShield',
       'setting',
       'getStarted',
+      'profile',
     ],
     stateReconciler: autoMergeLevel2,
   };

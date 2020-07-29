@@ -196,7 +196,7 @@ class Pool extends React.Component {
       Privacy: true,
       TokenID: token.id,
       TokenName: token.name,
-      TokenSymbol: token.symbol,
+      TokenSymbol: token?.symbol,
       TokenAmount: amount,
       TokenFee: 0,
       PDecimals: token.pDecimals,
@@ -316,12 +316,12 @@ class Pool extends React.Component {
             <Text style={stylesheet.headerTitle}>Output (estimated)</Text>
             <View style={mainStyle.twoColumns}>
               <Text style={stylesheet.output}>{topText}</Text>
-              <Text style={stylesheet.symbol}>{pair.token1.symbol}</Text>
+              <Text style={stylesheet.symbol}>{pair.token1?.symbol}</Text>
             </View>
             <Text style={stylesheet.output}>+</Text>
             <View style={mainStyle.twoColumns}>
               <Text style={stylesheet.output}>{bottomText}</Text>
-              <Text style={stylesheet.symbol}>{pair.token2.symbol}</Text>
+              <Text style={stylesheet.symbol}>{pair.token2?.symbol}</Text>
             </View>
           </View>
         )}

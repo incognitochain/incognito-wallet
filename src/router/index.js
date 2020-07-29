@@ -10,7 +10,7 @@ export default createAppContainer(
       [ROUTE_NAMES.RootSplash]: SplashNavigator,
     },
     {
-      initialRouteName: ROUTE_NAMES.AppNavigator,
+      initialRouteName: ROUTE_NAMES.RootSplash,
     },
   ),
 );

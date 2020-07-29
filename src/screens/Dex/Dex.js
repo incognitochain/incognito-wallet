@@ -152,7 +152,7 @@ class Dex extends React.Component {
       isLoading,
     } = this.props;
     const { addLiquidityParams, mode, removeLiquidityParams } = this.state;
-    
+
     if (mode === MODES.ADD) {
       return (
         <AddPool
@@ -254,22 +254,18 @@ class Dex extends React.Component {
 
   render() {
     const { histories, onGetHistoryStatus, navigation } = this.props;
-    const { mode } = this.state;
-    const Wrapper = mode === MODES.GET_STARTED_INVEST ? View : ScrollView;
     return (
       <View style={mainStyle.wrapper}>
         {this.renderHeader()}
-        <View style={[dexStyle.scrollViewContainer, mode === MODES.GET_STARTED_INVEST] && { padding: 0 }}>
-          <Wrapper refreshControl={this.renderRefreshControl()}>
+        <View style={dexStyle.scrollViewContainer}>
+          <ScrollView refreshControl={this.renderRefreshControl()}>
             {this.renderMode()}
-            { mode !== MODES.GET_STARTED_INVEST && (
-              <RecentHistory
-                histories={(histories || []).filter(item => item.type !== MESSAGES.TRADE)}
-                onGetHistoryStatus={onGetHistoryStatus}
-                navigation={navigation}
-              />
-            ) }
-          </Wrapper>
+            <RecentHistory
+              histories={(histories || []).filter(item => item.type !== MESSAGES.TRADE)}
+              onGetHistoryStatus={onGetHistoryStatus}
+              navigation={navigation}
+            />
+          </ScrollView>
         </View>
         {this.renderTransfer()}
       </View>

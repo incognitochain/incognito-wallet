@@ -47,7 +47,7 @@ const AccountItem = ({ accountName, PaymentAddress }) => {
         `Can not switch to account "${accountName}", please try again.`,
       ).showErrorToast();
     } finally {
-      await dispatch(actionSwitchAccountFetched());
+      dispatch(actionSwitchAccountFetched());
     }
   };
   const Component = () => (

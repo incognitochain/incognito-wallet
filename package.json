@@ -1,6 +1,6 @@
 {
   "name": "incognito-wallet",
-  "version": "3.7.5",
+  "version": "3.8.2",
   "private": true,
   "rnpm": {
     "assets": [
@@ -33,12 +33,12 @@
     "postinstall": "./node_modules/.bin/rn-nodeify --install crypto,stream,vm --hack && npx jetify",
     "devtools": "react-devtools",
     "deployIOS:dev": "appcenter codepush release-react -a 0xSiris/Incognito -t \"49.7\" -d Development --development",
-    "deployIOS:prod": "appcenter codepush release-react -a 0xSiris/Incognito -t \"49.7\" -d Production -x",
+    "deployIOS:prod": "appcenter codepush release-react -a 0xSiris/Incognito -t \"49.8\" -d Production -x",
     "deployIOS:staging": "appcenter codepush release-react -a 0xSiris/Incognito -t \"49.7\" -d Staging",
     "deployIOS:next": "appcenter codepush release-react -a 0xSiris/Incognito -t \"49.7\" -d NextRelease",
     "deployAndroid:dev": "appcenter codepush release-react -a 0xSiris/Incognito-Android -t \"3.7.0\" -d Development --development -x",
     "deployAndroid:staging": "appcenter codepush release-react -a 0xSiris/Incognito-Android -t \"3.7.0\" -d Staging",
-    "deployAndroid:prod": "appcenter codepush release-react -a 0xSiris/Incognito-Android -t \"3.7.0\" -d Production -x",
+    "deployAndroid:prod": "appcenter codepush release-react -a 0xSiris/Incognito-Android -t \"3.8.0\" -d Production -x",
     "deployAndroid:next": "appcenter codepush release-react -a 0xSiris/Incognito-Android -t \"3.7.0\" -d NextRelease",
     "deploy:dev": "yarn deployIOS:dev && yarn deployAndroid:dev",
     "deploy:staging": "yarn deployIOS:staging && yarn deployAndroid:staging",
@@ -72,7 +72,7 @@
     "incognito-chain-web-js": "https://github.com/incognitochain/incognito-chain-web-js#3.7.3",
     "intl": "^1.2.5",
     "jetifier": "^1.6.5",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "lottie-ios": "3.1.3",
     "lottie-react-native": "^3.3.2",
     "memoize-one": "^5.0.5",
