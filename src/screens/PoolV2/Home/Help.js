@@ -18,7 +18,7 @@ const sections = [
   },
   {
     title: 'Rewards for each currency',
-    description: 'Under the balance of each currency provided, you’ll see a rewards counter specific to that currency. This number will update and compound every 15 minutes. Rewards are paid in PRV based on current prices.',
+    description: 'Under the balance of each currency provided, you’ll see a rewards counter specific to that currency. This number will update and compound every 1 hour. Rewards are paid in PRV based on current prices.',
   },
 ];
 
