@@ -39,3 +39,12 @@ export const apiCheckUnreadNews = () => {
       .catch((e) => reject(false));
   });
 };
+
+export const apiMarkReadAllNews = () => {
+  return new Promise((resolve, reject) => {
+    return http
+      .post('news/check-unread')
+      .then((rs) => resolve(rs))
+      .catch((e) => reject(false));
+  });
+};

@@ -6,7 +6,7 @@ import Modal, { actionToggleModal } from '@src/components/Modal';
 import withFCM from '@src/screens/Notification/Notification.withFCM';
 import withWallet from '@screens/Wallet/features/Home/Wallet.enhance';
 import { useSelector, useDispatch, connect } from 'react-redux';
-import { useIsFocused } from 'react-navigation-hooks';
+import { useFocusEffect } from 'react-navigation-hooks';
 import { withLayout_2 } from '@src/components/Layout';
 import APIService from '@src/services/api/miner/APIService';
 import { accountSeleclor } from '@src/redux/selectors';
@@ -38,7 +38,6 @@ const enhance = (WrappedComp) => (props) => {
   } = props;
   const { categories, headerTitle, isFetching } = useSelector(homeSelector);
   const pTokens = useSelector(pTokensSelector);
-  const isFocused = useIsFocused();
   const wallet = useSelector((state) => state?.wallet);
   const defaultAccount = useSelector(accountSeleclor.defaultAccountSelector);
   const isFollowedDefaultPTokens = useSelector(isFollowDefaultPTokensSelector);
@@ -92,12 +91,6 @@ const enhance = (WrappedComp) => (props) => {
   }, [wallet]);
 
   React.useEffect(() => {
-    if (isFocused) {
-      clearWallet();
-    }
-  }, [isFocused]);
-
-  React.useEffect(() => {
     fetchData();
     tryLastWithdrawal();
     airdrop();
@@ -108,6 +101,13 @@ const enhance = (WrappedComp) => (props) => {
       followDefaultPTokens();
     }
   }, [pTokens]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      clearWallet();
+      getHomeConfiguration();
+    }, []),
+  );
 
   return (
     <ErrorBoundary>

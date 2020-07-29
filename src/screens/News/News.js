@@ -5,6 +5,7 @@ import Header from '@src/components/Header';
 import PropTypes from 'prop-types';
 import { camelCaseKeys } from '@src/utils';
 import { ScrollView } from '@src/components/core';
+import { useFocusEffect } from 'react-navigation-hooks';
 import withNews from './News.enhance';
 import { newsSelector } from './News.selector';
 import { LAYOUT_TYPE } from './News.constant';
@@ -79,6 +80,11 @@ const Category = (props) => {
 const News = (props) => {
   const { handleFetchNews } = props;
   const { data, isFetching } = useSelector(newsSelector);
+  useFocusEffect(
+    React.useCallback(() => {
+      handleFetchNews();
+    }, []),
+  );
   return (
     <View style={styled.container}>
       <Header title="Bulletin" style={styled.header} />

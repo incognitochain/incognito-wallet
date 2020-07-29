@@ -8,6 +8,7 @@ import {
   apiCheckUnreadNews,
   apiReadNews,
   apiRemoveNews,
+  apiMarkReadAllNews,
 } from './News.services';
 import { newsSelector } from './News.selector';
 
@@ -24,9 +25,7 @@ export const actionFetchFailNews = () => ({
   type: ACTION_FETCH_FAIL_NEWS,
 });
 
-export const actionFetchNews = () => async (dispatch, getState) => {
-  let data = [];
-  let isReadAll = false;
+export const actionFetchNews = (type = '') => async (dispatch, getState) => {
   const state = getState();
   try {
     const { isFetching } = newsSelector(state);
@@ -34,18 +33,24 @@ export const actionFetchNews = () => async (dispatch, getState) => {
       return;
     }
     await dispatch(actionFetchingNews());
-    const [news, unread] = await new Promise.all([
-      apiGetNews(),
-      apiCheckUnreadNews(),
-    ]);
-    data = news;
-    isReadAll = unread === 0;
-    await dispatch(
-      actionFetchedNews({
-        data,
-        isReadAll,
-      }),
-    );
+    let task = [apiGetNews()];
+    switch (type) {
+    case 'post': {
+      task = [...task, apiMarkReadAllNews()];
+      break;
+    }
+    default:
+      task = [...task, apiCheckUnreadNews()];
+      break;
+    }
+    const [news, unread] = await new Promise.all(task);
+    let payload = {
+      data: news,
+    };
+    if (type !== 'post') {
+      payload = { ...payload, isReadAll: unread === 0 };
+    }
+    await dispatch(actionFetchedNews(payload));
   } catch (error) {
     await dispatch(actionFetchFailNews());
     throw new Error(error);
