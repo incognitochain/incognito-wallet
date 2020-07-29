@@ -23,6 +23,7 @@ const MESSAGES = {
   CAN_NOT_SEND_TX:
     'It looks like your transaction didn\'t go through.  Please wait a few minutes and try again',
   GENERAL: 'Something went wrong. Please try again.',
+  API_POOL_ERROR: 'The network is a little busy. Please try again later.'
 };
 
 const isValidException = exception => {
@@ -223,6 +224,13 @@ class Exception {
 
       if (this.exception.code === CODES.NOT_ENOUGH_COIN) {
         return `${MESSAGES.PENDING_TX} (${ERROR.PENDING_TX}) (${CODES.NOT_ENOUGH_COIN})`;
+      }
+
+      if (
+        this.exception?.code?.toLowerCase().includes('econnaborted') ||
+        this.message?.toLowerCase().includes('lock wait timeout exceeded;')
+      ) {
+        return MESSAGES.API_POOL_ERROR;
       }
 
       if (this?.exception?.code?.toLowerCase().includes('api_error')) {
