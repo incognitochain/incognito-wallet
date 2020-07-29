@@ -27,6 +27,7 @@ const api = {
   api_bnb_memo_required: apiError(-1027),
   api_unstake_fail: apiError(-80011),
   api_tx_added: apiError(-80002),
+  api_amount_invalid: apiError(-80003),
 };
 
 

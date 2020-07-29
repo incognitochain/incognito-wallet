@@ -156,7 +156,7 @@ const Trade = ({
                 quote={quote}
               />
               {!!(!isErc20 && pair) && <PoolSize outputToken={outputToken} inputToken={inputToken} pair={pair} />}
-              <Powered network={isErc20 ? 'Kyber' : 'Incognito'} />
+              <Powered network={isErc20 ? quote?.protocol : 'Incognito'} />
               <ExtraInfo left={warning} right="" style={styles.warning} />
             </View>
           )}
