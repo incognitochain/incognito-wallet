@@ -1,5 +1,4 @@
 import isArray from 'lodash/isArray';
-import { actionFetchNews } from '@screens/News';
 import {
   ACTION_FETCHING,
   ACTION_FETCHED,
@@ -22,8 +21,8 @@ export const actionFetchFail = () => ({
 });
 
 export const actionFetch = () => async (dispatch, getState) => {
-  const { defaultConfigs, isFetching } = getState()?.home;
-  if (isFetching) {
+  const { defaultConfigs, isFetching, isFetched } = getState()?.home;
+  if (isFetching || (isFetched && !isFetching)) {
     return;
   }
   let categories = isArray(defaultConfigs?.categories)

@@ -20,13 +20,11 @@ export default (state = initialState, action) => {
     };
   }
   case ACTION_FETCHED_NEWS: {
-    const { data, isReadAll } = action.payload;
     return {
       ...state,
       isFetching: false,
       isFetched: true,
-      data,
-      isReadAll,
+      ...action.payload,
     };
   }
   case ACTION_FETCH_FAIL_NEWS: {
