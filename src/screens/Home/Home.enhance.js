@@ -6,7 +6,7 @@ import Modal, { actionToggleModal } from '@src/components/Modal';
 import withFCM from '@src/screens/Notification/Notification.withFCM';
 import withWallet from '@screens/Wallet/features/Home/Wallet.enhance';
 import { useSelector, useDispatch, connect } from 'react-redux';
-import { useIsFocused } from 'react-navigation-hooks';
+import { useFocusEffect } from 'react-navigation-hooks';
 import { withLayout_2 } from '@src/components/Layout';
 import APIService from '@src/services/api/miner/APIService';
 import { accountSeleclor } from '@src/redux/selectors';
@@ -24,7 +24,7 @@ import {
 } from '@screens/GetStarted';
 import { followDefaultTokens } from '@src/redux/actions/account';
 import { pTokensSelector } from '@src/redux/selectors/token';
-import { withNews, actionFetchNews } from '@screens/News';
+import { withNews, actionCheckUnreadNews } from '@screens/News';
 import { CONSTANT_KEYS } from '@src/constants';
 import { homeSelector } from './Home.selector';
 import { actionFetch as actionFetchHomeConfigs } from './Home.actions';
@@ -39,7 +39,6 @@ const enhance = (WrappedComp) => (props) => {
   } = props;
   const { categories, headerTitle, isFetching } = useSelector(homeSelector);
   const pTokens = useSelector(pTokensSelector);
-  const isFocused = useIsFocused();
   const wallet = useSelector((state) => state?.wallet);
   const defaultAccount = useSelector(accountSeleclor.defaultAccountSelector);
   const isFollowedDefaultPTokens = useSelector(isFollowDefaultPTokensSelector)(
@@ -51,7 +50,7 @@ const enhance = (WrappedComp) => (props) => {
     try {
       await new Promise.all([
         dispatch(actionFetchHomeConfigs()),
-        dispatch(actionFetchNews()),
+        dispatch(actionCheckUnreadNews()),
       ]);
     } catch (error) {
       console.log('Fetching configuration for home failed.', error);
@@ -99,12 +98,6 @@ const enhance = (WrappedComp) => (props) => {
   }, [wallet]);
 
   React.useEffect(() => {
-    if (isFocused) {
-      clearWallet();
-    }
-  }, [isFocused]);
-
-  React.useEffect(() => {
     fetchData();
     tryLastWithdrawal();
     airdrop();
@@ -115,6 +108,13 @@ const enhance = (WrappedComp) => (props) => {
       followDefaultPTokens();
     }
   }, [pTokens]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      clearWallet();
+      getHomeConfiguration();
+    }, []),
+  );
 
   return (
     <ErrorBoundary>
