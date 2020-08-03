@@ -81,7 +81,7 @@ export default class Server {
             if (s.default) {
               return {
                 ...s,
-                address: s.id === 'testnet' ? 'http://192.168.1.80:9354' : s.address,
+                address: s.id === 'testnet' ? 'http://192.168.1.146:9354' : s.address,
               };
             }
           }

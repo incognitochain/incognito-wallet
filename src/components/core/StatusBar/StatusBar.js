@@ -10,9 +10,9 @@ import { wizardSelector } from '@src/screens/GetStarted/GetStarted.selector';
 const { Wizard, Node, Dex, DexHistory, DexHistoryDetail, GetStaredAddNode } = routeNames;
 
 const dark4Screens = [];
-const blue2Screens = [GetStaredAddNode];
-const blue1Screens = [Node, GetStaredAddNode];
-const dark2Screen = [Dex, DexHistory, DexHistoryDetail, GetStaredAddNode];
+const blue2Screens = [];
+const blue1Screens = [];
+const dark2Screen = [Dex, DexHistory, DexHistoryDetail];
 const blackScreen = [Wizard];
 
 const isIOS = Platform.OS === 'ios';

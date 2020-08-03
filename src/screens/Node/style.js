@@ -56,6 +56,7 @@ const style = StyleSheet.create({
   },
   list: {
     paddingBottom: 50,
+    paddingTop: 30,
     flex: 1
   },
   container_first_app:{

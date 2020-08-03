@@ -79,30 +79,6 @@ const AppNavigator = createStackNavigator(
       PaymentBuyNodeScreen,
       { header: () => null },
     ),
-    [ROUTE_NAMES.Node]: navigationOptionsHandler(Node, { header: () => null }),
-    [ROUTE_NAMES.AddNode]: navigationOptionsHandler(AddNode, {
-      title: 'Add Node',
-    }),
-    [ROUTE_NAMES.LinkDevice]: navigationOptionsHandler(LinkDevice, {
-      title: 'Link Device',
-    }),
-    [ROUTE_NAMES.AddStake]: navigationOptionsHandler(AddStake, {
-      title: 'Stake',
-    }),
-    [ROUTE_NAMES.Unstake]: navigationOptionsHandler(Unstake, {
-      title: 'Unstake',
-    }),
-    [ROUTE_NAMES.AddSelfNode]: navigationOptionsHandler(AddSelfNode, {
-      title: 'Virtual Node',
-    }),
-    [ROUTE_NAMES.GetStaredAddNode]: navigationOptionsHandler(
-      GetStartedAddNode,
-      { title: 'Setup Node' },
-    ),
-    [ROUTE_NAMES.RepairingSetupNode]: navigationOptionsHandler(
-      RepairingSetupNode,
-      { title: 'Continue setup' },
-    ),
     ...RouteNoHeader,
   },
   {
