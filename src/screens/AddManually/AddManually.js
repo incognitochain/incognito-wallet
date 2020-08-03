@@ -1,6 +1,10 @@
 import React from 'react';
-import { View, ScrollView } from 'react-native';
-import { Text, TouchableOpacity } from '@src/components/core';
+import { View } from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  KeyboardAwareScrollView,
+} from '@src/components/core';
 import AddERC20Token from '@src/components/AddERC20Token';
 import AddBep2Token from '@src/components/AddBep2Token';
 import Icons from 'react-native-vector-icons/Fontisto';
@@ -57,11 +61,13 @@ const AddManually = () => {
   return (
     <View style={styles.container}>
       <Header title="Add manually" onGoBack={onGoBack} />
-      <SelectType />
-      <ScrollView style={styles.scrollview}>
-        {type === TYPES.BEP2.value && <AddBep2Token />}
-        {type === TYPES.ERC20.value && <AddERC20Token />}
-      </ScrollView>
+      <KeyboardAwareScrollView>
+        <View style={styles.extra}>
+          <SelectType />
+          {type === TYPES.BEP2.value && <AddBep2Token />}
+          {type === TYPES.ERC20.value && <AddERC20Token />}
+        </View>
+      </KeyboardAwareScrollView>
       <ModalSelectType />
     </View>
   );

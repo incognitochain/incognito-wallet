@@ -30,7 +30,7 @@ class PoolSize extends React.Component {
         <Text style={[style.feeTitle]}>Pool Size:</Text>
         <View style={[style.flex, style.textRight]}>
           <Text style={style.fee} numberOfLines={2}>
-            {formattedInputPool} {inputToken.symbol} + {formattedOutputPool} {outputToken.symbol}
+            {formattedInputPool} {inputToken?.symbol} + {formattedOutputPool} {outputToken?.symbol}
           </Text>
         </View>
       </View>

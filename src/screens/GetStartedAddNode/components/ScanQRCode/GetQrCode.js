@@ -1,5 +1,4 @@
 import images from '@src/assets';
-import { Text } from '@components/core/index';
 import DeviceLog from '@components/DeviceLog/index';
 import { openQrScanner } from '@components/QrCodeScanner/index';
 import APIService from '@services/api/miner/APIService';
@@ -8,7 +7,7 @@ import Util from '@utils/Util';
 import ViewUtil, { onClickView } from '@utils/ViewUtil';
 import _ from 'lodash';
 import React, { useCallback, useMemo, useState } from 'react';
-import { Image, TouchableOpacity } from 'react-native';
+import { Image, TouchableOpacity, Text } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { COLORS } from '@src/styles';
 import styles from '../../styles';

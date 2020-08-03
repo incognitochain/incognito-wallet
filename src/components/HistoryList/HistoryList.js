@@ -15,6 +15,8 @@ import { TOKEN } from '@src/constants/elements';
 import Swipeout from 'react-native-swipeout';
 import { useNavigation } from 'react-navigation-hooks';
 import trim from 'lodash/trim';
+import { useSelector } from 'react-redux';
+import { decimalDigitsSelector } from '@src/screens/Setting';
 import styleSheet from './style';
 
 const getStatusData = (status, statusCode, decentralized) => {
@@ -82,7 +84,7 @@ const getTypeData = (type, history) => {
     balanceDirection = '-';
     break;
   case CONSTANT_COMMONS.HISTORY.TYPE.DEPOSIT:
-    typeText = history?.userPaymentAddress ? 'Deposit' : 'Receive';
+    typeText = history?.depositAddress ? 'Deposit' : 'Receive';
     balanceColor = COLORS.green;
     balanceDirection = '+';
     break;
@@ -130,8 +132,21 @@ const HistoryItemWrapper = ({ history, onCancelEtaHistory, ...otherProps }) => {
   return component;
 };
 
+const NormalText = ({ style, text, ...rest }) => (
+  <Text
+    numberOfLines={1}
+    style={[styleSheet.text, style]}
+    ellipsizeMode="tail"
+    {...rest}
+  >
+    {trim(text)}
+  </Text>
+);
+
 const HistoryItem = ({ history }) => {
   const navigation = useNavigation();
+  const decimalDigits = useSelector(decimalDigitsSelector);
+  const { pDecimals, amount } = history;
   if (!history) {
     return null;
   }
@@ -144,9 +159,7 @@ const HistoryItem = ({ history }) => {
     history.type,
     history,
   );
-  const amount =
-    (history.amount && formatUtil.amount(history.amount, history.pDecimals)) ||
-    formatUtil.number(history.requestedAmount);
+  const _amount = formatUtil.amount(amount, pDecimals, true, decimalDigits);
   const onPress = () => {
     navigation?.navigate(routeNames.TxHistoryDetail, {
       data: {
@@ -164,41 +177,30 @@ const HistoryItem = ({ history }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styleSheet.itemContainer}>
       <View style={[styleSheet.row, styleSheet.rowTop]}>
-        <Text
-          style={[styleSheet.title, styleSheet.leftText]}
-          numberOfLines={1}
-          ellipsizeMode="tail"
+        <NormalText
+          text={typeText}
+          style={styleSheet.title}
           {...generateTestId(TOKEN.TRANSACTION_TYPE)}
-        >
-          {typeText}
-        </Text>
-        <Text
-          style={[styleSheet.title, styleSheet.righText]}
-          numberOfLines={1}
-          ellipsizeMode="tail"
+        />
+        <NormalText
+          text={_amount ? trim(_amount) : '0'}
+          style={styleSheet.title}
           {...generateTestId(TOKEN.TRANSACTION_CONTENT)}
-        >
-          {amount ? trim(amount) : ''}
-        </Text>
+        />
       </View>
       <View style={styleSheet.row}>
-        <Text
-          style={[styleSheet.desc, styleSheet.leftText]}
-          numberOfLines={1}
-          ellipsizeMode="tail"
+        <NormalText
+          style={styleSheet.desc}
+          text={formatUtil.formatDateTime(history.time)}
           {...generateTestId(TOKEN.TRANSACTION_TIME)}
-        >
-          {formatUtil.formatDateTime(history.time)}
-        </Text>
-        <Text
-          style={[styleSheet.desc, styleSheet.righText]}
-          numberOfLines={1}
-          ellipsizeMode="tail"
+        />
+        <NormalText
+          style={styleSheet.desc}
           {...generateTestId(TOKEN.TRANSACTION_STATUS)}
-        >
-          {statusText}{' '}
-          {!!statusNumber || statusNumber === 0 ? `[${statusNumber}]` : null}
-        </Text>
+          text={`${statusText} ${
+            !!statusNumber || statusNumber === 0 ? `[${statusNumber}]` : ''
+          }`}
+        />
       </View>
     </TouchableOpacity>
   );
@@ -206,13 +208,15 @@ const HistoryItem = ({ history }) => {
 
 const HistoryList = ({ histories, onCancelEtaHistory }) => (
   <View style={styleSheet.container}>
-    {histories.map((history) => (
-      <HistoryItemWrapper
-        key={history.id}
-        history={history}
-        onCancelEtaHistory={onCancelEtaHistory}
-      />
-    ))}
+    {histories
+      .sort((a, b) => new Date(b?.time).getTime() - new Date(a?.time).getTime())
+      .map((history) => (
+        <HistoryItemWrapper
+          key={history.id}
+          history={history}
+          onCancelEtaHistory={onCancelEtaHistory}
+        />
+      ))}
   </View>
 );
 
@@ -263,6 +267,16 @@ HistoryList.defaultProps = {
 HistoryList.propTypes = {
   histories: PropTypes.array,
   onCancelEtaHistory: PropTypes.func,
+};
+
+NormalText.propTypes = {
+  style: PropTypes.any,
+  text: PropTypes.string,
+};
+
+NormalText.defaultProps = {
+  style: null,
+  text: '',
 };
 
 export default HistoryList;

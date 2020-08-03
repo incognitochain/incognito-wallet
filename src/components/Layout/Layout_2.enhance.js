@@ -12,9 +12,8 @@ const styled = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   wrapper: {
-    margin: 25,
+    marginHorizontal: 25,
     flex: 1,
-    marginTop: 0,
   },
 });
 

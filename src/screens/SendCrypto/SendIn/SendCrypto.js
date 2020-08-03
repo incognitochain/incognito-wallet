@@ -10,7 +10,7 @@ import {
   reset,
 } from 'redux-form';
 import { connect } from 'react-redux';
-import { Toast } from '@components/core';
+import { Toast, KeyboardAwareScrollView } from '@components/core';
 import LoadingTx from '@components/LoadingTx';
 import {
   createForm,
@@ -181,7 +181,7 @@ class SendCrypto extends React.Component {
               }}
             />
           ),
-          onBack: () => navigation.navigate(ROUTES_NAME.WalletDetail)
+          onBack: () => navigation.navigate(ROUTES_NAME.WalletDetail),
         });
         await rfReset(formName);
       }
@@ -252,10 +252,10 @@ class SendCrypto extends React.Component {
       rfChange,
     } = this.props;
     return (
-      <View style={homeStyle.container}>
+      <KeyboardAwareScrollView>
         <Form>
           {({ handleSubmit }) => (
-            <View>
+            <View style={homeStyle.container}>
               <Field
                 onChange={(text) => {
                   rfChange(formName, 'amount', text);
@@ -268,6 +268,9 @@ class SendCrypto extends React.Component {
                 componentProps={{
                   keyboardType: 'decimal-pad',
                   onPressMax: this.onPressMax,
+                  style: {
+                    marginTop: 22,
+                  },
                 }}
                 validate={this.getAmountValidator()}
                 {...generateTestId(SEND.AMtOUNT_INPUT)}
@@ -280,7 +283,7 @@ class SendCrypto extends React.Component {
                 component={InputQRField}
                 name="toAddress"
                 label="To"
-                placeholder="Enter an Incognito address"
+                placeholder="Enter Incognito address"
                 validate={validator.combinedIncognitoAddress}
                 showNavAddrBook
                 onOpenAddressBook={onShowFrequentReceivers}
@@ -311,7 +314,7 @@ class SendCrypto extends React.Component {
           )}
         </Form>
         {isSending && <LoadingTx />}
-      </View>
+      </KeyboardAwareScrollView>
     );
   }
 }

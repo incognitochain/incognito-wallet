@@ -24,14 +24,14 @@ const withValidate = WrappedComp => (props) => {
         if (inputFee) {
           setError(MESSAGES.GREATER(inputFee, inputToken.pDecimals));
         } else {
-          setError(MESSAGES.GREATER(min, inputToken.pDecimals));
+          setError(MESSAGES.GREATER_OR_EQUAL(min, inputToken.pDecimals));
         }
       } else {
         number = convertUtil.toOriginalAmount(number, inputToken.pDecimals, inputToken.pDecimals !== 0);
         if (inputFee && number <= inputFee) {
           setError(MESSAGES.GREATER(inputFee, inputToken.pDecimals));
-        } else if (number <= min) {
-          setError(MESSAGES.GREATER(min, inputToken.pDecimals));
+        } else if (number < min) {
+          setError(MESSAGES.GREATER_OR_EQUAL(min, inputToken.pDecimals));
         } else if (!Number.isInteger(number)) {
           setError(MESSAGES.MUST_BE_INTEGER);
         } else if (inputBalance !== null && inputFee !== null && number > inputBalance) {

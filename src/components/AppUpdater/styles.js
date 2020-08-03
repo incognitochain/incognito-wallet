@@ -1,31 +1,36 @@
-import {StyleSheet} from 'react-native';
-import {FontStyle} from '@src/styles/TextStyle';
-import dimension from '@src/styles/utils';
-
-const deviceWidth = dimension.deviceWidth();
+import { StyleSheet } from 'react-native';
+import { FONT, COLORS, UTILS } from '@src/styles';
 
 const styles = StyleSheet.create({
+  dialog: {
+    margin: 25,
+    position: 'relative',
+    borderRadius: 13,
+    width: UTILS.deviceWidth() - 50,
+  },
+  hook: {
+    marginVertical: 50,
+  },
   title: {
-    fontSize: 18,
-    marginTop: 20,
-    marginBottom: 20,
-    paddingRight: 30,
-    ...FontStyle.medium,
+    fontFamily: FONT.NAME.bold,
+    fontSize: FONT.SIZE.superMedium,
+    lineHeight: FONT.SIZE.superMedium + 5,
+    color: COLORS.black,
+    textAlign: 'center',
+    marginBottom: 15,
   },
   desc: {
-    marginVertical: 10,
+    fontFamily: FONT.NAME.medium,
+    fontSize: FONT.SIZE.regular,
+    lineHeight: FONT.SIZE.regular + 5,
+    color: COLORS.colorGreyBold,
+    textAlign: 'center',
   },
-  newDesc: {
-    marginTop: 20,
-    lineHeight: 25,
-    fontSize: 17,
-    maxWidth: deviceWidth - 30,
-  },
-  icon: {
+  btnClose: {
     position: 'absolute',
-    top: 20,
-    right: 20,
-  }
+    top: 5,
+    right: 5,
+  },
 });
 
 export default styles;

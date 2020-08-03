@@ -69,31 +69,8 @@ const fontSizes = {
   superLarge: 40,
 };
 
-// const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-
-// // based on iphone 5s's scale
-// const scale = SCREEN_WIDTH / 320;
-
-export function normalize(size) {
-  return size;
-  // const newSize = size * scale;
-  // if (Platform.OS === 'ios') {
-  //   return Math.round(PixelRatio.roundToNearestPixel(newSize));
-  // } else {
-  //   return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2;
-  // }
-}
-
-const getFontSizes = () =>
-  Object.keys(fontSizes).reduce((acc, key) => {
-    acc[key] = normalize(fontSizes[key]);
-    return acc;
-  }, {});
-const _SIZE = getFontSizes();
 export default {
   NAME: fontNames,
-  SIZE: _SIZE,
+  SIZE: fontSizes,
   STYLE: fontStyle,
-  NORMALIZE: normalize,
-  FONT_SIZES: fontSizes,
 };

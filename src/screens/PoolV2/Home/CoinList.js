@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, ScrollView, TouchableOpacity } from '@components/core';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from '@components/core';
 import mainStyles from '@screens/PoolV2/style';
-import { Row } from '@src/components/';
+import { Row, PRVSymbol } from '@src/components/';
 import { ArrowRightGreyIcon } from '@components/Icons/index';
 import { useNavigation } from 'react-navigation-hooks';
 import ROUTE_NAMES from '@routers/routeNames';
-import { CONSTANT_COMMONS } from '@src/constants';
 import { RefreshControl } from 'react-native';
 import styles from './style';
 
@@ -18,6 +17,7 @@ const CoinList = ({
   loading,
   onLoad,
   account,
+  isLoadingHistories,
 }) => {
   const navigation = useNavigation();
 
@@ -46,14 +46,23 @@ const CoinList = ({
             <Row style={mainStyles.coin} key={item.symbol}>
               <Text style={mainStyles.coinName}>{item.name}</Text>
               <Text
-                style={[mainStyles.coinInterest, mainStyles.textRight, mainStyles.flex]}
+                style={[mainStyles.coinExtra, mainStyles.textRight, mainStyles.flex]}
               >{item.displayInterest}
               </Text>
             </Row>
           ))}
+          {renderRate()}
         </ScrollView>
       </>
     );
+  };
+
+  const renderRate = () => {
+    if (!isLoadingHistories && !histories?.length) {
+      return (
+        <Text style={mainStyles.coinExtra}>Rates subject to change at any time.</Text>
+      );
+    }
   };
 
   const renderUserData = () => {
@@ -72,22 +81,24 @@ const CoinList = ({
             <Row>
               <View>
                 <Text style={mainStyles.coinName}>{item.symbol}</Text>
-                <Text style={mainStyles.coinInterest}>
+                <Text style={mainStyles.coinExtra}>
                   {coins.find(coin => coin.id === item.id).displayInterest}
                 </Text>
               </View>
               <View style={[mainStyles.flex]}>
                 <Text style={[mainStyles.coinName, mainStyles.textRight]}>{item.displayBalance}</Text>
                 {!!item.displayPendingBalance &&
-                  <Text style={[mainStyles.coinName, mainStyles.textRight]}>+ {item.displayPendingBalance}</Text>
+                  <Text style={[mainStyles.coinExtra, mainStyles.textRight]}>+ {item.displayPendingBalance}</Text>
                 }
                 {!!item.displayUnstakeBalance &&
-                <Text style={[mainStyles.coinName, mainStyles.textRight]}>- {item.displayUnstakeBalance}</Text>
+                <Text style={[mainStyles.coinExtra, mainStyles.textRight]}>- {item.displayUnstakeBalance}</Text>
                 }
-                <Text style={[mainStyles.coinExtra, mainStyles.textRight]}>
-                  {CONSTANT_COMMONS.PRV_SPECIAL_SYMBOL}&nbsp;
-                  {item.displayReward}
-                </Text>
+                <Row style={[mainStyles.textRight, mainStyles.justifyRight]} center>
+                  <PRVSymbol style={mainStyles.coinInterest} />
+                  <Text style={mainStyles.coinInterest}>
+                    &nbsp;{item.displayReward}
+                  </Text>
+                </Row>
                 {!!item.displayWithdrawReward &&
                 <Text style={[mainStyles.coinExtra, mainStyles.textRight]}>- {item.displayWithdrawReward}</Text>
                 }
@@ -95,25 +106,32 @@ const CoinList = ({
             </Row>
           </View>
         ))}
+        {renderRate()}
       </ScrollView>
     );
   };
 
   const renderBottom = () => {
-    if (histories?.length > 0) {
+    if (isLoadingHistories) {
       return (
-        <TouchableOpacity onPress={handleHistory}>
-          <Row center spaceBetween style={mainStyles.flex}>
-            <Text style={styles.rateStyle}>Provider history</Text>
-            <ArrowRightGreyIcon style={[{marginLeft: 10}]} />
-          </Row>
-        </TouchableOpacity>
+        <View style={styles.rateChange}>
+          <ActivityIndicator />
+        </View>
       );
     }
 
-    return (
-      <Text style={styles.rateStyle}>Rates subject to change at any time.</Text>
-    );
+    if (histories?.length > 0) {
+      return (
+        <View style={styles.rateChange}>
+          <TouchableOpacity onPress={handleHistory}>
+            <Row center spaceBetween style={mainStyles.flex}>
+              <Text style={styles.rateStyle}>Provider history</Text>
+              <ArrowRightGreyIcon style={[{marginLeft: 10}]} />
+            </Row>
+          </TouchableOpacity>
+        </View>
+      );
+    }
   };
 
   const renderContent = () => {
@@ -127,9 +145,7 @@ const CoinList = ({
   return (
     <View style={mainStyles.coinContainer}>
       {renderContent()}
-      <View style={styles.rateChange}>
-        {renderBottom()}
-      </View>
+      {renderBottom()}
     </View>
   );
 };
@@ -142,6 +158,7 @@ CoinList.propTypes = {
   onLoad: PropTypes.func,
   loading: PropTypes.bool,
   account: PropTypes.object.isRequired,
+  isLoadingHistories: PropTypes.bool,
 };
 
 CoinList.defaultProps = {
@@ -151,6 +168,7 @@ CoinList.defaultProps = {
   withdrawable: false,
   onLoad: undefined,
   loading: false,
+  isLoadingHistories: false,
 };
 
 export default React.memo(CoinList);

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 const styled = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.9)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     width: '100%',
     height: '100%',
   },

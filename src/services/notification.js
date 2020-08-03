@@ -1,20 +1,5 @@
-/* eslint-disable no-unused-vars */
-import { ExHandler } from '@src/services/exception';
-import routeNames from '@src/router/routeNames';
 import firebase from 'react-native-firebase';
-import { Platform } from 'react-native';
-import { logEvent } from '@services/firebase';
-import {
-  actionNavigate,
-  normalizedData,
-  actionHasNoti,
-  actionFetch,
-  actionInit,
-} from '@src/screens/Notification';
-import { CONSTANT_COMMONS, CONSTANT_EVENTS } from '@src/constants';
-import { mappingData, delay } from '../screens/Notification/Notification.utils';
 import LogManager from './LogManager';
-import NavigationService from './NavigationService';
 
 const notifications = firebase.notifications();
 

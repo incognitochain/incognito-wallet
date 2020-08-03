@@ -31,7 +31,7 @@ class ExchangeRate extends React.PureComponent {
       <View style={style.twoColumns}>
         <Text style={[style.feeTitle]}>Exchange Rate:</Text>
         <Text style={[style.fee, style.textRight, style.ellipsis]} numberOfLines={1}>
-          1 {inputToken.symbol} =&nbsp;
+          1 {inputToken?.symbol} =&nbsp;
           {formatUtil.amount(rawRate, outputToken.pDecimals)}
           &nbsp;{outputToken?.symbol}
         </Text>

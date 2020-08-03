@@ -29,10 +29,10 @@ const withSuccess = WrappedComp => (props) => {
       />
       <SuccessModal
         closeSuccessDialog={closeSuccess}
-        title="Withdrawal in process."
+        title="Withdrawal initiated."
         buttonTitle="Back to dashboard"
         description={`${inputText} ${coin.symbol} is being withdrawn to ${account.name}.`}
-        extraInfo="This may take between 1 to 3 days. Your balance will update when withdrawal is complete."
+        extraInfo="You’ll receive a notification when your balance updates."
         visible={success}
         buttonStyle={mainStyle.button}
       />

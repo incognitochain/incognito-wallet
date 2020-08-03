@@ -1,4 +1,4 @@
-import { Toast, Text } from '@components/core';
+import { Toast, Text, KeyboardAwareScrollView } from '@components/core';
 import {
   createForm,
   InputMaxValueField,
@@ -385,10 +385,10 @@ class Withdraw extends React.Component {
       isErc20Token || externalSymbol === CONSTANT_COMMONS.CRYPTO_SYMBOL.ETH;
     let { shouldBlockETHWrongAddress } = this.state;
     return (
-      <View style={style.container}>
+      <KeyboardAwareScrollView>
         <Form>
           {({ handleSubmit, submitting }) => (
-            <View>
+            <View style={style.container}>
               <Field
                 onChange={(text) => {
                   rfChange(formName, 'amount', text);
@@ -401,6 +401,9 @@ class Withdraw extends React.Component {
                 componentProps={{
                   keyboardType: 'decimal-pad',
                   onPressMax: this.onPressMax,
+                  style: {
+                    marginTop: 22,
+                  },
                 }}
                 validate={[
                   ...validator.combinedAmount,
@@ -444,7 +447,6 @@ class Withdraw extends React.Component {
                   address.
                 </Text>
               )}
-              {this.renderMemo()}
               <EstimateFee
                 amount={
                   isFormValid && !shouldBlockETHWrongAddress ? amount : null
@@ -457,6 +459,7 @@ class Withdraw extends React.Component {
                 isFormValid={isFormValid}
                 style={style.estimateFee}
               />
+              {this.renderMemo()}
               <ButtonBasic
                 title="Unshield"
                 btnStyle={style.submitBtn}
@@ -468,7 +471,7 @@ class Withdraw extends React.Component {
             </View>
           )}
         </Form>
-      </View>
+      </KeyboardAwareScrollView>
     );
   }
 }

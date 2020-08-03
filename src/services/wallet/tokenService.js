@@ -1,12 +1,10 @@
-import {
-  Wallet
-} from 'incognito-chain-web-js/build/wallet';
+import { Wallet } from 'incognito-chain-web-js/build/wallet';
 import _ from 'lodash';
 import tokenModel from '@src/models/token';
 import storage from '@src/services/storage';
 import { CONSTANT_KEYS } from '@src/constants';
 import { getTokenInfo } from '@services/api/token';
-import {PRIORITY_LIST} from '@screens/Dex/constants';
+import { PRIORITY_LIST } from '@screens/Dex/constants';
 import { saveWallet, updateStatusHistory } from './WalletService';
 import { listCustomTokens } from './RpcClientService';
 
@@ -90,17 +88,22 @@ export default class Token {
     wallet,
     paymentInfo,
     feePToken = 0,
-    info,
+    info = '',
   ) {
     await Wallet.resetProgressTx();
     const { TokenSymbol, TokenName, TokenAmount } = submitParam;
 
-    if (typeof TokenSymbol !== 'string' || TokenSymbol.trim() === '') throw new Error('TokenSymbol is invalid');
-    if (typeof TokenName !== 'string' || TokenName.trim() === '') throw new Error('TokenName is invalid');
-    if (typeof TokenAmount !== 'number' ||  TokenAmount <= 0 ) throw new Error('TokenAmount is invalid');
+    if (typeof TokenSymbol !== 'string' || TokenSymbol.trim() === '')
+      throw new Error('TokenSymbol is invalid');
+    if (typeof TokenName !== 'string' || TokenName.trim() === '')
+      throw new Error('TokenName is invalid');
+    if (typeof TokenAmount !== 'number' || TokenAmount <= 0)
+      throw new Error('TokenAmount is invalid');
 
     // get index account by name
-    const indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+    const indexAccount = wallet.getAccountIndexByName(
+      account.name || account.AccountName,
+    );
 
     // prepare param for create and send privacy custom token
     // payment info
@@ -113,12 +116,19 @@ export default class Token {
     let response;
     const hasPrivacyForNativeToken = true;
     const hasPrivacyForPToken = true;
-    const infoStr = ![undefined, null].includes(info) ? JSON.stringify(info) : undefined;
-
+    const strInfo = typeof info !== 'string' ? JSON.stringify(info) : info;
     try {
       response = await wallet.MasterAccount.child[
         indexAccount
-      ].createAndSendPrivacyToken(paymentInfos, submitParam, feeNativeToken, feePToken, hasPrivacyForNativeToken, hasPrivacyForPToken, infoStr);
+      ].createAndSendPrivacyToken(
+        paymentInfos,
+        submitParam,
+        feeNativeToken,
+        feePToken,
+        hasPrivacyForNativeToken,
+        hasPrivacyForPToken,
+        strInfo,
+      );
 
       await saveWallet(wallet);
     } catch (e) {
@@ -137,11 +147,13 @@ export default class Token {
     feePToken,
     remoteAddress,
     account,
-    wallet
+    wallet,
   ) {
     await Wallet.resetProgressTx();
     // get index account by name
-    let indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+    let indexAccount = wallet.getAccountIndexByName(
+      account.name || account.AccountName,
+    );
     // prepare param for create and send privacy custom token
     // payment info
     // @@ Note: it is use for receivers constant
@@ -159,7 +171,7 @@ export default class Token {
         submitParam,
         feeNativeToken,
         feePToken,
-        remoteAddress
+        remoteAddress,
       );
       await saveWallet(wallet);
     } catch (e) {
@@ -176,10 +188,12 @@ export default class Token {
     feePToken,
     remoteAddress,
     account,
-    wallet
+    wallet,
   ) {
     await Wallet.resetProgressTx();
-    let indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+    let indexAccount = wallet.getAccountIndexByName(
+      account.name || account.AccountName,
+    );
     let paymentInfos = [];
     let response;
     try {
@@ -220,9 +234,7 @@ export default class Token {
     try {
       const followingTokens = Token.getFollowingTokens({ account, wallet });
 
-      return followingTokens.filter(
-        token => token?.IsPrivacy
-      );
+      return followingTokens.filter((token) => token?.IsPrivacy);
     } catch (e) {
       throw e;
     }
@@ -232,9 +244,7 @@ export default class Token {
     try {
       const followingTokens = Token.getFollowingTokens({ account, wallet });
 
-      return followingTokens.filter(
-        token => !token?.IsPrivacy
-      );
+      return followingTokens.filter((token) => !token?.IsPrivacy);
     } catch (e) {
       throw e;
     }
@@ -246,11 +256,15 @@ export default class Token {
         throw new Error('Token is required');
       }
 
-      await updateStatusHistory(wallet).catch(() => console.warn('History statuses were not updated'));
+      await updateStatusHistory(wallet).catch(() =>
+        console.warn('History statuses were not updated'),
+      );
 
       const accountWallet = wallet.getAccountByName(account.name);
       let histories = [];
-      histories = await accountWallet.getPrivacyTokenTxHistoryByTokenID(token?.id);
+      histories = await accountWallet.getPrivacyTokenTxHistoryByTokenID(
+        token?.id,
+      );
       // if (token?.isPrivacy) {
       //   histories = await accountWallet.getPrivacyTokenTxHistoryByTokenID(token?.id);
       // } else {
@@ -264,42 +278,60 @@ export default class Token {
   }
 
   static mergeTokens(chainTokens, pTokens) {
-    return [PRV, ..._([...chainTokens, ...pTokens])
-      .uniqBy(item => item.tokenId || item.id)
-      .map(item => {
-        const pToken = pTokens.find(token => token.tokenId === (item.tokenId || item.id ));
-        return {
-          ...item,
-          id: item.tokenId || item.id,
-          pDecimals: Math.min(pToken?.pDecimals || 0, 9),
-          decimals: pToken?.decimals,
-          hasIcon: !!pToken,
-          symbol: pToken?.symbol || item.symbol,
-          displayName: pToken ? `Privacy ${pToken.symbol}` : `Incognito ${item.name}`,
-          name: pToken ? pToken.name : item.name,
-          isVerified: item.verified || pToken?.verified,
-        };
-      })
-      .orderBy([
-        'hasIcon',
-        item => PRIORITY_LIST.indexOf(item?.id) > -1 ? PRIORITY_LIST.indexOf(item?.id) : 100,
-        item => _.isString(item.symbol) && item.symbol.toLowerCase(),
-      ], ['desc', 'asc'])
-      .value()];
+    return [
+      PRV,
+      ..._([...chainTokens, ...pTokens])
+        .uniqBy((item) => item.tokenId || item.id)
+        .map((item) => {
+          const pToken = pTokens.find(
+            (token) => token.tokenId === (item.tokenId || item.id),
+          );
+          return {
+            ...item,
+            id: item.tokenId || item.id,
+            pDecimals: Math.min(pToken?.pDecimals || 0, 9),
+            decimals: pToken?.decimals,
+            hasIcon: !!pToken,
+            symbol: pToken?.symbol || item.symbol,
+            displayName: pToken
+              ? `Privacy ${pToken.symbol}`
+              : `Incognito ${item.name}`,
+            name: pToken ? pToken.name : item.name,
+            isVerified: item.verified || pToken?.verified,
+          };
+        })
+        .orderBy(
+          [
+            'hasIcon',
+            (item) =>
+              PRIORITY_LIST.indexOf(item?.id) > -1
+                ? PRIORITY_LIST.indexOf(item?.id)
+                : 100,
+            (item) => _.isString(item.symbol) && item.symbol.toLowerCase(),
+          ],
+          ['desc', 'asc'],
+        )
+        .value(),
+    ];
   }
 
   static flatTokens(tokens) {
     const tokenDict = {};
-    tokens.forEach(item => tokenDict[item.id] = item);
+    tokens.forEach((item) => (tokenDict[item.id] = item));
     return tokenDict;
   }
 }
 
 export async function getUserUnfollowTokenIDs() {
-  const listRaw = await storage.getItem(CONSTANT_KEYS.USER_UNFOLLOWING_TOKEN_ID_LIST);
+  const listRaw = await storage.getItem(
+    CONSTANT_KEYS.USER_UNFOLLOWING_TOKEN_ID_LIST,
+  );
   return JSON.parse(listRaw) || [];
 }
 
 export async function setUserUnfollowTokenIDs(newList = []) {
-  return await storage.setItem(CONSTANT_KEYS.USER_UNFOLLOWING_TOKEN_ID_LIST, JSON.stringify(newList));
+  return await storage.setItem(
+    CONSTANT_KEYS.USER_UNFOLLOWING_TOKEN_ID_LIST,
+    JSON.stringify(newList),
+  );
 }

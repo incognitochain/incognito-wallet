@@ -16,7 +16,7 @@ class CoinConfigModel {
     this.pDecimals = token.PDecimals;
     this.min = data.Min;
     this.max = data.Max;
-    this.apy = data.APY;
+    this.apy = data.APY.toFixed(2);
     this.masterAddress = masterAddress;
 
     if (this.id === COINS.PRV_ID) {
@@ -56,11 +56,12 @@ export class UserCoinPoolModel {
       this.symbol = this.coin.symbol;
     }
 
-    this.displayReward = formatUtil.amountFull(this.rewardBalance, this.pDecimals, true);
+    this.displayReward = formatUtil.amountFull(this.rewardBalance, COINS.PRV.pDecimals, true);
     this.displayBalance = formatUtil.amountFull(this.balance, this.pDecimals, true);
+    this.displayFullBalance = formatUtil.amountFull(this.balance, this.pDecimals, false);
     this.displayPendingBalance = formatUtil.amountFull(this.pendingBalance, this.pDecimals, true);
     this.displayUnstakeBalance = formatUtil.amountFull(this.unstakePendingBalance, this.pDecimals, true);
-    this.displayWithdrawReward = formatUtil.amountFull(this.withdrawPendingBalance, this.pDecimals, true);
+    this.displayWithdrawReward = formatUtil.amountFull(this.withdrawPendingBalance, COINS.PRV.pDecimals, true);
   }
 }
 
@@ -93,7 +94,7 @@ export class PoolHistory {
     this.coin = coins.find(coin => coin.id === this.coinId);
 
     if (this.coin) {
-      this.description = `${formatUtil.amountFull(this.amount, this.coin.pDecimals)} ${this.coin.symbol}`;
+      this.description = `${formatUtil.amountFull(this.amount, this.coin.pDecimals, true)} ${this.coin.symbol}`;
     }
 
     this.status = [

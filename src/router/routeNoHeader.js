@@ -5,7 +5,6 @@ import Home from '@screens/Home';
 import Wallet from '@screens/Wallet/features/Home';
 import Community from '@screens/Community';
 import CreateToken from '@screens/CreateToken';
-import Stake from '@screens/Stake';
 import Shield from '@screens/Shield';
 import ShieldGenQRCode from '@screens/Shield/features/GenQRCode';
 import FollowToken from '@screens/FollowToken';
@@ -35,10 +34,17 @@ import AddressBookForm from '@src/screens/AddressBook/AddressBook.form';
 import CoinInfo from '@screens/Wallet/features/CoinInfo';
 import Keychain from '@src/screens/Setting/features/Keychain';
 import CoinInfoVerify from '@src/screens/Wallet/features/CoinInfo/CoinInfo.verify';
+import News from '@screens/News';
 import FrequentReceivers, {
   FrequentReceiversForm,
 } from '@src/screens/SendCrypto/FrequentReceivers';
-import { PoolV2, PoolV2History, PoolV2Provide, PoolV2Withdraw } from '@src/screens/PoolV2';
+import {
+  PoolV2,
+  PoolV2History,
+  PoolV2Provide,
+  PoolV2Withdraw,
+} from '@src/screens/PoolV2';
+import Profile from '@src/screens/Profile';
 import routeNames from './routeNames';
 
 const routes = [
@@ -69,10 +75,6 @@ const routes = [
   {
     screen: CreateToken,
     name: routeNames.CreateToken,
-  },
-  {
-    screen: Stake,
-    name: routeNames.Stake,
   },
   {
     screen: ShieldGenQRCode,
@@ -233,6 +235,14 @@ const routes = [
   {
     screen: PoolV2History.HistoryDetail,
     name: routeNames.PoolV2HistoryDetail,
+  },
+  {
+    name: routeNames.News,
+    screen: News,
+  },
+  {
+    name: routeNames.Profile,
+    screen: Profile,
   },
 ];
 

@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text } from '@components/core';
-import { CONSTANT_COMMONS } from '@src/constants';
 import HelpIcon from '@components/HelpScreen/Icon';
 import ROUTE_NAMES from '@routers/routeNames';
 import { Row } from '@src/components/';
+import PRVSymbol from '@components/PRVSymbol';
 import styles from './style';
 
 const TotalReward = ({
@@ -13,13 +13,15 @@ const TotalReward = ({
   return (
     <View>
       <Row center style={styles.rewards}>
-        <Text style={styles.amount}>
-          <Text style={styles.symbol}>{CONSTANT_COMMONS.PRV_SPECIAL_SYMBOL}</Text>&nbsp;
-          {total}
+        <Text>
+          <PRVSymbol style={styles.symbol} />&nbsp;
+          <Text style={styles.amount}>{total}</Text>
         </Text>
+      </Row>
+      <Row center>
+        <Text style={[styles.center, styles.rateStyle]}>Compounding Rewards</Text>
         <HelpIcon screen={ROUTE_NAMES.PoolV2Help} style={styles.icon} />
       </Row>
-      <Text style={[styles.center, styles.rateStyle]}>Provider Rewards</Text>
     </View>
   );
 };

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, Switch } from '@components/core';
+import { Switch } from '@components/core';
 import {
   getDecimalSeparator,
   setDecimalSeparator as saveDecimalSeparator,
 } from '@src/resources/separator';
 import Section, { sectionStyle } from '@screens/Setting/features/Section';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 const SeparatorSection = () => {
   const [decimalSeparator, setDecimalSeparator] = useState(
@@ -26,7 +26,7 @@ const SeparatorSection = () => {
     <Section
       label="Decimal Separator"
       customItems={[
-        <TouchableOpacity
+        <View
           key="separator"
           onPress={togglePin}
           style={[sectionStyle.subItem]}
@@ -35,7 +35,7 @@ const SeparatorSection = () => {
             {'Use decimal comma\ninstead of point'}
           </Text>
           <Switch onValueChange={togglePin} value={decimalSeparator === ','} />
-        </TouchableOpacity>,
+        </View>,
       ]}
     />
   );

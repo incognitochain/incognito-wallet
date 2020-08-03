@@ -25,36 +25,34 @@ const style = StyleSheet.create({
     bottom: '50%',
   },
   customBackContainer: {
-    position: 'absolute', 
-    top: 6, 
-    left: 10, 
-    zIndex: 1, 
-    width: 25, 
-    height: 25
+    position: 'absolute',
+    top: 6,
+    left: 10,
+    zIndex: 1,
+    width: 25,
+    height: 25,
   },
   navigation: {
-    position: 'absolute', 
-    bottom: 0, 
-    left: 0, 
-    height: 75, 
-    width: '100%', 
-    flexDirection: 'row', 
-    backgroundColor: 'white'
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    height: 60,
+    width: '100%',
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    alignItems: 'center',
   },
   back: {
-    height: 70, 
-    width: '25%', 
-    justifyContent: 'center', 
-    alignContent: 'center', 
-    alignItems: 'center', 
-    marginEnd: 5,
-    paddingBottom: 10
+    width: '25%',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
   },
   rightContainer: {
-    flexDirection: 'row', 
-    flex: 1, 
-    justifyContent: 'flex-end'
-  }
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
 });
 
 export default style;

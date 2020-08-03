@@ -5,7 +5,7 @@ import { ScrollView, TouchableOpacity, Toast } from '@src/components/core';
 import LinkingService from '@src/services/linking';
 import { CopyIcon, OpenUrlIcon } from '@src/components/Icons';
 import PropTypes from 'prop-types';
-import { COLORS, UTILS } from '@src/styles';
+import { COLORS } from '@src/styles';
 import { TokenBasic } from '@src/components/Token';
 import { BtnInfo } from '@src/components/Button';
 import { useNavigation } from 'react-navigation-hooks';

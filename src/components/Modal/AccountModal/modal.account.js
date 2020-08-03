@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { isIOS } from '@src/utils/platform';
 import Header from './Header';

@@ -6,7 +6,7 @@ import styles from './style';
 import withHome from './Home.enhance';
 import Category from './features/Category';
 
-const Home = props => {
+const Home = (props) => {
   const { getHomeConfiguration, categories, isFetching } = props?.homeProps;
   return (
     <ScrollView
@@ -18,8 +18,11 @@ const Home = props => {
       )}
     >
       <View style={styles.contentContainer}>
-        {categories.map(category => (
-          <Category key={category?.id} {...{ ...category }} />
+        {categories.map((category, index) => (
+          <Category
+            key={category?.id}
+            {...{ ...category, firstChild: index === 0 }}
+          />
         ))}
       </View>
     </ScrollView>

@@ -64,12 +64,15 @@ export default {
     const amount = toNumber(humanAmount);
     checkAmount(amount);
 
+    // Use big number to solve float calculation problem
+    // For example: 0.5000001 * 1e9 = 500000099.99999994
+    // The result should be 500000100
     const decision_rate = Number(decimals) ? 10 ** Number(decimals) : 1;
     if (round) {
-      return Math.floor(amount * decision_rate);
+      return Math.floor(BigNumber(amount).multipliedBy(BigNumber(decision_rate)).toNumber());
     }
 
-    return amount * decision_rate;
+    return BigNumber(amount).multipliedBy(BigNumber(decision_rate)).toNumber();
   },
 
   toRealTokenValue(tokens, tokenId, value) {

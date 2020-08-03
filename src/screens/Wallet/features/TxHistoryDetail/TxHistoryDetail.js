@@ -104,7 +104,8 @@ const TxHistoryDetail = (props) => {
         : CONSTANT_COMMONS.DECIMALS.MAIN_CRYPTO_CURRENCY,
     );
   const amountStr =
-    (history.amount && formatUtil.amount(history.amount, history.pDecimals)) ||
+    (history.amount &&
+      formatUtil.amount(history.amount, history.pDecimals, true)) ||
     formatUtil.number(history.requestedAmount);
 
   const historyFactories = [

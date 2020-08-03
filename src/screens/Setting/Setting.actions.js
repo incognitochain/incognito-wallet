@@ -4,6 +4,7 @@ import serverService from '@src/services/wallet/Server';
 import {
   ACTION_FETCHED_DEVICES,
   ACTION_FETCHED_SERVER,
+  ACTION_TOGGLE_DECIMAL_DIGITS,
 } from './Setting.constant';
 
 const actionFetchedDevices = (payload) => ({
@@ -14,6 +15,10 @@ const actionFetchedDevices = (payload) => ({
 const actionFetchedServer = (payload) => ({
   type: ACTION_FETCHED_SERVER,
   payload,
+});
+
+export const actionToggleDecimalDigits = () => ({
+  type: ACTION_TOGGLE_DECIMAL_DIGITS,
 });
 
 export const actionFetchDevices = () => async (dispatch, getState) => {

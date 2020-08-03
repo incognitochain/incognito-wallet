@@ -14,6 +14,7 @@ import { SectionItem } from './features/Section';
 import { settingSelector } from './Setting.selector';
 import { actionFetchServers } from './Setting.actions';
 import withSetting from './Setting.enhance';
+import DecimalDigitsSection from './features/DecimalDigitsSection';
 
 const Setting = () => {
   const navigation = useNavigation();
@@ -40,6 +41,7 @@ const Setting = () => {
           ))}
           <PINSection />
           <SeparatorSection />
+          <DecimalDigitsSection />
           <AddressBookSection />
           {global.isDebug() && <DevSection />}
         </View>

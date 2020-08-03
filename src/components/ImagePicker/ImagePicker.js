@@ -29,7 +29,7 @@ class ImagePicker extends Component {
           <Text style={styles.text}>{text || 'Upload your image'}</Text>
           <View style={styles.hook}>
             {uri ? (
-              <Image style={styles.image} source={uri} />
+              <Image style={styles.image} source={{ uri }} />
             ) : (
               <View style={styles.circle} />
             )}

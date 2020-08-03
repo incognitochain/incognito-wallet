@@ -17,13 +17,7 @@ import format from '@src/utils/format';
 import { switchAccount } from '@src/redux/actions/account';
 import PropTypes from 'prop-types';
 import srcAccountIcon from '@src/assets/images/icons/account_staking_pool.png';
-import {
-  activeFlowSelector,
-} from '@screens/Stake/stake.selector';
-import { DEPOSIT_FLOW, WITHDRAW_FLOW } from '@screens/Stake/stake.constant';
 import { ExHandler } from '@src/services/exception';
-import { CONSTANT_COMMONS } from '@src/constants';
-import LogManager from '@src/services/LogManager';
 import withChoseAccount from './ChooseAccount.enhance';
 
 const styled = StyleSheet.create({
@@ -72,8 +66,7 @@ const Account = props => {
   const { account, lastChild, isLoadingBalance, onSelectAccount } = props;
   const dispatch = useDispatch();
   const selectedPrivacy = useSelector(selectedPrivacySeleclor.getPrivacyDataBaseOnAccount)(account);
-  const { symbol, tokenId, pDecimals, amount } = selectedPrivacy;
-  const { activeFlow } = useSelector(activeFlowSelector);
+  const { symbol, pDecimals, amount } = selectedPrivacy;
   const shouldShowBalance = true;
   const onChooseAccount = async (name) => {
     try {

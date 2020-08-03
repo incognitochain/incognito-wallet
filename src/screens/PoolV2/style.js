@@ -15,7 +15,7 @@ export default StyleSheet.create({
   },
   coinName: {
     fontFamily: FONT.NAME.bold,
-    fontSize: 18,
+    fontSize: 20,
     marginBottom: UTILS.heightScale(8),
   },
   coinInterest: {
@@ -32,6 +32,9 @@ export default StyleSheet.create({
   },
   textRight: {
     textAlign: 'right',
+  },
+  justifyRight: {
+    justifyContent: 'flex-end',
   },
   button: {
     backgroundColor: COLORS.green2,

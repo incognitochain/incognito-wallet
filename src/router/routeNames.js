@@ -49,10 +49,6 @@ export default {
   NodeHelp: 'NodeHelp',
   WhySend: 'WhySend',
   WhyReceive: 'WhyReceive',
-  Stake: 'Stake',
-  StakeHistory: 'StakeHistory',
-  StakeRecoverAccount: 'StakeRecoverAccount',
-  StakeHistoryDetail: 'StakeHistoryDetail',
   PriceChartCrypto: 'PriceChartCrypto',
   BuyNodeScreen: 'BuyNodeScreen',
   PaymentBuyNodeScreen: 'PaymentBuyNodeScreen',
@@ -78,7 +74,7 @@ export default {
   CoinInfo: 'CoinInfo',
   Keychain: 'Keychain',
   CoinInfoVerify: 'CoinInfoVerify',
-  PoolV2: 'PoolV2',
+  PoolV2: 'Stake',
   PoolV2Help: 'PoolV2Help',
   PoolV2ProvideSelectCoin: 'PoolV2ProvideSelectCoin',
   PoolV2ProvideInput: 'PoolV2ProvideInput',
@@ -86,9 +82,10 @@ export default {
   PoolV2WithdrawSelectCoin: 'PoolV2WithdrawSelectCoin',
   PoolV2WithdrawRewards: 'PoolV2WithdrawRewards',
   PoolV2WithdrawProvision: 'PoolV2WithdrawProvision',
-  PoolV2History: 'PoolV2History',
-  PoolV2HistoryDetail: 'PoolV2HistoryDetail',
   NodeBuyHelp: 'NodeBuyHelp',
   DestinationBuyNode: 'DestinationBuyNode',
-  NodeItemsHelp: 'NodeItemsHelp'
+  NodeItemsHelp: 'NodeItemsHelp',
+  PoolV2History: 'StakeHistory',
+  PoolV2HistoryDetail: 'StakeHistoryDetail',
+  News: 'News'
 };

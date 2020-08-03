@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { FONT, COLORS, UTILS } from '@src/styles';
+import { FONT, COLORS } from '@src/styles';
 
 export const styled = StyleSheet.create({
   container: {
@@ -9,6 +9,7 @@ export const styled = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     marginBottom: 25,
+    alignItems: 'center',
   },
   label: {
     fontFamily: FONT.NAME.medium,
@@ -30,7 +31,7 @@ export const styled = StyleSheet.create({
     lineHeight: FONT.SIZE.medium + 4,
     color: COLORS.black,
     flex: 5,
-    paddingRight: 10,
+    paddingRight: 5,
     textAlign: 'left',
   },
   verified: {

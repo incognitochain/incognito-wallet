@@ -45,7 +45,7 @@ const SelectCoin = ({
                   <ActivityIndicator />
                 }
               </Row>
-              <Text style={mainStyle.coinInterest}>{coin.displayInterest}</Text>
+              <Text style={mainStyle.coinExtra}>{coin.displayInterest}</Text>
             </View>
           </TouchableOpacity>
         ))}

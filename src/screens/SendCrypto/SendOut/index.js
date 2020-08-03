@@ -9,13 +9,13 @@ import { ExHandler } from '@services/exception';
 import tokenService from '@services/wallet/tokenService';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import LoadingContainer from '@components/LoadingContainer';
 import { change as rfOnChangeValue, focus } from 'redux-form';
 import routeNames from '@src/router/routeNames';
 import { withdrawReceiversSelector } from '@src/redux/selectors/receivers';
 import { HEADER_TITLE_RECEIVERS } from '@src/redux/types/receivers';
-import LocalDatabase from '@utils/LocalDatabase';
+import { KEY_SAVE } from '@utils/LocalDatabase';
 import {
   selectedPrivacySeleclor,
   sharedSeleclor,
@@ -29,13 +29,21 @@ import {
   actionInit,
 } from '@src/components/EstimateFee/EstimateFee.actions';
 import convert from '@src/utils/convert';
+import accountService from '@services/wallet/accountService';
+import { MESSAGES } from '@screens/Dex/constants';
+import Toast from '@components/core/Toast/Toast';
+import {
+  actionAddStorageData,
+  actionRemoveStorageData,
+} from '@screens/UnShield';
+import ErrorBoundary from '@src/components/ErrorBoundary';
+import { compose } from 'recompose';
 import Withdraw, { formName } from './Withdraw';
 
 class WithdrawContainer extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
   }
-
   async componentDidMount() {
     const {
       selectedPrivacy,
@@ -82,6 +90,7 @@ class WithdrawContainer extends Component {
         originalFee,
         isUsedPRVFee,
         feeForBurn,
+        memo,
       } = payload;
       const { account, wallet, selectedPrivacy } = this.props;
       const type = CONSTANT_COMMONS.TOKEN_TX_TYPE.SEND;
@@ -110,6 +119,7 @@ class WithdrawContainer extends Component {
         wallet,
         isUsedPRVFee ? paymentInfo : null,
         isUsedPRVFee ? 0 : originalFee,
+        memo,
       );
       if (res.txId) {
         return res;
@@ -186,8 +196,36 @@ class WithdrawContainer extends Component {
         isUsedPRVFee,
         remoteAddress,
         memo,
+        originalAmount,
         originalFee,
       } = payload;
+      const { account, wallet, selectedPrivacy } = this.props;
+
+      const prvFee = isUsedPRVFee ? originalFee : 0;
+      const tokenFee = isUsedPRVFee ? 0 : originalFee;
+
+      let spendingPRV;
+      let spendingCoin;
+
+      if (prvFee) {
+        spendingPRV = await accountService.hasSpendingCoins(
+          account,
+          wallet,
+          prvFee,
+        );
+      }
+
+      spendingCoin = await accountService.hasSpendingCoins(
+        account,
+        wallet,
+        originalAmount + tokenFee,
+        selectedPrivacy.tokenId,
+      );
+
+      if (spendingCoin || spendingPRV) {
+        return Toast.showError(MESSAGES.PENDING_TRANSACTIONS);
+      }
+
       const tempAddress = await this.getWithdrawAddress({
         amount,
         paymentAddress: remoteAddress,
@@ -211,7 +249,7 @@ class WithdrawContainer extends Component {
 
   handleDecentralizedWithdraw = async (payload = {}) => {
     try {
-      const { selectedPrivacy } = this.props;
+      const { selectedPrivacy, addStorageData, removeStorageData } = this.props;
       const { amount, originalAmount, remoteAddress } = payload;
       const tx = await this.handleBurningToken(payload);
       const data = {
@@ -226,9 +264,15 @@ class WithdrawContainer extends Component {
         isErc20Token: selectedPrivacy?.isErc20Token,
         externalSymbol: selectedPrivacy?.externalSymbol,
       };
-      await LocalDatabase.addWithdrawalData(data);
+      await addStorageData({
+        keySave: KEY_SAVE.WITHDRAWAL_DATA_DECENTRALIZED,
+        tx: data,
+      });
       await withdraw(data);
-      await LocalDatabase.removeWithdrawalData(data.burningTxId);
+      await removeStorageData({
+        keySave: KEY_SAVE.WITHDRAWAL_DATA_DECENTRALIZED,
+        burningTxId: data?.burningTxId,
+      });
       return tx;
     } catch (e) {
       throw e;
@@ -257,7 +301,6 @@ class WithdrawContainer extends Component {
 
   render() {
     const { selectedPrivacy, estimateFee } = this.props;
-
     if (!estimateFee.init || !selectedPrivacy) {
       return <LoadingContainer />;
     }
@@ -294,6 +337,8 @@ const mapDispatch = {
   actionFetchedMaxFeePToken,
   actionInit,
   focus,
+  actionAddStorageData,
+  actionRemoveStorageData,
 };
 
 WithdrawContainer.defaultProps = {
@@ -319,9 +364,29 @@ WithdrawContainer.propTypes = {
   actionFetchedMaxFeePToken: PropTypes.func.isRequired,
   actionInit: PropTypes.func.isRequired,
   focus: PropTypes.func.isRequired,
+  actionAddStorageData: PropTypes.func.isRequired,
+  actionRemoveStorageData: PropTypes.func.isRequired,
+  addStorageData: PropTypes.func.isRequired,
+  removeStorageData: PropTypes.func.isRequired,
 };
 
-export default connect(
-  mapState,
-  mapDispatch,
+const enhance = (WrappedComp) => (props) => {
+  const dispatch = useDispatch();
+  const addStorageData = async (payload) =>
+    await dispatch(actionAddStorageData(payload));
+  const removeStorageData = async (payload) =>
+    await dispatch(actionRemoveStorageData(payload));
+  return (
+    <ErrorBoundary>
+      <WrappedComp {...{ ...props, addStorageData, removeStorageData }} />
+    </ErrorBoundary>
+  );
+};
+
+export default compose(
+  enhance,
+  connect(
+    mapState,
+    mapDispatch,
+  ),
 )(WithdrawContainer);

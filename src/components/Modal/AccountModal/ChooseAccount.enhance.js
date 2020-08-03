@@ -3,8 +3,6 @@ import { StyleSheet, View } from 'react-native';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { useDispatch } from 'react-redux';
 import { actionLoadAllBalance } from '@src/redux/actions/account';
-import { activeFlowSelector } from '@screens/Stake/stake.selector';
-import { DEPOSIT_FLOW } from '@screens/Stake/stake.constant';
 import { COLORS } from '@src/styles';
 import { Toast } from '@src/components/core';
 

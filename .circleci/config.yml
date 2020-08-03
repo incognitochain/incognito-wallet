@@ -13,7 +13,7 @@ commands:
         - run:
             name: Login appcenter
             command: |
-              npm install appcenter-cli -g
+              npm install appcenter-cli@2.6.3 -g
               appcenter login --token $CODEPUSH_ACCESS_TOKEN --disable-telemetry
 jobs:
   checkout_code:
@@ -122,6 +122,55 @@ jobs:
       - get_app_info
       - run: yarn deployIOS:next
       - run: curl -X POST -H 'Content-type:application/json' --data '{"text":"'"Deploy iOS $APP_VERSION next release successfully! $LAST_COMMIT_MESSAGE"'"}' $SLACK_HOOK
+  push_android_production:
+    executor:
+      name: rn/linux_android
+    steps:
+      - attach_workspace:
+          at: .
+      - login_appcenter
+      - get_app_info
+      - run: yarn deployAndroid:prod
+      - run: curl -X POST -H "Content-type:application/json" --data '{"text":"'"Deploy Android $APP_VERSION production successfully! $LAST_COMMIT_MESSAGE"'"}' $SLACK_HOOK
+  push_ios_production:
+    executor:
+      name: rn/linux_android
+    steps:
+      - attach_workspace:
+          at: .
+      - login_appcenter
+      - get_app_info
+      - run: yarn deployIOS:prod
+      - run: curl -X POST -H 'Content-type:application/json' --data '{"text":"'"Deploy iOS $APP_VERSION production successfully! $LAST_COMMIT_MESSAGE"'"}' $SLACK_HOOK
+  push_play_store:
+    executor:
+      name: rn/linux_android
+    steps:
+      - attach_workspace:
+          at: .
+      - get_app_info
+      - run: bundle install
+      - run: bundle exec fastlane android release
+      - run: chmod +x .circleci/slack-upload.sh
+      - run: cp android/app/build/outputs/apk/release/app-release.apk ./$APP_VERSION.apk
+      - run: bash .circleci/slack-upload.sh -f ./$APP_VERSION.apk -c '$SLACK_CHANNEL' -s $SLACK_API_KEY -n "$APP_VERSION" -x "\"$LAST_COMMIT_MESSAGE\""
+  push_app_store:
+    macos:
+      xcode: 11.3.0
+    steps:
+      - attach_workspace:
+          at: .
+      - get_app_info
+      - run: bundle install
+      - run: |
+          cd ios
+          pod install
+      - run: brew update
+      - run: brew install watchman
+      - run: bundle exec fastlane ios release
+      - run: chmod +x .circleci/slack-upload.sh
+      - run: curl -X POST -H 'Content-type:application/json' --data '{"text":"'"Push iOS $APP_VERSION to the app store successfully!"'"}' $SLACK_HOOK
+
 orbs:
   rn: react-native-community/react-native@4.1.0
 version: 2.1
@@ -197,3 +246,35 @@ workflows:
         - push_ios_next:
             requires:
               - generate_data
+  store:
+    jobs:
+      - checkout_code:
+          filters:
+            branches:
+              only:
+                - store
+      - generate_data:
+          requires:
+            - checkout_code
+      - push_app_store:
+          requires:
+            - generate_data
+      - push_play_store:
+          requires:
+            - generate_data
+  push_production:
+    jobs:
+      - checkout_code:
+          filters:
+            branches:
+              only:
+                - master
+      - generate_data:
+          requires:
+            - checkout_code
+      - push_android_production:
+          requires:
+            - generate_data
+      - push_ios_production:
+          requires:
+            - generate_data

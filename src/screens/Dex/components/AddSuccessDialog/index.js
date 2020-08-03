@@ -30,8 +30,8 @@ class AddSuccessDialog extends React.Component {
               {MESSAGES.ADD_LIQUIDITY_SUCCESS_TITLE}
             </Text>
             <Text style={mainStyle.dialogDesc}>
-            You added {formatUtil.amountFull(inputValue, inputToken.pDecimals)} {inputToken.symbol}
-            &nbsp;and {formatUtil.amountFull(outputValue, outputToken.pDecimals)} {outputToken.symbol}.
+            You added {formatUtil.amountFull(inputValue, inputToken.pDecimals)} {inputToken?.symbol}
+            &nbsp;and {formatUtil.amountFull(outputValue, outputToken.pDecimals)} {outputToken?.symbol}.
             </Text>
             <Text style={mainStyle.extraInfo}>
               {MESSAGES.ADD_LIQUIDITY_SUCCESS}

@@ -9,17 +9,16 @@ import {
   actionFetchHistoryToken,
 } from '@src/redux/actions/token';
 import { selectedPrivacySeleclor } from '@src/redux/selectors';
-import { useIsFocused } from 'react-navigation-hooks';
-import { defaultAccountNameSelector } from '@src/redux/selectors/account';
+import { useFocusEffect } from 'react-navigation-hooks';
+import withWallet from '@screens/Wallet/features/Home/Wallet.enhance';
 
 const enhance = (WrappedComp) => (props) => {
+  const { tryLastWithdrawal } = props;
   const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
   const token = useSelector(
     selectedPrivacySeleclor.selectedPrivacyByFollowedSelector,
   );
-  const account = useSelector(defaultAccountNameSelector);
   const dispatch = useDispatch();
-  const isFocused = useIsFocused();
   const handleLoadHistory = async () => {
     try {
       if (selectedPrivacy?.isMainCrypto) {
@@ -32,11 +31,12 @@ const enhance = (WrappedComp) => (props) => {
       new ExHandler(error).showErrorToast();
     }
   };
-  React.useEffect(() => {
-    if (isFocused && selectedPrivacy?.tokenId) {
+  useFocusEffect(
+    React.useCallback(() => {
+      tryLastWithdrawal();
       handleLoadHistory();
-    }
-  }, [selectedPrivacy?.tokenId, token?.id, isFocused, account]);
+    }, []),
+  );
   return (
     <ErrorBoundary>
       <WrappedComp {...{ ...props, handleLoadHistory }} />
@@ -46,5 +46,6 @@ const enhance = (WrappedComp) => (props) => {
 
 export default compose(
   withLayout_2,
+  withWallet,
   enhance,
 );

@@ -51,14 +51,14 @@ const Provide = ({
         </Row>
         <Text style={mainStyle.error}>{error}</Text>
         <RoundCornerButton
-          title="Withdraw rewards"
+          title="Withdraw provisions"
           style={[mainStyle.button, styles.button]}
           onPress={onConfirm}
           disabled={!!error || !inputText}
         />
         <ExtraInfo
           left="Balance"
-          right={`${coin.displayBalance} ${coin.symbol}`}
+          right={`${coin.displayFullBalance} ${coin.symbol}`}
           style={mainStyle.coinExtra}
         />
         <Text style={mainStyle.coinExtra}>

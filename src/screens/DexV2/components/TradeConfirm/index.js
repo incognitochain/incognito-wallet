@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
-import { View, Text, RoundCornerButton, ScrollView } from '@components/core';
+import { View, Text, RoundCornerButton, ScrollView, FlexView } from '@components/core';
 import Balance from '@screens/DexV2/components/Balance';
 import ExtraInfo from '@screens/DexV2/components/ExtraInfo';
 import format from '@utils/format';
@@ -35,11 +35,12 @@ const Trade = ({
   warning,
   isErc20,
   pair,
+  quote,
 }) => {
   return (
-    <View>
+    <FlexView>
       <Header title="Order preview" />
-      <ScrollView>
+      <ScrollView paddingBottom>
         <View style={styles.mainInfo}>
           <Text style={styles.bigText}>Buy at least</Text>
           <Text style={styles.bigText} numberOfLines={3}>{format.amountFull(minimumAmount, outputToken.pDecimals)} {outputToken.symbol}</Text>
@@ -97,7 +98,7 @@ const Trade = ({
           />
         </>
         )}
-        <Powered network={isErc20 ? 'Kyber' : 'Incognito'} />
+        <Powered network={isErc20 ? quote?.protocol : 'Incognito'} />
         {!!warning && <ExtraInfo left={warning} right="" style={styles.warning} />}
         {!!error && <Text style={styles.error}>{error}</Text>}
         <RoundCornerButton
@@ -108,7 +109,7 @@ const Trade = ({
         />
       </ScrollView>
       <Loading open={trading} />
-    </View>
+    </FlexView>
   );
 };
 
@@ -129,6 +130,7 @@ Trade.propTypes = {
   warning: PropTypes.string,
   isErc20: PropTypes.bool,
   pair: PropTypes.object,
+  quote: PropTypes.object,
 };
 
 Trade.defaultProps = {
@@ -141,6 +143,7 @@ Trade.defaultProps = {
   warning: '',
   isErc20: false,
   pair: null,
+  quote: null,
 };
 
 export default compose(

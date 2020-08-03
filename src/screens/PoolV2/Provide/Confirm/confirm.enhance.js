@@ -6,6 +6,7 @@ import { ExHandler } from '@services/exception';
 import accountService from '@services/wallet/accountService';
 import { provide } from '@services/api/pool';
 import { getSignPublicKey } from '@services/gomobile';
+import LocalDatabase from '@utils/LocalDatabase';
 
 const withConfirm = WrappedComp => (props) => {
   const [error, setError] = React.useState('');
@@ -49,6 +50,7 @@ const withConfirm = WrappedComp => (props) => {
       }
 
       const signPublicKeyEncode = await getSignPublicKey(account.PrivateKey);
+      const txs = await LocalDatabase.getProvideTxs();
       const result = await accountService.createAndSendToken(
         account,
         wallet,
@@ -60,7 +62,16 @@ const withConfirm = WrappedComp => (props) => {
       );
 
       if (result && result.txId) {
+        txs.push({
+          paymentAddress: account.PaymentAddress,
+          txId: result.txId,
+          signPublicKeyEncode,
+          value
+        });
+        await LocalDatabase.saveProvideTxs(txs);
         await provide(account.PaymentAddress, result.txId, signPublicKeyEncode, value);
+        txs.splice(txs.length - 1, 1);
+        await LocalDatabase.saveProvideTxs(txs);
         onSuccess(true);
       }
     } catch (error) {

@@ -14,7 +14,7 @@ const withCoinData = WrappedComp => (props) => {
         coin,
         inputToken: coin,
         inputBalance: coin.balance,
-        inputMin: coin.id === COINS.PRV_ID ? MAX_FEE_PER_TX : coin.min,
+        inputMin: (coin.id === COINS.PRV_ID ? coin.min + MAX_FEE_PER_TX : coin.min) || MAX_FEE_PER_TX,
         fee: MAX_FEE_PER_TX,
         feeToken: COINS.PRV,
         prvBalance,

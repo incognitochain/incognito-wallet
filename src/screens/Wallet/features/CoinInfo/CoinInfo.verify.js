@@ -59,7 +59,7 @@ const NormalText = ({ text, sub }) => (
   </Text>
 );
 
-const CoinInfoUnVerified = () => {
+const CoinInfoVerified = () => {
   return (
     <View style={styled.extra}>
       <NormalText text="Genuine coins that originate from an external blockchain (Ethereum, Bitcoin, Binance, etc.) are automatically verified." />
@@ -68,7 +68,7 @@ const CoinInfoUnVerified = () => {
   );
 };
 
-const CoinInfoVerified = () => {
+const CoinInfoUnVerified = () => {
   return (
     <View style={styled.extra}>
       <NormalText text="If you are shielding a coin or adding it to your list, look out for the verified symbol to make sure you have the correct coin you are looking for." />

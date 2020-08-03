@@ -8,7 +8,10 @@ const withSuccess = WrappedComp => (props) => {
   const [success, setSuccess] = React.useState(false);
   const navigation = useNavigation();
 
-  const { displayFullTotalRewards } = props;
+  const {
+    displayFullTotalRewards,
+    account,
+  } = props;
 
   const closeSuccess = () => {
     setSuccess(false);
@@ -27,7 +30,7 @@ const withSuccess = WrappedComp => (props) => {
         closeSuccessDialog={closeSuccess}
         title="Withdrawal successful."
         buttonTitle="Back to dashboard"
-        description={`${displayFullTotalRewards} PRV in provider rewards has been withdrawn to Anon.`}
+        description={`${displayFullTotalRewards} PRV in provider rewards has been withdrawn to ${account.name || account.AccountName}.`}
         extraInfo="Please wait for your balance to update."
         visible={success}
         buttonStyle={mainStyle.button}

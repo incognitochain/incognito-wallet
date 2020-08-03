@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { compose } from 'recompose';
-import { View, Text, TouchableOpacity } from '@components/core';
+import { View, Text, TouchableOpacity, ActivityIndicator } from '@components/core';
 import { withLayout_2 } from '@components/Layout';
 import Header from '@components/Header/index';
 import { VirtualizedList } from 'react-native';
@@ -21,6 +21,7 @@ const History = ({
   isLoadingHistories,
   onReloadHistories,
   onLoadMoreHistories,
+  isLoadingMoreHistories,
 }) => {
   const navigation = useNavigation();
   const viewDetail = (item) => {
@@ -33,13 +34,17 @@ const History = ({
       <Text style={styles.buttonTitle}>{item.type}</Text>
       <View style={styles.row}>
         <Text style={[styles.content, styles.ellipsis]} numberOfLines={1}>{item.description}</Text>
-        <View style={[styles.row, styles.center]}>
-          <Text style={styles.content} numberOfLines={1}>{item.status}</Text>
+        <View style={[styles.row, styles.center, styles.status]}>
+          <Text style={[styles.content]} numberOfLines={1}>{item.status}</Text>
           <ArrowRightGreyIcon style={{ marginLeft: 10 }} />
         </View>
       </View>
     </TouchableOpacity>
   );
+
+  const renderFooter = () => isLoadingMoreHistories ?
+    <ActivityIndicator /> : null;
+
 
   return (
     <View style={styles.wrapper}>
@@ -58,6 +63,7 @@ const History = ({
             onEndReachedThreshold={0.1}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
+            ListFooterComponent={renderFooter}
           />
         ) : <LoadingContainer /> }
       </View>
@@ -68,11 +74,13 @@ const History = ({
 History.propTypes = {
   histories: PropTypes.array,
   isLoadingHistories: PropTypes.bool,
+  isLoadingMoreHistories: PropTypes.bool,
 };
 
 History.defaultProps = {
   histories: null,
   isLoadingHistories: false,
+  isLoadingMoreHistories: false,
 };
 
 export default compose(

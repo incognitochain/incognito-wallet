@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { getHistories } from '@services/api/pool';
 import { ExHandler } from '@services/exception';
 import { MESSAGES } from '@src/constants';
-import { useFocusEffect, useNavigationParam } from 'react-navigation-hooks';
+import { useNavigationParam } from 'react-navigation-hooks';
 import { LIMIT } from './constants';
 
 const withHistories = WrappedComp => (props) => {
@@ -12,29 +12,24 @@ const withHistories = WrappedComp => (props) => {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(null);
   const coins = useNavigationParam('coins');
-
-  useFocusEffect(useCallback(() => {
-    reload();
-  }, []));
-
   const { account } = props;
 
-  const reload = () => {
+  const reload = (force = false) => {
     if (!loading) {
+      if (force) {
+        setHistories([]);
+      }
+
+      debounceLoadHistories.cancel();
       if (page !== 1) {
         setPage(1);
       } else {
-        debounceLoadHistories.cancel();
-        loadHistories(account, page);
+        loadHistories(account, page, total, force ? [] : histories);
       }
     }
   };
 
   const loadHistories = async (account, page, total, histories) => {
-    if (total !== null && histories?.length >= total) {
-      return;
-    }
-
     try {
       setLoading(true);
       const data = await getHistories(account, page, LIMIT, coins || []);
@@ -46,8 +41,13 @@ const withHistories = WrappedComp => (props) => {
         .uniqBy(item => item.id)
         .value();
 
-      setTotal(data.total);
-      setHistories(mergedData);
+      if (_.first(mergedData)?.paymentAddress === account.PaymentAddress) {
+        setTotal(data.total);
+        setHistories(mergedData);
+      } else {
+        setTotal(0);
+        setHistories([]);
+      }
     } catch (error) {
       new ExHandler(error, MESSAGES.CAN_NOT_GET_POOL_HISTORIES).showErrorToast();
     } finally {
@@ -57,13 +57,15 @@ const withHistories = WrappedComp => (props) => {
 
   const loadMore = () => {
     if (!loading) {
-      setPage(page + 1);
+      setPage(Math.floor(histories.length / LIMIT) + 1);
     }
   };
 
   const debounceLoadHistories = useCallback(_.debounce(loadHistories, 200), [histories]);
 
   React.useEffect(() => {
+    console.debug('LOAD EFFECT', account.name, total, histories.length);
+
     setHistories([]);
     debounceLoadHistories.cancel();
     debounceLoadHistories(account, 1, null, []);
@@ -81,7 +83,8 @@ const withHistories = WrappedComp => (props) => {
       {...{
         ...props,
         histories,
-        isLoadingHistories: loading,
+        isLoadingHistories: page <= 1 && loading,
+        isLoadingMoreHistories: page > 1 && loading,
         onLoadMoreHistories: loadMore,
         onReloadHistories: reload,
       }}

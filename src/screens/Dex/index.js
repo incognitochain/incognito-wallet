@@ -11,7 +11,7 @@ import { getTokenList } from '@services/api/token';
 import { getPDEPairs } from '@services/wallet/RpcClientService';
 import tokenService from '@services/wallet/tokenService';
 import _ from 'lodash';
-import {PRIORITY_LIST} from '@screens/Dex/constants';
+import { MESSAGES, PRIORITY_LIST } from '@screens/Dex/constants';
 import {CustomError, ErrorCode, ExHandler} from '@services/exception';
 import {accountSeleclor, selectedPrivacySeleclor} from '@src/redux/selectors';
 import convertUtil from '@utils/convert';
@@ -154,7 +154,7 @@ class DexContainer extends Component {
 const mapState = state => ({
   account: accountSeleclor.defaultAccount(state),
   wallet: state.wallet,
-  histories: state.dex.histories,
+  histories: state.dex.histories.filter(item => item.type !== MESSAGES.TRADE),
   selectPrivacyByTokenID: selectedPrivacySeleclor.getPrivacyDataByTokenID(state),
 });
 

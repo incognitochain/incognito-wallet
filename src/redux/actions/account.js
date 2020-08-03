@@ -199,36 +199,37 @@ export const reloadAccountFollowingToken = (
   }
 };
 
-export const followDefaultTokens = (
-  account = throw new Error('Account object is required'),
-  pTokenList,
-) => async (dispatch, getState) => {
+export const followDefaultTokens = (account, pTokenList) => async (
+  dispatch,
+  getState,
+) => {
   try {
+    if (!account) {
+      throw new Error('Account object is required');
+    }
     const state = getState();
     const wallet = state?.wallet;
-    const pTokens = pTokenList || tokenSeleclor.pTokens(state);
+    const pTokens = pTokenList
+      ? pTokenList
+      : tokenSeleclor.pTokensSelector(state);
 
     if (!wallet) {
       throw new Error('Wallet is not exist');
     }
-
     const defaultTokens = [];
     pTokens?.forEach((token) => {
       if (token.default) {
         defaultTokens.push(token.convertToToken());
       }
     });
-
-    if (defaultTokens?.length > 0) {
+    if (defaultTokens.length > 0) {
       await accountService.addFollowingTokens(defaultTokens, account, wallet);
     }
-
     // update wallet object to store
-    dispatch({
+    await dispatch({
       type: walletType.SET,
       data: wallet,
     });
-
     return defaultTokens;
   } catch (e) {
     throw e;
@@ -284,7 +285,7 @@ export const actionSwitchAccount = (
     if (defaultAccount?.name !== account?.name) {
       await dispatch(setDefaultAccount(account));
     }
-    await dispatch(actionReloadFollowingToken(shouldLoadBalance));
+    dispatch(actionReloadFollowingToken(shouldLoadBalance));
     return account;
   } catch (error) {
     throw Error(error);

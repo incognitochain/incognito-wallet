@@ -7,6 +7,7 @@ import { BtnDelete } from '@src/components/Button';
 import Header from '@src/components/Header';
 import srcNotFound from '@src/assets/images/icons/not_found_receiver.png';
 import { isIOS } from '@src/utils/platform';
+import debounce from 'lodash/debounce';
 import EmptyList from './FrequentReceivers.empty';
 import {
   styledModal as styled,
@@ -62,6 +63,7 @@ const List = ({
   shouldDisabledItem,
   styledContainer = null,
 }) => {
+  const onPressItem = (item) => debounce(() => onSelectedAddress(item), 300);
   return (
     <View style={[listStyled.container, styledContainer]}>
       <ScrollView>
@@ -73,7 +75,7 @@ const List = ({
               disabledSwipe,
               _onDelete: () => onDelete(item),
             }}
-            onPress={() => onSelectedAddress(item)}
+            onPress={onPressItem(item)}
             disabled={shouldDisabledItem}
             isLastChild={arr.length - 1 === key}
           />

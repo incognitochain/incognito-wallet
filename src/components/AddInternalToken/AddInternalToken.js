@@ -1,4 +1,10 @@
-import { Text, Button, View, Toast } from '@src/components/core';
+import {
+  Text,
+  Button,
+  View,
+  Toast,
+  KeyboardAwareScrollView,
+} from '@src/components/core';
 import LoadingTx from '@src/components/LoadingTx';
 import { Field, change, isValid, formValueSelector } from 'redux-form';
 import {
@@ -34,7 +40,7 @@ const Form = createForm(formName, { initialValues });
 const descriptionMaxLength = validator.maxLength(255);
 const isEmail = validator.email();
 const imageValidate = [
-  validator.fileTypes(['jpeg/png']),
+  validator.fileTypes(['jpeg', 'png']),
   validator.maxFileSize(50),
 ];
 
@@ -72,10 +78,10 @@ class AddInternalToken extends Component {
 
   goBack = () => {
     const { navigation } = this.props;
-    navigation?.navigate(ROUTES_NAME.Wallet);
+    navigation?.navigate(ROUTES_NAME.Home);
   };
 
-  handleSaveCoinInfo = async data => {
+  handleSaveCoinInfo = async (data) => {
     try {
       return await addTokenInfo(data);
     } catch (e) {
@@ -87,7 +93,7 @@ class AddInternalToken extends Component {
   };
 
   // estimate fee when user update isPrivacy or amount, and toAddress is not null
-  handleEstimateFee = async values => {
+  handleEstimateFee = async (values) => {
     const { account, wallet } = this.props;
 
     const { fromAddress, toAddress, name, symbol, amount } = values;
@@ -125,7 +131,7 @@ class AddInternalToken extends Component {
     }
   };
 
-  handleCreateSendToken = async values => {
+  handleCreateSendToken = async (values) => {
     const { account, wallet, setWallet, getInternalTokenList } = this.props;
 
     const {
@@ -244,10 +250,10 @@ class AddInternalToken extends Component {
       !isGettingFee && typeof fee === 'number' && !isNotEnoughFee;
     const disabled = !isCanSubmit;
     return (
-      <View style={styleSheet.container}>
-        <Form style={styleSheet.form}>
+      <KeyboardAwareScrollView>
+        <Form>
           {({ handleSubmit, submitting }) => (
-            <>
+            <View style={styleSheet.container}>
               <View style={styleSheet.fields}>
                 <View style={[styleSheet.block, { marginTop: 0 }]}>
                   <Field
@@ -395,11 +401,11 @@ class AddInternalToken extends Component {
                 isAsync
                 isLoading={isGettingFee || submitting}
               />
-            </>
+            </View>
           )}
         </Form>
         {isCreatingOrSending && <LoadingTx />}
-      </View>
+      </KeyboardAwareScrollView>
     );
   }
 }
@@ -430,7 +436,7 @@ const mapDispatch = {
   getInternalTokenList,
 };
 
-const mapState = state => ({
+const mapState = (state) => ({
   amount: selector(state, 'amount'),
   name: selector(state, 'name'),
   symbol: selector(state, 'symbol'),

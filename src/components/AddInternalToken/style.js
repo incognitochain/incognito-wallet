@@ -1,9 +1,11 @@
 import { FONT, THEME, COLORS } from '@src/styles';
 import { StyleSheet } from 'react-native';
+import { isIOS } from '@src/utils/platform';
 
 const style = StyleSheet.create({
   container: {
     flex: 1,
+    marginBottom: isIOS() ? 30 : 50,
   },
   form: {
     flex: 1,
@@ -50,9 +52,9 @@ const style = StyleSheet.create({
     backgroundColor: COLORS.orange,
     height: 50,
   },
-  titleSubmitBtn:{
+  titleSubmitBtn: {
     fontFamily: FONT.NAME.medium,
-    fontSize: FONT.SIZE.superMedium
+    fontSize: FONT.SIZE.superMedium,
   },
   submitBtnDisabed: {
     opacity: 0.7,

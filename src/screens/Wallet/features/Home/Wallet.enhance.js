@@ -2,30 +2,34 @@ import React from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { useSelector, useDispatch } from 'react-redux';
 import { CustomError, ErrorCode, ExHandler } from '@src/services/exception';
-import { accountSeleclor, tokenSeleclor } from '@src/redux/selectors';
 import {
   getPTokenList,
   getInternalTokenList,
   actionRemoveFollowToken,
 } from '@src/redux/actions/token';
 import { actionReloadFollowingToken } from '@src/redux/actions/account';
-import storageService from '@src/services/storage';
-import { CONSTANT_KEYS, CONSTANT_COMMONS } from '@src/constants';
-import { countFollowToken } from '@src/services/api/token';
+import { CONSTANT_COMMONS } from '@src/constants';
 import { useNavigation } from 'react-navigation-hooks';
 import { setSelectedPrivacy } from '@src/redux/actions/selectedPrivacy';
 import routeNames from '@src/router/routeNames';
 import { Toast } from '@src/components/core';
 import { actionInit as actionInitEstimateFee } from '@components/EstimateFee/EstimateFee.actions';
 import { isGettingBalance as isGettingBalanceSelector } from '@src/redux/selectors/shared';
+import {
+  unShieldStorageDataSelector,
+  actionRemoveStorageData,
+} from '@src/screens/UnShield';
+import { KEY_SAVE } from '@src/utils/LocalDatabase';
+import { withdraw } from '@src/services/api/withdraw';
 
 export const WalletContext = React.createContext({});
 
 const enhance = (WrappedComp) => (props) => {
-  const account = useSelector(accountSeleclor.defaultAccount);
-  const tokens = useSelector(tokenSeleclor.tokensFollowedSelector);
   const wallet = useSelector((state) => state?.wallet);
   const isGettingBalance = useSelector(isGettingBalanceSelector);
+  const txs = useSelector(unShieldStorageDataSelector)(
+    KEY_SAVE.WITHDRAWAL_DATA_DECENTRALIZED,
+  );
   const dispatch = useDispatch();
   const [state, setState] = React.useState({
     isReloading: false,
@@ -47,36 +51,15 @@ const enhance = (WrappedComp) => (props) => {
   const fetchData = async (reload = false) => {
     try {
       await setState({ isReloading: true });
-      let tasks = [getFollowingToken(), handleCountFollowedToken()];
+      getFollowingToken();
       if (reload) {
-        tasks = [
-          ...tasks,
-          dispatch(getPTokenList()),
-          dispatch(getInternalTokenList()),
-        ];
+        dispatch(getPTokenList());
+        dispatch(getInternalTokenList());
       }
-      await Promise.all(tasks);
     } catch (error) {
       new ExHandler(error).showErrorToast();
     } finally {
       await setState({ isReloading: false });
-    }
-  };
-  const handleCountFollowedToken = async () => {
-    try {
-      const isChecked = !!JSON.parse(
-        await storageService.getItem(CONSTANT_KEYS.IS_CHECK_FOLLOWED_TOKEN),
-      );
-      const tokenIds = tokens.map((t) => t.id);
-      if (!isChecked) {
-        countFollowToken(tokenIds, account?.PublicKey).catch(null);
-        storageService.setItem(
-          CONSTANT_KEYS.IS_CHECK_FOLLOWED_TOKEN,
-          JSON.stringify(true),
-        );
-      }
-    } catch (e) {
-      new ExHandler(e);
     }
   };
   const handleExportKey = async () => {
@@ -94,6 +77,25 @@ const enhance = (WrappedComp) => (props) => {
     Toast.showSuccess('Add coin again to restore balance.', {
       duration: 500,
     });
+  };
+  const tryLastWithdrawal = async () => {
+    try {
+      txs.forEach(async (tx) => {
+        if (tx) {
+          await new Promise.all([
+            withdraw(tx),
+            dispatch(
+              actionRemoveStorageData({
+                keySave: KEY_SAVE.WITHDRAWAL_DATA_DECENTRALIZED,
+                burningTxId: tx?.burningTxId,
+              }),
+            ),
+          ]);
+        }
+      });
+    } catch (e) {
+      console.log('error', e);
+    }
   };
   return (
     <ErrorBoundary>
@@ -123,6 +125,7 @@ const enhance = (WrappedComp) => (props) => {
             handleRemoveToken,
             clearWallet,
             getFollowingToken,
+            tryLastWithdrawal,
           }}
         />
       </WalletContext.Provider>

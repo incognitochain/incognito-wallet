@@ -1,14 +1,14 @@
 import React from 'react';
-import { Animated, BackHandler, Easing } from 'react-native';
+import { Animated, BackHandler, Easing, AppState } from 'react-native';
 import TouchID from 'react-native-touch-id';
 import PropTypes from 'prop-types';
-import { debounce } from 'lodash';
 import { View, Text, TouchableOpacity, Image } from '@src/components/core';
 import { connect } from 'react-redux';
 import { updatePin } from '@src/redux/actions/pin';
 import { Icon } from 'react-native-elements';
 import convertUtil from '@utils/convert';
 import icFaceId from '@src/assets/images/icons/ic_faceid.png';
+import routeNames from '@src/router/routeNames';
 import styles from './styles';
 
 export const TAG = 'AddPIN';
@@ -29,39 +29,77 @@ const optionalConfigObject = {
   passcodeFallback: false, // iOS - allows the device to fall back to using the passcode, if faceid/touch is not available. this does not mean that if touchid/faceid fails the first few times it will revert to passcode, rather that if the former are not enrolled, then it will use the passcode.
 };
 
+const initialState = {
+  pin1: '',
+  pin2: '',
+  nextPin: false,
+  bioSupportedType: null,
+  action: null,
+  appState: '',
+};
+
 class AddPIN extends React.Component {
   static waiting = false;
 
   constructor(props) {
     super(props);
-
     const { action } = props.navigation?.state?.params;
-
     this.state = {
-      pin1: '',
-      pin2: '',
-      nextPin: false,
-      bioSupportedType: null,
+      ...initialState,
       action,
     };
     this.animatedValue = new Animated.Value(0);
   }
 
+  resetPin = () => this.setState({ ...initialState });
+
   componentDidMount() {
-    this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
     this.checkTouchSupported();
+    AppState.addEventListener('change', this.handleAppStateChange);
   }
 
   componentWillUnmount() {
     this.backHandler.remove();
+    this.resetPin();
+    AppState.removeEventListener('change', this.handleAppStateChange);
   }
+
+  handleAppStateChange = async (nextAppState) => {
+    const { appState } = this.state;
+    if (
+      appState.match(/inactive|background|active/) &&
+      nextAppState === 'active'
+    ) {
+      this.setState({ pin1: '', pin2: '' });
+    }
+    await this.setState({ appState: nextAppState });
+  };
 
   handleAnimation = () => {
     Animated.sequence([
       // start rotation in one direction (only half the time is needed)
-      Animated.timing(this.animatedValue, {toValue: 1.0, duration: 50, easing: Easing.linear, useNativeDriver: true}),
-      Animated.timing(this.animatedValue, {toValue: -1.0, duration: 50, easing: Easing.linear, useNativeDriver: true}),
-      Animated.timing(this.animatedValue, {toValue: 0.0, duration: 50, easing: Easing.linear, useNativeDriver: true})
+      Animated.timing(this.animatedValue, {
+        toValue: 1.0,
+        duration: 50,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+      Animated.timing(this.animatedValue, {
+        toValue: -1.0,
+        duration: 50,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+      Animated.timing(this.animatedValue, {
+        toValue: 0.0,
+        duration: 50,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
     ]).start();
   };
 
@@ -70,7 +108,7 @@ class AddPIN extends React.Component {
     if (action === 'login' || action === 'remove') {
       TouchID.isSupported(optionalConfigObject)
         .then((biometryType) => {
-          this.setState({bioSupportedType: biometryType});
+          this.setState({ bioSupportedType: biometryType });
           this.handleBioAuth();
         })
         .catch(() => null);
@@ -109,7 +147,6 @@ class AddPIN extends React.Component {
     }
 
     if (currentPin.length === pinLength.length) {
-
       if (nextPin && pin1 !== currentPin) {
         // Toast.showError(MESSAGES.INCORRECT_PIN);
         this.handleAnimation();
@@ -119,7 +156,7 @@ class AddPIN extends React.Component {
         } else {
           this.updatePin(currentPin);
         }
-      } else if(nextPin) {
+      } else if (nextPin) {
         this.updatePin(currentPin);
       } else if (this.isCorrectPin(currentPin)) {
         if (action === 'remove') {
@@ -161,6 +198,7 @@ class AddPIN extends React.Component {
   };
 
   handleBioAuth = () => {
+    const { navigation } = this.props;
     TouchID.authenticate('', optionalConfigObject)
       .then(() => {
         const { action } = this.state;
@@ -170,7 +208,12 @@ class AddPIN extends React.Component {
           this.removeSuccess();
         }
       })
-      .catch(() => null);
+      .catch(() => {
+        //handle when type 'Cancel'
+        navigation.navigate(routeNames.AddPin, {
+          action: 'login',
+        });
+      });
   };
 
   renderTitle() {
@@ -196,45 +239,95 @@ class AddPIN extends React.Component {
 
     return (
       <View style={styles.container}>
-        { (action === 'login' || action === 'remove') && bioSupportedType && (
-          <TouchableOpacity style={styles.fingerprint} onPress={this.handleBioAuth} activeOpacity={opacity}>
-            {
-              bioSupportedType === 'FaceID' ? <Image source={icFaceId} style={[styles.icon, { height: 45, width: 45, resizeMode: 'contain' }]} />
-                :  <Icon containerStyle={styles.icon} type='material' name='fingerprint' size={50} />
-            }
+        {(action === 'login' || action === 'remove') && bioSupportedType && (
+          <TouchableOpacity
+            style={styles.fingerprint}
+            onPress={this.handleBioAuth}
+            activeOpacity={opacity}
+          >
+            {bioSupportedType === 'FaceID' ? (
+              <Image
+                source={icFaceId}
+                style={[
+                  styles.icon,
+                  { height: 45, width: 45, resizeMode: 'contain' },
+                ]}
+              />
+            ) : (
+              <Icon
+                containerStyle={styles.icon}
+                type="material"
+                name="fingerprint"
+                size={50}
+              />
+            )}
           </TouchableOpacity>
         )}
         {this.renderTitle()}
         <View style={styles.input}>
-          {pinLength.map(item =>
-            <View key={item} style={[styles.dot, userPin.length >= item && styles.active]} />
-          )}
+          {pinLength.map((item) => (
+            <View
+              key={item}
+              style={[styles.dot, userPin.length >= item && styles.active]}
+            />
+          ))}
         </View>
-        <Animated.View style={{
-          transform: [{
-            translateX: this.animatedValue.interpolate({
-              inputRange: [-1, 1],
-              outputRange: [-10, 10]
-            })
-          }]
-        }}
+        <Animated.View
+          style={{
+            transform: [
+              {
+                translateX: this.animatedValue.interpolate({
+                  inputRange: [-1, 1],
+                  outputRange: [-10, 10],
+                }),
+              },
+            ],
+          }}
         >
           <View style={styles.keyboard}>
-            {keys.map(key => (
-              <TouchableOpacity key={key} id={key} style={styles.key} onPress={() => this.handleInput(key)} activeOpacity={opacity}>
+            {keys.map((key) => (
+              <TouchableOpacity
+                key={key}
+                id={key}
+                style={styles.key}
+                onPress={() => this.handleInput(key)}
+                activeOpacity={opacity}
+              >
                 <Text style={styles.keyText}>{key}</Text>
               </TouchableOpacity>
             ))}
-            { action !== 'login' && (
-              <TouchableOpacity style={[styles.key]} onPress={() => navigation.goBack()} activeOpacity={opacity}>
-                <Icon containerStyle={styles.icon} type='material' name="chevron-left" size={35} />
+            {action !== 'login' && (
+              <TouchableOpacity
+                style={[styles.key]}
+                onPress={() => navigation.goBack()}
+                activeOpacity={opacity}
+              >
+                <Icon
+                  containerStyle={styles.icon}
+                  type="material"
+                  name="chevron-left"
+                  size={35}
+                />
               </TouchableOpacity>
             )}
-            <TouchableOpacity style={[styles.key, styles.lastKey]} onPress={() => this.handleInput('0')} activeOpacity={opacity}>
+            <TouchableOpacity
+              style={[styles.key, styles.lastKey]}
+              onPress={() => this.handleInput('0')}
+              activeOpacity={opacity}
+            >
               <Text style={styles.keyText}>0</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.key]} onPress={() => this.clearInput()} activeOpacity={opacity}>
-              <Icon containerStyle={styles.icon} type='material' name="backspace" size={20} />
+            <TouchableOpacity
+              style={[styles.key]}
+              onPress={() => this.clearInput()}
+              activeOpacity={opacity}
+            >
+              <Icon
+                containerStyle={styles.icon}
+                type="material"
+                name="backspace"
+                size={20}
+              />
             </TouchableOpacity>
           </View>
         </Animated.View>
@@ -253,7 +346,7 @@ AddPIN.defaultProps = {
   pin: '',
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   pin: state.pin.pin,
 });
 
@@ -261,5 +354,5 @@ const mapDispatchToProps = { updatePin };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(AddPIN);

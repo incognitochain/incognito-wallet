@@ -1,10 +1,9 @@
 import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import {activeFlowSelector} from '@screens/Stake/stake.selector';
-import {useSelector, useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {actionToggleModal} from '@src/components/Modal';
 import {FONT, COLORS, THEME} from '@src/styles';
-import {BtnClose, BtnBack} from '@src/components/Button';
+import {BtnClose} from '@src/components/Button';
 
 const styled = StyleSheet.create({
   container: {

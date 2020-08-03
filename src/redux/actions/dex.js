@@ -217,30 +217,6 @@ export const getHistoriesSuccess = (histories) => ({
   payload: histories,
 });
 
-export const getTradeHistories = () => async (dispatch) => {
-  const histories = await LocalDatabase.getDexHistory();
-  const formattedHistories = histories.map(item => {
-    const history = HISTORY_TYPES[item.type].load(item);
-
-    if (RETRY_STATUS.includes(history.status) && history.errorTried < MAX_ERROR_TRIED) {
-      history.status = undefined;
-    } else {
-      history.status = NOT_CHANGE_STATUS.includes(item.status) ? item.status : undefined;
-    }
-
-    history.errorTried = history.errorTried || 0;
-
-
-    console.debug(history.type);
-
-    return history;
-  }).filter(item => item.type === MESSAGES.TRADE);
-
-  dispatch(getHistoriesSuccess(formattedHistories));
-
-  return formattedHistories;
-};
-
 export const getHistories = () => async (dispatch) => {
   const histories = await LocalDatabase.getDexHistory();
   const formattedHistories = histories.map(item => {
@@ -255,7 +231,7 @@ export const getHistories = () => async (dispatch) => {
     history.errorTried = history.errorTried || 0;
 
     return history;
-  }).filter(item => item.type !== MESSAGES.TRADE);
+  });
 
   dispatch(getHistoriesSuccess(formattedHistories));
 

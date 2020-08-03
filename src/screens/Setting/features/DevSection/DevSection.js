@@ -4,10 +4,12 @@ import Section, { sectionStyle } from '@screens/Setting/features/Section';
 import LocalDatabase from '@utils/LocalDatabase';
 import RNRestart from 'react-native-restart';
 import { AsyncStorage } from 'react-native';
+import { useNavigation } from 'react-navigation-hooks';
+import routeNames from '@src/router/routeNames';
 
 const DevSection = () => {
   const [homeConfig] = React.useState(global.homeConfig);
-
+  const navigation = useNavigation();
   const resetUniswapTooltip = async () => {
     await LocalDatabase.resetViewUniswapTooltip();
     RNRestart.Restart();
@@ -20,6 +22,8 @@ const DevSection = () => {
     );
     RNRestart.Restart();
   };
+
+  const onNavUserProfile = () => navigation.navigate(routeNames.Profile);
 
   const isStagingConfig = homeConfig === 'staging';
 
@@ -44,6 +48,14 @@ const DevSection = () => {
           style={[sectionStyle.subItem, { marginTop: 10 }]}
         >
           <Text style={sectionStyle.desc}>Reset uniswap tooltip</Text>
+        </TouchableOpacity>,
+        <TouchableOpacity
+          key="user-profile"
+          onPress={onNavUserProfile}
+          activeOpacity={0.5}
+          style={[sectionStyle.subItem, { marginTop: 10 }]}
+        >
+          <Text style={sectionStyle.desc}>User profile</Text>
         </TouchableOpacity>,
       ]}
     />

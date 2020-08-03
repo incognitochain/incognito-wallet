@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, ActivityIndicator } from 'react-native';
+import { Text, View } from 'react-native';
 import PropTypes from 'prop-types';
 import withToken from '@src/components/Token/Token.enhance';
 import { TokenVerifiedIcon } from '@src/components/Icons';
@@ -11,45 +11,44 @@ import { BtnDelete } from '@src/components/Button';
 import replace from 'lodash/replace';
 import convert from '@src/utils/convert';
 import trim from 'lodash/trim';
-import { TouchableOpacity } from '@src/components/core';
+import { TouchableOpacity, ActivityIndicator } from '@src/components/core';
 import { COLORS } from '@src/styles';
 import { followingTokenSelector } from '@src/redux/selectors/token';
 import { useSelector } from 'react-redux';
+import { CONSTANT_COMMONS } from '@src/constants';
+import { decimalDigitsSelector } from '@src/screens/Setting';
 import { styled } from './Token.styled';
 
-const defaultProps = {
-  displayName: 'Sample name',
-  amount: 0,
-  onPress: null,
-  symbol: null,
-  isGettingBalance: false,
-  style: null,
-  pDecimals: null,
-  isVerified: false,
-  iconUrl: null,
-  amountInPRV: 0,
-  price: 0,
-  percentChange: 0,
-  pricePrv: 0,
+export const NormalText = (props) => {
+  const { style, stylePSymbol, containerStyle, text, hasPSymbol } = props;
+  return (
+    <View style={[styled.normalText, containerStyle]}>
+      {hasPSymbol && <Text style={[styled.pSymbol, stylePSymbol]}>ℙ</Text>}
+      <Text numberOfLines={1} style={[styled.text, style]} ellipsizeMode="tail">
+        {trim(text)}
+      </Text>
+    </View>
+  );
 };
 
-export const NormalText = ({
-  style = null,
-  stylePSymbol = null,
-  containerStyle = null,
-  text = '',
-  hasPSymbol = false,
-}) => (
-  <View style={[styled.normalText, containerStyle]}>
-    {hasPSymbol && <Text style={[styled.pSymbol, stylePSymbol]}>ℙ</Text>}
-    <Text numberOfLines={1} style={[styled.text, style]} ellipsizeMode="tail">
-      {trim(text)}
-    </Text>
-  </View>
-);
+NormalText.propTypes = {
+  style: PropTypes.any,
+  stylePSymbol: PropTypes.any,
+  containerStyle: PropTypes.any,
+  text: PropTypes.string,
+  hasPSymbol: PropTypes.bool,
+};
+
+NormalText.defaultProps = {
+  style: null,
+  stylePSymbol: null,
+  containerStyle: null,
+  text: '',
+  hasPSymbol: false,
+};
 
 export const Name = (props) => {
-  const { name = 'Sample Name', isVerified = false } = props;
+  const { name, isVerified } = props;
   return (
     <View style={[styled.name, props?.styledContainerName]}>
       <NormalText text={name} style={[styled.boldText, props?.styledName]} />
@@ -58,19 +57,38 @@ export const Name = (props) => {
   );
 };
 
+Name.propTypes = {
+  name: PropTypes.string,
+  isVerified: PropTypes.bool,
+};
+
+Name.defaultProps = {
+  name: 'Sample Name',
+  isVerified: false,
+};
+
 export const AmountBasePRV = (props) => {
   const {
-    amount = 0,
-    pricePrv = 0,
-    customStyle = null,
-    customPSymbolStyle = null,
+    amount,
     pDecimals,
+    pricePrv,
+    customPSymbolStyle,
+    customStyle,
   } = props;
+  const decimalDigits = useSelector(decimalDigitsSelector);
+  const hunmanAmount = convert.toNumber(
+    convert.toHumanAmount(amount, pDecimals),
+  );
+  const priceBasePrv = hunmanAmount * pricePrv;
+  const originalAmount = convert.toOriginalAmount(
+    priceBasePrv,
+    CONSTANT_COMMONS.PRV.pDecimals,
+  );
   const _amount = format.amount(
-    floor(
-      convert.toNumber(convert.toHumanAmount(amount, pDecimals)) * pricePrv,
-      9,
-    ),
+    floor(originalAmount),
+    CONSTANT_COMMONS.PRV.pDecimals,
+    true,
+    decimalDigits,
   );
   return (
     <NormalText
@@ -82,8 +100,23 @@ export const AmountBasePRV = (props) => {
   );
 };
 
+AmountBasePRV.defaultProps = {
+  amount: 0,
+  pricePrv: 0,
+  customStyle: null,
+  customPSymbolStyle: null,
+};
+
+AmountBasePRV.propTypes = {
+  amount: PropTypes.number,
+  pricePrv: PropTypes.number,
+  customStyle: PropTypes.any,
+  customPSymbolStyle: PropTypes.any,
+  pDecimals: PropTypes.number.isRequired,
+};
+
 export const ChangePrice = (props) => {
-  const { change = '0', customStyle = null } = props;
+  const { change, customStyle } = props;
   const isTokenDecrease = change[0] === '-';
   const changeToNumber = Number(replace(change, '-', ''));
   if (changeToNumber === 0) {
@@ -104,8 +137,18 @@ export const ChangePrice = (props) => {
   );
 };
 
+ChangePrice.propTypes = {
+  change: PropTypes.string,
+  customStyle: PropTypes.any,
+};
+
+ChangePrice.defaultProps = {
+  change: '0',
+  customStyle: null,
+};
+
 const Price = (props) => {
-  const { pricePrv = 0 } = props;
+  const { pricePrv } = props;
   return (
     <View style={styled.priceContainer}>
       <NormalText
@@ -117,29 +160,42 @@ const Price = (props) => {
   );
 };
 
+Price.propTypes = {
+  pricePrv: PropTypes.number,
+};
+
+Price.defaultProps = {
+  pricePrv: 0,
+};
+
 export const Amount = (props) => {
   const {
-    amount = 0,
-    pDecimals = 0,
-    symbol = '',
-    customStyle = null,
-    showSymbol = true,
-    isGettingBalance = false,
-    showGettingBalance = false,
-    hasPSymbol = false,
-    stylePSymbol = null,
-    containerStyle = null,
+    amount,
+    pDecimals,
+    symbol,
+    customStyle,
+    showSymbol,
+    isGettingBalance,
+    showGettingBalance,
+    hasPSymbol,
+    stylePSymbol,
+    containerStyle,
+    size,
   } = props;
+  const decimalDigits = useSelector(decimalDigitsSelector);
   const shouldShowGettingBalance = isGettingBalance && showGettingBalance;
   if (shouldShowGettingBalance) {
-    return <ActivityIndicator size="small" />;
+    return <ActivityIndicator size={size} />;
   }
   return (
     <NormalText
       style={[styled.bottomText, styled.boldText, customStyle]}
-      text={`${format.amount(floor(amount, 9), pDecimals)} ${
-        showSymbol ? symbol : ''
-      }`}
+      text={`${format.amount(
+        floor(amount, pDecimals),
+        pDecimals,
+        true,
+        decimalDigits,
+      )} ${showSymbol ? symbol : ''}`}
       hasPSymbol={hasPSymbol}
       stylePSymbol={stylePSymbol}
       containerStyle={containerStyle}
@@ -147,13 +203,41 @@ export const Amount = (props) => {
   );
 };
 
+Amount.propTypes = {
+  size: PropTypes.string,
+  amount: PropTypes.number,
+  pDecimals: PropTypes.number,
+  symbol: PropTypes.string,
+  customStyle: PropTypes.any,
+  showSymbol: PropTypes.bool,
+  isGettingBalance: PropTypes.bool,
+  showGettingBalance: PropTypes.bool,
+  hasPSymbol: PropTypes.bool,
+  stylePSymbol: PropTypes.any,
+  containerStyle: PropTypes.any,
+};
+
+Amount.defaultProps = {
+  size: 'small',
+  amount: 0,
+  pDecimals: 0,
+  symbol: '',
+  customStyle: null,
+  showSymbol: true,
+  isGettingBalance: false,
+  showGettingBalance: false,
+  hasPSymbol: false,
+  stylePSymbol: null,
+  containerStyle: null,
+};
+
 export const Symbol = (props) => {
   const {
-    symbol = '',
-    networkName = '',
-    isErc20Token = false,
-    isBep2Token = false,
-    styledSymbol = null,
+    symbol,
+    networkName,
+    isErc20Token,
+    isBep2Token,
+    styledSymbol,
   } = props;
   return (
     <NormalText
@@ -164,6 +248,22 @@ export const Symbol = (props) => {
       }`}
     />
   );
+};
+
+Symbol.propTypes = {
+  symbol: PropTypes.string,
+  networkName: PropTypes.string,
+  isErc20Token: PropTypes.bool,
+  isBep2Token: PropTypes.bool,
+  styledSymbol: PropTypes.any,
+};
+
+Symbol.defaultProps = {
+  symbol: '',
+  networkName: '',
+  isErc20Token: false,
+  isBep2Token: false,
+  styledSymbol: null,
 };
 
 const TokenPairPRV = (props) => (
@@ -205,6 +305,12 @@ export const Follow = (props) => {
     return <Text style={styled.followText}>Added</Text>;
   }
   return null;
+};
+
+Follow.propTypes = {
+  shouldShowFollowed: PropTypes.bool.isRequired,
+  isFollowed: PropTypes.bool.isRequired,
+  tokenId: PropTypes.number.isRequired,
 };
 
 const Token = (props) => {
@@ -249,15 +355,21 @@ const Token = (props) => {
   return TokenComponent;
 };
 
-Name.defaultProps = {
-  styledName: null,
+Token.defaultProps = {
+  displayName: 'Sample name',
+  amount: 0,
+  onPress: null,
+  symbol: null,
+  isGettingBalance: false,
+  style: null,
+  pDecimals: null,
+  isVerified: false,
+  iconUrl: null,
+  amountInPRV: 0,
+  price: 0,
+  percentChange: 0,
+  pricePrv: 0,
 };
-
-Name.propTypes = {
-  styledName: PropTypes.object,
-};
-
-Token.defaultProps = { ...defaultProps };
 
 Token.propTypes = {
   pDecimals: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),

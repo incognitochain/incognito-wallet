@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   text: {
     color: COLORS.colorGreyBold,
     textAlign: 'center',
-    lineHeight: FONT.NORMALIZE(FONT.FONT_SIZES.regular + 4),
+    lineHeight: FONT.SIZE.regular + 4,
     fontSize: FONT.SIZE.regular,
   },
   image: {

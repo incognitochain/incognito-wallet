@@ -87,7 +87,7 @@ class Input extends React.Component {
             <VerifiedText text={item.displayName} style={modalStyle.tokenSymbol} isVerified={item.isVerified} />
             <Text style={modalStyle.tokenName}>{item.name}</Text>
           </View>
-          <Text style={[modalStyle.tokenSymbol, mainStyle.textRight]}>{item.symbol}</Text>
+          <Text style={[modalStyle.tokenSymbol, mainStyle.textRight]}>{item?.symbol}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -134,7 +134,7 @@ class Input extends React.Component {
           tokenId={token.id}
           size={20}
         />
-        <VerifiedText text={token.symbol} style={modalStyle.tokenInfo} isVerified={token.isVerified} />
+        <VerifiedText text={token?.symbol} style={modalStyle.tokenInfo} isVerified={token.isVerified} />
       </View>
     );
   }

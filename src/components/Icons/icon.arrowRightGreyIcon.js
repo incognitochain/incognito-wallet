@@ -1,20 +1,17 @@
 import React from 'react';
-import {Image} from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import chevronRight from '@src/assets/images/icons/icon_chevron_right.png';
 
-const ArrowRightGreyIcon = props => {
-  const defaultStyle = {
+const styled = StyleSheet.create({
+  icon: {
     width: 8,
-    height: 14,
-  };
-  const {style, source, ...rest} = props;
-  return (
-    <Image
-      source={chevronRight}
-      style={[defaultStyle, style]}
-      {...rest}
-    />
-  );
+    height: 12,
+  },
+});
+
+const ArrowRightGreyIcon = (props) => {
+  const { style, source, ...rest } = props;
+  return <Image source={chevronRight} style={[styled.icon, style]} {...rest} />;
 };
 
 export default ArrowRightGreyIcon;

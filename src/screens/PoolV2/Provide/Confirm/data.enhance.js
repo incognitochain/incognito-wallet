@@ -11,7 +11,9 @@ const withData = WrappedComp => (props) => {
   const feeToken = useNavigationParam('feeToken');
   const prvBalance = useNavigationParam('prvBalance');
 
-  const deposit = formatUtil.toFixed(convertUtil.toNumber(rawText), coin.pDecimals);
+  const humanAmount = convertUtil.toNumber(rawText);
+  const deposit = humanAmount < 0 ? formatUtil.toFixed(humanAmount, coin.pDecimals)
+    : formatUtil.amountFull(humanAmount, 0);
   const provide = formatUtil.amountFull(value, coin.pDecimals);
 
   return (

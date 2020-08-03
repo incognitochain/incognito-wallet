@@ -38,6 +38,7 @@ const Provide = ({
         <RoundCornerButton
           title="Withdraw rewards"
           style={[mainStyle.button, styles.button]}
+          disabled={!!error}
           onPress={onConfirm}
         />
         <Text style={mainStyle.coinExtra}>

@@ -23,7 +23,7 @@ const withPairs = WrappedComp => (props) => {
       const pTokens = await getTokenList();
       const chainTokens = await tokenService.getPrivacyTokens();
       const chainPairs = await getPDEState();
-      const tokens = tokenService.mergeTokens(chainTokens, pTokens);
+      let tokens = tokenService.mergeTokens(chainTokens, pTokens);
       const erc20Tokens = await getAllTradingTokens();
 
       // const erc20Tokens = [];
@@ -76,6 +76,16 @@ const withPairs = WrappedComp => (props) => {
           ['asc', 'desc', 'desc']
         )
         .value();
+
+      tokens = tokens.concat(erc20Tokens.filter(token => !tokens.find(item => item.id === token.id)));
+      tokens = tokens
+        .map(token => {
+          const erc20Token = erc20Tokens.find(item => item.id === token.id);
+          return {
+            ...token,
+            address: erc20Token?.address,
+          };
+        });
 
       setPairs(pairs);
       setPairTokens(pairTokens);

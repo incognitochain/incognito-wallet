@@ -3,30 +3,48 @@ import AccountModel from '@models/account';
 import { COINS, CONSTANT_COMMONS, CONSTANT_KEYS } from '@src/constants';
 import tokenModel from '@src/models/token';
 import storage from '@src/services/storage';
-import { countFollowToken, countUnfollowToken } from '@src/services/api/token';
-import { AccountWallet, KeyWallet, Wallet } from 'incognito-chain-web-js/build/wallet';
+import {
+  AccountWallet,
+  KeyWallet,
+  Wallet,
+} from 'incognito-chain-web-js/build/wallet';
 import _ from 'lodash';
 import { STACK_TRACE } from '@services/exception/customError/code/webjsCode';
 import { cachePromise } from '@services/cache';
 import { chooseBestCoinToSpent } from 'incognito-chain-web-js/lib/tx/utils';
 import bn from 'bn.js';
+import { getPassphrase } from '@services/wallet/passwordService';
 import { CustomError, ErrorCode } from '../exception';
 import { getActiveShard } from './RpcClientService';
-import tokenService, { getUserUnfollowTokenIDs, setUserUnfollowTokenIDs } from './tokenService';
-import { loadListAccountWithBLSPubKey, saveWallet, SuccessTx } from './WalletService';
+import tokenService from './tokenService';
+import {
+  loadListAccountWithBLSPubKey,
+  saveWallet,
+  SuccessTx,
+} from './WalletService';
 
 const TAG = 'Account';
 
-const getBalanceNoCache = (indexAccount, wallet, tokenId) => () => {
-  return wallet.MasterAccount.child[indexAccount].getBalance(tokenId);
+const getBalanceNoCache = (indexAccount, wallet, tokenId) => async () => {
+  const account = wallet.MasterAccount.child[indexAccount];
+  account.isRevealViewKeyToGetCoins = true;
+
+  const balance = await wallet.MasterAccount.child[indexAccount].getBalance(tokenId);
+  await account.saveAccountCached(wallet.Storage);
+  return balance;
 };
 
 const getPendingHistory = (histories, spendingCoins) => {
-  histories = histories.filter(item => item.status === SuccessTx);
+  histories = histories.filter((item) => item.status === SuccessTx);
 
-  const pendingHistory =  histories.find(history =>
-    spendingCoins.find(coin => history.listUTXOForPToken.includes(coin.SNDerivator)) ||
-    spendingCoins.find(coin => history.listUTXOForPRV.includes(coin.SNDerivator))
+  const pendingHistory = histories.find(
+    (history) =>
+      spendingCoins.find((coin) =>
+        history.listUTXOForPToken.includes(coin.SNDerivator),
+      ) ||
+      spendingCoins.find((coin) =>
+        history.listUTXOForPRV.includes(coin.SNDerivator),
+      ),
   );
 
   return !!pendingHistory;
@@ -38,16 +56,14 @@ const hasSpendingCoins = async (indexAccount, wallet, amount, tokenId) => {
 
   let histories;
 
-  await wallet.updateStatusHistory();
-
   histories = await account.getNormalTxHistory();
   histories = histories.concat(await account.getPrivacyTokenTxHistory());
 
-  const spendingCoins = chooseBestCoinToSpent(coins, new bn(amount)).resultInputCoins;
+  const spendingCoins = chooseBestCoinToSpent(coins, new bn(amount))
+    .resultInputCoins;
 
   return getPendingHistory(histories, spendingCoins);
 };
-
 
 export default class Account {
   static async getDefaultAccountName() {
@@ -55,7 +71,7 @@ export default class Account {
       return await storage.getItem(CONSTANT_KEYS.DEFAULT_ACCOUNT_NAME);
     } catch (e) {
       console.error(
-        'Error while getting default account index, fallback index to 0'
+        'Error while getting default account index, fallback index to 0',
       );
     }
     return null;
@@ -89,22 +105,33 @@ export default class Account {
   }
 
   // paymentInfos = [{ paymentAddressStr: toAddress, amount: amount}];
-  static async createAndSendNativeToken(paymentInfos, fee, isPrivacy, account, wallet, info) {
+  static async createAndSendNativeToken(
+    paymentInfos,
+    fee,
+    isPrivacy,
+    account,
+    wallet,
+    info = '',
+  ) {
     console.log('Wallet.ProgressTx: ', Wallet.ProgressTx);
     // paymentInfos: payment address string, amount in Number (miliconstant)
     // await Wallet.resetProgressTx();
     // console.log('Wallet.ProgressTx: ', Wallet.ProgressTx);
-    const indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+    const indexAccount = wallet.getAccountIndexByName(
+      account.name || account.AccountName,
+    );
     // create and send constant
     let result;
-    const infoStr = ![undefined, null].includes(info) ? JSON.stringify(info) : undefined;
+
+    const infoStr = typeof info !== 'string' ? JSON.stringify(info) : info;
+
     result = await wallet.MasterAccount.child[
       indexAccount
     ].createAndSendNativeToken(paymentInfos, fee, isPrivacy, infoStr);
 
     console.log(
       'Spendingcoin after sendConstant: ',
-      wallet.MasterAccount.child[indexAccount].spendingCoins
+      wallet.MasterAccount.child[indexAccount].spendingCoins,
     );
 
     // save wallet
@@ -113,7 +140,16 @@ export default class Account {
     return result;
   }
 
-  static createAndSendToken(account, wallet, receiverAddress, amount, tokenId, nativeFee, tokenFee, prvAmount) {
+  static createAndSendToken(
+    account,
+    wallet,
+    receiverAddress,
+    amount,
+    tokenId,
+    nativeFee,
+    tokenFee,
+    prvAmount,
+  ) {
     if (tokenId === COINS.PRV_ID) {
       const paymentInfos = [
         {
@@ -133,10 +169,12 @@ export default class Account {
       );
     }
 
-    const receivers = [{
-      PaymentAddress: receiverAddress,
-      Amount: Math.floor(amount),
-    }];
+    const receivers = [
+      {
+        PaymentAddress: receiverAddress,
+        Amount: Math.floor(amount),
+      },
+    ];
 
     let paymentInfos = null;
     if (prvAmount) {
@@ -153,7 +191,7 @@ export default class Account {
       TokenSymbol: 'Symbol',
       TokenTxType: CONSTANT_COMMONS.TOKEN_TX_TYPE.SEND,
       TokenAmount: amount,
-      TokenReceivers: receivers
+      TokenReceivers: receivers,
     };
 
     return tokenService.createSendPToken(
@@ -166,12 +204,24 @@ export default class Account {
     );
   }
 
-  static async createAndSendStopAutoStakingTx(wallet, account, feeNativeToken, candidatePaymentAddress, candidateMiningSeedKey) {
-    const indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+  static async createAndSendStopAutoStakingTx(
+    wallet,
+    account,
+    feeNativeToken,
+    candidatePaymentAddress,
+    candidateMiningSeedKey,
+  ) {
+    const indexAccount = wallet.getAccountIndexByName(
+      account.name || account.AccountName,
+    );
     let result;
     result = await wallet.MasterAccount.child[
       indexAccount
-    ].createAndSendStopAutoStakingTx(feeNativeToken, candidatePaymentAddress, candidateMiningSeedKey);
+    ].createAndSendStopAutoStakingTx(
+      feeNativeToken,
+      candidatePaymentAddress,
+      candidateMiningSeedKey,
+    );
     await saveWallet(wallet);
     await Wallet.resetProgressTx();
     return result;
@@ -202,21 +252,40 @@ export default class Account {
   //   return result;
   // }
 
-  static async staking(param, feeNativeToken, candidatePaymentAddress, account, wallet, rewardReceiverPaymentAddress, autoReStaking = false) {
-    if (!param || typeof param?.type !== 'number') throw new Error('Invalid staking param');
-    if (!candidatePaymentAddress) throw new Error('Missing candidatePaymentAddress');
+  static async staking(
+    param,
+    feeNativeToken,
+    candidatePaymentAddress,
+    account,
+    wallet,
+    rewardReceiverPaymentAddress,
+    autoReStaking = false,
+  ) {
+    if (!param || typeof param?.type !== 'number')
+      throw new Error('Invalid staking param');
+    if (!candidatePaymentAddress)
+      throw new Error('Missing candidatePaymentAddress');
     if (!account) throw new Error('Missing account');
     if (!wallet) throw new Error('Missing wallet');
     // param: payment address string, amount in Number (miliconstant)
     await Wallet.resetProgressTx();
-    const indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+    const indexAccount = wallet.getAccountIndexByName(
+      account.name || account.AccountName,
+    );
     const candidateMiningSeedKey = account.ValidatorKey;
     // create and send constant
     let result;
     try {
       result = await wallet.MasterAccount.child[
         indexAccount
-      ].createAndSendStakingTx(param, feeNativeToken, candidatePaymentAddress, candidateMiningSeedKey, rewardReceiverPaymentAddress, autoReStaking);
+      ].createAndSendStakingTx(
+        param,
+        feeNativeToken,
+        candidatePaymentAddress,
+        candidateMiningSeedKey,
+        rewardReceiverPaymentAddress,
+        autoReStaking,
+      );
 
       // save wallet
       await saveWallet(wallet);
@@ -237,7 +306,7 @@ export default class Account {
       result = await wallet.MasterAccount.child[indexAccount].defragment(
         amount,
         fee,
-        isPrivacy
+        isPrivacy,
       );
 
       // save wallet
@@ -274,7 +343,10 @@ export default class Account {
     try {
       const key = KeyWallet.base58CheckDeserialize(paymentAddrStr);
       const paymentAddressObj = key?.KeySet?.PaymentAddress || {};
-      if (paymentAddressObj.Pk?.length === 32 && paymentAddressObj.Tk?.length === 32) {
+      if (
+        paymentAddressObj.Pk?.length === 32 &&
+        paymentAddressObj.Tk?.length === 32
+      ) {
         return true;
       }
     } catch (e) {
@@ -293,10 +365,16 @@ export default class Account {
    * If `tokenId` is not passed, this method will return native token (PRV) balance, else custom token balance (from `tokenId`)
    */
   static async getBalance(account, wallet, tokenId) {
-    const key = `balance-${account.name || account.AccountName}-${tokenId || '0000000000000000000000000000000000000000000000000000000000000004'}`;
-    const indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+    const key = `balance-${account.name || account.AccountName}-${tokenId ||
+      '0000000000000000000000000000000000000000000000000000000000000004'}`;
+    const indexAccount = wallet.getAccountIndexByName(
+      account.name || account.AccountName,
+    );
 
-    return await cachePromise(key, getBalanceNoCache(indexAccount, wallet, tokenId));
+    return await cachePromise(
+      key,
+      getBalanceNoCache(indexAccount, wallet, tokenId),
+    );
   }
 
   static parseShard(account) {
@@ -306,42 +384,24 @@ export default class Account {
     return lastByte % 8;
   }
 
-
-  static getFollowingTokens(account, wallet){
+  static getFollowingTokens(account, wallet) {
     const indexAccount = wallet.getAccountIndexByName(account.name);
-    return wallet.MasterAccount.child[indexAccount].listFollowingTokens()?.map(tokenModel.fromJson);
+    return wallet.MasterAccount.child[indexAccount]
+      .listFollowingTokens()
+      ?.map(tokenModel.fromJson);
   }
 
   static async addFollowingTokens(tokens, account, wallet) {
     const indexAccount = wallet.getAccountIndexByName(account.name);
     await wallet.MasterAccount.child[indexAccount].addFollowingToken(...tokens);
-
-    // remove these tokenIds out of tracking list
-    const followList = tokens.map(t => t.ID);
-    const prevList = await getUserUnfollowTokenIDs();
-    const newList = _.difference(prevList, followList);
-
-    // track then token
-    countFollowToken(followList, account?.PublicKey).catch(null);
-
-    setUserUnfollowTokenIDs(newList);
+    return wallet;
   }
 
   static async removeFollowingToken(tokenId, account, wallet) {
     const indexAccount = wallet.getAccountIndexByName(account.name);
     await wallet.MasterAccount.child[indexAccount].removeFollowingToken(
-      tokenId
+      tokenId,
     );
-
-    // save these tokenIds for tracking list token of user
-    const prevList = await getUserUnfollowTokenIDs();
-
-    prevList.push(tokenId);
-    setUserUnfollowTokenIDs(prevList);
-
-    // track then token
-    countUnfollowToken(tokenId, account?.PublicKey).catch(null);
-
     return wallet;
   }
 
@@ -353,8 +413,15 @@ export default class Account {
    * @returns {object}
    */
   static async getRewardAmount(tokenID, paymentAddrStr, isGetAll = false) {
-    if(_.isEmpty(paymentAddrStr)) throw new CustomError(ErrorCode.payment_address_empty,{name:'payment address is empty'});
-    return await AccountWallet?.getRewardAmount(paymentAddrStr,isGetAll,tokenID);
+    if (_.isEmpty(paymentAddrStr))
+      throw new CustomError(ErrorCode.payment_address_empty, {
+        name: 'payment address is empty',
+      });
+    return await AccountWallet?.getRewardAmount(
+      paymentAddrStr,
+      isGetAll,
+      tokenID,
+    );
   }
 
   /**
@@ -364,7 +431,9 @@ export default class Account {
    * @param {object} wallet
    */
   static async createAndSendWithdrawRewardTx(tokenID, account, wallet) {
-    const indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+    const indexAccount = wallet.getAccountIndexByName(
+      account.name || account.AccountName,
+    );
     return wallet.MasterAccount.child[
       indexAccount
     ].createAndSendWithdrawRewardTx(tokenID);
@@ -397,24 +466,27 @@ export default class Account {
    * @param {object} wallet
    * @returns :AccountModel: template
    */
-  static async getAccountWithBLSPubKey(blsKey,wallet) {
+  static async getAccountWithBLSPubKey(blsKey, wallet) {
     try {
       let accountWallet = null;
-      if(!_.isEmpty(blsKey)){
-        console.log(TAG,'getAccountWithBLSPubKey begin');
-        const listAccounts = await loadListAccountWithBLSPubKey(wallet)||[];
-        console.log(TAG,'getAccountWithBLSPubKey listAccount ',listAccounts);
-        let account = listAccounts.find(item=> _.isEqual(item.BLSPublicKey,blsKey));
+      if (!_.isEmpty(blsKey)) {
+        console.log(TAG, 'getAccountWithBLSPubKey begin');
+        const listAccounts = (await loadListAccountWithBLSPubKey(wallet)) || [];
+        console.log(TAG, 'getAccountWithBLSPubKey listAccount ', listAccounts);
+        let account = listAccounts.find((item) =>
+          _.isEqual(item.BLSPublicKey, blsKey),
+        );
 
-        account = account? await wallet.getAccountByName(account.AccountName):null;
-        console.log(TAG,'getAccountWithBLSPubKey end ---- ',account);
+        account = account
+          ? await wallet.getAccountByName(account.AccountName)
+          : null;
+        console.log(TAG, 'getAccountWithBLSPubKey end ---- ', account);
         // accountWallet = account? new AccountModel(account):null;
         accountWallet = account;
       }
       return accountWallet;
-
     } catch (e) {
-      console.warn(TAG,'getAccountWithBLSPubKey error =',e );
+      console.warn(TAG, 'getAccountWithBLSPubKey error =', e);
     }
     return null;
   }
@@ -425,24 +497,29 @@ export default class Account {
    * @param {object} wallet
    * @returns :AccountModel: template
    */
-  static async getFullDataOfAccount(accountName,wallet) {
+  static async getFullDataOfAccount(accountName, wallet) {
     try {
       let accountWallet = null;
-      if(!_.isEmpty(accountName)){
-        console.log(TAG,'getFullDataOfAccount begin');
-        const listAccounts = await loadListAccountWithBLSPubKey(wallet)||[];
-        console.log(TAG,'getFullDataOfAccount listAccount ',listAccounts);
-        let account:JSON = listAccounts.find(item=> _.isEqual(item.AccountName,accountName));
+      if (!_.isEmpty(accountName)) {
+        console.log(TAG, 'getFullDataOfAccount begin');
+        const listAccounts = (await loadListAccountWithBLSPubKey(wallet)) || [];
+        console.log(TAG, 'getFullDataOfAccount listAccount ', listAccounts);
+        let account: JSON = listAccounts.find((item) =>
+          _.isEqual(item.AccountName, accountName),
+        );
 
-        let accountTemp = account? await wallet.getAccountByName(account.AccountName):null;
-        console.log(TAG,'getFullDataOfAccount end ---- ',account);
+        let accountTemp = account
+          ? await wallet.getAccountByName(account.AccountName)
+          : null;
+        console.log(TAG, 'getFullDataOfAccount end ---- ', account);
         // accountWallet = account? new AccountModel(account):null;
-        accountWallet = accountTemp? new AccountModel({...accountTemp,...account}):null;
+        accountWallet = accountTemp
+          ? new AccountModel({ ...accountTemp, ...account })
+          : null;
       }
       return accountWallet;
-
     } catch (e) {
-      console.warn(TAG,'getFullDataOfAccount error =',e );
+      console.warn(TAG, 'getFullDataOfAccount error =', e);
     }
     return null;
   }
@@ -462,77 +539,182 @@ export default class Account {
     if (accountWallet) {
       const list = await accountWallet.getAllPrivacyTokenBalance();
 
-      return list?.map(tokenData => ({
-        amount: tokenData?.Balance,
-        id: tokenData?.TokenID,
-      })) || [];
+      return (
+        list?.map((tokenData) => ({
+          amount: tokenData?.Balance,
+          id: tokenData?.TokenID,
+        })) || []
+      );
     } else {
-      throw new Error('Can not get list coin has balance of non-existed account');
+      throw new Error(
+        'Can not get list coin has balance of non-existed account',
+      );
     }
   }
 
-  static async createAndSendTxWithNativeTokenContribution(wallet, account, fee, pdeContributionPairID, contributedAmount, info = '') {
-    let indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+  static async createAndSendTxWithNativeTokenContribution(
+    wallet,
+    account,
+    fee,
+    pdeContributionPairID,
+    contributedAmount,
+    info = '',
+  ) {
+    let indexAccount = wallet.getAccountIndexByName(
+      account.name || account.AccountName,
+    );
     let result;
     try {
       result = await wallet.MasterAccount.child[
         indexAccount
-      ].createAndSendTxWithNativeTokenContribution(fee, pdeContributionPairID, contributedAmount, info);
+      ].createAndSendTxWithNativeTokenContribution(
+        fee,
+        pdeContributionPairID,
+        contributedAmount,
+        info,
+      );
     } catch (e) {
       throw e;
     }
     return result;
   }
 
-  static async createAndSendPTokenContributionTx(wallet, account, tokenParam, feeNativeToken, feePToken, pdeContributionPairID, contributedAmount) {
-    let indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+  static async createAndSendPTokenContributionTx(
+    wallet,
+    account,
+    tokenParam,
+    feeNativeToken,
+    feePToken,
+    pdeContributionPairID,
+    contributedAmount,
+  ) {
+    let indexAccount = wallet.getAccountIndexByName(
+      account.name || account.AccountName,
+    );
     let result;
     try {
       result = await wallet.MasterAccount.child[
         indexAccount
-      ].createAndSendPTokenContributionTx(tokenParam, feeNativeToken, feePToken, pdeContributionPairID, contributedAmount);
+      ].createAndSendPTokenContributionTx(
+        tokenParam,
+        feeNativeToken,
+        feePToken,
+        pdeContributionPairID,
+        contributedAmount,
+      );
     } catch (e) {
       throw e;
     }
     return result;
   }
 
-  static async createAndSendNativeTokenTradeRequestTx(wallet, account, fee, tokenIDToBuyStr, sellAmount, minimumAcceptableAmount, tradingFee, info = '') {
-    let indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+  static async createAndSendNativeTokenTradeRequestTx(
+    wallet,
+    account,
+    fee,
+    tokenIDToBuyStr,
+    sellAmount,
+    minimumAcceptableAmount,
+    tradingFee,
+    info = '',
+  ) {
+    let indexAccount = wallet.getAccountIndexByName(
+      account.name || account.AccountName,
+    );
     let result;
     try {
-      console.debug('CREATE AND SEND NATIVE TOKEN TRADE', fee, tokenIDToBuyStr, sellAmount, minimumAcceptableAmount, tradingFee, info);
+      console.debug(
+        'CREATE AND SEND NATIVE TOKEN TRADE',
+        fee,
+        tokenIDToBuyStr,
+        sellAmount,
+        minimumAcceptableAmount,
+        tradingFee,
+        info,
+      );
       result = await wallet.MasterAccount.child[
         indexAccount
-      ].createAndSendNativeTokenTradeRequestTx(fee, tokenIDToBuyStr, sellAmount, minimumAcceptableAmount, tradingFee, info);
+      ].createAndSendNativeTokenTradeRequestTx(
+        fee,
+        tokenIDToBuyStr,
+        sellAmount,
+        minimumAcceptableAmount,
+        tradingFee,
+        info,
+      );
     } catch (e) {
       throw e;
     }
     return result;
   }
 
-  static async createAndSendPTokenTradeRequestTx(wallet, account, tokenParam, feeNativeToken, feePToken, tokenIDToBuyStr, sellAmount, minimumAcceptableAmount, tradingFee) {
-    let indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+  static async createAndSendPTokenTradeRequestTx(
+    wallet,
+    account,
+    tokenParam,
+    feeNativeToken,
+    feePToken,
+    tokenIDToBuyStr,
+    sellAmount,
+    minimumAcceptableAmount,
+    tradingFee,
+  ) {
+    let indexAccount = wallet.getAccountIndexByName(
+      account.name || account.AccountName,
+    );
     let result;
 
     try {
-      console.debug('CREATE AND SEND PTOKEN TRADE', tokenParam, feeNativeToken, feePToken, tokenIDToBuyStr, sellAmount, minimumAcceptableAmount, tradingFee);
+      console.debug(
+        'CREATE AND SEND PTOKEN TRADE',
+        tokenParam,
+        feeNativeToken,
+        feePToken,
+        tokenIDToBuyStr,
+        sellAmount,
+        minimumAcceptableAmount,
+        tradingFee,
+      );
       result = await wallet.MasterAccount.child[
         indexAccount
-      ].createAndSendPTokenTradeRequestTx(tokenParam, feeNativeToken, feePToken, tokenIDToBuyStr, sellAmount, minimumAcceptableAmount, tradingFee);
+      ].createAndSendPTokenTradeRequestTx(
+        tokenParam,
+        feeNativeToken,
+        feePToken,
+        tokenIDToBuyStr,
+        sellAmount,
+        minimumAcceptableAmount,
+        tradingFee,
+      );
     } catch (e) {
       throw e;
     }
     return result;
   }
 
-  static async createAndSendWithdrawDexTx(wallet, account, fee, withdrawalToken1IDStr, withdrawalToken2IDStr, withdrawalShareAmt, info = '') {
-    let indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+  static async createAndSendWithdrawDexTx(
+    wallet,
+    account,
+    fee,
+    withdrawalToken1IDStr,
+    withdrawalToken2IDStr,
+    withdrawalShareAmt,
+    info = '',
+  ) {
+    let indexAccount = wallet.getAccountIndexByName(
+      account.name || account.AccountName,
+    );
     let result;
     try {
       result = await wallet.MasterAccount.child[
         indexAccount
-      ].createAndSendWithdrawDexTx(fee, withdrawalToken1IDStr, withdrawalToken2IDStr, withdrawalShareAmt, info);
+      ].createAndSendWithdrawDexTx(
+        fee,
+        withdrawalToken1IDStr,
+        withdrawalToken2IDStr,
+        withdrawalShareAmt,
+        info,
+      );
     } catch (e) {
       throw e;
     }
@@ -548,7 +730,9 @@ export default class Account {
   }
 
   static hasSpendingCoins(account, wallet, amount, tokenId = null) {
-    const indexAccount = wallet.getAccountIndexByName(account.name || account.AccountName);
+    const indexAccount = wallet.getAccountIndexByName(
+      account.name || account.AccountName,
+    );
     return hasSpendingCoins(indexAccount, wallet, amount, tokenId);
   }
 }

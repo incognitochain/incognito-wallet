@@ -1,3 +1,5 @@
-import Setting from './Setting';
+export { default } from './Setting';
 
-export default Setting;
+export * from './Setting.actions';
+
+export * from './Setting.selector';

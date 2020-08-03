@@ -3,7 +3,7 @@ import { View, TouchableOpacity, Text } from 'react-native';
 import PropTypes from 'prop-types';
 import { commonStyled } from './Button.styled';
 
-const Button = props => {
+const Button = (props) => {
   const {
     icon,
     title,
@@ -15,7 +15,7 @@ const Button = props => {
   return (
     <TouchableOpacity {...rest}>
       <View style={[commonStyled.container, styledContainer]}>
-        {icon}
+        {!!icon && icon}
         {hiddenTitle && hiddenTitle ? null : (
           <Text style={[commonStyled.title, styledTitle]}>{title}</Text>
         )}

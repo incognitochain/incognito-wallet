@@ -42,8 +42,8 @@ const withPoolData = WrappedComp => (props) => {
     const totalReducer = (accumulator, item) => accumulator + item.rewardBalance;
     const totalRewards = userData.reduce(totalReducer, 0);
 
-    const displayFullTotalRewards = formatUtils.amountFull(totalRewards, COINS.PRV.pDecimals, true);
-    const displayClipTotalRewards = formatUtils.amountFull(totalRewards, COINS.PRV.pDecimals, false);
+    const displayClipTotalRewards = formatUtils.amountFull(totalRewards, COINS.PRV.pDecimals, true);
+    const displayFullTotalRewards = formatUtils.amountFull(totalRewards, COINS.PRV.pDecimals, false);
 
     setTotalRewards(totalRewards);
     setDisplayClipTotalRewards(displayClipTotalRewards.toString());
@@ -60,7 +60,7 @@ const withPoolData = WrappedComp => (props) => {
       const config = await getConfig(account);
       await getUserData(account, config.coins);
     } catch (error) {
-      new ExHandler(error, MESSAGES.CAN_NOT_GET_PDEX_DATA).showErrorToast();
+      new ExHandler(error, MESSAGES.CAN_NOT_GET_POOL_DATA).showErrorToast();
     } finally {
       setLoading(false);
     }

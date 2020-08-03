@@ -24,6 +24,8 @@ export const KEY_SAVE = {
   SCREEN_STAKE_GUIDE: CONSTANT_KEYS.SCREEN_STAKE_GUIDE,
   WEBVIEW: '$webview',
   NODECLEARED: '$node_cleared',
+  PROVIDE_TXS: CONSTANT_KEYS.PROVIDE_TXS,
+  WITHDRAWAL_DATA_DECENTRALIZED: CONSTANT_KEYS.WITHDRAWAL_DATA_DECENTRALIZED,
 };
 export default class LocalDatabase {
   static async getValue(key: String): String {
@@ -342,4 +344,15 @@ export default class LocalDatabase {
     return LocalDatabase.saveValue(KEY_SAVE.NODECLEARED, value);
   };
 
+  static async getProvideTxs() {
+    const value = await LocalDatabase.getValue(KEY_SAVE.PROVIDE_TXS);
+    return value ? JSON.parse(value) : [];
+  }
+
+  static saveProvideTxs(txs) {
+    return LocalDatabase.saveValue(
+      KEY_SAVE.PROVIDE_TXS,
+      JSON.stringify(txs || []),
+    );
+  }
 }

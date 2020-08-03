@@ -29,7 +29,6 @@ import AddPin from '@screens/AddPIN';
 import {DepositHistory, WithdrawHistory} from '@models/dexHistory';
 import Toast from '@components/core/Toast/Toast';
 import VerifiedText from '@components/VerifiedText/index';
-import {logEvent} from '@services/firebase';
 import routeNames from '@routers/routeNames';
 import TransferSuccessPopUp from '../TransferSuccessPopUp';
 import {WAIT_TIME, MESSAGES, MIN_INPUT, MULTIPLY, MAX_WAITING_TIME, PRV_ID} from '../../constants';
@@ -94,7 +93,7 @@ class Transfer extends React.PureComponent {
       Privacy: true,
       TokenID: token.id,
       TokenName: token.name,
-      TokenSymbol: token.symbol,
+      TokenSymbol: token?.symbol,
       TokenTxType: CONSTANT_COMMONS.TOKEN_TX_TYPE.SEND,
       TokenAmount: amount,
       TokenReceivers: [{
@@ -138,31 +137,11 @@ class Transfer extends React.PureComponent {
     const { dexMainAccount, onAddHistory } = this.props;
     let res;
 
-    await logEvent(CONSTANT_EVENTS.DEPOSIT_PDEX, {
-      tokenId: token.id,
-      tokenSymbol: token.symbol,
-    });
-
-    try {
-      if (!token.id || token.id === PRV_ID) {
-        res = await this.sendPRV(account, dexMainAccount, amount, fee);
-      } else {
-        res = await this.sendPToken(account, dexMainAccount, token, amount, null, feeUnit === PRV.symbol ? fee : 0, feeUnit !== PRV.symbol ? fee : 0);
-      }
-
-      await logEvent(CONSTANT_EVENTS.DEPOSIT_PDEX_SUCCESS, {
-        tokenId: token.id,
-        tokenSymbol: token.symbol,
-      });
-    } catch (e) {
-      await logEvent(CONSTANT_EVENTS.DEPOSIT_PDEX_FAILED, {
-        tokenId: token.id,
-        tokenSymbol: token.symbol,
-      });
-
-      throw e;
+    if (!token.id || token.id === PRV_ID) {
+      res = await this.sendPRV(account, dexMainAccount, amount, fee);
+    } else {
+      res = await this.sendPToken(account, dexMainAccount, token, amount, null, feeUnit === PRV?.symbol ? fee : 0, feeUnit !== PRV?.symbol ? fee : 0);
     }
-
     onAddHistory(new DepositHistory(res, token, amount, fee, feeUnit, account));
   }
 
@@ -177,25 +156,20 @@ class Transfer extends React.PureComponent {
 
     try {
       WithdrawHistory.withdrawing = true;
-      await logEvent(CONSTANT_EVENTS.WITHDRAW_PDEX, {
-        tokenId: token.id,
-        tokenSymbol: token.symbol,
-      });
-
       if (!token.id || token.id === PRV_ID) {
         res1 = await sendPRV(dexMainAccount, dexWithdrawAccount, amount + fee, fee);
-        newHistory = new WithdrawHistory(res1, token, amount, rawFee, PRV.symbol, account);
+        newHistory = new WithdrawHistory(res1, token, amount, rawFee, PRV?.symbol, account);
         onAddHistory(newHistory);
         await waitUntil(checkCorrectBalance(dexWithdrawAccount, PRV, amount + fee), WAIT_TIME);
         res2 = await this.sendPRV(dexWithdrawAccount, account, amount, fee);
       } else {
         const {transfer} = this.state;
         const {feeUnit} = transfer;
-        const paymentInfo = feeUnit === PRV.symbol ? {
+        const paymentInfo = feeUnit === PRV?.symbol ? {
           paymentAddressStr: dexWithdrawAccount.PaymentAddress,
           amount: fee,
         } : null;
-        const tokenFee = feeUnit !== PRV.symbol ? fee : 0;
+        const tokenFee = feeUnit !== PRV?.symbol ? fee : 0;
         res1 = await sendPToken(dexMainAccount, dexWithdrawAccount, token, amount + tokenFee, paymentInfo, tokenFee ? 0 : fee, tokenFee);
         newHistory = new WithdrawHistory(res1, token, amount, rawFee, feeUnit, account);
         onAddHistory(newHistory);
@@ -207,16 +181,7 @@ class Transfer extends React.PureComponent {
       WithdrawHistory.currentWithdraw = null;
       onUpdateHistory(newHistory);
       Toast.showSuccess(MESSAGES.WITHDRAW_COMPLETED);
-
-      await logEvent(CONSTANT_EVENTS.WITHDRAW_PDEX_SUCCESS, {
-        tokenId: token.id,
-        tokenSymbol: token.symbol,
-      });
     } catch (error) {
-      await logEvent(CONSTANT_EVENTS.WITHDRAW_PDEX_FAILED, {
-        tokenId: token.id,
-        tokenSymbol: token.symbol,
-      });
       WithdrawHistory.currentWithdraw = null;
       onUpdateHistory(newHistory);
       throw error;
@@ -244,7 +209,8 @@ class Transfer extends React.PureComponent {
       this.updateTransfer({ chainError: null });
       try {
         this.setState({ sending: true });
-        if (token.id !== PRV_ID && feeUnit === PRV.symbol) {
+        if (token.id !== PRV_ID && feeUnit === PRV?.symbol) {
+          prvBalance = await accountService.getBalance(prvAccount, wallet);
           prvBalance = await accountService.getBalance(prvAccount, wallet);
           prvFee = fee;
           if (prvFee > prvBalance) {
@@ -407,7 +373,7 @@ class Transfer extends React.PureComponent {
       const isUsed = await isExchangeRatePToken(token.id);
       isUsed && supportedFeeTypes.push({
         tokenId: token.id,
-        symbol: token.symbol
+        symbol: token?.symbol
       });
     } finally {
       this.updateTransfer({ supportedFeeTypes });
@@ -420,7 +386,7 @@ class Transfer extends React.PureComponent {
     const { fee, feeUnit, feeUnitByTokenId } = estimateFeeData;
     let error = transfer.error;
     const { token, amount, balance } = transfer;
-    const txFee = feeUnit === token.symbol ? fee : 0;
+    const txFee = feeUnit === token?.symbol ? fee : 0;
 
     if (txFee + amount > balance) {
       error = MESSAGES.BALANCE_INSUFFICIENT;
@@ -530,7 +496,7 @@ class Transfer extends React.PureComponent {
             <VerifiedText text={item.displayName} style={modalStyle.tokenSymbol} isVerified={item.isVerified} />
             <Text style={modalStyle.tokenName}>{item.name}</Text>
           </View>
-          <Text style={[modalStyle.tokenSymbol, mainStyle.textRight]}>{item.symbol}</Text>
+          <Text style={[modalStyle.tokenSymbol, mainStyle.textRight]}>{item?.symbol}</Text>
         </View>
       </TouchableOpacity>
     );

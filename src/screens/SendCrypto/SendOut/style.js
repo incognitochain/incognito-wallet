@@ -1,10 +1,11 @@
 import { StyleSheet } from 'react-native';
 import { COLORS, FONT } from '@src/styles';
+import { isIOS } from '@src/utils/platform';
 
 export default StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 12,
+    marginBottom: isIOS() ? 70 : 100,
   },
   mainContainer: {
     flex: 1,
@@ -19,8 +20,8 @@ export default StyleSheet.create({
     width: '100%',
   },
   submitBtn: {
-    marginVertical: 50,
-    backgroundColor: COLORS.colorBlue
+    marginTop: 50,
+    backgroundColor: COLORS.colorBlue,
   },
   memoContainer: {},
   memoText: {

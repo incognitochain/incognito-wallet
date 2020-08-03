@@ -42,7 +42,10 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  status: {
+  },
   ellipsis: {
-    width: '65%',
+    flex: 1,
+    marginRight: 25,
   },
 });

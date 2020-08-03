@@ -12,6 +12,7 @@ const COLORS = {
   blue6: '#00407E',
   red: '#FE4D4D',
   green: '#34C759',
+  pink: '#E5006D',
   dark1: '#101111',
   dark2: '#0D3A3C',
   dark3: '#014E52',
@@ -37,6 +38,7 @@ const COLORS = {
   lightGrey17: '#707070',
   lightGrey18: '#DCDCDD',
   lightGreyBlur: '#F4F4F4',
+  lightGrey19: '#F4F4F4',
 
   newGrey: '#8A8A8E',
 
@@ -46,7 +48,7 @@ const COLORS = {
   toastBackgroundSuccess: 'rgba(42, 171, 160, 0.8)',
   overlayBlack: 'rgba(6, 40, 41, 0.9)',
   overlayBlackDark: 'rgba(0, 0, 0, 0.8)',
-  overlayBlackLight: 'rgba(0, 0, 0, 0.3)',
+  overlayBlackLight: 'rgba(0, 0, 0, 0.5)',
   errorMessage: '#ed4337',
   mottoGrey: '#8c9c9d',
 

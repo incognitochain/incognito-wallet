@@ -23,9 +23,9 @@ const enhance = (WrappedComp) => (props) => {
   const handleToggleFollowToken = async (token) => {
     try {
       if (!token?.isFollowed) {
-        await dispatch(actionAddFollowToken(token?.tokenId));
+        dispatch(actionAddFollowToken(token?.tokenId));
       } else {
-        await dispatch(actionRemoveFollowToken(token?.tokenId));
+        dispatch(actionRemoveFollowToken(token?.tokenId));
       }
     } catch (error) {
       console.log(error);

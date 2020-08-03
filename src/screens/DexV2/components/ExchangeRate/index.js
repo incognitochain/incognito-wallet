@@ -22,7 +22,11 @@ const ExchangeRate = ({
       !inputValue || !_.isNumber(inputValue)
   )) {
     const minRate = (inputValue / Math.pow(10, inputToken.pDecimals || 0)) / (minimumAmount / Math.pow(10, outputToken.pDecimals));
-    right = `${formatUtil.amount(minRate, 0, true)} ${inputToken?.symbol} / ${outputToken.symbol}`;
+    if (minRate >= 1) {
+      right = `${formatUtil.amount(minRate, 0, true)} ${inputToken?.symbol} / ${outputToken.symbol}`;
+    } else {
+      right = `${formatUtil.toFixed(minRate, 9)} ${inputToken?.symbol} / ${outputToken.symbol}`;
+    }
   }
 
   return (

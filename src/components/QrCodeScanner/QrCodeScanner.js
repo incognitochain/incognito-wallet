@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, Modal, Toast } from '@src/components/core';
+import {Text} from 'react-native';
+import { View, Modal, Toast } from '@src/components/core';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import styles from './style';
 

@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     lineHeight: 28,
   },
   description: {
-    color: COLORS.lightGrey1,
+    color: COLORS.newGrey,
     fontFamily: FONT.NAME.medium,
     fontSize: 16,
     lineHeight: 22,

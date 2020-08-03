@@ -1,11 +1,10 @@
 import React from 'react';
-import { View, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { View } from 'react-native';
 import Header from '@components/Header';
 import UnShieldForm from '@src/screens/SendCrypto/SendOut';
 import { useSelector } from 'react-redux';
 import { useNavigation } from 'react-navigation-hooks';
 import { accountSeleclor, selectedPrivacySeleclor } from '@src/redux/selectors';
-import { isIOS } from '@src/utils/platform';
 import { styled } from './UnShield.styled';
 import withUnShield from './UnShield.enhance';
 
@@ -14,30 +13,22 @@ const UnShield = () => {
   const navigation = useNavigation();
   const account = useSelector(accountSeleclor.defaultAccountSelector);
   const wallet = useSelector((state) => state?.wallet);
-  const Wrapper = isIOS() ? KeyboardAvoidingView : View;
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <Wrapper
-        style={styled.container}
-        contentContainerStyle={{ flex: 1 }}
-        keyboardVerticalOffset={200}
-        behavior="padding"
-      >
-        <Header
-          titleStyled={styled.headerTitle}
-          title={`Unshield ${selectedPrivacy?.externalSymbol ||
-            selectedPrivacy?.symbol}`}
-        />
-        <UnShieldForm
-          navigation={navigation}
-          selectable={false}
-          selectedPrivacy={selectedPrivacy}
-          account={account}
-          wallet={wallet}
-          reloading={false}
-        />
-      </Wrapper>
-    </ScrollView>
+    <View style={styled.container}>
+      <Header
+        titleStyled={styled.headerTitle}
+        title={`Unshield ${selectedPrivacy?.externalSymbol ||
+          selectedPrivacy?.symbol}`}
+      />
+      <UnShieldForm
+        navigation={navigation}
+        selectable={false}
+        selectedPrivacy={selectedPrivacy}
+        account={account}
+        wallet={wallet}
+        reloading={false}
+      />
+    </View>
   );
 };
 

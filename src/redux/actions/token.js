@@ -17,6 +17,7 @@ import {
 } from '@src/redux/utils/token';
 import { getBalance as getAccountBalance } from '@src/redux/actions/account';
 import internalTokenModel from '@models/token';
+import Util from '@src/utils/Util';
 import { setWallet } from './wallet';
 import {
   followingTokenSelector,
@@ -197,12 +198,13 @@ export const actionAddFollowToken = (tokenId) => async (dispatch, getState) => {
       (foundInternalToken && internalTokenModel.toJson(foundInternalToken)) ||
       foundPToken?.convertToToken();
     if (!token) throw Error('Can not follow empty coin');
-    await dispatch(actionAddFollowTokenFetching(tokenId));
-    await accountService.addFollowingTokens([token], account, wallet);
-    await dispatch(setWallet(wallet));
-    await dispatch(actionAddFollowTokenSuccess(tokenId));
+    dispatch(actionAddFollowTokenFetching(tokenId));
+    await Util.delay(0);
+    wallet = await accountService.addFollowingTokens([token], account, wallet);
+    dispatch(setWallet(wallet));
+    dispatch(actionAddFollowTokenSuccess(tokenId));
   } catch (error) {
-    await dispatch(actionAddFollowTokenFail(tokenId));
+    dispatch(actionAddFollowTokenFail(tokenId));
     throw Error(error);
   }
 };
@@ -220,16 +222,17 @@ export const actionRemoveFollowToken = (tokenId) => async (
       return;
     }
     const account = accountSeleclor.defaultAccount(state);
-    await dispatch(actionAddFollowTokenFetching(tokenId));
+    dispatch(actionAddFollowTokenFetching(tokenId));
+    await Util.delay(0);
     wallet = await accountService.removeFollowingToken(
       tokenId,
       account,
       wallet,
     );
-    await dispatch(setWallet(wallet));
-    await dispatch(actionAddFollowTokenSuccess(tokenId));
+    dispatch(setWallet(wallet));
+    dispatch(actionAddFollowTokenSuccess(tokenId));
   } catch (error) {
-    await dispatch(actionAddFollowTokenFail(tokenId));
+    dispatch(actionAddFollowTokenFail(tokenId));
     throw Error(error);
   }
 };

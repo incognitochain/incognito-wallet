@@ -1,13 +1,14 @@
 import { StyleSheet } from 'react-native';
 import { COLORS } from '@src/styles';
+import { isIOS } from '@src/utils/platform';
 
 export const homeStyle = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 12,
+    marginBottom: isIOS() ? 70 : 100,
   },
   submitBtn: {
-    marginVertical: 50,
+    marginTop: 50,
     backgroundColor: COLORS.colorBlue,
   },
 });

@@ -54,7 +54,6 @@ instance.interceptors.response.use(
   errorData => {
     const errResponse = errorData?.response;
     const originalRequest = errorData?.config;
-
     // can not get response, alert to user
     if (errorData?.isAxiosError && !errResponse) {
       return new ExHandler(

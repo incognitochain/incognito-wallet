@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLORS, FONT } from '@src/styles';
+import { isIOS } from '@src/utils/platform';
 
 export default StyleSheet.create({
   container: {
@@ -40,7 +41,8 @@ export default StyleSheet.create({
   selectType: {
     marginTop: 15,
   },
-  scrollview: {
+  extra: {
     flex: 1,
+    marginBottom: isIOS() ? 70 : 100,
   },
 });

@@ -19,7 +19,6 @@ import { connect, useSelector } from 'react-redux';
 import { useNavigation } from 'react-navigation-hooks';
 import { BtnExport } from '@src/components/Button';
 import Section, { sectionStyle } from '@screens/Setting/features/Section';
-import { isStakeAccount } from '@screens/Stake/stake.utils';
 import { settingSelector } from '@screens/Setting/Setting.selector';
 import { accountSection } from './AccountSection.styled';
 
@@ -138,8 +137,7 @@ const AccountSection = ({
   const isDeletable = (account) =>
     listAccount.length > 1 &&
     !dexUtils.isDEXAccount(account?.name) &&
-    !isNodeAccount(account?.name, devices) &&
-    !isStakeAccount(account);
+    !isNodeAccount(account?.name, devices);
 
   return (
     <Section

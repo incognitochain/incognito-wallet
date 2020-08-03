@@ -1,3 +1,4 @@
+import 'react-native-console-time-polyfill';
 import codePush from 'react-native-code-push';
 import AppScreen from '@src/components/AppScreen';
 import { StatusBar, Toast } from '@src/components/core';
@@ -9,15 +10,20 @@ import ROUTE_NAMES from '@src/router/routeNames';
 import { notificationInitialize } from '@src/services/notification';
 import NavigationService from '@src/services/NavigationService';
 import React, { useEffect, useState } from 'react';
-import 'react-native-console-time-polyfill';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import AppUpdater from '@components/AppUpdater/index';
 import { PersistGate } from 'redux-persist/integration/react';
 import NetInfo from '@react-native-community/netinfo';
 import { Linking, Text } from 'react-native';
-import ModalConnection from './components/Modal/ModalConnection';
-import LocalDatabase from './utils/LocalDatabase';
+import { compose } from 'recompose';
+import PropTypes from 'prop-types';
 import { MAIN_WEBSITE } from './constants/config';
+import LocalDatabase from './utils/LocalDatabase';
+import ModalConnection from './components/Modal/ModalConnection';
+import {
+  actionSetCurrentScreen,
+  actionSetPrevScreen,
+} from './screens/Navigation';
 
 const isShowDeviceLog = false;
 const { store, persistor } = configureStore();
@@ -36,9 +42,34 @@ function getActiveRouteName(navigationState) {
   return route.routeName;
 }
 
-const App = () => {
+const App = (props) => {
+  const { setCurrentScreen } = props;
+  const dispatch = useDispatch();
+  return (
+    <AppContainer
+      ref={(navigatorRef) =>
+        NavigationService.setTopLevelNavigator(navigatorRef)
+      }
+      onNavigationStateChange={(prevState, currentState) => {
+        const prevScreen = getActiveRouteName(prevState);
+        const currentScreen = getActiveRouteName(currentState);
+        setCurrentScreen(currentScreen);
+        dispatch(actionSetCurrentScreen(currentScreen));
+        if (currentScreen !== prevScreen) {
+          dispatch(actionSetPrevScreen(prevScreen));
+        }
+        console.debug('CurrentScreen', currentScreen);
+      }}
+    />
+  );
+};
+
+export const AppWrapper = (props) => (WrappedComponent) => {
   const [currentScreen, setCurrentScreen] = useState(ROUTE_NAMES.Wizard);
-  const [currentNetworkConnectedState, setCurrentNetworkConnectedState] = useState(true);
+  const [
+    currentNetworkConnectedState,
+    setCurrentNetworkConnectedState,
+  ] = useState(true);
 
   useEffect(() => {
     // Init recursive main website
@@ -58,11 +89,11 @@ const App = () => {
 
   const listenNetworkChanges = () => {
     // Add event listener for network state changes
-    NetInfo.addEventListener(state => {
+    NetInfo.addEventListener((state) => {
       console.log('Connection type', state.type);
       console.log('Is connected?', state.isConnected);
 
-      // I want to do this here because of 
+      // I want to do this here because of
       // the state change from none => yes => It will check again and show overlay 1 time before set it to only first time veryly
       if (currentNetworkConnectedState === state?.isConnected) {
         setCurrentNetworkConnectedState(currentNetworkConnectedState);
@@ -79,14 +110,14 @@ const App = () => {
   const openSettingApp = () => {
     let messageErr = 'Can\'t handle settings url, please go to Setting manually';
     Linking.canOpenURL('app-settings:')
-      .then(supported => {
+      .then((supported) => {
         if (!supported) {
           alert(messageErr);
         } else {
           return Linking.openURL('app-settings:');
         }
       })
-      .catch(err => alert(messageErr));
+      .catch((err) => alert(messageErr));
   };
 
   return (
@@ -94,21 +125,16 @@ const App = () => {
       <PersistGate loading={null} persistor={persistor}>
         <StatusBar currentScreen={currentScreen} />
         <AppScreen>
-          <AppContainer
-            ref={navigatorRef => NavigationService.setTopLevelNavigator(navigatorRef)}
-            onNavigationStateChange={(prevState, currentState) => {
-              const currentScreen = getActiveRouteName(currentState);
-              setCurrentScreen(currentScreen);
-              console.debug('CurrentScreen', currentScreen);
-            }}
-          />
+          <App {...{ ...props, currentScreen, setCurrentScreen }} />
           {isShowDeviceLog && <DeviceLog />}
           <AppUpdater />
           <QrScanner />
           <Toast />
           <ModalConnection
             isVisible={false}
-            onPressSetting={() => { openSettingApp(); }}
+            onPressSetting={() => {
+              openSettingApp();
+            }}
             onPressOk={() => listenNetworkChanges()}
           />
         </AppScreen>
@@ -117,4 +143,11 @@ const App = () => {
   );
 };
 
-export default codePush(codePushOptions)(App);
+App.propTypes = {
+  setCurrentScreen: PropTypes.func.isRequired,
+};
+
+export default compose(
+  codePush(codePushOptions),
+  AppWrapper,
+)(App);

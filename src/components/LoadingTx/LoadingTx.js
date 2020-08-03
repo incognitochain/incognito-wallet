@@ -3,8 +3,8 @@ import accountService from '@src/services/wallet/accountService';
 import { COLORS } from '@src/styles';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { Modal } from 'react-native';
 import KeepAwake from 'react-native-keep-awake';
+import PureModal from '@components/Modal/features/PureModal';
 import styleSheet from './style';
 
 class LoadingTx extends Component {
@@ -42,30 +42,33 @@ class LoadingTx extends Component {
       });
   };
 
-  handleToggle = isOpen => {
+  handleToggle = (isOpen) => {
     this.setState(({ open }) => ({ open: isOpen ?? !open }));
   };
 
-  render() {
-    const { open, percent } = this.state;
+  renderModalContent = () => {
+    const { percent } = this.state;
     const { text } = this.props;
-
     return (
-      <Modal animationType="fade" transparent visible={open}>
-        <View style={styleSheet.container}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
-          <Text style={styleSheet.percent}>
-            {percent}
-            <Text style={styleSheet.percentSymbol}> %</Text>
-          </Text>
-          <Text style={[styleSheet.desc, styleSheet.extraDesc]}>{text}</Text>
+      <View style={styleSheet.container}>
+        <View style={styleSheet.wrapper}>
+          <ActivityIndicator size="large" color={COLORS.black} />
+          <Text style={styleSheet.percent}>{`${percent}%`}</Text>
+          {!!text && (
+            <Text style={[styleSheet.desc, styleSheet.extraDesc]}>{text}</Text>
+          )}
           <Text style={styleSheet.desc}>
-            Please wait, this window will close when complete
+            {'Please do not navigate away till this\nwindow closes.'}
           </Text>
         </View>
         <KeepAwake />
-      </Modal>
+      </View>
     );
+  };
+
+  render() {
+    const { open } = this.state;
+    return <PureModal visible={open} content={this.renderModalContent()} />;
   }
 }
 

@@ -9,16 +9,16 @@ import { Header } from '@src/components/';
 
 const sections = [
   {
-    title: 'Total rewards balance',
-    description: 'The big number is your total PRV rewards balance, across all currencies. You can withdraw this anytime. If you wish to re-invest your rewards, simply add it to the pool again.',
+    title: 'Compounding Rewards',
+    description: 'This number is your total PRV rewards balance, which reflects automatic compounding at currency-specific rates.',
   },
   {
     title: 'APY rates',
-    description: 'Current rates are noted here in green. These are subject to change at any time.',
+    description: 'Current rates are noted here in grey. These are subject to change at any time.',
   },
   {
     title: 'Rewards for each currency',
-    description: 'Under the balance of each currency provided, you’ll see a rewards counter specific to that currency. This number will update and compound every 15 minutes. Rewards are paid in PRV based on current prices.',
+    description: 'Under the balance of each currency provided, you’ll see a rewards counter specific to that currency. This number will update and compound every 1 hour. Rewards are paid in PRV based on current prices.',
   },
 ];
 

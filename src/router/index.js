@@ -1,4 +1,4 @@
-import {createAppContainer, createSwitchNavigator} from 'react-navigation';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import AppNavigator from './AppNavigator';
 import ROUTE_NAMES from './routeNames';
 import SplashNavigator from './SplashNavigator';

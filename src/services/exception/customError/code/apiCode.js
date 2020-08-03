@@ -26,6 +26,8 @@ const api = {
   api_invalid_type_upload_file: apiError(-8001),
   api_bnb_memo_required: apiError(-1027),
   api_unstake_fail: apiError(-80011),
+  api_tx_added: apiError(-80002),
+  api_amount_invalid: apiError(-80003),
 };
 
 

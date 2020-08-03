@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
-import { getTradeHistories, getHistoryStatus } from '@src/redux/actions/dex';
+import { getHistoryStatus, getHistories } from '@src/redux/actions/dex';
 import { useDispatch } from 'react-redux';
 import { LONG_DATE_TIME_FORMAT } from '@utils/format';
 import moment from 'moment';
+import { MESSAGES } from '@screens/Dex/constants';
 
 const withOldHistories = WrappedComp => (props) => {
   const [histories, setHistories] = useState([]);
   const dispatch = useDispatch();
 
   const loadHistories = async () => {
-    const oldHistories = (await dispatch(getTradeHistories()))
+    const oldHistories = (await dispatch(getHistories()))
+      .filter(item => item.type !== MESSAGES.TRADE)
       .map(item => ({
         ...item,
-        outputToken: item.outputToken.replace(/^p/g, ''),
-        inputToken: item.inputToken.replace(/^p/g, ''),
-        networkFeeUnit: item.networkFeeUnit.replace(/^p/g, ''),
+        outputToken: item.outputToken?.replace(/^p/g, ''),
+        inputToken: item.inputToken?.replace(/^p/g, ''),
+        networkFeeUnit: item.networkFeeUnit?.replace(/^p/g, ''),
       }));
     const promises = await oldHistories.map(item => dispatch(getHistoryStatus(item)));
     const histories = await Promise.all(promises)
