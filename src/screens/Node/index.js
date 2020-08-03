@@ -208,6 +208,7 @@ class Node extends BaseScreen {
             { text: 'Resume', onPress: () => { this.goToScreen(routeNames.RepairingSetupNode, { isRepairing: true, verifyProductCode: verifyProductCode }); } },
           ],
           { cancelable: false }
+          
         );
       }
     } else {

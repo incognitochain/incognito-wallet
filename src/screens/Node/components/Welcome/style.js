@@ -41,14 +41,14 @@ const style = StyleSheet.create({
     textAlign: 'left',
     color: COLORS.colorPrimary,
     fontFamily: FONT.NAME.bold,
-    fontSize: FONT.FONT_SIZES.medium,
+    fontSize: FONT.SIZE.medium,
     marginBottom: 15,
   },
   getNode: {
     textAlign: 'left',
     color: COLORS.lightGrey1,
     fontFamily: FONT.NAME.medium,
-    fontSize: FONT.FONT_SIZES.medium,
+    fontSize: FONT.SIZE.medium,
   },
   vNodeTitle: {
     textAlign: 'center',

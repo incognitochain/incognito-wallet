@@ -15,13 +15,13 @@ const style = StyleSheet.create({
   },
   title: {
     ...FONT.STYLE.bold,
-    fontSize: font.FONT_SIZES.regular,
+    fontSize: FONT.SIZE.regular,
     marginTop: 30,
     lineHeight: 26,
   },
   titleHeader: {
     ...FONT.STYLE.bold,
-    fontSize: font.FONT_SIZES.superMedium,
+    fontSize: FONT.SIZE.superMedium,
     marginTop: 30,
     lineHeight: 26,
   },

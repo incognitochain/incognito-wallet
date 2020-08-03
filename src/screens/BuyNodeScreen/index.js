@@ -334,7 +334,7 @@ const BuyNodeScreen = () => {
         <View style={{width: ScreenWidth * 0.4, flexDirection: 'row', justifyContent: 'flex-end',  alignItems: 'center'}}>
           <CurrentBalance
             balanceStyle={styles.balance}
-            tokenStyle={[{ fontSize: FONT.FONT_SIZES.superMedium, marginRight: -30 }, theme.text.boldTextStyleMedium]}
+            tokenStyle={[{ fontSize: FONT.SIZE.superMedium, marginRight: -30 }, theme.text.boldTextStyleMedium]}
             isNestedCurrentBalance
             selectContainer={{
               borderWidth: 0,

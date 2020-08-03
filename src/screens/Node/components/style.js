@@ -168,7 +168,7 @@ export const rewardStyle = StyleSheet.create({
   },
   balance: {
     fontFamily: FONT.NAME.specialBold,
-    fontSize: FONT.FONT_SIZES.medium,
+    fontSize: FONT.SIZE.medium,
     color: COLORS.colorGreyBold,
     textAlign: 'center',
     height: '100%',

@@ -17,7 +17,7 @@ const WelcomeFirstTime = ({ onPressOk }) => (
     <View style={styles.pNode}>
      
       <Text style={[styles.buyText, {textAlign: 'center', color: 'black'}]}>Welcome to the network!</Text>
-      <Text style={[styles.getNode, theme.MARGIN.marginTopAvg, {fontSize: FONT.FONT_SIZES.regular, textAlign: 'center'}]}>You`re all setup and ready to begin powering Incognito. To keep the network secure, Nodes are selected to wok at random. Your first earnings will show up anywhere between 1 - 14 days.</Text>
+      <Text style={[styles.getNode, theme.MARGIN.marginTopAvg, {fontSize: FONT.SIZE.regular, textAlign: 'center'}]}>You`re all setup and ready to begin powering Incognito. To keep the network secure, Nodes are selected to wok at random. Your first earnings will show up anywhere between 1 - 14 days.</Text>
       <Button
         style={[styles.pNodeButton, theme.BUTTON.BLACK_TYPE, theme.MARGIN.marginTopAvg]}
         onPress={onPressOk}

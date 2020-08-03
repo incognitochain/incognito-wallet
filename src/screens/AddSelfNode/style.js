@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     ...TextStyle.mediumText,
     color: COLORS.colorPrimary,
     fontFamily: FontStyle.light.fontFamily,
-    fontSize: FONT.FONT_SIZES.regular
+    fontSize: FONT.SIZE.regular
   },
   buttonChooseAccount:{
     ...TextStyle.smallText,

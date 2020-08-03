@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     width: '100%',
     color: COLORS.colorPrimary,
     fontFamily: FONT.NAME.bold,
-    fontSize: FONT.FONT_SIZES.superMedium,
+    fontSize: FONT.SIZE.superMedium,
     alignSelf: 'center',
     textAlign: 'center',
   },
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     ...TextStyle.normalText,
     color: COLORS.black,
     fontFamily: FONT.NAME.semiBold,
-    fontSize: FONT.FONT_SIZES.superMedium,
+    fontSize: FONT.SIZE.superMedium,
     marginTop: 10,
   },
   item_container_error: {

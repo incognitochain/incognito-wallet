@@ -19,7 +19,7 @@ const style = StyleSheet.create({
   title: {
     ...FONT.STYLE.bold,
     marginTop: 30,
-    fontSize: FONT.FONT_SIZES.medium
+    fontSize: FONT.SIZE.medium
   },
   bold: {
     ...FONT.STYLE.bold,

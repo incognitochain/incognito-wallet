@@ -16,7 +16,7 @@ const styled = StyleSheet.create({
   },
   text: {
     fontFamily: FONT.NAME.regular,
-    fontSize: FONT.FONT_SIZES.regular,
+    fontSize: FONT.SIZE.regular,
     color: COLORS.colorPrimary
   }
 });
