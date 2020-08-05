@@ -358,7 +358,6 @@ class Pool extends React.Component {
 
     return (
       <View style={mainStyle.feeWrapper}>
-        <SharePercent share={pair.share} totalShare={pair.totalShare} />
         <Balance
           token={inputToken}
           balance={inputBalance}

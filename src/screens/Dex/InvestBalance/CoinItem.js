@@ -25,8 +25,8 @@ const CoinItem = ({
   const token = useSelector(state => selectedPrivacySeleclor.getPrivacyDataByTokenID(state)(coin.id));
   return (
     <TouchableOpacity
-      onPress={() => onPress && onPress(coin)}
-      disabled={coin.balance === 0}
+      onPress={() => onPress(coin)}
+      disabled={!onPress || !coin.balance}
       style={onPress && coin.balance === 0 ? mainStyle.disabled : null}
     >
       <Row

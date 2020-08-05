@@ -67,6 +67,8 @@ export class PDexTradeHistoryModel {
 
       const originalSellAmount = BigNumber(this.sellAmount)
         .dividedBy(BigNumber(10).pow(sellToken.pDecimals));
+
+      // Decimals is 18 for all buy tokens returned by Kyber/Uniswap (handled by API)
       const originalPrice = BigNumber(this.buyAmount)
         .dividedBy(BigNumber(10).pow(18));
       this.buyAmount = BigNumber(originalPrice)
