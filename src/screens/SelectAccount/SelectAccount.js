@@ -10,7 +10,7 @@ import {
 } from '@src/redux/actions/account';
 import Header, { useSearchBox } from '@src/components/Header';
 import { withLayout_2 } from '@src/components/Layout';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 import {
   defaultAccountNameSelector,
   switchAccountSelector,
@@ -24,6 +24,7 @@ import { styled, itemStyled } from './SelectAccount.styled';
 const AccountItem = ({ accountName, PaymentAddress }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const onSelect = useNavigationParam('onSelect');
   const defaultAccountName = useSelector(defaultAccountNameSelector);
   const switchingAccount = useSelector(switchAccountSelector);
   if (!accountName) {
@@ -34,7 +35,13 @@ const AccountItem = ({ accountName, PaymentAddress }) => {
       if (switchingAccount) {
         return;
       }
-      navigation.goBack();
+
+      if (!onSelect) {
+        navigation.goBack();
+      } else {
+        onSelect();
+      }
+
       await dispatch(actionSwitchAccountFetching());
       if (accountName === defaultAccountName) {
         Toast.showInfo(`Your current account is "${accountName}"`);
@@ -70,15 +77,17 @@ const AccountItem = ({ accountName, PaymentAddress }) => {
   return <Component />;
 };
 
-const ListAccount = () => {
+const ListAccount = ({ ignoredAccounts }) => {
   const listAccount = useSelector(accountSeleclor.listAccountSelector);
   const [result, keySearch] = useSearchBox({
     data: listAccount,
     handleFilter: () => [
       ...listAccount.filter(
         (account) =>
-          includes(account?.accountName.toLowerCase(), keySearch) ||
-          includes(account?.name.toLowerCase(), keySearch),
+          !(ignoredAccounts.includes(account?.name.toLowerCase()) ||
+            ignoredAccounts.includes(account?.accountName.toLowerCase())) &&
+          (includes(account?.accountName.toLowerCase(), keySearch) ||
+          includes(account?.name.toLowerCase(), keySearch)),
       ),
     ],
   });
@@ -92,6 +101,7 @@ const ListAccount = () => {
 };
 
 const SelectAccount = () => {
+  const ignoredAccounts = useNavigationParam('ignoredAccounts') || [];
   return (
     <View style={styled.container}>
       <Header
@@ -99,7 +109,7 @@ const SelectAccount = () => {
         titleStyled={styled.titleStyled}
         canSearch
       />
-      <ListAccount />
+      <ListAccount ignoredAccounts={ignoredAccounts} />
     </View>
   );
 };
@@ -109,6 +119,8 @@ AccountItem.propTypes = {
   PaymentAddress: PropTypes.string.isRequired,
 };
 
-SelectAccount.propTypes = {};
+ListAccount.propTypes = {
+  ignoredAccounts: PropTypes.array.isRequired,
+};
 
 export default withLayout_2(SelectAccount);

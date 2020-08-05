@@ -4,8 +4,6 @@ import _ from 'lodash';
 import {Overlay} from 'react-native-elements';
 import {Button, ScrollView, View} from '@components/core';
 import FullScreenLoading from '@components/FullScreenLoading/index';
-import HeaderBar from '@components/HeaderBar/HeaderBar';
-import {COLORS} from '@src/styles';
 import {MAX_WAITING_TIME, MESSAGES, MIN_CANCEL_VALUE, SHORT_WAIT_TIME} from '@screens/Dex/constants';
 import {CONSTANT_COMMONS} from '@src/constants';
 import tokenService, {PRV} from '@services/wallet/tokenService';
@@ -17,6 +15,8 @@ import {connect} from 'react-redux';
 import {ExHandler} from '@services/exception';
 import AddPin from '@screens/AddPIN';
 import routeNames from '@routers/routeNames';
+import { Header } from '@src/components';
+import { withLayout_2 } from '@components/Layout/index';
 import TradeHistory from './TradeHistory';
 import WithdrawHistory from './WithdrawHistory';
 import DepositHistory from './DepositHistory';
@@ -25,11 +25,6 @@ import RemoveLiquidityHistory from './RemoveLiquidityHistory';
 import stylesheet from './style';
 
 const MAX_TRIED = MAX_WAITING_TIME / SHORT_WAIT_TIME;
-
-const options = {
-  title: 'Transaction details',
-  headerBackground: COLORS.dark2,
-};
 
 const HISTORY_TYPES = {
   [MESSAGES.DEPOSIT]: DepositHistory,
@@ -88,6 +83,9 @@ const checkCorrectBalance = (wallet, account, token, value) => {
   let tried = 0;
   return async (resolve, reject) => {
     const balance = await accountService.getBalance(account, wallet, token.id);
+
+    console.debug('BALANCE', balance);
+
     if (balance >= value) {
       clearInterval(currentInterval);
       return resolve(balance);
@@ -130,11 +128,9 @@ const DexHistoryDetail = ({ navigation, wallet, updateHistory, getHistoryStatus,
       const fee = _.floor(networkFee / 2, 0);
       let res;
       if (token.id === PRV.id) {
-        console.debug('CONTINUE STEP PRV');
         await waitUntil(checkCorrectBalance(wallet, dexWithdrawAccount, PRV, amount + fee), SHORT_WAIT_TIME);
         res = await sendPRV(wallet, dexWithdrawAccount, account, amount, fee);
       } else {
-        console.debug('CONTINUE STEP TOKEN');
         const tokenFee = networkFeeUnit !== PRV.symbol ? fee : 0;
         await waitUntil(checkCorrectBalance(wallet, dexWithdrawAccount, token, amount + tokenFee), SHORT_WAIT_TIME);
         res = await sendPToken(wallet, dexWithdrawAccount, account, token, amount, null, tokenFee ? 0 : fee, tokenFee);
@@ -229,12 +225,8 @@ const DexHistoryDetail = ({ navigation, wallet, updateHistory, getHistoryStatus,
   };
 
   return(
-    <View>
-      <HeaderBar
-        index={2}
-        navigation={navigation}
-        scene={{ descriptor: { options } }}
-      />
+    <View style={stylesheet.flex}>
+      <Header title="Transaction details" />
       <ScrollView style={stylesheet.scrollView}>
         <History
           {...history}
@@ -292,4 +284,4 @@ DexHistoryDetail.propTypes = {
 export default connect(
   mapState,
   mapDispatch
-)(DexHistoryDetail);
+)(withLayout_2(DexHistoryDetail));

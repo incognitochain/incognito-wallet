@@ -5,13 +5,13 @@ import stylesheet from './style';
 
 
 const ExtraInfo = (props) => {
-  const { left, right, style, rightStyle } = props;
+  const { left, right, style, rightStyle, wrapperStyle } = props;
 
   const LeftWrapper = typeof left === 'object' ? View : Text;
   const RightWrapper = typeof right === 'object' ? View : Text;
 
   return (
-    <View style={stylesheet.wrapper}>
+    <View style={[stylesheet.wrapper, wrapperStyle]}>
       <LeftWrapper style={[stylesheet.text, stylesheet.textLeft, style]}>{left}</LeftWrapper>
       <RightWrapper
         numberOfLines={1}
@@ -35,12 +35,14 @@ ExtraInfo.propTypes = {
     PropTypes.number,
   ]).isRequired,
   style: PropTypes.object,
+  wrapperStyle: PropTypes.object,
   rightStyle: PropTypes.object,
 };
 
 ExtraInfo.defaultProps = {
   style: null,
   rightStyle: null,
+  wrapperStyle: null,
 };
 
 export default ExtraInfo;

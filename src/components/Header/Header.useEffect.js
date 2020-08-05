@@ -20,7 +20,7 @@ export const useSearchBox = (props) => {
   const [state, setState] = React.useState(initialState);
   const { result } = state;
   const initData = async () =>
-    await setState({ ...initialState, result: [...data] });
+    await setState({ ...initialState, result: handleFilter() });
   const filterData = async () => {
     if (!isEmpty(keySearch)) {
       return await setState({ ...initialState, result: handleFilter() });

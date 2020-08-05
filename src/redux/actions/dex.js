@@ -147,10 +147,6 @@ function getAddLiquidityStatus(history) {
         }
       }
 
-      if (AddLiquidityHistory.currentHistory && history.txId === AddLiquidityHistory.currentHistory.txId) {
-        return TRANSFER_STATUS.PROCESSING;
-      }
-
       if (result.isInMempool) {
         return TRANSFER_STATUS.PENDING;
       }
