@@ -306,10 +306,10 @@ class NodeItemDetail extends Component {
     }
     
     // Offline
-    if (!item?.IsOnline || item?.IsOnline === 0 || (!item.Staked && unstakedPNode)) {
+    if (!item?.IsOnline || item?.IsOnline === 0 || (!item.Staked)) {
       return COLORS.lightGrey1;
     }
-    
+
     // Online
     if (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0) {
       return COLORS.blue;
@@ -387,7 +387,6 @@ class NodeItemDetail extends Component {
       }
     });
     let device = Device.getInstance(item);
-    console.log(device.toJSON());
     // const isUnstaking = item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
     const unstakedPNode = item.Unstaked;
     const isUnstaking = device.StakerAddress ? device.IsUnstaking : (device.Staked && device.Unstaking);

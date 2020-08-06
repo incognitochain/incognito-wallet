@@ -12,6 +12,7 @@ import NodeService from '@services/NodeService';
 import { ExHandler } from '@services/exception';
 import Header from '@src/components/Header';
 import theme from '@src/styles/theme';
+import LogManager from '@src/services/LogManager';
 import styles from './style';
 
 class LinkDevice extends BaseScreen {
@@ -42,10 +43,22 @@ class LinkDevice extends BaseScreen {
         product_id: productId,
         product_type: DEVICES.MINER_TYPE
       });
-      const listDevice = await LocalDatabase.getListDevices();
-      const newListDevice = [node, ...listDevice];
-      await LocalDatabase.saveListDevices(newListDevice);
-      this.goToScreen(routeNames.Node);
+      let listDevice = await LocalDatabase.getListDevices();
+      let isDuplicate = false;
+      for (let i = 0; i < listDevice?.length; i++) {
+        if (listDevice[i]?.minerInfo?.qrCodeDeviceId === qrCode) {
+          isDuplicate = true;
+          break;
+        }
+      }
+      if (isDuplicate) {
+        new ExHandler('This QRCode is existing. Could not import node device').showErrorToast(true);
+        return;
+      } else {
+        const newListDevice = [node, ...listDevice];
+        await LocalDatabase.saveListDevices(newListDevice);
+        this.goToScreen(routeNames.Node);
+      }
     } finally {
       this.setState({ loading: false });
     }

@@ -64,7 +64,7 @@ const AppNavigator = createStackNavigator(
     [ROUTE_NAMES.Node]: navigationOptionsHandler(Node, { header: () => null, }),
     [ROUTE_NAMES.AddNode]: navigationOptionsHandler(AddNode, { header: () => null, }),
     [ROUTE_NAMES.LinkDevice]: navigationOptionsHandler(LinkDevice, { header: () => null,}),
-    [ROUTE_NAMES.AddStake]: navigationOptionsHandler(AddStake, { title: 'Stake' }),
+    [ROUTE_NAMES.AddStake]: navigationOptionsHandler(AddStake, { header: () => null }),
     [ROUTE_NAMES.Unstake]: navigationOptionsHandler(Unstake, { header: () => null }),
     [ROUTE_NAMES.AddSelfNode]: navigationOptionsHandler(AddSelfNode, { header: () => null, }),
     [ROUTE_NAMES.GetStaredAddNode]: navigationOptionsHandler(GetStartedAddNode, { header: () => null,}),

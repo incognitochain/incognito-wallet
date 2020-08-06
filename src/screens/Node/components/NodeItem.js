@@ -33,6 +33,14 @@ class NodeItem extends React.Component {
     const deviceData = await NodeService.fetchAndSavingInfoNodeStake(item);
     const device = Device.getInstance(deviceData);
 
+    // Fetch-ping firebase instanly for getting ip
+    const ip = await NodeService.pingGetIP(device);
+    if (ip) {
+      device.Host = ip;
+      device.setIsOnline(MAX_RETRY);
+    } else {
+      device.setIsOnline(Math.max(device.IsOnline - 1, 0));
+    }
     if (device.IsLinked) {
       const res = await NodeService.getLog(device);
       const log = res.Data;

@@ -10,11 +10,11 @@ const Reward = ({ symbol, pDecimals, balance, isDefault, balanceStyle, container
   <View style={rewardStyle.container}>
     <View style={[{ flexDirection: 'row' }, containerItemStyle]}>
       {isDefault && isDefault ? (
-        <Text style={[rewardStyle.balance, balanceStyle]} numberOfLines={1}>
+        <Text style={[rewardStyle.balance, balanceStyle, {fontVariant: ['tabular-nums']}]} numberOfLines={1} >
           {symbol === PRV?.symbol ? (idDefault ? 'PRV' : 'ℙ') : symbol} {(balance > 1? formatUtils.amountClipedRewards(balance, pDecimals, false, true) : formatUtils.amountClipedMaxRewards(balance, pDecimals, false, true))}
         </Text>
       ) : (
-        <Text style={[rewardStyle.balance, balanceStyle]} numberOfLines={1}>
+        <Text style={[rewardStyle.balance, balanceStyle, {fontVariant: ['tabular-nums']}]} numberOfLines={1}>
           {(balance > 1? formatUtils.amountClipedRewards(balance, pDecimals, false, true) : formatUtils.amountClipedMaxRewards(balance, pDecimals, false, true))} {symbol === PRV?.symbol ? (idDefault ? 'PRV' : 'ℙ') : symbol}
         </Text>
       )}
