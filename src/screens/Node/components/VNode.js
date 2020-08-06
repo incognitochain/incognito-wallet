@@ -213,6 +213,9 @@ class VNode extends React.Component {
 
     // Check account not imported
     const hasAccount = item?.AccountName;
+
+    const colorStatus = this.getColorStatus(item);
+
     return (
       <View style={styles.container}>
         {isFetching ? <Loader /> : (
@@ -220,9 +223,7 @@ class VNode extends React.Component {
             <TouchableOpacity
               style={[styles.row]}
               onLongPress={() => { 
-                // if (global.isDebug()) {
                 this.showDeleteAlert();
-                // }
               }}
 
               onPress={() => NavigationService.navigate(routeNames.NodeItemDetail,
@@ -242,12 +243,13 @@ class VNode extends React.Component {
                   onImport: onImportAccount,
                   isUnstaking: item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking),
                   withdrawable: item?.IsOnline && item?.IsWorking,
-                  isOffline: !item?.IsOnline,
+                  isOffline: !item?.IsOnline || item?.IsOnline === 0 || (!item.Staked),
+                  isOnline: item?.IsWorking && item?.IsOnline && item?.IsOnline > 0,
                 })}
             >
               <View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center'}}>
-                  <BtnStatus backgroundColor={this.getColorStatus(item)} />
+                  <BtnStatus backgroundColor={colorStatus} />
                   <Text style={[styles.itemLeft]}>Node {labelName || '-'}</Text>
                 </View>
                 <View style={{marginLeft: 30}}>

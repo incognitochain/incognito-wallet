@@ -13,7 +13,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { MESSAGES } from '@src/constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import LogManager from '@src/services/LogManager';
 import Header from '@src/components/Header';
 import linkingService from '@src/services/linking';
 import Swiper from 'react-native-swiper';
@@ -21,7 +20,6 @@ import convert from '@utils/convert';
 import theme from '@src/styles/theme';
 import Device from '@src/models/device';
 import { Platform } from 'react-native';
-import BtnInformation from '@src/components/Button/BtnInformation';
 import NavigationService from '@src/services/NavigationService';
 import routeNames from '@src/router/routeNames';
 import BtnMoreInfo from '@src/components/Button/BtnMoreInfo';
@@ -291,6 +289,13 @@ class NodeItemDetail extends Component {
       </TouchableOpacity>
     );
   }
+  renderUpdateFirmware = (onPress, shouldRenderUnstake) => {
+    return (
+      <TouchableOpacity style={[theme.MARGIN.marginBottomDefault, {position: 'absolute', bottom: shouldRenderUnstake ? 20 : 80, left: 20}]} onPress={()=>{this.goToUpdateFirmWareBasic();}}>
+        <Text style={[theme.text.mediumTextMotto]}>Manage Node setting</Text>
+      </TouchableOpacity>
+    );
+  }
   renderBtn = (title, onPress) => {
     return (
       <Button onPress={onPress} title={title} buttonStyle={[{ flex: 1, margin: 2 }, theme.BUTTON.BLUE_TYPE]} />
@@ -299,7 +304,6 @@ class NodeItemDetail extends Component {
   // Only for test
   getColorStatus = (item) => {
     const isUnstaking = item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
-    const unstakedPNode = item.Unstaked;
     // Unstaking
     if (isUnstaking) {
       return COLORS.orange;
@@ -319,19 +323,25 @@ class NodeItemDetail extends Component {
     return COLORS.green;
   }
 
-  renderStatusNode = (item) => {
-    const isUnstaking = item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
+  renderStatusNode = (item, isUnstaking, isOffline, isOnline) => {
     const unstakedPNode = item.Unstaked;
-    let isOffline  = (!item?.IsOnline || item?.IsOnline === 0 || (!item.Staked && unstakedPNode));
-    const isOnline = (item?.IsWorking && item?.IsOnline && item?.IsOnline > 0);
     const {canDropDown} = this.state;
 
     const hasStaked = item.Staked;
-    const noNeedToShowForUnstaked = item?.IsVNode && !hasStaked || !item?.IsVNode && !hasStaked && unstakedPNode;
+    const noNeedToShowForUnstaked = (item?.IsVNode && !hasStaked) || (!item?.IsVNode && !hasStaked && unstakedPNode);
     
     if (noNeedToShowForUnstaked) {
       return (
         null
+      );
+    }
+
+    if (isUnstaking) {
+      return (
+        <>
+          {this.renderStatus('Status', 'Unstaking', 'orange')}
+          {canDropDown && this.renderUnstaking()}
+        </>
       );
     }
     if (isOffline) {
@@ -350,14 +360,6 @@ class NodeItemDetail extends Component {
         </>
       );
     }
-    if (isUnstaking) {
-      return (
-        <>
-          {this.renderStatus('Status', 'Unstaking', 'orange')}
-          {canDropDown && this.renderUnstaking()}
-        </>
-      );
-    }
     return (
       <>
         {this.renderStatus('Status', 'Waiting', 'green')}
@@ -365,10 +367,16 @@ class NodeItemDetail extends Component {
       </>
     );
   }
+
+  goToUpdateFirmWareBasic = () => {
+    const { navigation } = this.props;
+    const {item} = navigation.state.params;
+    NavigationService.navigate(routeNames.BasicInfo, {device: item});
+  }
+  
   render() {
     const { navigation } = this.props;
-    const { deviceName, ip, withdrawable,
-      rewardsList,
+    const { ip, rewardsList,
       onWithdraw,
       onUnstake,
       onStake,
@@ -376,10 +384,12 @@ class NodeItemDetail extends Component {
       name,
       hasAccount,
       stake,
-      onImport,
-      isOffline } = navigation.state.params;
+      isUnstaking,
+      isOffline,
+      isOnline,
+      onImport } = navigation.state.params;
 
-    let { rewards, canDropDown } = this.state;
+    let { rewards } = this.state;
     let shouldShowWithdraw = false;
     rewards.forEach(element => {
       if (element?.balance > 0) {
@@ -387,9 +397,7 @@ class NodeItemDetail extends Component {
       }
     });
     let device = Device.getInstance(item);
-    // const isUnstaking = item?.StakerAddress && item?.StakerAddress != '' ? item?.IsUnstaking : (item?.Staked && item?.Unstaking);
-    const unstakedPNode = item.Unstaked;
-    const isUnstaking = device.StakerAddress ? device.IsUnstaking : (device.Staked && device.Unstaking);
+    const shouldRenderUnstake = !stake && hasAccount && !isUnstaking;
     return (
       <View style={styles.containerDetail}>
         <Header
@@ -435,9 +443,10 @@ class NodeItemDetail extends Component {
         <View style={[theme.MARGIN.marginTopAvg]}>
           {this.renderItemText('Keychain', name)}
           {this.renderItemText('IP', ip)}
-          {this.renderStatusNode(device)}
+          {this.renderStatusNode(device, isUnstaking, isOffline, isOnline)}
         </View>
-        {!stake && hasAccount && !isUnstaking ? this.renderUnstake(() => onUnstake(device)) : null}
+        {shouldRenderUnstake ? this.renderUnstake(() => onUnstake(device)) : this.renderUpdateFirmware(()=>{this.goToUpdateFirmWareBasic();}, !shouldRenderUnstake)}
+        {shouldRenderUnstake && this.renderUpdateFirmware(()=>{this.goToUpdateFirmWareBasic();}, !shouldRenderUnstake)}
       </View>
     );
   }
