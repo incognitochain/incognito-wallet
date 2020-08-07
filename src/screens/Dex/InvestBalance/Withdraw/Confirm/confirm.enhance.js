@@ -75,10 +75,7 @@ const withConfirm = WrappedComp => (props) => {
 
       WithdrawHistory.withdrawing = true;
 
-      const paymentInfo = coin.id === PRV_ID ? {
-        paymentAddressStr: dexWithdrawAccount.PaymentAddress,
-        amount: rawFee,
-      } : null;
+      const prvAmount = coin.id !== PRV_ID ? rawFee : 0;
 
       res1 = await accountService.createAndSendToken(
         dexMainAccount,
@@ -88,11 +85,11 @@ const withConfirm = WrappedComp => (props) => {
         coin.id,
         rawFee,
         0,
-        paymentInfo,
+        prvAmount,
       );
       newHistory = new WithdrawHistory(res1, coin, value, rawFee, COINS.PRV.symbol, account);
       handleAddHistory(newHistory);
-      await checkCorrectBalance(dexWithdrawAccount, COINS.PRV, value + rawFee);
+      await checkCorrectBalance(dexWithdrawAccount, coin, value);
       res2 = await accountService.createAndSendToken(
         dexWithdrawAccount,
         wallet,
