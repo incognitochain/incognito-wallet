@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import {View, Text, RoundCornerButton, ScrollView, FlexView} from '@components/core';
-import ExtraInfo from '@screens/DexV2/components/ExtraInfo';
 import { withLayout_2 } from '@components/Layout';
 import Header from '@components/Header/index';
 import Loading from '@screens/DexV2/components/Loading';
@@ -19,7 +18,6 @@ import styles from './style';
 const Confirm = ({
   firstCoin,
   secondCoin,
-  share,
   fee,
   feeToken,
   onConfirm,
@@ -35,11 +33,6 @@ const Confirm = ({
           <Text style={styles.bigText}>Add</Text>
           <Text style={styles.bigText} numberOfLines={3}>{firstCoin.displayValue} {firstCoin.symbol} + {secondCoin.displayValue} {secondCoin.symbol}</Text>
         </View>
-        <ExtraInfo
-          left="Shares"
-          right={`${share}%`}
-          style={{ ...styles.extra }}
-        />
         <Balance
           token={feeToken}
           balance={fee}
@@ -66,7 +59,6 @@ const Confirm = ({
 Confirm.propTypes = {
   firstCoin: PropTypes.object.isRequired,
   secondCoin: PropTypes.object.isRequired,
-  share: PropTypes.string.isRequired,
   pair: PropTypes.object.isRequired,
   onConfirm: PropTypes.func.isRequired,
   fee: PropTypes.number.isRequired,

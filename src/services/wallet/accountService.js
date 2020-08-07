@@ -367,7 +367,7 @@ export default class Account {
     const key = `balance-${account.name || account.AccountName}-${tokenId ||
       '0000000000000000000000000000000000000000000000000000000000000004'}`;
     const indexAccount = wallet.getAccountIndexByName(
-      account.name || account.AccountName,
+      this.getAccountName(account),
     );
 
     return await cachePromise(

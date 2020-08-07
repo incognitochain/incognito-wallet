@@ -302,31 +302,31 @@ class Pool extends React.Component {
       outputBalance,
     } = this.state;
 
+    if (!inputToken || !outputToken) {
+      return null;
+    }
+
     return (
       <View style={mainStyle.feeWrapper}>
-        {!!pair && (
-          <>
-            <Balance
-              token={inputToken}
-              balance={inputBalance}
-            />
-            <Balance
-              token={outputToken}
-              balance={outputBalance}
-            />
-            <ExchangeRate
-              inputToken={inputToken}
-              inputValue={inputValue}
-              outputToken={outputToken}
-              outputValue={outputValue}
-            />
-            <PoolSize
-              inputToken={inputToken}
-              pair={pair}
-              outputToken={outputToken}
-            />
-          </>
-        )}
+        <Balance
+          token={inputToken}
+          balance={inputBalance}
+        />
+        <Balance
+          token={outputToken}
+          balance={outputBalance}
+        />
+        <ExchangeRate
+          inputToken={inputToken}
+          inputValue={inputValue}
+          outputToken={outputToken}
+          outputValue={outputValue}
+        />
+        <PoolSize
+          inputToken={inputToken}
+          pair={pair}
+          outputToken={outputToken}
+        />
       </View>
     );
   }
