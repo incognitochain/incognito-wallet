@@ -12,8 +12,17 @@ class PoolSize extends React.Component {
       pair,
     } = this.props;
 
-    if (!inputToken || !outputToken || _.isEmpty(pair)) {
+    if (!inputToken || !outputToken) {
       return null;
+    }
+
+    if (!pair || _.isEmpty(pair)) {
+      return (
+        <ExtraInfo
+          left="Pool size:"
+          right="0"
+        />
+      );
     }
 
     const inputPool = pair[inputToken.id];
