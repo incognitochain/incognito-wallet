@@ -87,7 +87,7 @@ const ManageBalance = ({
               style={[mainStyle.flex, mainStyle.button, mainStyle.margin]}
               title="Withdraw"
               onPress={handleWithdraw}
-              disabled={followingCoins.some(coin => !coin.displayBalance)}
+              disabled={followingCoins.some(coin => !coin.displayBalance) || followingCoins.every(coin => !coin.balance)}
             />
           </Row>
           <CoinList coins={followingCoins} />
