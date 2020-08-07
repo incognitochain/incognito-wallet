@@ -18,6 +18,8 @@ const withBalance = WrappedComp => (props) => {
       const newCoins = [...noBalanceCoins];
 
       const currentAccountName = accountService.getAccountName(account);
+      console.debug('ACCOUNT NAME', currentAccountName);
+      console.debug('LOAD COIN');
       for (let index = 0; index < newCoins.length; index += 1) {
         const coin = newCoins[index];
         coin.balance = undefined;
@@ -26,7 +28,10 @@ const withBalance = WrappedComp => (props) => {
         newCoins[index] = coin;
         setFollowingCoins([...newCoins]);
 
-        const balance = await accountService.getBalance(account, wallet, coin.id);
+        console.debug('LOAD BALANCE', currentAccountName, index, coin.symbol);
+        // TODO: For unknown reason, when we pass account, account will be changed to pDEX. We need to find a solution to fix it
+        const balance = await accountService.getBalance({ name: currentAccountName }, wallet, coin.id);
+        console.debug('LOAD BALANCE COMPLETE', currentAccountName, index, coin.symbol);
         coin.displayBalance = formatUtil.amountFull(balance, coin.pDecimals) || '0';
         coin.displayClipBalance = formatUtil.amountFull(balance, coin.pDecimals, true) || '0';
         coin.balance = balance;
@@ -40,6 +45,8 @@ const withBalance = WrappedComp => (props) => {
           setFollowingCoins([...newCoins]);
         }
       }
+
+      console.debug('LOAD ACCOUNT NAME', currentAccountName);
     } catch (error) {
       console.debug('CAN GET COIN BALANCE', error);
     }

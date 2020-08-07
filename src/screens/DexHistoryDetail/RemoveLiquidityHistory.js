@@ -32,10 +32,6 @@ const RemoveLiquidityHistory = ({
     </View>
     <TransactionID txId={txId} />
     <View style={stylesheet.row}>
-      <Text style={stylesheet.field}>SHARE</Text>
-      <Text style={stylesheet.textRight} numberOfLines={1}>{formatUtils.amount(shareValue)}</Text>
-    </View>
-    <View style={stylesheet.row}>
       <Text style={stylesheet.field}>TIME</Text>
       <Text style={stylesheet.textRight}>{formatUtils.formatUnixDateTime(lockTime)}</Text>
     </View>
