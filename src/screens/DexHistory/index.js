@@ -1,21 +1,25 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { RefreshControl } from 'react-native';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import _ from 'lodash';
-import {ScrollView, Text, View} from '@components/core';
-import {getHistories, getHistoryStatus, NOT_CHANGE_STATUS, MAX_ERROR_TRIED, RETRY_STATUS} from '@src/redux/actions/dex';
+import { ScrollView, View } from '@components/core';
+import {
+  getHistories,
+  getHistoryStatus,
+  NOT_CHANGE_STATUS,
+  MAX_ERROR_TRIED,
+  RETRY_STATUS
+} from '@src/redux/actions/dex';
 import routeNames from '@routers/routeNames';
-import HeaderBar from '@components/HeaderBar/HeaderBar';
-import {COLORS} from '@src/styles';
-import HISTORY_TYPES from '@src/components/DexHistoryItem';
-import stylesheet from './style';
-
-const appRecently = [];
+import HistoryItem from '@src/components/DexHistoryItem';
+import { Header } from '@src/components';
+import { withLayout_2 } from '@components/Layout/index';
+import styles from './style';
 
 class DexHistory extends React.Component {
   state = {
-    recently: undefined,
+    isFetching: false,
   };
 
   componentDidMount() {
@@ -43,86 +47,57 @@ class DexHistory extends React.Component {
 
   getStatus = () => {
     const { histories, getHistoryStatus } = this.props;
-    const recently = appRecently;
     histories.forEach(item => {
       if ((!NOT_CHANGE_STATUS.includes(item.status)) ||
         (RETRY_STATUS.includes(item.status) && item.errorTried < MAX_ERROR_TRIED)) {
         getHistoryStatus(item);
-        if (!recently.includes(item)) {
-          recently.push(item.txId);
-        }
       }
     });
 
-    this.setState({ recently, isFetching: false });
+    this.setState({ isFetching: false });
   };
 
   goToDetail(history) {
     const { navigation } = this.props;
-    navigation.navigate(routeNames.DexHistoryDetail, { history });
+    navigation.navigate(routeNames.InvestHistoryDetail, { history });
   }
 
-  renderHeader = () => {
-    const options= {
-      title: 'History',
-      headerBackground: COLORS.dark2,
-    };
-    const { navigation } = this.props;
+  renderHistory(list, history) {
     return (
-      <HeaderBar
-        index={1}
-        navigation={navigation}
-        scene={{ descriptor: {options} }}
-      />
-    );
-  };
-
-  renderHistory(list, history, index) {
-    const History = HISTORY_TYPES[history.type];
-    return (
-      <History
-        {...history}
+      <HistoryItem
+        history={history}
         key={history.txId}
         onPress={this.goToDetail.bind(this, history)}
-        isLastItem={index === list.length - 1}
       />
     );
   }
 
-  renderList(list, title) {
+  renderList(list) {
     if (list.length <= 0) {
       return null;
     }
 
     return (
-      <View style={stylesheet.wrapper}>
-        <Text style={stylesheet.title}>{title}</Text>
-        <View>
-          {list.map(this.renderHistory.bind(this, list))}
-        </View>
+      <View>
+        {list.map(this.renderHistory.bind(this, list))}
       </View>
     );
   }
 
   render() {
     let { histories } = this.props;
-    const { recently, isFetching } = this.state;
+    const { isFetching } = this.state;
 
-    if (recently === undefined) {
-      histories = [];
-    }
-
-    const allHistories = _.orderBy([...histories], ['updatedAt'], ['desc']);
-    const recentlyHistories = _.remove(allHistories, item => recently.includes(item.txId));
+    const allHistories = _.orderBy(histories, ['lockTime'], ['desc']);
 
     return (
-      <View style={stylesheet.container}>
-        {this.renderHeader()}
-        <ScrollView refreshControl={<RefreshControl refreshing={isFetching} onRefresh={this.loadData} />}>
-          <View style={stylesheet.listContainer}>
-            {this.renderList(recentlyHistories, 'Recent activity')}
-            {this.renderList(allHistories, 'Past activity')}
-          </View>
+      <View>
+        <Header title="History" />
+        <ScrollView
+          refreshControl={<RefreshControl refreshing={isFetching} onRefresh={this.loadData} />}
+          style={styles.scrollView}
+        >
+          {this.renderList(allHistories)}
         </ScrollView>
       </View>
     );
@@ -148,4 +123,4 @@ DexHistory.propTypes = {
 export default connect(
   mapState,
   mapDispatch
-)(DexHistory);
+)(withLayout_2(DexHistory));

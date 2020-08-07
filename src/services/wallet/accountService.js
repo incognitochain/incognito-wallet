@@ -158,7 +158,6 @@ export default class Account {
         },
       ];
 
-      console.debug('SEND PRV');
       return Account.createAndSendNativeToken(
         paymentInfos,
         Math.floor(nativeFee),
@@ -734,5 +733,9 @@ export default class Account {
       account.name || account.AccountName,
     );
     return hasSpendingCoins(indexAccount, wallet, amount, tokenId);
+  }
+
+  static getAccountName(account) {
+    return account.name || account.AccountName || account.accountName;
   }
 }

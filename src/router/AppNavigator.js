@@ -3,13 +3,10 @@ import { createStackNavigator } from 'react-navigation-stack';
 import WhySend from '@screens/WhySend';
 import WhyReceive from '@screens/WhyReceive';
 import pApps from '@screens/Papps';
-import DexHistory from '@screens/DexHistory';
-import DexHistoryDetail from '@screens/DexHistoryDetail';
 import HeaderBar from '@src/components/HeaderBar';
 import AddPIN from '@src/screens/AddPIN';
 import PriceChartCrypto from '@src/screens/PriceChartCrypto';
 import { navigationOptionsHandler } from '@src/utils/router';
-import Dex from '@screens/Dex';
 import NodeHelp from '@screens/NodeHelp';
 import BuyNodeScreen from '@screens/BuyNodeScreen';
 import PaymentBuyNodeScreen from '@src/screens/PaymentBuyNodeScreen';
@@ -28,17 +25,7 @@ const RouteNoHeader = getRoutesNoHeader();
 
 const AppNavigator = createStackNavigator(
   {
-    [ROUTE_NAMES.DexHistory]: navigationOptionsHandler(DexHistory, {
-      header: () => null,
-    }),
-    [ROUTE_NAMES.DexHistoryDetail]: navigationOptionsHandler(DexHistoryDetail, {
-      header: () => null,
-    }),
     [ROUTE_NAMES.AddPin]: navigationOptionsHandler(AddPIN, {
-      header: () => null,
-    }),
-    [ROUTE_NAMES.Dex]: navigationOptionsHandler(Dex, {
-      title: 'pDex',
       header: () => null,
     }),
     [ROUTE_NAMES.pApps]: navigationOptionsHandler(pApps),

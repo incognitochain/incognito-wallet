@@ -1,3 +1,4 @@
+import React from 'react';
 import formatUtil from '@utils/format';
 import { MESSAGES } from '@screens/Dex/constants';
 import {PRV} from '@services/wallet/tokenService';
@@ -30,6 +31,10 @@ export class TradeHistory {
     this.updatedAt = Math.floor(new Date().getTime() / 1000);
   }
 
+  get shortDescription() {
+    return '';
+  }
+
   static load(historyObject) {
     const history = new TradeHistory();
     return parseHistory(history, historyObject);
@@ -54,12 +59,16 @@ export class WithdrawHistory {
     this.networkFee = networkFee;
     this.networkFeeDecimals = networkFeeUnit === token.symbol ? token.pDecimals : PRV.pDecimals;
     this.networkFeeUnit = networkFeeUnit;
-    this.account = account.AccountName;
+    this.account = account.AccountName || account.name;
     this.paymentAddress = account.PaymentAddress;
     this.checking = false;
     this.updatedAt = Math.floor(new Date().getTime() / 1000);
 
     WithdrawHistory.currentWithdraw = this;
+  }
+
+  get shortDescription() {
+    return `${formatUtil.amountFull(this.amount, this.pDecimals)} ${this.tokenSymbol} to ${this.account}`;
   }
 
   updateTx2(res) {
@@ -94,8 +103,12 @@ export class DepositHistory {
     this.type = MESSAGES.DEPOSIT;
     this.networkFee = formatUtil.amountFull(networkFee, networkFeeUnit === token.symbol ? token.pDecimals : PRV.pDecimals);
     this.networkFeeUnit = networkFeeUnit;
-    this.account = account.AccountName;
+    this.account = account.name || account.AccountName;
     this.updatedAt = Math.floor(new Date().getTime() / 1000);
+  }
+
+  get shortDescription() {
+    return `${this.amount} ${this.tokenSymbol} from ${this.account}`;
   }
 
   static load(historyObject) {
@@ -124,6 +137,11 @@ export class AddLiquidityHistory {
     this.account = account.AccountName || account.name;
     this.paymentAddress = account.PaymentAddress;
     this.updatedAt = Math.floor(new Date().getTime() / 1000);
+  }
+
+  get shortDescription() {
+    return `${formatUtil.amountFull(this.token1.TokenAmount || 0, this.token1.PDecimals)} ${this.token1.TokenSymbol} ` +
+    `${formatUtil.amountFull(this.token2.TokenAmount || 0, this.token2.PDecimals)} ${this.token2.TokenSymbol}`;
   }
 
   updateTx2(res) {
@@ -175,8 +193,12 @@ export class RemoveLiquidityHistory {
     this.updatedAt = Math.floor(new Date().getTime() / 1000);
   }
 
+  get shortDescription() {
+    return `${this.token1.TokenAmount} ${this.token1.TokenSymbol} ` + `${this.token2.TokenAmount} ${this.token2.TokenSymbol}`;
+  }
+
   static load(historyObject) {
-    const history = new AddLiquidityHistory();
+    const history = new RemoveLiquidityHistory();
     return parseHistory(history, historyObject);
   }
 }

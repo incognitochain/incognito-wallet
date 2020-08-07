@@ -27,8 +27,6 @@ const DevSection = () => {
 
   const isStagingConfig = homeConfig === 'staging';
 
-  console.debug('HOME CONFIG', homeConfig);
-
   return (
     <Section
       label="Dev Tools"
