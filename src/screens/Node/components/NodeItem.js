@@ -99,6 +99,8 @@ class NodeItem extends React.Component {
         if (device?.PublicKeyMining === ShardCommitteeData[i].MiningPubKey.bls) {
           device.Working = true;
           break;
+        } else {
+          device.Working = false;
         }
       }
     }
