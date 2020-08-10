@@ -13,7 +13,6 @@ import withPairs from '@screens/DexV2/components/pdexPair.enhance';
 import withAccount from '@screens/DexV2/components/account.enhance';
 import LoadingContainer from '@components/LoadingContainer/LoadingContainer';
 import { LIMIT } from '@screens/DexV2/constants';
-import withOldHistories from '@screens/DexV2/components/oldHistories.enhance';
 import { ArrowRightGreyIcon } from '@components/Icons';
 import styles from './style';
 import withHistories from '../histories.enhance';
@@ -87,5 +86,4 @@ export default compose(
   withPairs,
   withAccount,
   withHistories,
-  withOldHistories,
 )(History);

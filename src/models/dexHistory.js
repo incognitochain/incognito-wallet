@@ -32,7 +32,7 @@ export class TradeHistory {
   }
 
   get shortDescription() {
-    return '';
+    return `${this.inputValue} ${this.inputToken} to ${this.outputValue} ${this.outputToken}`;
   }
 
   static load(historyObject) {

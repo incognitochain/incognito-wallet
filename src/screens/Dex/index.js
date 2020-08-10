@@ -135,7 +135,7 @@ class DexContainer extends Component {
 const mapState = state => ({
   account: accountSeleclor.defaultAccount(state),
   wallet: state.wallet,
-  histories: state.dex.histories.filter(item => item.type !== MESSAGES.TRADE),
+  histories: state.dex.histories,
   selectPrivacyByTokenID: selectedPrivacySeleclor.getPrivacyDataByTokenID(state),
 });
 
