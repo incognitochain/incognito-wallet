@@ -736,6 +736,10 @@ export default class Account {
   }
 
   static getAccountName(account) {
-    return account.name || account.AccountName || account.accountName;
+    if (account) {
+      return account.name || account.AccountName || account.accountName;
+    }
+
+    return '';
   }
 }
