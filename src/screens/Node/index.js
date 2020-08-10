@@ -392,7 +392,10 @@ class Node extends BaseScreen {
         listDevice: list,
       }, this.getFullInfo);
     } else {
-      this.setState({ listDevice: list });
+      this.setState({ listDevice: list }, () => {
+        this.getFullInfo();
+      });
+      
     }
   };
 
