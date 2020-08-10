@@ -89,7 +89,7 @@ const getTypeData = (type, history) => {
     balanceDirection = '+';
     break;
   case CONSTANT_COMMONS.HISTORY.TYPE.SEND:
-    typeText = 'Send';
+    typeText = CONSTANT_COMMONS.HISTORY.META_DATA_TYPE[history?.metaDataType] || 'Send';
     balanceColor = COLORS.orange;
     balanceDirection = '-';
     break;

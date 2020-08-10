@@ -85,6 +85,7 @@ export const normalizeData = (histories, decimals, pDecimals) =>
     fee: h?.feeNativeToken,
     decimals,
     pDecimals,
+    metaDataType: h?.metaData?.Type,
   }));
 
 export const loadTokenHistory = () => async (dispatch, getState) => {
