@@ -6,6 +6,7 @@ import formatUtil from '@utils/format';
 
 const withBalanceLoader = WrappedComp => (props) => {
   const [inputBalance, setInputBalance] = React.useState(null);
+  const [inputBalanceText, setInputBalanceText] = React.useState('');
   const [prvBalance, setPRVBalance] = React.useState(null);
   const [lastInputToken, setLastInputToken] = React.useState(null);
   const [lastAccount, setLastAccount] = React.useState(null);
@@ -51,6 +52,7 @@ const withBalanceLoader = WrappedComp => (props) => {
       }
 
       setInputBalance(balance);
+      setInputBalanceText(formatUtil.amountFull(balance, token?.pDecimals));
     } catch (error) {
       console.debug('GET INPUT BALANCE ERROR', error);
     }
@@ -70,6 +72,7 @@ const withBalanceLoader = WrappedComp => (props) => {
       {...{
         ...props,
         inputBalance,
+        inputBalanceText,
         prvBalance,
         account,
 
