@@ -128,7 +128,11 @@ export default {
       FAILED: 'FAILED',
       PENDING: 'PENDING',
       EXPIRED: 'EXPIRED'
-    }
+    },
+    META_DATA_TYPE: {
+      90: 'Add liquidity',
+      93: 'Remove liquidity',
+    },
   },
   TRACK_LOG_EVENT,
   TRACK_LOG_EVENT_STATUS,
