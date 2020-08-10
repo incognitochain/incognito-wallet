@@ -52,8 +52,7 @@ class LinkDevice extends BaseScreen {
         }
       }
       if (isDuplicate) {
-        new ExHandler('This QRCode is existing. Could not import node device').showErrorToast(true);
-        return;
+        this.goToScreen(routeNames.Node);
       } else {
         const newListDevice = [node, ...listDevice];
         await LocalDatabase.saveListDevices(newListDevice);

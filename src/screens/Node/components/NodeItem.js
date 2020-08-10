@@ -93,6 +93,14 @@ class NodeItem extends React.Component {
         device.StakerAddress = null;
         return this.getVNodeInfo(device, true);
       }
+      let ShardCommittee = Object.values(committees?.ShardCommittee) || [];
+      let ShardCommitteeData = ShardCommittee[0] || [];
+      for (let i=0;i<ShardCommitteeData.length; i++) {
+        if (device?.PublicKeyMining === ShardCommitteeData[i].MiningPubKey.bls) {
+          device.Working = true;
+          break;
+        }
+      }
     }
 
     if (device.StakerAddress) {

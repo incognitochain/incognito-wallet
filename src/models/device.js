@@ -1,6 +1,7 @@
 import {DEVICES} from '@src/constants/miner';
 import accountService from '@src/services/wallet/accountService';
 import _ from 'lodash';
+import LogManager from '@src/services/LogManager';
 
 export const DEVICE_STATUS = {
   CODE_UNKNOWN : -1,
@@ -88,7 +89,10 @@ export default class Device {
     return this.data.minerInfo.isOnline;
   }
   get IsWorking() {
-    return this.data.minerInfo.status === 'committee';
+    return this.data.minerInfo.status === 'committee' || this.data?.isWorking;
+  }
+  set Working(value) {
+    this.data['isWorking'] = value;
   }
   setIsOnline(result) {
     this.data.minerInfo.isOnline = result;
