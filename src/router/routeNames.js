@@ -87,5 +87,7 @@ export default {
   NodeItemsHelp: 'NodeItemsHelp',
   PoolV2History: 'StakeHistory',
   PoolV2HistoryDetail: 'StakeHistoryDetail',
-  News: 'News'
+  News: 'News',
+  BasicInfo: 'BasicInfo',
+  UpdateWifi: 'UpdateWifi'
 };

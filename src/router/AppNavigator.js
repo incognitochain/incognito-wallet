@@ -12,6 +12,7 @@ import DestinationBuyNode from '@screens/DestinationBuyNode';
 import HeaderBar from '@src/components/HeaderBar';
 import GetStartedAddNode from '@src/screens/GetStartedAddNode';
 import NodeItemDetail from '@src/screens/Node/components/NodeItemDetail';
+import BasicInfo from '@src/screens/Node/components/UpgradeNode/BasicInfo';
 import RepairingSetupNode from '@src/screens/GetStartedAddNode/continueSetup/RepairingSetupNode';
 import WhyReceive from '@screens/WhyReceive';
 import pApps from '@screens/Papps';
@@ -25,6 +26,7 @@ import NodeHelp from '@screens/NodeHelp';
 import NodeItemsHelp from '@screens/NodeItemsHelp';
 import BuyNodeScreen from '@screens/BuyNodeScreen';
 import PaymentBuyNodeScreen from '@src/screens/PaymentBuyNodeScreen';
+import UpdateWifi from '@src/screens/Node/components/UpgradeNode/UpdateWifi';
 import { getRoutesNoHeader } from './routeNoHeader';
 import ROUTE_NAMES from './routeNames';
 
@@ -72,6 +74,8 @@ const AppNavigator = createStackNavigator(
     [ROUTE_NAMES.NodeItemDetail]: navigationOptionsHandler(NodeItemDetail, { header: () => null }),
     [ROUTE_NAMES.NodeBuyHelp]: navigationOptionsHandler(NodeBuyHelp, { header: () => null }),
     [ROUTE_NAMES.DestinationBuyNode]: navigationOptionsHandler(DestinationBuyNode, { header: () => null }),
+    [ROUTE_NAMES.BasicInfo]: navigationOptionsHandler(BasicInfo, { header: () => null }),
+    [ROUTE_NAMES.UpdateWifi]: navigationOptionsHandler(UpdateWifi, { header: () => null }),
     [ROUTE_NAMES.PriceChartCrypto]: navigationOptionsHandler(PriceChartCrypto, {
       title: 'Price chart',
     }),
