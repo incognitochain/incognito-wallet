@@ -9,11 +9,12 @@ import Loading from '@screens/DexV2/components/Loading';
 import withDefaultAccount from '@components/Hoc/withDefaultAccount';
 import mainStyles from '@screens/Dex/style';
 import Balance from '@screens/DexV2/components/Balance';
-import withDexAccounts from '@screens/Dex/dexAccount.enhance';
+import accountService from '@services/wallet/accountService';
 import withSuccess from './success.enhance';
 import withConfirm from './confirm.enhance';
 import withData from './data.enhance';
 import styles from './style';
+import withShareAccount from './shareAccount.enhance';
 
 const Confirm = ({
   pair,
@@ -24,6 +25,7 @@ const Confirm = ({
   onConfirm,
   processing,
   error,
+  account,
 }) => {
   const { token1, token2 } = pair;
   return (
@@ -36,7 +38,7 @@ const Confirm = ({
         </View>
         <ExtraInfo
           left="To"
-          right="pDEX"
+          right={accountService.getAccountName(account)}
           style={{ ...styles.extra }}
         />
         <Balance
@@ -70,12 +72,14 @@ Confirm.propTypes = {
   bottomText: PropTypes.string,
 
   error: PropTypes.string,
+  account: PropTypes.object,
 };
 
 Confirm.defaultProps = {
   topText: '',
   bottomText: '',
   error: '',
+  account: '',
 };
 
 export default compose(
@@ -83,6 +87,6 @@ export default compose(
   withData,
   withSuccess,
   withDefaultAccount,
-  withDexAccounts,
+  withShareAccount,
   withConfirm,
 )(Confirm);
