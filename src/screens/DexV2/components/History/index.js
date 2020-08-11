@@ -19,7 +19,6 @@ import withHistories from '../histories.enhance';
 
 const History = ({
   histories,
-  oldHistories,
   isLoadingHistories,
   onReloadHistories,
   onLoadMoreHistories,
@@ -43,21 +42,20 @@ const History = ({
     </TouchableOpacity>
   );
 
-  const allHistories = histories.concat(oldHistories);
-
   return (
     <View style={styles.wrapper}>
       <Header title="pDEX" />
       <Text style={[styles.buttonTitle, styles.historyTitle]}>Order history</Text>
       <View style={styles.wrapper}>
-        {allHistories.length ? (
+        {histories.length ? (
           <VirtualizedList
-            data={allHistories}
+            data={histories}
             renderItem={renderHistoryItem}
             getItem={(data, index) => data[index]}
             getItemCount={data => data.length}
             refreshing={isLoadingHistories}
             onRefresh={onReloadHistories}
+            keyExtractor={(item) => item.id}
             onEndReached={(histories || []).length >= LIMIT ? onLoadMoreHistories : _.noop}
             onEndReachedThreshold={0.1}
             showsVerticalScrollIndicator={false}
@@ -71,13 +69,11 @@ const History = ({
 
 History.propTypes = {
   histories: PropTypes.array,
-  oldHistories: PropTypes.array,
   isLoadingHistories: PropTypes.bool,
 };
 
 History.defaultProps = {
   histories: null,
-  oldHistories: null,
   isLoadingHistories: false,
 };
 
