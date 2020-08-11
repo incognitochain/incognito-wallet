@@ -11,9 +11,6 @@
 #include "Universe.objc.h"
 
 
-FOUNDATION_EXPORT const int64_t GomobileBigIntSize;
-FOUNDATION_EXPORT const int64_t GomobileHashSize;
-
 FOUNDATION_EXPORT NSString* _Nonnull GomobileDeriveSerialNumber(NSString* _Nullable args, NSError* _Nullable* _Nullable error);
 
 /**
@@ -21,14 +18,10 @@ FOUNDATION_EXPORT NSString* _Nonnull GomobileDeriveSerialNumber(NSString* _Nulla
  */
 FOUNDATION_EXPORT NSString* _Nonnull GomobileGenerateBLSKeyPairFromSeed(NSString* _Nullable args);
 
-FOUNDATION_EXPORT NSString* _Nonnull GomobileGenerateContractAddress(NSString* _Nullable args, NSError* _Nullable* _Nullable error);
-
 /**
  * args: seed
  */
 FOUNDATION_EXPORT NSString* _Nonnull GomobileGenerateKeyFromSeed(NSString* _Nullable seedB64Encoded, NSError* _Nullable* _Nullable error);
-
-FOUNDATION_EXPORT NSString* _Nonnull GomobileGetSignPublicKey(NSString* _Nullable args, NSError* _Nullable* _Nullable error);
 
 /**
  * plaintextB64Encode = base64Encode(private key || ciphertext)
@@ -74,20 +67,10 @@ FOUNDATION_EXPORT NSString* _Nonnull GomobileRandomScalars(NSString* _Nullable n
 
 FOUNDATION_EXPORT NSString* _Nonnull GomobileScalarMultBase(NSString* _Nullable scalarB64Encode, NSError* _Nullable* _Nullable error);
 
-FOUNDATION_EXPORT NSString* _Nonnull GomobileSign0x(NSString* _Nullable args, NSError* _Nullable* _Nullable error);
-
-FOUNDATION_EXPORT NSString* _Nonnull GomobileSignKyber(NSString* _Nullable args, NSError* _Nullable* _Nullable error);
-
-FOUNDATION_EXPORT NSString* _Nonnull GomobileSignPoolWithdraw(NSString* _Nullable args, NSError* _Nullable* _Nullable error);
-
 FOUNDATION_EXPORT NSString* _Nonnull GomobileStaking(NSString* _Nullable args, int64_t serverTime, NSError* _Nullable* _Nullable error);
 
 FOUNDATION_EXPORT NSString* _Nonnull GomobileStopAutoStaking(NSString* _Nullable args, int64_t serverTime, NSError* _Nullable* _Nullable error);
 
-FOUNDATION_EXPORT BOOL GomobileVerifySign(NSString* _Nullable signEncode, NSString* _Nullable signPublicKeyEncode, NSString* _Nullable amount, NSString* _Nullable paymentAddress, BOOL* _Nullable ret0_, NSError* _Nullable* _Nullable error);
-
 FOUNDATION_EXPORT NSString* _Nonnull GomobileWithdrawDexTx(NSString* _Nullable args, int64_t serverTime, NSError* _Nullable* _Nullable error);
-
-FOUNDATION_EXPORT NSString* _Nonnull GomobileWithdrawSmartContractBalance(NSString* _Nullable args, NSError* _Nullable* _Nullable error);
 
 #endif
