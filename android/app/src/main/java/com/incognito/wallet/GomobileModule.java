@@ -248,50 +248,6 @@ public class GomobileModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void generateIncognitoContractAddress(String data, Callback successCallback) {
-        try {
-            Log.d(TAG, "Generate smart contract address: begin");
-            successCallback.invoke(null, Gomobile.generateContractAddress(data));
-        } catch (Exception e) {
-            Log.d(TAG, "Generate smart contract address: error");
-            successCallback.invoke(e.getMessage(), null);
-        }
-    }
-
-    @ReactMethod
-    public void withdrawSmartContractBalance(String data, Callback successCallback) {
-        try {
-            Log.d(TAG, "Withdraw smart contract: begin");
-            successCallback.invoke(null, Gomobile.withdrawSmartContractBalance(data));
-        } catch (Exception e) {
-            Log.d(TAG, "Withdraw smart contract: error");
-            successCallback.invoke(e.getMessage(), null);
-        }
-    }
-
-    @ReactMethod
-    public void signKyber(String data, Callback successCallback) {
-        try {
-            Log.d(TAG, "Sign kyber: begin");
-            successCallback.invoke(null, Gomobile.signKyber(data));
-        } catch (Exception e) {
-            Log.d(TAG, "Sign kyber: error");
-            successCallback.invoke(e.getMessage(), null);
-        }
-    }
-
-    @ReactMethod
-    public void sign0x(String data, Callback successCallback) {
-        try {
-            Log.d(TAG, "Sign 0x: begin");
-            successCallback.invoke(null, Gomobile.sign0x(data));
-        } catch (Exception e) {
-            Log.d(TAG, "Sign 0x: error");
-            successCallback.invoke(e.getMessage(), null);
-        }
-    }
-
-    @ReactMethod
     public void signPoolWithdraw(String data, Callback successCallback) {
         try {
             Log.d(TAG, "Sign 0x: begin");
