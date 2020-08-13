@@ -52,6 +52,7 @@ export const listAccountSelector = createSelector(
       ...item,
       accountName: item?.name || item?.AccountName,
       privateKey: item?.PrivateKey,
+      paymentAddress: item?.PaymentAddress,
     })),
 );
 

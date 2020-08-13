@@ -36,8 +36,6 @@ const GroupButton = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { guide } = useSelector(shieldStorageSelector);
-  const handleUnShield = async () =>
-    navigation.navigate(routeNames.UnShieldModal);
   const handleShield = async () => {
     navigation.navigate(routeNames.Shield);
     if (!guide) {
@@ -62,23 +60,17 @@ const GroupButton = () => {
           }}
           triangleStyle={{
             bottom: -30,
-            left: 50,
+            left: '48%',
             borderBottomColor: COLORS.black,
           }}
         />
       )}
       <View style={styled.groupButton}>
         <ButtonBasic
-          title="Shield"
+          title="Shield my crypto"
           btnStyle={[styled.btnStyle]}
           titleStyle={[styled.titleStyle]}
           onPress={handleShield}
-        />
-        <ButtonBasic
-          title="Unshield"
-          btnStyle={styled.btnStyle}
-          titleStyle={styled.titleStyle}
-          onPress={handleUnShield}
         />
       </View>
     </View>

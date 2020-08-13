@@ -27,7 +27,7 @@ export const genCentralizedWithdrawAddress = ({
       PrivacyTokenAddress: tokenId,
       ...(memo ? { Memo: memo } : {}),
     })
-    .then(res => res?.Address);
+    .then((res) => res?.Address);
 };
 
 const addETHTxWithdraw = ({
@@ -39,9 +39,9 @@ const addETHTxWithdraw = ({
   burningTxId,
   currencyType,
 }) => {
-  if (!paymentAddress) return throw new Error('Missing paymentAddress');
-  if (!tokenId) return throw new Error('Missing tokenId');
-  if (!burningTxId) return throw new Error('Missing burningTxId');
+  if (!paymentAddress) throw new Error('Missing paymentAddress');
+  if (!tokenId) throw new Error('Missing tokenId');
+  if (!burningTxId) throw new Error('Missing burningTxId');
 
   const parseAmount = Number(amount);
   const parseOriginalAmount = Number(originalAmount);
@@ -52,7 +52,7 @@ const addETHTxWithdraw = ({
     !Number.isFinite(parseOriginalAmount) ||
     parseOriginalAmount === 0
   ) {
-    return throw new Error('Invalid amount');
+    throw new Error('Invalid amount');
   }
 
   return http.post('eta/add-tx-withdraw', {
@@ -109,7 +109,7 @@ const addERC20TxWithdraw = ({
   });
 };
 
-export const withdraw = data => {
+export const withdraw = (data) => {
   const { isErc20Token, externalSymbol } = data;
   if (isErc20Token) {
     return addERC20TxWithdraw(data);

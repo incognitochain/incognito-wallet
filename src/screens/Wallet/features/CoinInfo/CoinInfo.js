@@ -72,7 +72,7 @@ const CoinInfo = (props) => {
     handlePressVerifiedInfo,
   } = props;
   const navigation = useNavigation();
-  const onGoBack = () => navigation.navigate(routeNames.WalletDetail);
+  const onGoBack = () => navigation.goBack();
   return (
     <View style={styled.container}>
       <Header
