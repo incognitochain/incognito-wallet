@@ -22,11 +22,9 @@ class SuccessModal extends React.Component {
     return (
       <Overlay isVisible={visible} overlayStyle={styles.dialog}>
         <View style={[styles.dialogContent]}>
-          {!!title && (
-            <Text style={styles.dialogTitle}>
-              {title}
-            </Text>
-          )}
+          <Text style={styles.dialogTitle}>
+            {title}
+          </Text>
           {!!description && (
             <Text style={styles.dialogDesc}>
               {description}
@@ -53,12 +51,11 @@ SuccessModal.defaultProps = {
   extraInfo: '',
   buttonStyle: null,
   description: '',
-  title: '',
 };
 
 SuccessModal.propTypes = {
   visible: PropTypes.bool.isRequired,
-  title: PropTypes.string,
+  title: PropTypes.string.isRequired,
   description: PropTypes.string,
   closeSuccessDialog: PropTypes.func.isRequired,
   extraInfo: PropTypes.string,

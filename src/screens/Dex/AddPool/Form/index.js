@@ -265,8 +265,8 @@ class Pool extends React.Component {
       outputBalance,
     } = this.state;
 
-    // const inputPool = pair[inputToken.id];
-    // const share = formatUtils.toFixed(inputValue / inputPool * 100, 4);
+    const inputPool = pair[inputToken.id];
+    const share = formatUtils.toFixed(inputValue / inputPool * 100, 4);
 
     if (MAX_FEE_PER_TX + inputValue > prvBalance) {
       return this.setState({ inputError: MESSAGES.NOT_ENOUGH_PRV_NETWORK_FEE });
@@ -286,7 +286,7 @@ class Pool extends React.Component {
         balance: outputBalance,
       },
       prvBalance,
-      // share,
+      share,
       pair,
     });
   };

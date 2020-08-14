@@ -5,7 +5,7 @@ import mainStyle from '@screens/Dex/style';
 import { compose } from 'recompose';
 import { withLayout_2 } from '@components/Layout/index';
 import withDefaultAccount from '@components/Hoc/withDefaultAccount';
-import { Header, Row, LoadingContainer, SuccessModal } from '@src/components';
+import { Header, Row, LoadingContainer } from '@src/components';
 import withDexAccounts from '@screens/Dex/dexAccount.enhance';
 import withBalance from '@screens/Dex/InvestBalance/balance.enhance';
 import { useNavigation } from 'react-navigation-hooks';
@@ -26,7 +26,6 @@ const ManageBalance = ({
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [creating, setCreating] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const handleTopUp = () => {
     navigation.navigate(routeNames.InvestTopUp);
@@ -40,21 +39,17 @@ const ManageBalance = ({
 
   const initAccounts = async () => {
     try {
-      const pdexAccount = accounts.find((item) => accountService.getAccountName(item) === DEX.MAIN_ACCOUNT);
-      const pdexWithdrawAccount = accounts.find((item) => accountService.getAccountName(item) === DEX.WITHDRAW_ACCOUNT);
-      const createdAccounts = !pdexAccount || !pdexWithdrawAccount;
-
       setCreating(true);
-      if (!pdexAccount) {
-        const firstAccount = pdexWithdrawAccount || accounts[0];
+      if (!accounts.find((item) => item.accountName === DEX.MAIN_ACCOUNT)) {
+        const firstAccount = accounts[0];
         await accountService.createAccount(
           DEX.MAIN_ACCOUNT,
           wallet,
           accountService.parseShard(firstAccount),
         );
       }
-
-      if (!pdexWithdrawAccount) {
+      if (!accounts.find((item) => item.accountName === DEX.WITHDRAW_ACCOUNT)) {
+        accounts = await wallet.listAccount();
         const dexMainAccount = accounts.find(
           (item) => item.AccountName === DEX.MAIN_ACCOUNT,
         );
@@ -65,19 +60,12 @@ const ManageBalance = ({
         );
       }
 
-      setSuccess(createdAccounts);
-
       await dispatch(reloadAccountList());
     } catch (e) {
       new ExHandler(e, 'Can not create accounts.').showErrorToast();
     } finally {
       setCreating(false);
     }
-  };
-
-  const closeSuccess = async () => {
-    navigation.navigate(routeNames.Keychain);
-    setSuccess(false);
   };
 
   React.useEffect(() => {
@@ -105,15 +93,6 @@ const ManageBalance = ({
           <CoinList coins={followingCoins} />
         </View>
       )}
-
-      <SuccessModal
-        closeSuccessDialog={closeSuccess}
-        title=""
-        buttonStyle={mainStyle.button}
-        buttonTitle="Back up now"
-        extraInfo="2 new keychains named pDEX and pDEXWithdraw have been generated for this feature. Please back them up before proceeding."
-        visible={success}
-      />
     </View>
   );
 };
