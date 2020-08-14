@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { CustomError, ErrorCode, ExHandler } from '@services/exception';
 import convertUtil from '@utils/convert';
 import { PRIORITY_LIST } from '@screens/Dex/constants';
-import { MESSAGES } from '@src/constants';
+import { COINS, MESSAGES } from '@src/constants';
 import { getAllTradingTokens } from '@services/trading';
 
 const withPairs = WrappedComp => (props) => {
@@ -29,7 +29,7 @@ const withPairs = WrappedComp => (props) => {
       // const erc20Tokens = [];
 
       if (!_.has(chainPairs, 'PDEPoolPairs')) {
-        throw new CustomError(ErrorCode.FULLNODE_DOWN);
+        return new ExHandler(new CustomError(ErrorCode.FULLNODE_DOWN), MESSAGES.CAN_NOT_GET_PDEX_DATA).showErrorToast();
       }
 
       const pairs = _(chainPairs.PDEPoolPairs)
@@ -39,11 +39,12 @@ const withPairs = WrappedComp => (props) => {
           total: convertUtil.toRealTokenValue(tokens, pair.Token1IDStr, pair.Token1PoolValue) + convertUtil.toRealTokenValue(tokens, pair.Token2IDStr, pair.Token2PoolValue),
           keys: [pair.Token1IDStr, pair.Token2IDStr],
         }))
+        .filter(pair => pair.keys.includes(COINS.PRV_ID))
         .filter(pair => pair.total)
         .orderBy('total', 'desc')
         .value();
-      const shares = chainPairs.PDEShares;
 
+      const shares = chainPairs.PDEShares;
       Object.keys(shares).forEach(key => {
         if (shares[key] === 0) {
           delete shares[key];
