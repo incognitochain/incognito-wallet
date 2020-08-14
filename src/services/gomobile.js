@@ -1,5 +1,4 @@
 import { NativeModules } from 'react-native';
-import {getNodeTime} from '@services/wallet/RpcClientService';
 
 const PrivacyGo = NativeModules.PrivacyGo;
 const requiredTimeMethods = [
@@ -48,13 +47,12 @@ const log = (...args) => null;
 
 try {
   asyncMethods.forEach(methodName => {
-    global[methodName] = (data) => {
+    global[methodName] = (data, time) => {
       return new Promise(async (resolve, reject) => {
         try {
           log(`${methodName} called with params`, data);
 
           if (requiredTimeMethods.includes(methodName)) {
-            const time = await getNodeTime();
             PrivacyGo[methodName](data, time, function(error, result) {
               if (error) {
                 reject(error);
