@@ -12,7 +12,7 @@ const { Wizard, Node, Dex, DexHistory, DexHistoryDetail, GetStaredAddNode } = ro
 const dark4Screens = [];
 const blue2Screens = [GetStaredAddNode];
 const blue1Screens = [Node, GetStaredAddNode];
-const dark2Screen = [GetStaredAddNode];
+const dark2Screen = [Dex, DexHistory, DexHistoryDetail, GetStaredAddNode];
 const blackScreen = [Wizard];
 
 const isIOS = Platform.OS === 'ios';
@@ -38,6 +38,9 @@ const StatusBar = React.memo(({ currentScreen }) => {
   } else if (blue1Screens.includes(currentScreen)) {
     backgroundColor = COLORS.blue1;
     textColor = 'light-content';
+  } else if (dark2Screen.includes(currentScreen)) {
+    backgroundColor = COLORS.dark2;
+    textColor = 'light-content';
   } else if (blackScreen.includes(currentScreen)) {
     backgroundColor = COLORS.black;
     textColor = 'light-content';
@@ -45,7 +48,6 @@ const StatusBar = React.memo(({ currentScreen }) => {
     backgroundColor = COLORS.white;
     textColor = 'dark-content';
   }
-
   if (currentScreen === Wizard && isFetched) {
     backgroundColor = COLORS.white;
     textColor = 'dark-content';

@@ -2,27 +2,27 @@ import { COLORS, FONT } from '@src/styles';
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+  textRight: {
+    textAlign: 'right',
+    marginLeft: 'auto',
+  },
   history: {
     paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderColor: COLORS.lightGrey5,
   },
   historyType: {
     color: COLORS.dark1,
     marginBottom: 5,
-    ...FONT.STYLE.bold,
-    fontSize: 20,
   },
   shortDesc: {
-    color: COLORS.newGrey,
+    color: COLORS.lightGrey9,
     flex: 1,
-    marginRight: 15,
-    fontSize: 18,
+    fontSize: 15,
   },
   icon: {
     marginLeft: 10,
@@ -44,7 +44,7 @@ export default StyleSheet.create({
     flex: 1,
   },
   historyStatus: {
-    maxWidth: 145,
+    width: 145,
   },
   lastItem: {
     borderBottomWidth: 0,

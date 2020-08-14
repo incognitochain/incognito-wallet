@@ -47,5 +47,6 @@ module.exports = function(api) {
     ];
   }
 
+  console.log('BABEL CONFIG', config);
   return config;
 };

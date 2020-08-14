@@ -14,7 +14,6 @@ import UnShield from '@screens/UnShield';
 import ReceiveCrypto from '@screens/Wallet/features/ReceiveCrypto';
 import Send from '@screens/Send';
 import TokenSelectScreen from '@components/TokenSelectScreen';
-import PairSelectScreen from '@src/screens/Dex/PairSelectScreen';
 import Trade from '@screens/DexV2';
 import TradeConfirm from '@screens/DexV2/components/TradeConfirm';
 import TradeHistory from '@screens/DexV2/components/History';
@@ -45,13 +44,6 @@ import {
   PoolV2Provide,
   PoolV2Withdraw,
 } from '@src/screens/PoolV2';
-import GetStarted from '@src/screens/GetStarted';
-import InvestBalance from '@screens/Dex/InvestBalance';
-import Invest from '@screens/Dex';
-import InvestHistory from '@screens/DexHistory';
-import InvestHistoryDetail from '@screens/DexHistoryDetail';
-import AddLiquidityConfirm from '@screens/Dex/AddPool/Confirm';
-import RemoveLiquidityConfirm from '@screens/Dex/RemovePool/Confirm';
 import Profile from '@src/screens/Profile';
 import routeNames from './routeNames';
 
@@ -139,10 +131,6 @@ const routes = [
   {
     screen: TokenSelectScreen,
     name: routeNames.TokenSelectScreen,
-  },
-  {
-    screen: PairSelectScreen,
-    name: routeNames.PairSelectScreen,
   },
   {
     screen: TxHistoryDetail,
@@ -255,54 +243,6 @@ const routes = [
   {
     name: routeNames.Profile,
     screen: Profile,
-  },
-  {
-    screen: Invest,
-    name: routeNames.Invest,
-  },
-  {
-    screen: InvestHistory,
-    name: routeNames.InvestHistory,
-  },
-  {
-    screen: InvestHistoryDetail,
-    name: routeNames.InvestHistoryDetail,
-  },
-  {
-    screen: InvestBalance.ManageBalance,
-    name: routeNames.InvestBalance,
-  },
-  {
-    screen: InvestBalance.TopUp.SelectCoin,
-    name: routeNames.InvestTopUp,
-  },
-  {
-    screen: InvestBalance.TopUp.Input,
-    name: routeNames.InvestTopUpInput,
-  },
-  {
-    screen: InvestBalance.TopUp.Confirm,
-    name: routeNames.InvestTopUpConfirm,
-  },
-  {
-    screen: InvestBalance.Withdraw.SelectCoin,
-    name: routeNames.InvestWithdraw,
-  },
-  {
-    screen: InvestBalance.Withdraw.Input,
-    name: routeNames.InvestWithdrawInput,
-  },
-  {
-    screen: InvestBalance.Withdraw.Confirm,
-    name: routeNames.InvestWithdrawConfirm,
-  },
-  {
-    screen: AddLiquidityConfirm,
-    name: routeNames.AddLiquidityConfirm,
-  },
-  {
-    screen: RemoveLiquidityConfirm,
-    name: routeNames.RemoveLiquidityConfirm,
   },
 ];
 

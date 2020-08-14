@@ -25,11 +25,9 @@ class SuccessModal extends React.Component {
           <Text style={styles.dialogTitle}>
             {title}
           </Text>
-          {!!description && (
-            <Text style={styles.dialogDesc}>
-              {description}
-            </Text>
-          )}
+          <Text style={styles.dialogDesc}>
+            {description}
+          </Text>
           {!!extraInfo && (
             <Text style={styles.extraInfo}>
               {extraInfo}
@@ -47,16 +45,16 @@ class SuccessModal extends React.Component {
 }
 
 SuccessModal.defaultProps = {
-  buttonTitle: 'OK',
+  visible: false,
+  buttonTitle: 'Ok',
   extraInfo: '',
   buttonStyle: null,
-  description: '',
 };
 
 SuccessModal.propTypes = {
-  visible: PropTypes.bool.isRequired,
+  visible: PropTypes.bool,
   title: PropTypes.string.isRequired,
-  description: PropTypes.string,
+  description: PropTypes.string.isRequired,
   closeSuccessDialog: PropTypes.func.isRequired,
   extraInfo: PropTypes.string,
   buttonTitle: PropTypes.string,

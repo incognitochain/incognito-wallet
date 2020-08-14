@@ -7,8 +7,8 @@ export default StyleSheet.create({
     borderRadius: 20,
   },
   dialogContent: {
-    paddingVertical: 50,
-    paddingHorizontal: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     justifyContent: 'center',
     alignItems: 'center',
     width: 'auto',
@@ -21,7 +21,8 @@ export default StyleSheet.create({
     resizeMode: 'contain'
   },
   dialogTitle: {
-    fontSize: 20,
+    fontSize: 26,
+    marginTop: 30,
     marginBottom: 15,
     ...FONT.STYLE.medium,
     textAlign: 'center',
@@ -29,7 +30,6 @@ export default StyleSheet.create({
   dialogDesc: {
     fontSize: 18,
     paddingHorizontal: 30,
-    marginBottom: 20,
     color: COLORS.dark1,
     textAlign: 'center',
   },
@@ -41,11 +41,11 @@ export default StyleSheet.create({
   },
   extraInfo: {
     fontSize: 16,
-    marginBottom: 20,
+    marginTop: 20,
     color: COLORS.lightGrey16,
     textAlign: 'center',
   },
   button: {
-    marginTop: 10,
+    marginTop: 30,
   },
 });

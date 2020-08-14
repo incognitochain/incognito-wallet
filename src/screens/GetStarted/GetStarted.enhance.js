@@ -136,9 +136,33 @@ const enhance = (WrappedComp) => (props) => {
     }
   };
 
-  const goHome = async () => {
+  const goHome = async ({ wallet }) => {
     try {
+      let isCreatedNewAccount = false;
+      let accounts = await wallet.listAccount();
+      if (!accounts.find((item) => item.AccountName === DEX.MAIN_ACCOUNT)) {
+        const firstAccount = accounts[0];
+        await accountService.createAccount(
+          DEX.MAIN_ACCOUNT,
+          wallet,
+          accountService.parseShard(firstAccount),
+        );
+        isCreatedNewAccount = true;
+      }
+      if (!accounts.find((item) => item.AccountName === DEX.WITHDRAW_ACCOUNT)) {
+        accounts = await wallet.listAccount();
+        const dexMainAccount = accounts.find(
+          (item) => item.AccountName === DEX.MAIN_ACCOUNT,
+        );
+        await accountService.createAccount(
+          DEX.WITHDRAW_ACCOUNT,
+          wallet,
+          accountService.parseShard(dexMainAccount),
+        );
+        isCreatedNewAccount = true;
+      }
       dispatch(initNotification());
+      isCreatedNewAccount ? dispatch(reloadAccountList()) : false;
     } catch (error) {
       new ExHandler(error).showErrorToast();
     }

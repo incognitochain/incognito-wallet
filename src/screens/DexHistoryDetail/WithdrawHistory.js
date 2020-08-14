@@ -2,7 +2,7 @@ import React from 'react';
 import { Overlay } from 'react-native-elements';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { View, Text, Button, RoundCornerButton } from '@components/core';
+import { View, Text, Button } from '@components/core';
 import formatUtils from '@utils/format';
 import {TRANSFER_STATUS} from '@src/redux/actions/dex';
 import FullScreenLoading from '@components/FullScreenLoading/index';
@@ -58,7 +58,7 @@ const DexHistory = ({
       <Text style={stylesheet.textRight} numberOfLines={2}>{account}</Text>
     </View>
     <TransactionID txId={paymentAddress} title="PAYMENT ADDRESS" />
-    {status === TRANSFER_STATUS.INTERRUPTED && <RoundCornerButton style={stylesheet.button} title="Try again" onPress={onContinue} />}
+    {status === TRANSFER_STATUS.INTERRUPTED && <Button style={stylesheet.button} title="Try again" onPress={onContinue} />}
     <Overlay
       isVisible={loading}
       overlayStyle={stylesheet.modal}

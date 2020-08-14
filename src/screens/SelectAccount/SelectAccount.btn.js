@@ -1,15 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { StyleSheet, Text, View } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { accountSeleclor } from '@src/redux/selectors';
 import { COLORS, FONT } from '@src/styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from 'react-navigation-hooks';
 import routeNames from '@src/router/routeNames';
 import { ButtonBasic } from '@src/components/Button';
-import { actionSwitchAccount } from '@src/redux/actions/account';
-import { listAccountSelector } from '@src/redux/selectors/account';
 
 const styled = StyleSheet.create({
   container: {
@@ -36,30 +33,11 @@ const styled = StyleSheet.create({
   },
 });
 
-const BtnSelectAccount = ({ ignoredAccounts }) => {
+const BtnSelectAccount = () => {
   const account = useSelector(accountSeleclor.defaultAccountSelector);
-  const accounts = useSelector(listAccountSelector);
   const navigation = useNavigation();
-  const dispatch = useDispatch();
   const onNavSelectAccount = () =>
-    navigation.navigate(routeNames.SelectAccount, {
-      ignoredAccounts,
-    });
-
-  const checkAccount = async () => {
-    if (ignoredAccounts.includes(account.name.toLowerCase())) {
-      const accountNames = accounts.map(item => item.accountName);
-      const validAccounts = accountNames.filter(name => !ignoredAccounts.includes(name.toLowerCase()));
-      if (validAccounts && validAccounts.length) {
-        await dispatch(actionSwitchAccount(validAccounts[0]));
-      }
-    }
-  };
-
-  React.useEffect(() => {
-    checkAccount();
-  }, []);
-
+    navigation.navigate(routeNames.SelectAccount);
   return (
     <View style={styled.container}>
       <ButtonBasic
@@ -78,12 +56,6 @@ const BtnSelectAccount = ({ ignoredAccounts }) => {
   );
 };
 
-BtnSelectAccount.propTypes = {
-  ignoredAccounts: PropTypes.array,
-};
-
-BtnSelectAccount.defaultProps = {
-  ignoredAccounts: []
-};
+BtnSelectAccount.propTypes = {};
 
 export default BtnSelectAccount;

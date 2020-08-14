@@ -1,24 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {
+  Text,
+  View,
+  RoundCornerButton,
+} from '@components/core';
 import formatUtil from '@utils/format';
-import { SuccessModal } from '@src/components';
-import mainStyles from '@screens/DexV2/style';
+import { Overlay } from 'react-native-elements';
+import styles from './style';
 import { MESSAGES } from '../../constants';
 
 class TradeSuccessModal extends React.Component {
   render() {
     const { visible, inputToken, inputValue, outputToken, outputValue, closeSuccessDialog } = this.props;
-    const desc = `You placed an order to buy ${outputValue ? formatUtil.amountFull(outputValue, outputToken?.pDecimals) : outputValue} ${outputToken?.symbol} for ${inputValue} ${inputToken?.symbol}.`;
     return (
-      <SuccessModal
-        closeSuccessDialog={closeSuccessDialog}
-        title={`${MESSAGES.TRADE_SUCCESS_TITLE}!`}
-        description={desc}
-        buttonTitle="Keep trading"
-        buttonStyle={mainStyles.button}
-        extraInfo={MESSAGES.TRADE_SUCCESS}
-        visible={visible}
-      />
+      <Overlay isVisible={visible} overlayStyle={styles.dialog}>
+        <View style={[styles.dialogContent]}>
+          <Text style={styles.dialogTitle}>
+            {MESSAGES.TRADE_SUCCESS_TITLE}!
+          </Text>
+          <Text style={styles.dialogDesc}>
+            You placed an order to buy&nbsp;{outputValue ? formatUtil.amountFull(outputValue, outputToken?.pDecimals) : outputValue} {outputToken?.symbol}&nbsp;for {inputValue} {inputToken?.symbol}.
+          </Text>
+          <Text style={styles.extraInfo}>
+            {MESSAGES.TRADE_SUCCESS}
+          </Text>
+          <RoundCornerButton
+            onPress={closeSuccessDialog}
+            title="Keep trading"
+            style={styles.button}
+          />
+        </View>
+      </Overlay>
     );
   }
 }

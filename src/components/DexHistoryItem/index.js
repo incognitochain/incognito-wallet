@@ -1,38 +1,17 @@
-import React from 'react';
-import { ActivityIndicator, Text, TouchableOpacity, View } from '@components/core';
-import _ from 'lodash';
-import { Icon } from 'react-native-elements';
-import { COLORS } from '@src/styles';
-import Row from '@components/Row/index';
-import stylesheet from './style';
+import { MESSAGES } from '@screens/Dex/constants';
 
-const HistoryItem = ({
-  style,
-  onPress,
-  history,
-}) => {
-  const { status, type } = history;
-  return (
-    <TouchableOpacity style={[stylesheet.history, style]} onPress={onPress}>
-      <View style={[stylesheet.shortInfo]}>
-        <Text style={stylesheet.historyType}>{_.capitalize(type)}</Text>
-      </View>
-      <Row center spaceBetween style={stylesheet.flex}>
-        <Text style={stylesheet.shortDesc} numberOfLines={2}>
-          {history.shortDescription}
-        </Text>
-        <Row style={[stylesheet.historyStatus]}>
-          {status === undefined ?
-            <ActivityIndicator size="small" style={stylesheet.textRight} /> :
-            <Text style={[stylesheet.textRight, stylesheet[status]]}>{_.capitalize(status)}</Text>
-          }
-          <View style={stylesheet.icon}>
-            <Icon name="chevron-right" color={COLORS.lightGrey1} />
-          </View>
-        </Row>
-      </Row>
-    </TouchableOpacity>
-  );
+import TradeHistory from './TradeHistory';
+import DepositHistory from './DepositHistory';
+import WithdrawHistory from './WithdrawHistory';
+import AddLiquidityHistory from './AddLiquidity';
+import RemoveLiquidityHistory from './RemoveLiquidity';
+
+const HISTORY_COMPONENTS = {
+  [MESSAGES.DEPOSIT]: DepositHistory,
+  [MESSAGES.WITHDRAW]: WithdrawHistory,
+  [MESSAGES.TRADE]: TradeHistory,
+  [MESSAGES.ADD_LIQUIDITY]: AddLiquidityHistory,
+  [MESSAGES.REMOVE_LIQUIDITY]: RemoveLiquidityHistory,
 };
 
-export default HistoryItem;
+export default HISTORY_COMPONENTS;
