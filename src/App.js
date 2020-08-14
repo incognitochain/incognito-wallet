@@ -57,8 +57,8 @@ const App = (props) => {
         dispatch(actionSetCurrentScreen(currentScreen));
         if (currentScreen !== prevScreen) {
           dispatch(actionSetPrevScreen(prevScreen));
-          console.debug('CurrentScreen', currentScreen);
         }
+        console.debug('CurrentScreen', currentScreen);
       }}
     />
   );

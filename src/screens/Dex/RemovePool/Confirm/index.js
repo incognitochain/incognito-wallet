@@ -10,6 +10,7 @@ import withDefaultAccount from '@components/Hoc/withDefaultAccount';
 import mainStyles from '@screens/Dex/style';
 import Balance from '@screens/DexV2/components/Balance';
 import withDexAccounts from '@screens/Dex/dexAccount.enhance';
+import SharePercent from '@screens/Dex/SharePercent';
 import withSuccess from './success.enhance';
 import withConfirm from './confirm.enhance';
 import withData from './data.enhance';
@@ -19,6 +20,7 @@ const Confirm = ({
   pair,
   topText,
   bottomText,
+  value,
   fee,
   feeToken,
   onConfirm,
@@ -38,6 +40,11 @@ const Confirm = ({
           left="To"
           right="pDEX"
           style={{ ...styles.extra }}
+        />
+        <SharePercent
+          share={value}
+          totalShare={pair.totalShare}
+          style={styles.extra}
         />
         <Balance
           token={feeToken}
@@ -59,22 +66,23 @@ const Confirm = ({
 };
 
 Confirm.propTypes = {
-  pair: PropTypes.object.isRequired,
+  coin: PropTypes.object,
+  deposit: PropTypes.string,
+  provide: PropTypes.string,
   onConfirm: PropTypes.func.isRequired,
 
   fee: PropTypes.number.isRequired,
   feeToken: PropTypes.object.isRequired,
 
-  processing: PropTypes.bool.isRequired,
-  topText: PropTypes.string,
-  bottomText: PropTypes.string,
+  providing: PropTypes.bool.isRequired,
 
   error: PropTypes.string,
 };
 
 Confirm.defaultProps = {
-  topText: '',
-  bottomText: '',
+  coin: null,
+  deposit: '',
+  provide: '',
   error: '',
 };
 
