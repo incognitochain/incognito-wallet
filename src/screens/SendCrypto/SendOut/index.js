@@ -148,10 +148,7 @@ class WithdrawContainer extends Component {
       TokenSymbol: selectedPrivacy?.symbol,
       TokenTxType: type,
       TokenAmount: originalAmount + (isUsedPRVFee ? 0 : feeForBurn),
-      TokenReceivers: {
-        PaymentAddress: '',
-        Amount: originalAmount + (isUsedPRVFee ? 0 : feeForBurn),
-      },
+      TokenReceivers: [],
     };
     try {
       const res = await tokenService.createBurningRequest(
