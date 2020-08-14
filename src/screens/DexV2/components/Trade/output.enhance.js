@@ -4,7 +4,6 @@ import formatUtils from '@utils/format';
 import { MIN_PERCENT } from '@screens/DexV2/constants';
 import { getQuote as getQuoteAPI } from '@services/trading';
 import { v4 } from 'uuid';
-import { COINS } from '@src/constants';
 import { calculateOutputValue as calculateOutput } from './utils';
 
 let currentDebounceId;
@@ -19,18 +18,7 @@ const withCalculateOutput = WrappedComp => (props) => {
   const { inputToken, inputValue, outputToken, pair } = props;
 
   const calculateOutputValue = () => {
-    const firstPair = _.get(pair, 0);
-    const secondPair = _.get(pair, 1);
-
-    let currentInputToken = inputToken;
-    let outputValue = inputValue;
-
-    if (secondPair) {
-      outputValue = calculateOutput(firstPair, currentInputToken, outputValue, COINS.PRV);
-      currentInputToken = COINS.PRV;
-    }
-
-    outputValue = calculateOutput(secondPair || firstPair, currentInputToken, outputValue, outputToken);
+    let outputValue = calculateOutput(pair, inputToken, inputValue, outputToken);
 
     if (outputValue < 0) {
       outputValue = 0;
@@ -120,6 +108,10 @@ const withCalculateOutput = WrappedComp => (props) => {
       setQuote(null);
     }
   }, [inputToken, inputValue, outputToken, pair]);
+
+  React.useEffect(() => {
+
+  }, [inputToken, inputValue]);
 
   return (
     <WrappedComp
