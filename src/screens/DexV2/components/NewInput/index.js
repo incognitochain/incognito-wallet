@@ -4,7 +4,6 @@ import { View, Text, TouchableOpacity, ActivityIndicator } from '@src/components
 import { useNavigation } from 'react-navigation-hooks';
 import ROUTE_NAMES from '@routers/routeNames';
 import { ArrowRightGreyIcon } from '@components/Icons';
-import { BtnInfinite } from '@components/Button';
 import Input from './Input';
 import stylesheet from './style';
 
@@ -23,7 +22,6 @@ const InputContainer = (props) => {
     loading,
     placeholder,
     selectable,
-    maxValue,
   } = props;
   const showSelectTokenScreen = () => {
     navigation.navigate(ROUTE_NAMES.TokenSelectScreen, {
@@ -49,11 +47,6 @@ const InputContainer = (props) => {
           </Text>
         )}
         {!!loading && <ActivityIndicator />}
-        {!!maxValue && (
-          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-            <BtnInfinite onPress={() => onChange(maxValue)} />
-          </View>
-        ) }
         {selectable ? (
           <TouchableOpacity onPress={showSelectTokenScreen} style={stylesheet.centerJustify}>
             {token ? (
@@ -86,7 +79,6 @@ InputContainer.defaultProps = {
   disabled: false,
   loading: false,
   selectable: true,
-  maxValue: undefined,
 };
 
 InputContainer.propTypes = {
@@ -98,7 +90,6 @@ InputContainer.propTypes = {
   disabled: PropTypes.bool,
   loading: PropTypes.bool,
   selectable: PropTypes.bool,
-  maxValue: PropTypes.number,
 };
 
 export default InputContainer;

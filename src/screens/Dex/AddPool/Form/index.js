@@ -14,6 +14,7 @@ import Balance from '@screens/DexV2/components/Balance';
 import routeNames from '@routers/routeNames';
 import formatUtils from '@utils/format';
 import { MAX_FEE_PER_TX } from '@components/EstimateFee/EstimateFee.utils';
+import { ExHandler } from '@services/exception';
 import { mainStyle } from '../../Home/style';
 import { MESSAGES, MIN_INPUT } from '../../constants';
 
@@ -80,12 +81,7 @@ class Pool extends React.Component {
       }
 
       const { balance, error } = data;
-      this.setState({
-        inputBalance: balance,
-        inputError: error,
-        prvBalance: balance,
-        inputBalanceText: formatUtils.amountFull(balance, token.pDecimals),
-      });
+      this.setState({ inputBalance: balance, inputError: error, prvBalance: balance });
     } catch (error) {
       this.setState({ inputBalance: 0 });
       console.debug('GET INPUT BALANCE ERROR', error);
@@ -102,11 +98,7 @@ class Pool extends React.Component {
       }
 
       const { balance, error } = data;
-      this.setState({
-        outputBalance: balance,
-        outputError: error,
-        outputBalanceText: formatUtils.amountFull(balance, token.pDecimals),
-      });
+      this.setState({ outputBalance: balance, outputError: error });
     } catch (error) {
       this.setState({ outputBalance: 0 });
       console.debug('GET OUTPUT BALANCE ERROR', error);
@@ -350,8 +342,6 @@ class Pool extends React.Component {
       inputList,
       outputList,
       inputBalance,
-      inputBalanceText,
-      outputBalanceText,
     } = this.state;
     return (
       <View>
@@ -365,7 +355,6 @@ class Pool extends React.Component {
           loading={inputBalance === null}
           placeholder="0"
           selectable={false}
-          maxValue={inputBalanceText}
         />
         <Text style={mainStyle.error}>
           {inputError}
@@ -382,7 +371,6 @@ class Pool extends React.Component {
           token={outputToken || {}}
           value={outputText}
           placeholder="0"
-          maxValue={outputBalanceText}
         />
         <Text style={mainStyle.error}>
           {outputError}

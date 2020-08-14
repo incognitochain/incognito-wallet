@@ -7,6 +7,7 @@ import { Divider } from 'react-native-elements';
 import ExchangeRate from '@screens/Dex/ExchangeRate';
 import formatUtil from '@utils/format';
 import PoolSize from '@screens/Dex/PoolSize';
+import SharePercent from '@screens/Dex/SharePercent';
 import { ExHandler } from '@services/exception';
 import convertUtil from '@utils/convert';
 import routeNames from '@routers/routeNames';
@@ -102,11 +103,7 @@ class Pool extends React.Component {
       const { outputValue, outputText } = data;
       const { error } = this.parseText(outputText, outputToken, outputBalance);
 
-      this.setState({
-        outputValue,
-        outputText,
-        outputError: error,
-      });
+      this.setState({ outputValue, outputText, outputError: error });
     } catch (error) {
       console.debug('CALCULATE OUTPUT ERROR', error);
     }
@@ -152,7 +149,7 @@ class Pool extends React.Component {
         const token2 = tokens.find(item => item.id === tokenIds[1]);
         const shareKey = this.findShareKey(shares, tokenIds);
 
-        if (!shareKey || !token1 || !token2) {
+        if (!shareKey) {
           return null;
         }
 
@@ -165,25 +162,26 @@ class Pool extends React.Component {
 
         const share = shares[shareKey];
         let sharePercent;
+        let sharePercentDisplay;
 
         if (shares[shareKey] > 0) {
-          sharePercent = share / totalShare;
+          sharePercent = share / totalShare * 100;
+          sharePercentDisplay = `${formatUtil.toFixed(sharePercent, 4)} %`;
         }
 
         return {
           shareKey: shareKey.slice(shareKey.indexOf(tokenIds[0])),
           token1,
           token2,
-          token1Balance: _.floor(sharePercent * pairInfo[tokenIds[0]]),
-          token2Balance: _.floor(sharePercent * pairInfo[tokenIds[1]]),
           [tokenIds[0]]: pairInfo[tokenIds[0]],
           [tokenIds[1]]: pairInfo[tokenIds[1]],
           share: shares[shareKey],
           sharePercent,
+          sharePercentDisplay,
           totalShare,
         };
       })
-      .filter(pair => pair && pair.share > 0 && pair.token1Balance > 0 && pair.token2Balance > 0);
+      .filter(pair => pair && pair.share > 0);
 
     const inputList = [];
     const outputList = [];
@@ -232,7 +230,7 @@ class Pool extends React.Component {
       pair = userPairs.find(item => item.shareKey.includes(inputToken.id) && item.shareKey.includes(outputToken.id));
     }
 
-    let sharePercent = _.get(pair, 'sharePercent', 0);
+    let sharePercent = _.get(pair, 'sharePercent', 0) / 100;
     let inputBalance = _.get(pair, inputToken?.id, 0);
     if (inputBalance > 0) {
       inputBalance = _.floor(inputBalance * sharePercent);
@@ -242,9 +240,6 @@ class Pool extends React.Component {
     if (outputBalance > 0) {
       outputBalance = _.floor(outputBalance * sharePercent);
     }
-
-    const inputBalanceText = formatUtil.amountFull(inputBalance, inputToken?.pDecimals);
-    const outputBalanceText = formatUtil.amountFull(outputBalance, outputToken?.pDecimals);
 
     this.setState({
       outputList,
@@ -256,8 +251,6 @@ class Pool extends React.Component {
       outputText: '',
       inputBalance,
       outputBalance,
-      inputBalanceText,
-      outputBalanceText,
     });
   }
 
@@ -400,8 +393,6 @@ class Pool extends React.Component {
       rawText,
       inputError,
       outputError,
-      inputBalanceText,
-      outputBalanceText,
     } = this.state;
 
     if (!userPairs || userPairs.length <= 0) {
@@ -418,7 +409,6 @@ class Pool extends React.Component {
           value={rawText}
           placeholder="0"
           disabled={isLoading}
-          maxValue={inputBalanceText}
         />
         <Text style={mainStyle.error}>
           {inputError}
@@ -436,7 +426,6 @@ class Pool extends React.Component {
           value={outputText}
           placeholder="0"
           disabled={isLoading}
-          maxValue={outputBalanceText}
         />
         <Text style={mainStyle.error}>
           {outputError}
