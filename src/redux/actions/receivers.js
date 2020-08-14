@@ -12,6 +12,7 @@ const initPayload = {
   receiver: {
     address: '',
     name: '',
+    networkName: '',
   },
 };
 
@@ -45,7 +46,7 @@ export const actionDeleteAll = (payload = initPayload) => ({
   payload,
 });
 
-export const actionSyncSuccess = payload => ({
+export const actionSyncSuccess = (payload) => ({
   type: ACTION_SYNC_SUCCESS,
   payload,
 });

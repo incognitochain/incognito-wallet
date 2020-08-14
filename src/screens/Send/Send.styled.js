@@ -8,12 +8,3 @@ export const styled = StyleSheet.create({
     textTransform: 'none',
   },
 });
-
-export const styledForm = StyleSheet.create({
-  scrollview: {
-    flex: 1,
-  },
-  form: {
-    flex: 1,
-  },
-});

@@ -15,7 +15,7 @@ export const styled = StyleSheet.create({
   },
   btnStyle: {
     width: '100%',
-    maxWidth: '49%',
+    maxWidth: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 100,

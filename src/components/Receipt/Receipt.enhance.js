@@ -2,20 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import formatUtil from '@src/utils/format';
 import { CONSTANT_COMMONS, CONSTANT_CONFIGS } from '@src/constants';
-import { useDispatch, useSelector } from 'react-redux';
-import { actionToggleModal } from '@src/components/Modal';
-import { useNavigation } from 'react-navigation-hooks';
+import { useSelector } from 'react-redux';
+import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 import routeNames from '@src/router/routeNames';
 import { ExHandler } from '@src/services/exception';
 import { receiversSelector } from '@src/redux/selectors/receivers';
-import { useBtnSaveReceiver } from '@screens/SendCrypto/FrequentReceivers/FrequentReceivers.hooks';
+import { useBtnSaveReceiver } from '@screens/FrequentReceivers';
 import { compose } from 'redux';
 import { withLayout_2 } from '@src/components/Layout';
-import { actionInitEstimateFee } from '@src/components/EstimateFee/EstimateFee.actions';
 
 const enhance = (WrappedComp) => (props) => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
+  const params = useNavigationParam('params') || {};
   const {
     toAddress,
     lockTime,
@@ -26,7 +24,8 @@ const enhance = (WrappedComp) => (props) => {
     tokenSymbol,
     keySaveAddressBook,
     txId,
-  } = props;
+    title,
+  } = params || props;
   const { receivers } = useSelector(receiversSelector)[keySaveAddressBook];
   const time = formatUtil.formatDateTime(lockTime * 1000);
   const amount = `${formatUtil.amount(
@@ -62,22 +61,7 @@ const enhance = (WrappedComp) => (props) => {
     },
   ];
 
-  const handleToggleModal = async () =>
-    await dispatch(
-      actionToggleModal({
-        visible: false,
-        data: null,
-        onBack: () => navigation.navigate(routeNames.WalletDetail),
-      }),
-    );
-
-  const onBack = async () => {
-    navigation.navigate(routeNames.WalletDetail);
-    await new Promise.all([
-      dispatch(actionInitEstimateFee()),
-      handleToggleModal(),
-    ]);
-  };
+  const onBack = async () => navigation.navigate(routeNames.WalletDetail);
 
   const onSaveReceivers = async () => {
     try {
@@ -88,7 +72,6 @@ const enhance = (WrappedComp) => (props) => {
         keySave: keySaveAddressBook,
         headerTitle: 'Save address',
       });
-      handleToggleModal();
     } catch (error) {
       new ExHandler(error).showErrorToast();
     }
@@ -102,6 +85,7 @@ const enhance = (WrappedComp) => (props) => {
     <WrappedComp
       {...{
         ...props,
+        title,
         onBack,
         infoFactories,
         btnSaveReceiver,

@@ -5,21 +5,6 @@ const maxWidth = UTILS.screenWidth() - 190;
 
 export const styled = StyleSheet.create({
   container: { flex: 1 },
-  btnTrade: {
-    backgroundColor: COLORS.colorGrey,
-    paddingHorizontal: 18,
-    height: 40,
-    maxWidth: 80,
-  },
-  titleBtnTrade: {
-    color: COLORS.black,
-    fontSize: FONT.SIZE.regular - 1,
-    fontFamily: FONT.NAME.medium,
-  },
-  btnInfo: {
-    width: 30,
-    alignItems: 'center',
-  },
   styledContainerHeaderTitle: {
     maxWidth,
   },
@@ -35,7 +20,6 @@ export const groupBtnStyled = StyleSheet.create({
     maxWidth: '49%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: COLORS.colorBlue,
   },
   titleStyle: {
     fontFamily: FONT.NAME.medium,

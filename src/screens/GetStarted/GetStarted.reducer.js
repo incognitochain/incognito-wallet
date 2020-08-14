@@ -7,6 +7,7 @@ import {
   ACTION_SHOW_WIZARD_FETCHED,
   ACTION_TOGGLE_FOLLOW_DEFAULT_PTOKENS,
   ACTION_TOGGLE_SHOW_WIZARD,
+  ACTION_TOGGLE_DETECT_NETWORK_NAME,
 } from './GetStarted.constant';
 
 const initialState = {
@@ -17,7 +18,10 @@ const initialState = {
   followDefaultPTokens: {
     [CONSTANT_KEYS.IS_FOLLOW_DEFAULT_PTOKENS]: false,
   },
-  isFollowedDefaultPTokens: false
+  isFollowedDefaultPTokens: false,
+  detectNetworkName: {
+    [CONSTANT_KEYS.DETECT_NETWORK_NAME]: false,
+  },
 };
 
 const getStartedReducer = (state = initialState, action) => {
@@ -62,6 +66,16 @@ const getStartedReducer = (state = initialState, action) => {
       },
     };
   }
+  case ACTION_TOGGLE_DETECT_NETWORK_NAME: {
+    const { keySave } = action.payload;
+    return {
+      ...state,
+      detectNetworkName: {
+        ...state.detectNetworkName,
+        [keySave]: true,
+      },
+    };
+  }
   default:
     return state;
   }
@@ -70,7 +84,12 @@ const getStartedReducer = (state = initialState, action) => {
 const persistConfig = {
   key: 'getStarted',
   storage: AsyncStorage,
-  whitelist: ['showWizard', 'followDefaultPTokens', 'isFollowedDefaultPTokens'],
+  whitelist: [
+    'showWizard',
+    'followDefaultPTokens',
+    'isFollowedDefaultPTokens',
+    'detectNetworkName',
+  ],
   stateReconciler: autoMergeLevel2,
 };
 

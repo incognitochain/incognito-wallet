@@ -1,34 +1,59 @@
+/* eslint-disable import/no-cycle */
 import React from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
-import debounce from 'lodash/debounce';
 import PropTypes from 'prop-types';
-// eslint-disable-next-line import/no-cycle
-import { actionFetchFee } from './EstimateFee.actions';
+import accountService from '@src/services/wallet/accountService';
+import { useKeyboard } from '@src/components/UseEffect/useKeyboard';
+import { usePrevious } from '@src/components/UseEffect/usePrevious';
+import { actionFetchFee, actionInitEstimateFee } from './EstimateFee.actions';
 import { estimateFeeSelector } from './EstimateFee.selector';
 
-const enhance = WrappedComp => props => {
-  const { init } = useSelector(estimateFeeSelector);
-  const { amount = 0, address = '', isFormValid = false } = props;
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+const enhance = (WrappedComp) => (props) => {
+  const { screen, isFetching, isFetched } = useSelector(estimateFeeSelector);
+  const { amount = 0, address = '' } = props;
+  const isIncognitoAddress = accountService.checkPaymentAddress(address);
+  const [isKeyboardVisible] = useKeyboard();
+  const prevScreen = usePrevious(screen);
   const dispatch = useDispatch();
-  const handleEstimateFee = async () => {
-    if (isFormValid) {
+  const handleFetchFeeData = async () => {
+    try {
       await dispatch(
         actionFetchFee({
           amount,
           address,
         }),
       );
+    } catch (error) {
+      console.debug(error);
     }
   };
-  const _handleEstimateFee = debounce(handleEstimateFee, 1000);
-  React.useEffect(() => {
-    if (init) {
-      _handleEstimateFee();
+  const handleChangeForm = async () => {
+    try {
+      if (!address) {
+        return;
+      }
+      let config = {};
+      if (!isIncognitoAddress) {
+        config = { screen: 'UnShield' };
+      }
+      await dispatch(actionInitEstimateFee(config));
+      if (isKeyboardVisible) {
+        return;
+      }
+      if (!isFetched) {
+        return handleFetchFeeData();
+      } else if (isFetched && !isFetching && prevScreen !== screen) {
+        return handleFetchFeeData();
+      }
+    } catch (error) {
+      console.debug(error);
     }
-  }, [amount, address, selectedPrivacy?.tokenId]);
+  };
+  React.useEffect(() => {
+    handleChangeForm();
+  }, [isKeyboardVisible, address, amount, screen, isFetched, isFetching]);
+
   return (
     <ErrorBoundary>
       <WrappedComp {...{ ...props }} />
@@ -39,7 +64,6 @@ const enhance = WrappedComp => props => {
 enhance.propTypes = {
   amount: PropTypes.number.isRequired,
   address: PropTypes.string.isRequired,
-  isFormValid: PropTypes.bool.isRequired,
 };
 
 export default enhance;

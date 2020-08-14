@@ -32,6 +32,7 @@ export const styledModal = StyleSheet.create({
   header: {
     paddingHorizontal: 25,
   },
+  title: {},
 });
 
 export const notFoundStyled = StyleSheet.create({
@@ -73,28 +74,32 @@ export const listStyled = StyleSheet.create({
     lineHeight: FONT.SIZE.regular + 6,
     marginLeft: 15,
   },
+  title: {
+    paddingHorizontal: 25,
+    fontFamily: FONT.NAME.bold,
+    fontSize: FONT.SIZE.superMedium,
+    lineHeight: FONT.SIZE.superMedium + 4,
+    color: COLORS.black,
+  },
 });
 export const itemStyled = StyleSheet.create({
   hook: {
     flex: 1,
     backgroundColor: COLORS.white,
     paddingVertical: 15,
-    paddingHorizontal: 25,
+    paddingLeft: 25,
   },
   name: {
     color: COLORS.black,
-    fontFamily: FONT.NAME.medium,
+    fontFamily: FONT.NAME.bold,
     fontSize: FONT.SIZE.superMedium,
     lineHeight: FONT.SIZE.superMedium + 4,
-    marginBottom: 10,
+    marginBottom: 15,
   },
   address: {
     color: COLORS.colorGreyBold,
     fontFamily: FONT.NAME.medium,
     fontSize: FONT.SIZE.medium,
     lineHeight: FONT.SIZE.medium + 4,
-  },
-  lastChild: {
-    borderBottomColor: 'transparent',
   },
 });

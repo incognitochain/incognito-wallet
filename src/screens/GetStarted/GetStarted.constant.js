@@ -3,3 +3,5 @@ export const ACTION_SHOW_WIZARD_FETCHED = '[getStarted] Wizard fetched';
 export const ACTION_TOGGLE_SHOW_WIZARD = '[getStarted] Toggle wizard';
 export const ACTION_TOGGLE_FOLLOW_DEFAULT_PTOKENS =
   '[getStarted] Toggle follow default pTokens';
+export const ACTION_TOGGLE_DETECT_NETWORK_NAME =
+  '[getStarted] Detect network name';

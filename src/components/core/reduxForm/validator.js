@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-finally */
 import walletValidator from 'wallet-address-validator';
 import accountService from '@src/services/wallet/accountService';
 import formatUtils from '@src/utils/format';
@@ -37,7 +38,7 @@ const maxLength = (max, { message } = {}) => (value) =>
 const minLength = (min, { message } = {}) => (value) =>
   value && value.length < min
     ? messageHanlder(message, value, min) ??
-    `Must be at least ${min} characters`
+      `Must be at least ${min} characters`
     : undefined;
 
 const isInteger = ({ message } = {}) => (value) =>
@@ -61,19 +62,19 @@ const number = ({ message } = {}) => (value) => {
 const minValue = (min, { message } = {}) => (value) =>
   value && convert.toNumber(value) < min
     ? messageHanlder(message, value, min) ??
-    `Must be at least ${formatUtils.number(min)}`
+      `Must be at least ${formatUtils.number(min)}`
     : undefined;
 
 const maxValue = (max, { message } = {}) => (value) =>
   value && convert.toNumber(value) > max
     ? messageHanlder(message, value, max) ??
-    `Must be less than or equal ${formatUtils.number(max)}`
+      `Must be less than or equal ${formatUtils.number(max)}`
     : undefined;
 
 const largerThan = (min, { message } = {}) => (value) =>
   value && value <= min
     ? messageHanlder(message, value, min) ??
-    `Must be larger than ${formatUtils.number(min)}`
+      `Must be larger than ${formatUtils.number(min)}`
     : undefined;
 
 const email = ({ message } = {}) => (value) =>
@@ -94,12 +95,13 @@ const regexp = (pattern, { message } = {}) => (value) =>
 const maxBytes = (max, { message } = {}) => (value) =>
   value && new Blob([String(value)])?.size > max
     ? messageHanlder(message, value, max) ??
-    `Must be less than or equal ${formatUtils.number(max)} bytes`
+      `Must be less than or equal ${formatUtils.number(max)} bytes`
     : undefined;
 
 const incognitoAddress = (value, { message } = {}) => (value) =>
-  value && value?.length < 15 ? 'Invalid address' :
-    value && !accountService.checkPaymentAddress(value)
+  value && value?.length < 15
+    ? 'Invalid address'
+    : value && !accountService.checkPaymentAddress(value)
       ? messageHanlder(message, value) ?? 'Use Unshield to exit Incognito'
       : undefined;
 
@@ -303,7 +305,7 @@ const fileTypes = (typeList, { message } = {}) => (value) => {
   });
   return !found
     ? messageHanlder(message, value, typeList) ??
-    `Please use a valid type (${typeList?.join(', ')})`
+        `Please use a valid type (${typeList?.join(', ')})`
     : undefined;
 };
 
@@ -317,7 +319,7 @@ const maxFileSize = (sizeInKBytes, { message } = {}) => (value) => {
 
   return fileSize > sizeInKBytes
     ? messageHanlder(message, value, sizeInKBytes) ??
-    `Please use a file smaller than ${sizeInKBytes}kb`
+        `Please use a file smaller than ${sizeInKBytes}kb`
     : undefined;
 };
 
@@ -365,7 +367,7 @@ const combinedETHAddress = [required(), ethAddress()];
 const combinedTOMOAddress = [required(), tomoAddress()];
 const combinedBTCAddress = [required(), btcAddress()];
 const combinedNEOAddress = [required(), neoAddress()];
-const combinedXMRAddress = [required(), xmrAddress()];
+// const combinedXMRAddress = [required(), xmrAddress()];
 const combinedBNBAddress = [required(), bnbAddress()];
 
 const combinedZenAddress = [required(), zenAddress()];
@@ -423,6 +425,13 @@ const combinedAccountName = [
     message: 'Please use a valid account name (Ex: "Cat, Account-1,..").',
   }),
 ];
+
+const isBNBAddress = (address) => {
+  const regexp = new RegExp('^(t)?(bnb)([a-z0-9]{39})$'); // t(for testnet) bnb + 39 a-z0-9
+  return regexp.test(address);
+};
+
+const isZILAddress = (address) => validation.isBech32(address);
 
 export default {
   required,
@@ -485,4 +494,6 @@ export default {
   fileTypes,
   maxFileSize,
   isUnShieldAddress,
+  isBNBAddress,
+  isZILAddress,
 };

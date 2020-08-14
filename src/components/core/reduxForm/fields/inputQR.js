@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
-import { TextInput, View , TouchableOpacity } from '@src/components/core';
+import { TextInput, View, TouchableOpacity } from '@src/components/core';
 import { openQrScanner } from '@src/components/QrCodeScanner';
 import { AddressBookIcon } from '@src/components/Icons';
 import { generateTestId } from '@utils/misc';
 import { SEND } from '@src/constants/elements';
 import { BtnScanQrCode } from '@src/components/Button';
 import createField from './createField';
-
 
 const styled = StyleSheet.create({
   prepend: {
@@ -19,7 +18,6 @@ const styled = StyleSheet.create({
   line: {
     width: 1,
     height: 20,
-    backgroundColor: 'transparent',
     marginHorizontal: 7.5,
   },
   btn: {
@@ -30,7 +28,7 @@ const styled = StyleSheet.create({
   },
 });
 
-const getAddress = text => {
+const getAddress = (text) => {
   if (text && typeof text === 'string') {
     let indexSpec = text.indexOf(':');
     if (indexSpec != -1) {
@@ -54,7 +52,7 @@ const renderCustomField = ({
   return (
     <TextInput
       {...{ ...props, ...rest }}
-      onChangeText={t => input.onChange(t)}
+      onChangeText={(t) => input.onChange(t)}
       onBlur={onBlur}
       onFocus={onFocus}
       returnKeyType="done"
@@ -77,7 +75,7 @@ const renderCustomField = ({
           <BtnScanQrCode
             style={styled.btn}
             onPress={() => {
-              openQrScanner(data => {
+              openQrScanner((data) => {
                 let res = getAddress(data);
                 input.onChange(res);
               });
@@ -100,7 +98,7 @@ renderCustomField.defaultProps = {
   input: null,
   onOpenAddressBook: () => null,
   showNavAddrBook: false,
-  oldVersion: false
+  oldVersion: false,
 };
 
 const InputQRField = createField({

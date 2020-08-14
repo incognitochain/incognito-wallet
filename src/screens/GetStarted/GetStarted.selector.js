@@ -20,3 +20,8 @@ export const isFollowedDefaultPTokensSelector = createSelector(
   getStartedSelector,
   (getStarted) => !!getStarted?.isFollowedDefaultPTokens,
 );
+
+export const detectNetworkNameSelector = createSelector(
+  getStartedSelector,
+  (getStarted) => getStarted?.detectNetworkName,
+);

@@ -1,34 +1,30 @@
 import React from 'react';
-import AsyncStorage from '@react-native-community/async-storage';
-import {listAccountSelector} from '@src/redux/selectors/account';
-import {useSelector, useDispatch} from 'react-redux';
-import {ExHandler} from '@src/services/exception';
-import {actionCreate, actionSyncSuccess} from '@src/redux/actions/receivers';
+import { listAccountSelector } from '@src/redux/selectors/account';
+import { useSelector, useDispatch } from 'react-redux';
+import { ExHandler } from '@src/services/exception';
+import { actionCreate, actionSyncSuccess } from '@src/redux/actions/receivers';
 import LoadingContainer from '@src/components/LoadingContainer';
-import {useNavigationParam} from 'react-navigation-hooks';
-import {CONSTANT_KEYS} from '@src/constants';
-import {receiversSelector} from '@src/redux/selectors/receivers';
+import { CONSTANT_KEYS } from '@src/constants';
+import { receiversSelector } from '@src/redux/selectors/receivers';
 import { searchBoxConfig } from '@src/components/Header/Header.searchBox';
 import { reset } from 'redux-form';
 
-const enhance = WrappedComp => props => {
+const enhance = (WrappedComp) => (props) => {
   const [state, setState] = React.useState({
     isFetching: false,
     isFetched: false,
   });
   const dispatch = useDispatch();
   const accounts = useSelector(listAccountSelector);
-  const keySave = useNavigationParam('keySave');
-  const {sync = false} = useSelector(receiversSelector)[keySave];
-  const shouldSyncData =
-    keySave === CONSTANT_KEYS.REDUX_STATE_RECEIVERS_IN_NETWORK;
+  const keySave = CONSTANT_KEYS.REDUX_STATE_RECEIVERS_IN_NETWORK;
+  const { sync = false } = useSelector(receiversSelector)[keySave];
   const syncData = async () => {
     try {
       const isAccListEmpty = accounts.length === 0;
       if (!isAccListEmpty) {
         await Promise.all(
           accounts.map(
-            async account =>
+            async (account) =>
               await dispatch(
                 actionCreate({
                   keySave,
@@ -55,7 +51,7 @@ const enhance = WrappedComp => props => {
         isFetching: true,
       });
       await syncData();
-      await setState({...state, isFetched: true, isFetching: false});
+      await setState({ ...state, isFetched: true, isFetching: false });
     } catch (error) {
       await setState({
         ...state,
@@ -68,13 +64,13 @@ const enhance = WrappedComp => props => {
 
   React.useEffect(() => {
     dispatch(reset(searchBoxConfig.form));
-    if (shouldSyncData) {
+    if (!sync) {
       syncReceivers();
     }
   }, [accounts]);
 
-  const {isFetched} = state;
-  if (shouldSyncData && !isFetched) {
+  const { isFetched } = state;
+  if (!sync && !isFetched) {
     return <LoadingContainer />;
   }
   return <WrappedComp {...props} />;

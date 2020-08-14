@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import {
   getEstimateFeeForNativeToken,
   getEstimateFeeForPToken,
@@ -25,9 +26,7 @@ import {
   ACTION_USE_FEE_MAX,
 } from './EstimateFee.constant';
 import { apiGetEstimateFeeFromChain } from './EstimateFee.services';
-// eslint-disable-next-line import/no-cycle
 import { estimateFeeSelector, feeDataSelector } from './EstimateFee.selector';
-// eslint-disable-next-line import/no-cycle
 import { formName } from './EstimateFee.input';
 import {
   MAX_FEE_PER_TX,
@@ -127,13 +126,13 @@ export const actionFetchFee = ({ amount, address }) => async (
   let feePTokenEst = null;
   let minFeePTokenEst = null;
   try {
-    const { isFetching, isFetched } = estimateFeeSelector(state);
+    const { isFetching, init } = estimateFeeSelector(state);
     if (
+      !init ||
       !amount ||
       !address ||
       !selectedPrivacy?.tokenId ||
-      isFetching ||
-      isFetched
+      isFetching
     ) {
       return;
     }

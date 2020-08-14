@@ -17,12 +17,13 @@ import {
 } from './FrequentReceivers.styled';
 import withModal from './FrequentReceivers.enhance';
 
-const Item = ({
+export const Item = ({
   name,
   address,
   disabledSwipe,
   _onDelete,
   isLastChild,
+  containerStyled,
   ...rest
 }) => {
   return (
@@ -40,7 +41,7 @@ const Item = ({
       }}
     >
       <TouchableOpacity {...rest}>
-        <View style={itemStyled.hook}>
+        <View style={[itemStyled.hook, containerStyled]}>
           <Text style={itemStyled.name}>{name}</Text>
           <Text
             style={itemStyled.address}
@@ -55,17 +56,19 @@ const Item = ({
   );
 };
 
-const List = ({
+export const List = ({
   onSelectedAddress,
   receivers,
   disabledSwipe,
   onDelete,
   shouldDisabledItem,
   styledContainer = null,
+  title = '',
 }) => {
   const onPressItem = (item) => debounce(() => onSelectedAddress(item), 300);
   return (
     <View style={[listStyled.container, styledContainer]}>
+      {!!title && <Text style={listStyled.title}>{title}</Text>}
       <ScrollView>
         {receivers.map((item, key, arr) => (
           <Item
@@ -85,7 +88,7 @@ const List = ({
   );
 };
 
-const NotFound = () => {
+export const NotFound = () => {
   return (
     <View style={notFoundStyled.container}>
       <View style={notFoundStyled.hook}>
@@ -96,7 +99,7 @@ const NotFound = () => {
   );
 };
 
-const Modal = (props) => {
+export const Modal = (props) => {
   const {
     data,
     onSelectedAddress,
