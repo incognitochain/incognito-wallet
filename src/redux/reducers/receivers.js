@@ -6,8 +6,8 @@ import {
   ACTION_DELETE_ALL,
   ACTION_SYNC_SUCCESS,
 } from '@src/redux/actions/receivers';
-import { isReceiverExist } from '@src/redux/utils/receivers';
-import { CONSTANT_KEYS } from '@src/constants';
+import {isReceiverExist} from '@src/redux/utils/receivers';
+import {CONSTANT_KEYS} from '@src/constants';
 
 const initialState = {
   [CONSTANT_KEYS.REDUX_STATE_RECEIVERS_IN_NETWORK]: {
@@ -22,10 +22,10 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
   case ACTION_CREATE: {
-    const { keySave, receiver, sync = false } = action.payload;
+    const {keySave, receiver, sync = false} = action.payload;
     const oldReceivers = state[keySave].receivers;
     const exist = isReceiverExist(oldReceivers, receiver);
-    if (sync && exist) {
+    if(sync && exist){
       return state;
     }
     if (exist) {
@@ -47,20 +47,19 @@ export default (state = initialState, action) => {
     };
   }
   case ACTION_UPDATE: {
-    const { keySave, receiver } = action.payload;
+    const {keySave, receiver} = action.payload;
     const oldReceivers = state[keySave].receivers;
     return {
       ...state,
       [keySave]: {
         ...state[keySave],
         receivers: [
-          ...oldReceivers.map((item) =>
+          ...oldReceivers.map(item =>
             item.address === receiver.address
               ? {
                 ...item,
                 name: receiver.name,
                 updatedAt: new Date().getTime(),
-                networkName: receiver?.networkName,
               }
               : item,
           ),
@@ -69,8 +68,8 @@ export default (state = initialState, action) => {
     };
   }
   case ACTION_DELETE: {
-    const { keySave, receiver } = action.payload;
-    const { name, address } = receiver;
+    const {keySave, receiver} = action.payload;
+    const {name, address} = receiver;
     const oldReceivers = state[keySave].receivers;
     const exist = isReceiverExist(oldReceivers, receiver);
     if (!exist) {
@@ -82,17 +81,17 @@ export default (state = initialState, action) => {
         ...state[keySave],
         receivers: [
           ...oldReceivers.filter(
-            (item) => item?.name !== name && item?.address !== address,
+            item => item?.name !== name && item?.address !== address,
           ),
         ],
       },
     };
   }
   case ACTION_UPDATE_RECENTLY: {
-    const { keySave, receiver } = action.payload;
+    const {keySave, receiver} = action.payload;
     const oldReceivers = state[keySave].receivers;
     const exist = oldReceivers.some(
-      (item) => item?.address === receiver.address,
+      item => item?.address === receiver.address,
     );
     if (!exist) {
       return state;
@@ -102,9 +101,9 @@ export default (state = initialState, action) => {
       [keySave]: {
         ...state[keySave],
         receivers: [
-          ...oldReceivers.map((item) =>
+          ...oldReceivers.map(item =>
             item.address === receiver.address
-              ? { ...item, recently: new Date().getTime() }
+              ? {...item, recently: new Date().getTime()}
               : item,
           ),
         ],
@@ -112,7 +111,7 @@ export default (state = initialState, action) => {
     };
   }
   case ACTION_DELETE_ALL: {
-    const { keySave } = action.payload;
+    const {keySave} = action.payload;
     return {
       ...state,
       [keySave]: {

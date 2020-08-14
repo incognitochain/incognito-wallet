@@ -1,4 +1,3 @@
-/* eslint-disable import/no-cycle */
 import React from 'react';
 import { View, TouchableWithoutFeedback, Text } from 'react-native';
 import { Field, change, focus } from 'redux-form';
@@ -8,8 +7,11 @@ import { generateTestId } from '@src/utils/misc';
 import { useSelector, useDispatch } from 'react-redux';
 import convert from '@src/utils/convert';
 import { styled } from './EstimateFee.styled';
+// eslint-disable-next-line import/no-cycle
 import withEstimateFee from './EstimateFee.enhance';
+// eslint-disable-next-line import/no-cycle
 import { estimateFeeSelector, feeDataSelector } from './EstimateFee.selector';
+// eslint-disable-next-line import/no-cycle
 import { actionChangeFeeType, actionChangeFee } from './EstimateFee.actions';
 
 const feeValidator = [
@@ -91,7 +93,7 @@ const EstimateFeeInput = (props) => {
           onChange={onChangeFee}
           component={InputField}
           prependView={<SupportFees types={types} />}
-          placeholder="0"
+          placeholder={isFetching ? 'Estimating fee...' : '0'}
           name="fee"
           validate={[
             ...feeValidator,

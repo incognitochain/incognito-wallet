@@ -11,11 +11,10 @@ import { withLayout_2 } from '@src/components/Layout';
 import { formValueSelector, isValid, change } from 'redux-form';
 import { Keyboard } from 'react-native';
 import { receiversSelector } from '@src/redux/selectors/receivers';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { CONSTANT_KEYS } from '@src/constants';
 import { formName } from './FrequentReceivers.form';
 
 const enhance = (WrappedComp) => (props) => {
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
   const action = useNavigationParam('action') || 'create';
   const info = useNavigationParam('info');
   const keySave = useNavigationParam('keySave');
@@ -43,7 +42,6 @@ const enhance = (WrappedComp) => (props) => {
           receiver: {
             ...receiver,
             recently: new Date().getTime(),
-            networkName: selectedPrivacy?.networkName,
           },
         }),
       );
@@ -58,13 +56,10 @@ const enhance = (WrappedComp) => (props) => {
     try {
       // Check if name is existing, return dialog message
       let shouldBreakIfDuplicate = false;
-      accounts.forEach((element) => {
+      accounts.forEach(element => {
         if (element?.name === name) {
           shouldBreakIfDuplicate = true;
-          return new ExHandler(
-            {},
-            'This name is already existed',
-          ).showErrorToast();
+          return new ExHandler({}, 'This name is already existed').showErrorToast();
         }
       });
       if (!shouldBreakIfDuplicate) {
@@ -81,10 +76,7 @@ const enhance = (WrappedComp) => (props) => {
         Toast.showInfo('Updated!');
         return navigation.pop();
       } else {
-        return new ExHandler(
-          {},
-          'This name is already existed',
-        ).showErrorToast();
+        return new ExHandler({}, 'This name is already existed').showErrorToast();
       }
     } catch (error) {
       new ExHandler(error?.message || error).showErrorToast();

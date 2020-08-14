@@ -7,19 +7,19 @@ import {
   Divider,
   ScrollView,
 } from '@src/components/core';
-import { COLORS } from '@src/styles';
+import {COLORS} from '@src/styles';
 import formatUtil from '@src/utils/format';
 import PropTypes from 'prop-types';
 import React from 'react';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import { CONSTANT_COMMONS, CONSTANT_KEYS } from '@src/constants';
-import { useBtnSaveReceiver } from '@screens/FrequentReceivers';
-import { sendInReceiversSelector } from '@src/redux/selectors/receivers';
-import { useSelector, useDispatch } from 'react-redux';
-import { actionUpdateRecently } from '@src/redux/actions/receivers';
+import {CONSTANT_COMMONS, CONSTANT_KEYS} from '@src/constants';
+import {useBtnSaveReceiver} from '@src/screens/SendCrypto/FrequentReceivers/FrequentReceivers.hooks';
+import {sendInReceiversSelector} from '@src/redux/selectors/receivers';
+import {useSelector, useDispatch} from 'react-redux';
+import {actionUpdateRecently} from '@src/redux/actions/receivers';
 import styleSheet from './style';
 
-const Row = ({ label, value, valueProps }) => (
+const Row = ({label, value, valueProps}) => (
   <View style={styleSheet.rowText}>
     <Text style={styleSheet.labelText} numberOfLines={1} ellipsizeMode="tail">
       {label}:
@@ -35,7 +35,7 @@ const Row = ({ label, value, valueProps }) => (
   </View>
 );
 
-const Receipt = ({ info, onBack, onSaveReceivers }) => {
+const Receipt = ({info, onBack, onSaveReceivers}) => {
   const {
     time,
     amount,
@@ -47,7 +47,7 @@ const Receipt = ({ info, onBack, onSaveReceivers }) => {
     title,
   } = info;
   const dispatch = useDispatch();
-  const { receivers } = useSelector(sendInReceiversSelector);
+  const {receivers} = useSelector(sendInReceiversSelector);
   const [btnSaveReceiver] = useBtnSaveReceiver({
     onSaveReceivers,
     toAddress,
@@ -81,7 +81,7 @@ const Receipt = ({ info, onBack, onSaveReceivers }) => {
             <Row
               label="To"
               value={toAddress}
-              valueProps={{ ellipsizeMode: 'middle' }}
+              valueProps={{ellipsizeMode: 'middle'}}
             />
           )}
           {!!time && (

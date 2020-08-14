@@ -26,10 +26,6 @@ import { followDefaultTokens } from '@src/redux/actions/account';
 import { pTokensSelector } from '@src/redux/selectors/token';
 import { withNews, actionCheckUnreadNews } from '@screens/News';
 import { CONSTANT_KEYS } from '@src/constants';
-import {
-  withSyncIncognitoAddress,
-  withSyncDetectNetwork,
-} from '@screens/FrequentReceivers';
 import { homeSelector } from './Home.selector';
 import { actionFetch as actionFetchHomeConfigs } from './Home.actions';
 import Airdrop from './features/Airdrop';
@@ -189,7 +185,5 @@ export default compose(
   withWallet,
   withLayout_2,
   withNews,
-  withSyncIncognitoAddress,
-  withSyncDetectNetwork,
   enhance,
 );

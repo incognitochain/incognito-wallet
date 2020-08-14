@@ -1,31 +1,45 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, KeyboardAvoidingView, ScrollView } from 'react-native';
 import Header from '@src/components/Header';
 import { useSelector } from 'react-redux';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySeleclor, accountSeleclor } from '@src/redux/selectors';
 import { withLayout_2 } from '@src/components/Layout';
+import SendForm from '@screens/SendCrypto/SendIn';
 import { useNavigation } from 'react-navigation-hooks';
 import routeNames from '@src/router/routeNames';
-import { useBtnTrade } from '@src/components/UseEffect/useBtnTrade';
-import { BtnInfo } from '@src/components/Button';
-import SendForm from './features/Form';
+import { BtnQuestionDefault } from '@src/components/Button';
+import NavigationService from '@src/services/NavigationService';
 import { styled } from './Send.styled';
 
 const Send = () => {
   const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
   const navigation = useNavigation();
+  const account = useSelector(accountSeleclor.defaultAccountSelector);
+  const wallet = useSelector((state) => state?.wallet);
   const onGoBack = () => navigation.navigate(routeNames.WalletDetail);
-  const [BtnTrade] = useBtnTrade();
   return (
     <View style={styled.container}>
       <Header
         titleStyled={styled.headerTitle}
-        title={selectedPrivacy?.name}
-        rightHeader={<BtnTrade />}
+        title={`Send ${selectedPrivacy?.externalSymbol ||
+          selectedPrivacy?.symbol}`}
+        rightHeader={(
+          <BtnQuestionDefault
+            onPress={() => {
+              NavigationService.navigate(routeNames.WhySend);
+            }}
+          />
+        )}
         onGoBack={onGoBack}
-        customHeaderTitle={<BtnInfo />}
       />
-      <SendForm />
+      <SendForm
+        navigation={navigation}
+        selectable={false}
+        selectedPrivacy={selectedPrivacy}
+        account={account}
+        wallet={wallet}
+        reloading={false}
+      />
     </View>
   );
 };

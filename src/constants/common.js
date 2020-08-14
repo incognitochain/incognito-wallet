@@ -40,48 +40,12 @@ const CRYPTO_SYMBOL = {
   ZIL: 'ZIL',
 };
 
-const CRYPTO_SYMBOL_UNSHIELD = {
-  ETH: 'ETH',
-  TOMO: 'TOMO',
-  BTC: 'BTC',
-  NEO: 'NEO',
-  ZEN: 'ZEN',
-  ZCL: 'ZCL',
-  ZEC: 'ZEC',
-  VOT: 'VOT',
-  VTC: 'VTC',
-  SNG: 'SNG',
-  XRP: 'XRP',
-  XRB: 'XRB',
-  QTUM: 'QTUM',
-  PTS: 'PTS',
-  PPC: 'PPC',
-  GAS: 'GAS',
-  NMC: 'NMC',
-  MEC: 'MEC',
-  LTC: 'LTC',
-  KMD: 'KMD',
-  HUSH: 'HUSH',
-  GRLC: 'GRLC',
-  FRC: 'FRC',
-  DOGE: 'DOGE',
-  DGB: 'DGB',
-  DCR: 'DCR',
-  CLO: 'CLO',
-  BTG: 'BTG',
-  BCH: 'BCH',
-  BIO: 'BIO',
-  BVC: 'BVC',
-  BKX: 'BKX',
-  AUR: 'AUR',
-};
-
 const TOKEN_SYMBOL = {
   pETH: 'pETH',
   pBTC: 'pBTC',
   pBNB: 'pBNB',
   pUSD: 'pUSD',
-  pKCS: 'pKCS',
+  pKCS: 'pKCS'
 };
 
 const TOKEN_ID = {
@@ -94,14 +58,14 @@ const TOKEN_ID = {
 const AMOUNT_MAX_FRACTION_DIGITS = 4;
 
 const TRACK_LOG_EVENT = {
-  CLICK_STAKING: 'click_staking',
+  CLICK_STAKING:'click_staking'
 };
 
 const TRACK_LOG_EVENT_STATUS = {
-  BEGIN: 'INIT',
-  DOING: 'DOING',
-  PASS: 'PASS',
-  FAIL: 'FAIL',
+  BEGIN:'INIT',
+  DOING:'DOING',
+  PASS:'PASS',
+  FAIL:'FAIL'
 };
 
 const YEAR_SECONDS = 365 * 24 * 60 * 60;
@@ -112,12 +76,11 @@ export default {
   // old varibles, maybe remove later
   STAKING_TYPES: {
     SHARD: 0,
-    BEACON: 1,
+    BEACON: 1
   },
   STAKING_AMOUNT: 200,
   STAKING_MIN_FEE: 0.01,
-  STAKING_ADDRESS:
-    '1NHp2EKw7ALdXUzBfoRJvKrBBM9nkejyDcHVPvUjDcWRyG22dHHyiBKQGL1c',
+  STAKING_ADDRESS: '1NHp2EKw7ALdXUzBfoRJvKrBBM9nkejyDcHVPvUjDcWRyG22dHHyiBKQGL1c',
   DEFRAGMENT_DEFAULT_AMOUNT: 1,
   DEFRAGMENT_MIN_FEE: 0.01,
   DEFRAGMENT_SET_DEFAULT_PRIVACY: true,
@@ -126,22 +89,20 @@ export default {
 
   // for new app
   CRYPTO_SYMBOL,
-  CRYPTO_SYMBOL_UNSHIELD,
   TOKEN_SYMBOL,
   TOKEN_ID,
-  PRV_TOKEN_ID:
-    '0000000000000000000000000000000000000000000000000000000000000004',
+  PRV_TOKEN_ID: '0000000000000000000000000000000000000000000000000000000000000004',
   DECIMALS: {
     MAIN_CRYPTO_CURRENCY: 9,
     [CRYPTO_SYMBOL.PRV]: 9,
   },
   TOKEN_TX_TYPE: {
     INIT: 0,
-    SEND: 1,
+    SEND: 1
   },
   ADDRESS_TYPE: {
     DEPOSIT: 1,
-    WITHDRAW: 2,
+    WITHDRAW: 2
   },
   PRIVATE_TOKEN_CURRENCY_TYPE: {
     ETH: 1,
@@ -149,24 +110,24 @@ export default {
     ERC20: 3,
     BNB: 4,
     BNB_BEP2: 5,
-    USD: 6,
+    USD: 6
   },
   PRIVATE_TOKEN_TYPE: {
     COIN: 0,
-    TOKEN: 1, // including ERC20, BEP1, BEP2,...
+    TOKEN: 1 // including ERC20, BEP1, BEP2,...
   },
   HISTORY: {
     TYPE: {
       DEPOSIT: 1, // same with PRIVATE_TOKEN_HISTORY_ADDRESS_TYPE.DEPOSIT
       WITHDRAW: 2, // same with PRIVATE_TOKEN_HISTORY_ADDRESS_TYPE.WITHDRAW
       SEND: 3, // custom
-      RECEIVE: 4, // custom
+      RECEIVE: 4 // custom
     },
     STATUS_TEXT: {
       SUCCESS: 'SUCCESS',
       FAILED: 'FAILED',
       PENDING: 'PENDING',
-      EXPIRED: 'EXPIRED',
+      EXPIRED: 'EXPIRED'
     },
     META_DATA_TYPE: {
       90: 'Add liquidity',

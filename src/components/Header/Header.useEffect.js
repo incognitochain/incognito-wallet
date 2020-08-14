@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import PropTypes from 'prop-types';
 import toLower from 'lodash/toLower';
-import { trim } from 'lodash';
 
 export const useSearchBox = (props) => {
   const { data, handleFilter } = props;
@@ -13,21 +12,27 @@ export const useSearchBox = (props) => {
     result: [],
   };
   const selector = formValueSelector(searchBoxConfig.form);
-  const keySearch = trim(
-    toLower(
-      useSelector((state) => selector(state, searchBoxConfig.searchBox)) || '',
-    ),
+  const keySearch = toLower(
+    (
+      useSelector((state) => selector(state, searchBoxConfig.searchBox)) || ''
+    ).trim(),
   );
-  const isKeyEmpty = isEmpty(keySearch);
   const [state, setState] = React.useState(initialState);
   const { result } = state;
-  React.useEffect(() => {
+  const initData = async () =>
+    await setState({ ...initialState, result: handleFilter() });
+  const filterData = async () => {
     if (!isEmpty(keySearch)) {
-      return setState({ ...state, result: handleFilter() });
+      return await setState({ ...initialState, result: handleFilter() });
     }
-  }, [keySearch]);
-
-  return [isKeyEmpty ? data : result, keySearch];
+    if (!isEmpty(data)) {
+      return await initData();
+    }
+  };
+  React.useEffect(() => {
+    filterData();
+  }, [keySearch, data]);
+  return [result, keySearch];
 };
 
 useSearchBox.defaultProps = {};
