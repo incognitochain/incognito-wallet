@@ -24,7 +24,7 @@ const withSuccess = WrappedComp => (props) => {
       <SuccessModal
         closeSuccessDialog={closeSuccess}
         title="Liquidity added"
-        buttonTitle="OK"
+        buttonTitle="Provide more"
         buttonStyle={mainStyles.button}
         extraInfo="Please wait a few minutes for your added liquidity to display. Thanks for providing privacy."
         visible={success}

@@ -6,7 +6,7 @@ const style = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   content: {
-    paddingBottom: 60,
+    paddingBottom: 40,
   }
 });
 
