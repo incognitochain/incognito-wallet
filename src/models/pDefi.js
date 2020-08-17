@@ -3,14 +3,6 @@ import moment from 'moment';
 import { MAX_DEX_FEE, MAX_FEE_PER_TX } from '@components/EstimateFee/EstimateFee.utils';
 import BigNumber from 'bignumber.js';
 
-const TYPES = [
-  'Incognito',
-  'Incognito',
-  'Kyber',
-  '0x',
-  'Uniswap'
-];
-
 export class RewardModel {
   constructor(data = {}) {
     this.walletAddress = data.WalletAddress;
@@ -105,8 +97,6 @@ export class PDexTradeHistoryModel {
       this.networkFee = formatUtil.amountFull(this.networkFee, networkFeeToken.pDecimals);
       this.tradingFee = formatUtil.amountFull(this.tradingFee, networkFeeToken.pDecimals);
     }
-
-    this.exchange = TYPES[json.Type] || 'Incognito';
 
     this.description = `${this.sellAmount} ${this.sellTokenSymbol} to ${this.buyAmount} ${this.buyTokenSymbol}`;
   }

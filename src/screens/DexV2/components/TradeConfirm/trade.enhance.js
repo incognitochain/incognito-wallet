@@ -31,23 +31,12 @@ const withTrade = WrappedComp => (props) => {
 
 
   const deposit = () => {
-    let type = 1;
-
-    if (isErc20) {
-      if (quote.protocol.toLowerCase() === 'kyber') {
-        type = 2;
-      } else {
-        type = 4;
-      }
-    }
-
     return depositAPI({
       tokenId: inputToken.id,
       amount: inputValue,
       networkFee: fee / MAX_PDEX_TRADE_STEPS * (MAX_PDEX_TRADE_STEPS - 1) + (isErc20 ? DEFI_TRADING_FEE : 0),
       networkFeeTokenId: feeToken.id,
       receiverAddress: account.PaymentAddress,
-      type,
     });
   };
 

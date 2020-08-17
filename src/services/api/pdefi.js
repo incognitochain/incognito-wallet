@@ -14,15 +14,13 @@ export const deposit = ({
   networkFee,
   networkFeeTokenId,
   receiverAddress,
-  type,
 }) => {
   return http.post('pdefi/request-deposit', {
     'TokenID': tokenId,
     'Amount': Math.floor(amount),
     'NetworkFee': Math.floor(networkFee),
     'NetworkFeeTokenID': networkFeeTokenId,
-    'ReceiverAddress': receiverAddress,
-    'Type': type,
+    'ReceiverAddress': receiverAddress
   }).then(data => new DepositResponse(data));
 };
 
