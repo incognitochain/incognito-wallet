@@ -1,4 +1,5 @@
 import React from 'react';
+import { getDAppAddresses } from '@services/trading';
 
 const withPair = WrappedComp => (props) => {
   const [pair, setPair] = React.useState([]);
@@ -15,6 +16,11 @@ const withPair = WrappedComp => (props) => {
       setPair(null);
     }
   }, [inputToken, outputToken, pairs]);
+
+  React.useEffect(() => {
+    getDAppAddresses()
+      .catch(e => e);
+  }, []);
 
   return (
     <WrappedComp

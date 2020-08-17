@@ -1,14 +1,15 @@
 import _ from 'lodash';
-import {get0xQuote, get0xTokens,} from '@services/trading/0x';
-import {CONSTANT_COMMONS, CONSTANT_CONFIGS, TRADING} from '@src/constants';
+import { get0xQuote } from '@services/trading/0x';
+import { CONSTANT_COMMONS, CONSTANT_CONFIGS, TRADING } from '@src/constants';
 import http from '@src/services/http';
-import {getKyberQuote, getKyberTokens} from '@services/trading/kyber';
+import { getKyberQuote, getKyberTokens } from '@services/trading/kyber';
 import BigNumber from 'bignumber.js';
 import convertUtils from '@utils/convert';
 import UniswapRequest from '@models/uniswapRequest';
 import tokenService from '@services/wallet/tokenService';
+import { cachePromise, KEYS } from '@services/cache';
 
-const { PROTOCOLS } = TRADING;
+const { PROTOCOLS, setDAppAddresses } = TRADING;
 
 /**
  * Get all tradable tokens of multiple exchanges
@@ -80,6 +81,19 @@ export async function getQuote({buyToken, sellToken, sellAmount, protocol}) {
     .toNumber();
 
   return quote;
+}
+
+function getDAppAddressesNoCache() {
+  const url = '/uniswap/dapp-address';
+  return http.get(url);
+}
+
+export async function getDAppAddresses() {
+  const data = await cachePromise(KEYS.DAppAddress, getDAppAddressesNoCache, 600000);
+  const config = {};
+
+  data.forEach(item => config[item.DappName] = item.ContractId);
+  setDAppAddresses(config);
 }
 
 export async function getUniswapBalance(scAddress, token) {

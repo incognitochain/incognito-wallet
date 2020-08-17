@@ -4,6 +4,7 @@ export const KEYS = {
   PoolConfig: 'pool-configs',
   PoolUserData: (paymentAddress) => `pool-data-${paymentAddress}`,
   PoolHistory: (paymentAddress) => `pool-history-${paymentAddress}`,
+  DAppAddress: 'dapp-address',
 };
 
 /**
