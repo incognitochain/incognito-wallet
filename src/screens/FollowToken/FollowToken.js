@@ -58,16 +58,19 @@ const ListToken = (props) => {
   );
 };
 
-const Hook = (props) => {
+const Hook = React.memo((props) => {
   return (
     <View style={styled.hook}>
-      <BtnChecked onPress={props?.handleFilterTokensVerified} />
+      <BtnChecked
+        onPress={props?.handleFilterTokensVerified}
+        checked={props?.toggleVerified}
+      />
       <Text style={styled.hookText}>Show unverified coins</Text>
     </View>
   );
-};
+});
 
-const FollowToken = (props) => {
+const FollowToken = React.memo((props) => {
   return (
     <View style={styled.container}>
       <Header title="Add a coin" canSearch />
@@ -76,7 +79,7 @@ const FollowToken = (props) => {
       <Hook {...props} />
     </View>
   );
-};
+});
 
 ListToken.propTypes = {
   data: PropTypes.array.isRequired,

@@ -33,6 +33,11 @@ export const isTokenFollowedSelector = createSelector(
   (tokens) => (tokenId) => tokens.find((token) => token?.id === tokenId),
 );
 
+export const toggleVerifiedTokensSelector = createSelector(
+  (state) => state?.token?.toggleVerified,
+  (toggleVerified) => toggleVerified,
+);
+
 export default {
   followed,
   isGettingBalance,
@@ -44,4 +49,5 @@ export default {
   historyTokenSelector,
   followingTokenSelector,
   isTokenFollowedSelector,
+  toggleVerifiedTokensSelector,
 };

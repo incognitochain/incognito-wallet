@@ -11,17 +11,19 @@ import withTokenSelect from '@src/components/TokenSelect/TokenSelect.enhance';
 import {
   actionAddFollowToken,
   actionRemoveFollowToken,
+  actionToggleVerifiedToken,
 } from '@src/redux/actions/token';
+import { toggleVerifiedTokensSelector } from '@src/redux/selectors/token';
 
 const enhance = (WrappedComp) => (props) => {
-  const tokens = useSelector(availableTokensSelector);
-  const [state, setState] = React.useState({
-    data: [],
-  });
-  const { data } = state;
+  const availableTokens = useSelector(availableTokensSelector);
+  const toggleVerified = useSelector(toggleVerifiedTokensSelector);
+  const tokens = availableTokens.filter((token) =>
+    toggleVerified ? !!token?.isVerified : true,
+  );
   const dispatch = useDispatch();
   const [result, keySearch] = useSearchBox({
-    data,
+    data: tokens,
     handleFilter: () => handleFilterTokenByKeySearch({ tokens, keySearch }),
   });
   const handleToggleFollowToken = async (token) => {
@@ -36,21 +38,8 @@ const enhance = (WrappedComp) => (props) => {
     }
   };
 
-  const handleFilterTokensVerified = (checked) => {
-    let _tokens = [];
-    try {
-      _tokens = checked ? tokens.filter((token) => token?.isVerified) : tokens;
-    } catch (error) {
-      console.debug(error);
-    } finally {
-      setState({ ...state, data: _tokens });
-    }
-  };
-
-  React.useEffect(() => {
-    setState({ ...state, data: tokens });
-  }, [tokens]);
-
+  const handleFilterTokensVerified = () =>
+    dispatch(actionToggleVerifiedToken());
   return (
     <ErrorBoundary>
       <WrappedComp
@@ -59,6 +48,7 @@ const enhance = (WrappedComp) => (props) => {
           data: uniqBy([...result], 'tokenId'),
           handleToggleFollowToken,
           handleFilterTokensVerified,
+          toggleVerified,
         }}
       />
     </ErrorBoundary>

@@ -14,12 +14,13 @@ const initialState = {
     isEmpty: false,
   },
   following: [],
+  toggleVerified: false,
 };
 
 const setToken = (list, token) => {
   let newList = [...list];
   try {
-    const foundIndex = list.findIndex(t => t.id === token.id);
+    const foundIndex = list.findIndex((t) => t.id === token.id);
     if (foundIndex >= 0) {
       newList[foundIndex] = token;
     }
@@ -32,7 +33,7 @@ const setToken = (list, token) => {
 const removeTokenById = (list, tokenId) => {
   let newList = [...list];
   try {
-    newList = remove(newList, t => t.id === tokenId);
+    newList = remove(newList, (t) => t.id === tokenId);
   } catch (e) {
     throw new Error('Remove token failed');
   }
@@ -50,8 +51,8 @@ const setBulkToken = (list, tokens) => {
 };
 
 const setListToken = (list, tokens) => {
-  const newTokens = tokens?.map(token => {
-    const cachedToken = list?.find(t => t.id === token.id);
+  const newTokens = tokens?.map((token) => {
+    const cachedToken = list?.find((t) => t.id === token.id);
 
     // if cached token (in redux store) has its amount, keep it!
     if (cachedToken?.amount) {
@@ -70,7 +71,7 @@ const setGettingBalance = (list, tokenSymbol) => {
 
 const removeGettingBalance = (list, tokenSymbol) => {
   const newList = [...list];
-  remove(newList, item => item === tokenSymbol);
+  remove(newList, (item) => item === tokenSymbol);
   return newList;
 };
 
@@ -138,7 +139,7 @@ const reducer = (state = initialState, action) => {
     return {
       ...state,
       following: [...state.following].filter(
-        tokenId => tokenId !== action.payload,
+        (tokenId) => tokenId !== action.payload,
       ),
     };
   }
@@ -146,7 +147,7 @@ const reducer = (state = initialState, action) => {
     return {
       ...state,
       following: [...state.following].filter(
-        tokenId => tokenId !== action.payload,
+        (tokenId) => tokenId !== action.payload,
       ),
     };
   }
@@ -184,7 +185,7 @@ const reducer = (state = initialState, action) => {
   case type.ACTION_INIT_HISTORY: {
     return {
       ...state,
-      history: {...initialState.history}
+      history: { ...initialState.history },
     };
   }
   case typeSelectedPrivacy.SET: {
@@ -193,6 +194,12 @@ const reducer = (state = initialState, action) => {
       history: {
         ...initialState.history,
       },
+    };
+  }
+  case type.ACTION_TOGGLE_VERIFIED_TOKEN: {
+    return {
+      ...state,
+      toggleVerified: !state.toggleVerified,
     };
   }
   default:
