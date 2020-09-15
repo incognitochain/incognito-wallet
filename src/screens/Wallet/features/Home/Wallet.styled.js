@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { FONT, COLORS, UTILS } from '@src/styles';
+import { FONT, COLORS } from '@src/styles';
 
 export const styled = StyleSheet.create({
   container: {
@@ -143,5 +143,22 @@ export const rightHeaderStyled = StyleSheet.create({
   },
   btnExportKey: {
     marginRight: 15,
+  },
+});
+
+export const streamLineStyled = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.black,
+    marginBottom: 30,
+    justifyContent: 'center',
+    paddingVertical: 10,
+  },
+  text: {
+    color: COLORS.white,
+    fontSize: 13,
+    lineHeight: 15,
+    fontFamily: FONT.NAME.medium,
   },
 });

@@ -20,6 +20,8 @@ import Tooltip from '@src/components/Tooltip/Tooltip';
 import { COLORS } from '@src/styles';
 import isNaN from 'lodash/isNaN';
 import { TouchableOpacity } from '@src/components/core';
+import { Icon } from 'react-native-elements';
+import { useStreamLine } from '@src/screens/Streamline';
 import {
   styled,
   styledHook,
@@ -29,10 +31,11 @@ import {
   extraStyled,
   styledToken,
   rightHeaderStyled,
+  streamLineStyled,
 } from './Wallet.styled';
 import withWallet, { WalletContext } from './Wallet.enhance';
 
-const GroupButton = () => {
+const GroupButton = React.memo(() => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { guide } = useSelector(shieldStorageSelector);
@@ -75,9 +78,9 @@ const GroupButton = () => {
       </View>
     </View>
   );
-};
+});
 
-const Hook = () => {
+const Hook = React.memo(() => {
   const dispatch = useDispatch();
   const { guide } = useSelector(shieldStorageSelector);
   const handleCloseShield = async () => {
@@ -98,9 +101,9 @@ const Hook = () => {
       </Text>
     </View>
   );
-};
+});
 
-const Balance = () => {
+const Balance = React.memo(() => {
   let totalShielded = useSelector(totalShieldedTokensSelector);
   const isGettingTotalBalance =
     useSelector(isGettingTotalBalanceSelector).length > 0;
@@ -124,9 +127,9 @@ const Balance = () => {
       <Text style={styledBalance.title}>Shielded Balance</Text>
     </View>
   );
-};
+});
 
-const FollowToken = () => {
+const FollowToken = React.memo(() => {
   const followed = useSelector(tokenSeleclor.tokensFollowedSelector);
   const { walletProps } = React.useContext(WalletContext);
   const { handleSelectToken, handleRemoveToken } = walletProps;
@@ -158,9 +161,9 @@ const FollowToken = () => {
       ))}
     </View>
   );
-};
+});
 
-const AddToken = () => {
+const AddToken = React.memo(() => {
   const navigation = useNavigation();
   const handleFollowToken = () => navigation.navigate(routeNames.FollowToken);
   return (
@@ -170,7 +173,24 @@ const AddToken = () => {
       </View>
     </TouchableOpacity>
   );
-};
+});
+
+const StreamLine = React.memo(() => {
+  const { hasExceededMaxInputPRV, onNavigateStreamLine } = useStreamLine();
+  if (!hasExceededMaxInputPRV) {
+    return null;
+  }
+  return (
+    <TouchableOpacity onPress={onNavigateStreamLine}>
+      <View style={streamLineStyled.container}>
+        <Text style={streamLineStyled.text}>
+          Streamline this keychain now for efficient transactions
+        </Text>
+        <Icon name="chevron-right" color={COLORS.white} />
+      </View>
+    </TouchableOpacity>
+  );
+});
 
 const Extra = () => {
   const { walletProps } = React.useContext(WalletContext);
@@ -190,6 +210,7 @@ const Extra = () => {
         <GroupButton />
         <FollowToken />
         <AddToken />
+        <StreamLine />
       </ScrollView>
     </View>
   );

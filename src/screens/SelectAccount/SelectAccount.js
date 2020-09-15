@@ -19,6 +19,7 @@ import { Toast, TouchableOpacity } from '@src/components/core';
 import { ExHandler } from '@src/services/exception';
 import includes from 'lodash/includes';
 import debounce from 'lodash/debounce';
+import Util from '@src/utils/Util';
 import { styled, itemStyled } from './SelectAccount.styled';
 
 const AccountItem = ({ accountName, PaymentAddress }) => {
@@ -35,14 +36,13 @@ const AccountItem = ({ accountName, PaymentAddress }) => {
       if (switchingAccount) {
         return;
       }
-
       if (!onSelect) {
         navigation.goBack();
       } else {
         onSelect();
       }
-
-      await dispatch(actionSwitchAccountFetching());
+      await Util.delay(0);
+      dispatch(actionSwitchAccountFetching());
       if (accountName === defaultAccountName) {
         Toast.showInfo(`Your current account is "${accountName}"`);
         return;
@@ -84,10 +84,12 @@ const ListAccount = ({ ignoredAccounts }) => {
     handleFilter: () => [
       ...listAccount.filter(
         (account) =>
-          !(ignoredAccounts.includes(account?.name.toLowerCase()) ||
-            ignoredAccounts.includes(account?.accountName.toLowerCase())) &&
+          !(
+            ignoredAccounts.includes(account?.name.toLowerCase()) ||
+            ignoredAccounts.includes(account?.accountName.toLowerCase())
+          ) &&
           (includes(account?.accountName.toLowerCase(), keySearch) ||
-          includes(account?.name.toLowerCase(), keySearch)),
+            includes(account?.name.toLowerCase(), keySearch)),
       ),
     ],
   });

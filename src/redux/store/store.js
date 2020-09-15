@@ -20,7 +20,8 @@ export default function configureStore(preloadedState) {
       'setting',
       'getStarted',
       'profile',
-      'dev'
+      'dev',
+      'streamline'
     ],
     stateReconciler: autoMergeLevel2,
   };

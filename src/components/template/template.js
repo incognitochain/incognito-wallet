@@ -1,11 +1,11 @@
 import React from 'react';
-import {View} from 'react-native';
-import {styled} from './template.styled';
+import { View } from 'react-native';
+import { styled } from './template.styled';
 
-const Template = props => {
+const Template = (props) => {
   return <View style={styled.container} />;
 };
 
 Template.propTypes = {};
 
-export default Template;
+export default React.memo(Template);

@@ -5,10 +5,10 @@ const styled = StyleSheet.create({
   container: {},
 });
 
-const Template = props => {
+const Template = (props) => {
   return <View style={styled.container} />;
 };
 
 Template.propTypes = {};
 
-export default Template;
+export default React.memo(Template);

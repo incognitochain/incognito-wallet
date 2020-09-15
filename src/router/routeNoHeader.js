@@ -51,6 +51,8 @@ import AddLiquidityConfirm from '@screens/Dex/AddPool/Confirm';
 import RemoveLiquidityConfirm from '@screens/Dex/RemovePool/Confirm';
 import Profile from '@src/screens/Profile';
 import Receipt from '@src/components/Receipt';
+import Streamline from '@screens/Streamline';
+import WhyStreamline from '@screens/Streamline/features/WhyStreamLine';
 import routeNames from './routeNames';
 
 const routes = [
@@ -297,6 +299,14 @@ const routes = [
   {
     screen: SelectNetworkName,
     name: routeNames.SelectNetworkName,
+  },
+  {
+    screen: Streamline,
+    name: routeNames.Streamline,
+  },
+  {
+    screen: WhyStreamline,
+    name: routeNames.WhyStreamline,
   },
 ];
 

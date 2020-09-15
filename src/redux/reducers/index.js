@@ -13,6 +13,7 @@ import navigation from '@screens/Navigation/Navigation.reducer';
 import profile from '@screens/Profile/Profile.reducer';
 import news from '@screens/News/News.reducer';
 import dev from '@screens/Dev/Dev.reducer';
+import streamline from '@screens/Streamline/Streamline.reducer';
 import wallet from './wallet';
 import account from './account';
 import server from './server';
@@ -50,6 +51,7 @@ const rootReducer = reduceReducers(
     news,
     profile,
     dev,
+    streamline,
   }),
   globalReducer,
 );

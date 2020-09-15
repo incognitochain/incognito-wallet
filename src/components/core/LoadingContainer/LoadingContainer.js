@@ -13,7 +13,7 @@ const styled = StyleSheet.create({
 const LoadingContainer = (props) => {
   return (
     <View style={styled.container}>
-      <ActivityIndicator size={props?.size} />
+      <ActivityIndicator size={props?.size || 'small'} />
     </View>
   );
 };

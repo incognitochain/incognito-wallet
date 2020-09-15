@@ -98,4 +98,6 @@ export default {
   News: 'News',
   Receipt: 'Receipt',
   SelectNetworkName: 'SelectNetworkName',
+  Streamline: 'Streamline',
+  WhyStreamline: 'WhyStreamline',
 };

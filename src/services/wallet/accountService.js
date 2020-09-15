@@ -29,7 +29,9 @@ const getBalanceNoCache = (indexAccount, wallet, tokenId) => async () => {
   const account = wallet.MasterAccount.child[indexAccount];
   account.isRevealViewKeyToGetCoins = true;
 
-  const balance = await wallet.MasterAccount.child[indexAccount].getBalance(tokenId);
+  const balance = await wallet.MasterAccount.child[indexAccount].getBalance(
+    tokenId,
+  );
   await account.saveAccountCached(wallet.Storage);
   return balance;
 };
@@ -721,12 +723,18 @@ export default class Account {
   }
 
   static getUTXOs(wallet, account, coinId) {
+    if (!wallet || !account) {
+      return 0;
+    }
     const indexAccount = wallet.getAccountIndexByName(
       account.name || account.AccountName,
     );
-
     const walletAccount = wallet.MasterAccount.child[indexAccount];
-    return walletAccount?.coinUTXOs[coinId || COINS.PRV_ID];
+    return (
+      (walletAccount?.coinUTXOs &&
+        walletAccount?.coinUTXOs[coinId || COINS.PRV_ID]) ||
+      0
+    );
   }
 
   static getMaxInputPerTx() {
@@ -735,27 +743,27 @@ export default class Account {
 
   static hasExceededMaxInput(wallet, account, coinId) {
     const noOfUTXOs = this.getUTXOs(wallet, account, coinId);
-
     return noOfUTXOs > this.getMaxInputPerTx();
   }
 
   /**
    * Create multiple tx to defragment all utxo in account
-   * @param paymentInfos
    * @param {number} fee
-   * @param {string} isPrivacy
+   * @param {boolean} isPrivacy
    * @param {object} account
    * @param {object} wallet
    * @returns {Promise<*>}
    */
-  static async defragmentNativeCoin(
-    paymentInfos,
-    fee,
-    isPrivacy,
-    account,
-    wallet,
-  ) {
-    const indexAccount = wallet.getAccountIndexByName(this.getAccountName(account));
+  static async defragmentNativeCoin(fee, isPrivacy, account, wallet) {
+    if (!wallet) {
+      throw new Error('Missing wallet');
+    }
+    if (!account) {
+      throw new Error('Missing account');
+    }
+    const indexAccount = wallet.getAccountIndexByName(
+      this.getAccountName(account),
+    );
     const result = await wallet.MasterAccount.child[
       indexAccount
     ].defragmentNativeCoin(fee, isPrivacy);

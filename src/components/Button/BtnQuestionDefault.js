@@ -3,10 +3,10 @@ import { TouchableOpacity } from '@src/components/core';
 import srcQuestionIcon from '@src/assets/images/icons/question_black.png';
 import { QuestionIcon } from '@src/components/Icons';
 
-const BtnQuestionDefault = props => {
+const BtnQuestionDefault = (props) => {
   return (
     <TouchableOpacity {...props}>
-      <QuestionIcon icon={srcQuestionIcon} />
+      <QuestionIcon icon={props?.icon || srcQuestionIcon} />
     </TouchableOpacity>
   );
 };
