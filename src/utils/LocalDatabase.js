@@ -27,7 +27,6 @@ export const KEY_SAVE = {
   PROVIDE_TXS: CONSTANT_KEYS.PROVIDE_TXS,
   NODECLEARED: '$node_cleared',
   SHIP_ADDRESS: '$ship_address',
-  LAST_UPDATE_FIRMWARE: '$last_update_firmware',
 };
 export default class LocalDatabase {
   static async getValue(key: String): String {
@@ -365,22 +364,5 @@ export default class LocalDatabase {
 
   static setShipAddress = (value) => {
     return LocalDatabase.saveValue(KEY_SAVE.SHIP_ADDRESS, JSON.stringify(value || {}));
-  };
-
-  /**
-   * Get last time update firmware
-   * @returns {Promise<moment>}
-   */
-  static getLastUpdateFirmware = async () => {
-    const value = await LocalDatabase.getValue(KEY_SAVE.LAST_UPDATE_FIRMWARE);
-    return moment(_.toNumber(value || ''));
-  };
-
-  /**
-   * Save last time update firmware (current time)
-   * @returns {Promise<void>}
-   */
-  static setLastUpdateFirmware = () => {
-    return LocalDatabase.saveValue(KEY_SAVE.LAST_UPDATE_FIRMWARE, new Date().getTime().toString());
   };
 }

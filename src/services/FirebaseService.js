@@ -253,7 +253,7 @@ export default class FirebaseService {
   }
 
   sendAction = async (username, password, action, onCallback, timeout, retries = 4)=> {
-    console.log(TAG,`sendAction Username: ${username}-password=${password}`, action);
+    console.log(TAG,`sendAction Username: ${username}-password=${password}`, action, retries);
     this.username = username;
     this.password = password;
     // await this.send(action, onCallback, timeout);

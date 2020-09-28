@@ -9,6 +9,7 @@ import ZMQService from 'react-native-zmq-service';
 import API from '@services/api/miner/api';
 import axios from 'axios';
 import moment from 'moment';
+import { getLastUpdateFirmwareTime, setLastUpdatefirmwareTime } from '@services/api/node';
 import { CustomError, ExHandler } from './exception';
 import knownCode from './exception/customError/code/knownCode';
 import FirebaseService, {
@@ -112,10 +113,10 @@ export default class NodeService {
     }
   };
 
-  static send = (product, actionExcute = templateAction, chain = 'incognito', type = 'incognito', dataToSend = {}, timeout = 20, retries) => {
+  static send = (product, actionExcute = templateAction, chain = 'incognito', type = 'incognito', dataToSend = {}, timeout = 20, retries = 1) => {
     return new Promise((resolve, reject) => {
       const productId = product.product_id;
-      console.log(TAG, 'send ProductId: ', productId);
+      console.log(TAG, 'CALL FIREBASE', productId, actionExcute.key);
       if (productId) {
         const firebase = new FirebaseService();
         const uid = firebase.getUID() || '';
@@ -195,29 +196,38 @@ export default class NodeService {
     }
 
     return true;
-  }
+  };
 
-  static updateFirmware = async (device: Device, chain = 'incognito') => {
-    const lastUpdateFirmWare = LocalDatabase.getLastUpdateFirmware();
-    const currentTime = moment();
+  static updateFirmware = async (device: Device, latestVersion) => {
+    if (latestVersion) {
+      const lastUpdateFirmWare = getLastUpdateFirmwareTime(device.QRCode, latestVersion);
+      const currentTime = moment();
 
-    const diffInMinutes = currentTime.diff(lastUpdateFirmWare, 'minutes');
+      const diffInMinutes = currentTime.diff(lastUpdateFirmWare, 'minutes');
 
-    // Only update firmware once every 5 minutes. Because if we update it continuously,
-    // the Node will die \./
-    if (diffInMinutes >= 5) {
-      try {
-        if (!_.isEmpty(device)) {
-          const actionReset = LIST_ACTION.UPDATE_FIRMWARE;
-          const dataResult = await Util.excuteWithTimeout(NodeService.send(device.data, actionReset, chain, Action.TYPE.PRODUCT_CONTROL), timeout);
-          console.log(TAG, 'updateFirware send dataResult = ', dataResult);
-          // const { status = -1, data, message= ''} = dataResult;
-          return dataResult;
-        }
-      } catch (error) {
-        console.log(TAG, 'updateFirware error = ', error);
-        return null;
+      // Only update firmware once every 5 minutes. Because if we update it continuously,
+      // the Node will die \./
+      if (diffInMinutes >= 5) {
+        return;
       }
+    }
+
+    try {
+      if (!_.isEmpty(device)) {
+        const actionReset = LIST_ACTION.UPDATE_FIRMWARE;
+        const dataResult = await Util.excuteWithTimeout(NodeService.send(device.data, actionReset, undefined, Action.TYPE.PRODUCT_CONTROL), timeout);
+
+        if (latestVersion) {
+          await setLastUpdatefirmwareTime(device.QRCode, latestVersion);
+        }
+
+        console.log(TAG, 'updateFirware send dataResult = ', dataResult);
+        // const { status = -1, data, message= ''} = dataResult;
+        return dataResult;
+      }
+    } catch (error) {
+      console.log(TAG, 'updateFirware error = ', error);
+      return null;
     }
 
     return null;
@@ -227,7 +237,7 @@ export default class NodeService {
     try {
       if (!_.isEmpty(device)) {
         const action = LIST_ACTION.CHECK_VERSION;
-        const dataResult = await Util.excuteWithTimeout(NodeService.send(device.data, action, chain, Action.TYPE.PRODUCT_CONTROL, undefined, undefined, 2), 20);
+        const dataResult = await Util.excuteWithTimeout(NodeService.send(device.data, action, chain, Action.TYPE.PRODUCT_CONTROL, undefined, undefined), 20);
         console.log(TAG, 'checkVersion send dataResult = ', dataResult);
         const {status = -1, data, message = ''} = dataResult;
         if (status === 1) {
