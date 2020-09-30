@@ -6,6 +6,7 @@ import srcQuestion from '@src/assets/images/icons/question_gray.png';
 import { ScrollView } from '@src/components/core';
 import LoadingTx from '@src/components/LoadingTx';
 import PropTypes from 'prop-types';
+import accountService from '@services/wallet/accountService';
 import withStreamline from './Streamline.enhance';
 import { useStreamLine } from './Streamline.useStreamline';
 import { styled } from './Streamline.styled';
@@ -28,15 +29,18 @@ const Extra = () => {
     handleDefragmentNativeCoin,
     hookFactories,
     shouldDisabledForm,
+    UTXONativeCoin,
+    maxUTXOPerDefragment,
   } = useStreamLine();
+
   return (
     <>
       <Text style={styled.tooltip}>
-        Consolidate your UTXOs to ensure successful transactions of any amount.
+        There are {UTXONativeCoin} UTXOs in this keychain. You can consolidate {maxUTXOPerDefragment} UTXOs at a time.
       </Text>
       <ButtonBasic
         btnStyle={styled.btnStyle}
-        title="Consolidating"
+        title={`Consolidate ${maxUTXOPerDefragment}`}
         onPress={handleDefragmentNativeCoin}
         disabled={shouldDisabledForm}
       />
@@ -51,22 +55,38 @@ const Empty = React.memo(() => {
   return (
     <>
       <Text style={styled.emptyText}>
-        You’re operating at peak efficiency. Go you!
+        Consolidation complete
       </Text>
       <Text style={styled.emptyText}>
-        You’ll see a notification on your Assets screen if and when
-        consolidation is needed for this keychain.
+        You’re now running at peak efficiency.
       </Text>
     </>
   );
 });
 
 const Pending = React.memo(() => {
-  return (
-    <Text style={styled.emptyText}>
-      It will update when consolidation is complete.
-    </Text>
-  );
+  const {
+    UTXONativeCoin,
+    maxUTXOPerDefragment,
+  } = useStreamLine();
+
+  const remainingUTXOs = UTXONativeCoin - accountService.NO_OF_INPUT_PER_DEFRAGMENT + accountService.MAX_DEFRAGMENT_TXS;
+  const consolidatedUTXOs = accountService.NO_OF_INPUT_PER_DEFRAGMENT;
+
+  if (UTXONativeCoin > accountService.NO_OF_INPUT_PER_DEFRAGMENT) {
+    return (
+      <>
+        <Text style={styled.emptyText}>
+          Consolidation successful
+        </Text>
+        <Text style={styled.emptyText}>
+          You consolidated {consolidatedUTXOs} UTXOs. Your remaining UTXO count is {remainingUTXOs}. Please make another consolidation after this consolidation complete.
+        </Text>
+      </>
+    );
+  }
+
+  return (<Empty />);
 });
 
 const Streamline = (props) => {
@@ -75,8 +95,6 @@ const Streamline = (props) => {
     handleNavigateWhyStreamline,
     isFetching,
     isPending,
-    totalTimes,
-    currentTime,
   } = useStreamLine();
   const { refresh, handleFetchData } = props;
   const renderMain = () => {
@@ -91,8 +109,6 @@ const Streamline = (props) => {
         <Extra {...props} />
         {isFetching && (
           <LoadingTx
-            currentTime={currentTime}
-            totalTimes={totalTimes}
             descFactories={[
               {
                 desc:
@@ -113,13 +129,13 @@ const Streamline = (props) => {
     <View style={styled.container}>
       <Header
         title="Consolidate"
-        customHeaderTitle={
+        customHeaderTitle={(
           <BtnQuestionDefault
             style={styled.questionIcon}
             icon={srcQuestion}
             onPress={handleNavigateWhyStreamline}
           />
-        }
+        )}
         accountSelectable
       />
       <ScrollView

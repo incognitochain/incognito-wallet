@@ -69,7 +69,8 @@ const hasSpendingCoins = async (indexAccount, wallet, amount, tokenId) => {
 
 export default class Account {
   static NO_OF_INPUT_PER_DEFRAGMENT_TX = 10;
-  static MAX_DEFRAGMENT_TXS = 30;
+  static MAX_DEFRAGMENT_TXS = 10;
+  static NO_OF_INPUT_PER_DEFRAGMENT = Account.NO_OF_INPUT_PER_DEFRAGMENT_TX * Account.MAX_DEFRAGMENT_TXS;
 
   static async getDefaultAccountName() {
     try {

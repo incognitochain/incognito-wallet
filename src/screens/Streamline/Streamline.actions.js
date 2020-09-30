@@ -3,8 +3,6 @@ import { defaultAccountSelector } from '@src/redux/selectors/account';
 import { walletSelector } from '@src/redux/selectors/wallet';
 import { ExHandler } from '@src/services/exception';
 import accountServices from '@src/services/wallet/accountService';
-import { loadWallet } from '@src/services/wallet/WalletService';
-import Util from '@src/utils/Util';
 import {
   ACTION_FETCHING,
   ACTION_FETCHED,
@@ -13,7 +11,6 @@ import {
   ACTION_TOGGLE_PENDING,
 } from './Streamline.constant';
 import {
-  streamlineDataSelector,
   streamlineSelector,
 } from './Streamline.selector';
 
@@ -33,36 +30,29 @@ export const actionFetch = () => async (dispatch, getState) => {
     const account = defaultAccountSelector(state);
     const wallet = walletSelector(state);
     const { isFetching } = streamlineSelector(state);
-    const { UTXONativeCoin, times } = streamlineDataSelector(state);
-    let noOfRemainingTxs = Math.ceil(UTXONativeCoin / accountServices.NO_OF_INPUT_PER_DEFRAGMENT_TX);
+
     if (isFetching) {
       return;
     }
+
     await dispatch(actionFetching());
 
-    for (let index = 0; index < times; index++) {
-      const noOfTxsWillBeCreated = Math.min(noOfRemainingTxs, accountServices.MAX_DEFRAGMENT_TXS);
-      const result = await accountServices.defragmentNativeCoin(
-        MAX_FEE_PER_TX,
-        true,
-        account,
-        wallet,
-        noOfTxsWillBeCreated,
-      );
+    const result = await accountServices.defragmentNativeCoin(
+      MAX_FEE_PER_TX,
+      true,
+      account,
+      wallet,
+      accountServices.MAX_DEFRAGMENT_TXS
+    );
 
-      noOfRemainingTxs -= noOfTxsWillBeCreated;
+    if (result) {
+      const payload = {
+        address: account?.paymentAddress,
+        utxos: result?.map((item) => item?.txId),
+      };
+      await dispatch(actionFetched(payload));
+    }
 
-      if (result) {
-        const payload = {
-          address: account?.paymentAddress,
-          utxos: result?.map((item) => item?.txId),
-        };
-        await dispatch(actionFetched(payload));
-      }
-    }
-    if (times > 1) {
-      await Util.delay(0.5);
-    }
   } catch (e) {
     error = e;
     if (

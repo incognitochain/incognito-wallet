@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import KeepAwake from 'react-native-keep-awake';
 import PureModal from '@components/Modal/features/PureModal';
+import moment from 'moment';
 import styleSheet from './style';
 
 const LoadingTx = (props) => {
@@ -13,9 +14,11 @@ const LoadingTx = (props) => {
     percent: 0,
     message: '',
     totalTime: 0,
+    startTime: null,
   });
+  const [startTime, setStartTime] = React.useState(null);
   const { text, descFactories, currentTime, totalTimes } = props;
-  const { open, percent, message, totalTime } = state;
+  const { open, percent, message } = state;
 
   let displayPercent = percent;
 
@@ -29,7 +32,7 @@ const LoadingTx = (props) => {
   const progress = () => {
     const percent = accountService.getProgressTx();
     const message = accountService.getDebugMessage();
-    setState({ ...state, percent, message, totalTime: new Date().getTime() });
+    setState({ ...state, percent, message });
     if (percent === 100) {
       setTimeout(() => handleToggle(false), 1000);
     }
@@ -58,7 +61,7 @@ const LoadingTx = (props) => {
             <Text style={styleSheet.desc}>{message}</Text>
           )}
           {!!global.isDebug() && (
-            <Text style={styleSheet.desc}>{('Total time: ', totalTime)}</Text>
+            <Text style={styleSheet.desc}>{moment().diff(startTime, 'seconds')} seconds</Text>
           )}
         </View>
         <KeepAwake />
@@ -70,6 +73,7 @@ const LoadingTx = (props) => {
     const interval = setInterval(() => {
       progress();
     }, 1000);
+    setStartTime(moment());
     return () => clearInterval(interval);
   }, []);
 

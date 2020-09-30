@@ -76,6 +76,8 @@ export const useStreamLine = () => {
     await dispatch(actionFetch());
   };
 
+  const maxUTXOPerDefragment = Math.min(accountServices.NO_OF_INPUT_PER_DEFRAGMENT, UTXONativeCoin);
+
   React.useEffect(() => {
     setState({ ...state, shouldDisabledForm: accountBalance < MAX_FEE_PER_TX });
   }, [accountBalance]);
@@ -96,5 +98,6 @@ export const useStreamLine = () => {
     isPending,
     totalTimes: times,
     currentTime: consolidated,
+    maxUTXOPerDefragment,
   };
 };
