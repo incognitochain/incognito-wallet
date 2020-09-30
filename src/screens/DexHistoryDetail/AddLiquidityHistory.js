@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { View, Text, Button, TouchableOpacity, RoundCornerButton } from '@components/core';
+import {View, Text, Button, TouchableOpacity} from '@components/core';
 import formatUtils from '@utils/format';
 import {TRANSFER_STATUS} from '@src/redux/actions/dex';
 import {PRV} from '@services/wallet/tokenService';
@@ -51,6 +51,7 @@ const DexHistory = ({
       <Text style={stylesheet.field}>NETWORK FEE</Text>
       <Text style={stylesheet.textRight} numberOfLines={1}>{formatUtils.amountFull(inputFee + outputFee, PRV.pDecimals)} {PRV.symbol}</Text>
     </View>
+    <TokenID text={token1.TokenID} label={`${token1.TokenSymbol} COIN ID`} />
     {!!token1.ReturnedAmount && (
     <>
       <View style={stylesheet.row}>
@@ -71,6 +72,7 @@ const DexHistory = ({
       </View>
     </>
     )}
+    <TokenID text={token2.TokenID} label={`${token2.TokenSymbol} COIN ID`} />
     {!!token2.ReturnedAmount && (
     <>
       <View style={stylesheet.row}>
@@ -90,7 +92,7 @@ const DexHistory = ({
     <TokenID text={paymentAddress} label="PAYMENT ADDRESS" />
     {status === TRANSFER_STATUS.INTERRUPTED && (
       <View>
-        <RoundCornerButton style={stylesheet.button} title="Try again" onPress={onAdd} />
+        <Button style={stylesheet.button} title="Try again" onPress={onAdd} />
         <TouchableOpacity onPress={onCancel} style={stylesheet.cancelButton} activeOpacity={0.6}>
           <Text style={stylesheet.cancel}>Cancel</Text>
         </TouchableOpacity>

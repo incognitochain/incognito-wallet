@@ -5,9 +5,6 @@ export default StyleSheet.create({
   container: {
     flex: 1,
   },
-  scrollView: {
-    marginBottom: 100,
-  },
   listContainer: {
     marginTop: 40,
   },

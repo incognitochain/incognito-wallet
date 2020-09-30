@@ -65,21 +65,6 @@ class EstimateFee extends Component {
     rfDestroy(formName);
   }
 
-  handleChangeFee = () => {
-    this.setState({ isShowChangeFeeInput: true }, () => {
-      const { rfChange, estimateFeeData, feePDecimals, onNewFeeData } = this.props;
-      const convertedFee = convert.toHumanAmount(estimateFeeData?.fee, feePDecimals);
-
-      // clear previous fee
-      onNewFeeData({ fee: null });
-
-      if (typeof convertedFee === 'number') {
-        // set current fee to the change fee input
-        rfChange(formName, 'fee', formatUtils.toFixed(convertedFee, feePDecimals));
-      }
-    });
-  };
-
   onChangeNewFee = (values) => {
     const { onNewFeeData, feePDecimals, setUserFee } = this.props;
     const { fee } = values;
@@ -249,9 +234,6 @@ class EstimateFee extends Component {
                             <View style={styles.feeTextContainer}>
                               <Text style={styles.feeTextTitle}>{'You\'ll pay'}</Text>
                               {this.renderFeeText()}
-                              <TouchableOpacity style={styles.changeFeeLightBtn} onPress={this.handleChangeFee}>
-                                <Text style={styles.changeFeeText}>Customize fee</Text>
-                              </TouchableOpacity>
                             </View>
                           </>
                         )

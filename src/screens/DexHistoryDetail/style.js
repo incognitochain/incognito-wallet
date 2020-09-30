@@ -2,21 +2,20 @@ import { COLORS, FONT } from '@src/styles';
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
   scrollView: {
     marginBottom: 55,
-    flex: 1,
   },
   wrapper: {
-    marginTop: 20,
+    marginTop: 40,
+    paddingHorizontal: 20,
   },
   title: {
     paddingVertical: 15,
     fontSize: 20,
+    borderBottomWidth: 1,
+    borderColor: COLORS.lightGrey5,
     maxWidth: '100%',
-    ...FONT.STYLE.bold,
+    ...FONT.STYLE.medium,
   },
   txButton: {
     flex: 1,
@@ -35,14 +34,14 @@ export default StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: COLORS.lightGrey5,
     paddingVertical: 10,
   },
   textRight: {
     textAlign: 'right',
     marginLeft: 'auto',
     flex: 1,
-    ...FONT.STYLE.bold,
-    fontSize: 18,
   },
   historyType: {
     color: COLORS.dark1,
@@ -67,15 +66,12 @@ export default StyleSheet.create({
     width: 130,
   },
   field: {
-    color: COLORS.lightGrey16,
+    color: COLORS.lightGrey1,
     width: 180,
-    fontSize: 18,
-    marginRight: 10,
-    ...FONT.STYLE.medium,
+    fontSize: 14,
   },
   button: {
     marginTop: 50,
-    backgroundColor: COLORS.green3,
   },
   delete: {
     marginTop: 50,
@@ -93,5 +89,8 @@ export default StyleSheet.create({
     justifyContent: 'center',
     marginTop: 5,
     paddingVertical: 5,
+  },
+  cancel: {
+    color: COLORS.primary,
   },
 });
