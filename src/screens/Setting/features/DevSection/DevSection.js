@@ -24,10 +24,6 @@ const DevSection = () => {
   const dev = useSelector(devSelector);
   const dispatch = useDispatch();
   const account = useSelector(accountSeleclor.defaultAccountSelector);
-  const resetUniswapTooltip = async () => {
-    await LocalDatabase.resetViewUniswapTooltip();
-    RNRestart.Restart();
-  };
 
   const toggleHomeConfig = async () => {
     await AsyncStorage.setItem(
@@ -67,11 +63,6 @@ const DevSection = () => {
         <Switch onValueChange={toggleHomeConfig} value={isStagingConfig} />
       ),
       desc: 'Use staging home config',
-    },
-    {
-      id: 'uniswap-tooltip',
-      onPress: resetUniswapTooltip,
-      desc: 'Reset uniswap tooltip',
     },
     {
       id: 'user-profile',
