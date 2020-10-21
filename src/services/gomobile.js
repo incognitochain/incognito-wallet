@@ -37,10 +37,8 @@ const asyncMethods = [
   'signKyber',
   'getSignPublicKey',
   'signPoolWithdraw',
-];
-const syncMethods = [
   'scalarMultBase',
-  'generateKeyFromSeed'
+  'generateKeyFromSeed',
 ];
 
 const log = (...args) => null;
@@ -78,21 +76,6 @@ try {
       });
     };
   });
-
-  syncMethods.forEach(methodName => {
-    global[methodName] = (input) => {
-      log(`${methodName} called with params`, input);
-
-      const rs = PrivacyGo[methodName](input);
-      log(`${methodName} called successfully with result`, rs);
-
-      if (rs === null) {
-        throw new Error(`${methodName} go module called with error`);
-      }
-      return rs;
-    };
-  });
-
   console.log('GO modules were loaded');
 } catch {
   console.error('GO modules can not loaded');

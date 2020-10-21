@@ -225,26 +225,26 @@ public class GomobileModule extends ReactContextBaseJavaModule {
         }
     }
 
-    @ReactMethod(isBlockingSynchronousMethod =true)
-    public String scalarMultBase(String data) {
+    @ReactMethod
+    public void scalarMultBase(String data, Callback successCallback) {
         try {
-            return Gomobile.scalarMultBase(data);
+            Log.d(TAG, "Sign 0x: begin");
+            successCallback.invoke(null, Gomobile.scalarMultBase(data));
         } catch (Exception e) {
-            Log.d(TAG, "scalarMultBase: error");
+            Log.d(TAG, "Sign 0x: error");
+            successCallback.invoke(e.getMessage(), null);
         }
-
-        return null;
     }
 
-    @ReactMethod(isBlockingSynchronousMethod =true)
-    public String generateKeyFromSeed(String data) {
+    @ReactMethod
+    public void generateKeyFromSeed(String data, Callback successCallback) {
         try {
-            return Gomobile.generateKeyFromSeed(data);
+            Log.d(TAG, "Sign 0x: begin");
+            successCallback.invoke(null, Gomobile.generateKeyFromSeed(data));
         } catch (Exception e) {
-            Log.d(TAG, "generateKeyFromSeed: error");
+            Log.d(TAG, "Sign 0x: error");
+            successCallback.invoke(e.getMessage(), null);
         }
-
-        return null;
     }
 
     @ReactMethod

@@ -201,20 +201,24 @@ RCT_EXPORT_METHOD(signPoolWithdraw:(NSString *)data callback:(RCTResponseSenderB
   }
 }
 
-//exports a method scalarMultBase to javascript
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(
-  scalarMultBase:(NSString *)data
-) {
-  NSString *rs = GomobileScalarMultBase(data,nil);
-  return rs;
+RCT_EXPORT_METHOD(scalarMultBase:(NSString *)data callback:(RCTResponseSenderBlock)callback){
+  @try{
+    NSString *rs = GomobileScalarMultBase(data, nil);
+    callback(@[[NSNull null], rs]);
+  }
+  @catch(NSException *exception){
+    callback(@[exception.reason, [NSNull null]]);
+  }
 }
 
-//exports a method scalarMultBase to javascript
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(
-  generateKeyFromSeed:(NSString *)data
-) {
-  NSString *rs = GomobileGenerateKeyFromSeed(data,nil);
-  return rs;
+RCT_EXPORT_METHOD(generateKeyFromSeed:(NSString *)data callback:(RCTResponseSenderBlock)callback){
+  @try{
+    NSString *rs = GomobileGenerateKeyFromSeed(data, nil);
+    callback(@[[NSNull null], rs]);
+  }
+  @catch(NSException *exception){
+    callback(@[exception.reason, [NSNull null]]);
+  }
 }
 
 @end
