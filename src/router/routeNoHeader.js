@@ -53,6 +53,8 @@ import BuyNodeScreen from '@screens/BuyNodeScreen';
 import NodeHelp from '@screens/NodeHelp';
 import PaymentBuyNodeScreen from '@screens/PaymentBuyNodeScreen';
 import Node from '@screens/Node';
+// import Node from '@screens/Node/Node';
+
 import AddNode from '@screens/AddNode';
 import LinkDevice from '@screens/LinkDevice';
 import AddStake from '@screens/AddStake';
