@@ -22,13 +22,10 @@ const Node = (props) => {
     nodeRewards,
     allTokens,
     loading,
-    showModalMissingSetup,
     listDevice,
     showWelcome,
     isFetching,
     removingDevice,
-    onMissingSetupGoBack,
-    onMissingSetupResume,
     onClearNetworkNextTime,
     handleAddVirtualNodePress,
     handleAddNodePress,
@@ -71,6 +68,7 @@ const Node = (props) => {
     );
   };
 
+  console.log('SANG NGUYEN', listDevice, loadedDevices);
   const renderTotalRewards = () => {
     if (listDevice?.length > loadedDevices?.length) {
       return (
@@ -96,11 +94,7 @@ const Node = (props) => {
 
   const renderModalActionsForNodePrevSetup = () => {
     return (
-      <ModalMissingSetup
-        visible={showModalMissingSetup}
-        onGoBack={onMissingSetupGoBack}
-        onResume={onMissingSetupResume}
-      />
+      <ModalMissingSetup />
     );
   };
 
@@ -177,9 +171,6 @@ Node.propTypes = {
   allTokens: PropTypes.array.isRequired,
   loading: PropTypes.bool.isRequired,
   isFetching: PropTypes.bool.isRequired,
-  showModalMissingSetup: PropTypes.bool.isRequired,
-  onMissingSetupGoBack: PropTypes.func.isRequired,
-  onMissingSetupResume: PropTypes.func.isRequired,
   listDevice: PropTypes.array.isRequired,
   showWelcome: PropTypes.bool.isRequired,
   removingDevice: PropTypes.oneOfType([null, PropTypes.object]).isRequired,

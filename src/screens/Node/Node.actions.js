@@ -1,15 +1,24 @@
 import {
   ACTION_FETCH_FULL_INFO_FAIL,
-  ACTION_FETCHED_FULL_INFO, ACTION_FETCHING_FULL_INFO,
+  ACTION_FETCHED_FULL_INFO,
+  ACTION_FETCHING_FULL_INFO,
+  ACTION_UPDATE_COMBINE_REWARDS,
   ACTION_UPDATE_FETCHING,
-  ACTION_UPDATE_LIST_NODE_DEVICE, ACTION_UPDATE_WITH_DRAWING
+  ACTION_UPDATE_LIST_NODE_DEVICE,
+  ACTION_UPDATE_MISSING_SETUP,
+  ACTION_UPDATE_WITH_DRAWING
 } from '@screens/Node/Node.constant';
 import tokenService, {PRV} from '@services/wallet/tokenService';
-import {getBeaconBestStateDetail, listRewardAmount} from '@services/wallet/RpcClientService';
+import {
+  getBeaconBestStateDetail,
+  listRewardAmount
+} from '@services/wallet/RpcClientService';
 import _ from 'lodash';
-import {CustomError, ErrorCode} from '@services/exception';
-import {getTokenList} from '@services/api/token';
-
+import {
+  CustomError,
+  ErrorCode
+} from '@services/exception';
+import { getTokenList } from '@services/api/token';
 
 /**
 * @param {Object<{
@@ -123,6 +132,15 @@ export const actionUpdateWithdrawing = (withdrawing) => ({
   withdrawing,
 });
 
+export const actionUpdateCombineRewards = (payload) => ({
+  type: ACTION_UPDATE_COMBINE_REWARDS,
+  payload
+});
+
+export const actionUpdateMissingSetup = (payload) => ({
+  type: ACTION_UPDATE_MISSING_SETUP,
+  payload
+});
 
 
 

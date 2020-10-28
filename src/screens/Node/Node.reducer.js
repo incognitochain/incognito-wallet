@@ -2,9 +2,9 @@ import {persistReducer} from 'redux-persist';
 import AsyncStorage from '@react-native-community/async-storage';
 import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 import {
-  ACTION_FETCH_FULL_INFO_FAIL, ACTION_FETCHED_FULL_INFO, ACTION_FETCHING_FULL_INFO,
+  ACTION_FETCH_FULL_INFO_FAIL, ACTION_FETCHED_FULL_INFO, ACTION_FETCHING_FULL_INFO, ACTION_UPDATE_COMBINE_REWARDS,
   ACTION_UPDATE_FETCHING,
-  ACTION_UPDATE_LIST_NODE_DEVICE, ACTION_UPDATE_WITH_DRAWING
+  ACTION_UPDATE_LIST_NODE_DEVICE, ACTION_UPDATE_MISSING_SETUP, ACTION_UPDATE_WITH_DRAWING
 } from '@screens/Node/Node.constant';
 import {PRV} from '@services/wallet/tokenService';
 
@@ -15,7 +15,19 @@ const initCommittees = {
   CandidateShardWaitingForCurrentRandom: [],
   ShardCommittee: {}
 };
+
 const initAllTokens = [PRV];
+
+const initCombineRewards = {
+  rewards:      null,
+  withdrawable: false,
+  noRewards:    false
+};
+
+const initMissingSetup = {
+  visible: false,
+  verifyProductCode: ''
+};
 
 const initialState = {
   isFetching: false,
@@ -23,7 +35,9 @@ const initialState = {
   listDevice: [], //List node device
   committees: initCommittees,
   nodeRewards: {},
-  allTokens: initAllTokens
+  allTokens: initAllTokens,
+  combineRewards: initCombineRewards,
+  missingSetup: initMissingSetup
 };
 
 const nodeReducer = (state = initialState, action) => {
@@ -76,6 +90,27 @@ const nodeReducer = (state = initialState, action) => {
     return {
       ...state,
       withdrawing
+    };
+  }
+  case ACTION_UPDATE_COMBINE_REWARDS: {
+    const { rewards, withdrawable, noRewards } = action?.payload;
+    return {
+      ...state,
+      combineRewards: {
+        rewards,
+        withdrawable,
+        noRewards
+      }
+    };
+  }
+  case ACTION_UPDATE_MISSING_SETUP: {
+    const { visible, verifyProductCode } = action?.payload;
+    return {
+      ...state,
+      missingSetup: {
+        visible,
+        verifyProductCode
+      }
     };
   }
   default:

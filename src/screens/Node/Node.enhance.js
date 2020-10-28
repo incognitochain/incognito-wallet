@@ -7,14 +7,20 @@ import _ from 'lodash';
 import { compose } from 'recompose';
 import HeaderNode from '@screens/Node/components/HeaderNode/RightHeaderAddNode';
 import nodeSignInEnhance from '@screens/Node/Node.enhanceSignIn';
-import { checkIfVerifyCodeIsExisting, checkShowWelcome} from '@screens/Node/Node.utils';
+import {
+  checkIfVerifyCodeIsExisting,
+  checkShowWelcome
+} from '@screens/Node/Node.utils';
 import APIService from '@src/services/api/miner/APIService';
 import LocalDatabase from '@utils/LocalDatabase';
 import Device from '@models/device';
 import {
   actionGetNodeFullInfo,
   actionUpdateFetching,
-  actionUpdateListNodeDevice as updateListNode, actionUpdateWithdrawing
+  actionUpdateListNodeDevice as updateListNode,
+  actionUpdateWithdrawing,
+  actionUpdateCombineRewards as updateCombineRewards,
+  actionUpdateMissingSetup as updateMissingSetup
 } from '@screens/Node/Node.actions';
 import {ExHandler} from '@services/exception';
 import routeNames from '@routers/routeNames';
@@ -24,16 +30,14 @@ import NodeService from '@services/NodeService';
 import {Toast} from '@components/core';
 import useFeatureConfig from '@src/shared/hooks/featureConfig';
 import appConstant from '@src/constants/app';
-import {getTransactionByHash} from '@services/wallet/RpcClientService';
+import { getTransactionByHash } from '@services/wallet/RpcClientService';
 import { onClickView } from '@utils/ViewUtil';
 import { parseNodeRewardsToArray } from '@screens/Node/utils';
 import convert from '@utils/convert';
 import { PRV_ID } from '@screens/Dex/constants';
 
-/*
-* avoid refresh data to much
-* */
-let lastRefreshTime;
+let loadedDevices = [];
+let lastRefreshTime; // avoid refresh data to much
 
 const nodeEnhance = WrappedComp => props => {
   const [onPress, isDisabled] = useFeatureConfig(appConstant.DISABLED.BUY_NODE);
@@ -44,33 +48,28 @@ const nodeEnhance = WrappedComp => props => {
   //State
   const [showWelcome, setShowWelcome]
     = useState(false);
-  const [showModalMissingSetup, setShowModalMissingSetup]
-    = useState(false);
-  const [verifyProductCode, setVerifyProductCode]
-    = useState('');
-  const [loadedDevices, setLoadedDevices]
-    = useState([]);
   const [withdrawTxs, setWithdrawTxs]
     = useState({});
-  const [withdrawable, setWithdrawable]
-    = useState(false);
   const [removingDevice, setRemovingDevice]
     = useState(null);
-  const [rewards, setRewards]
-    = useState(null);
-  const [noRewards, setNoRewards]
-    = useState(false);
 
   //Redux store
-  const wallet
-    = useSelector(state => state.wallet);
+  const wallet = useSelector(state => state.wallet);
   const {
+
     isFetching,
     listDevice,
     withdrawing,
+
+    //from API
     allTokens,
     committees,
     nodeRewards,
+
+    //from cell update
+    rewards,
+    withdrawable,
+    noRewards
   } = useSelector(nodeSelector);
 
   //Actions
@@ -96,7 +95,7 @@ const nodeEnhance = WrappedComp => props => {
       dispatch(actionUpdateFetching(false));
       return;
     }
-    setLoadedDevices([]);
+    loadedDevices = [];
     dispatch(actionGetNodeFullInfo(allTokens));
   };
   const refreshData = async () => {
@@ -123,7 +122,6 @@ const nodeEnhance = WrappedComp => props => {
     if (firstTime && (!refresh || (refresh === lastRefreshTime))) {
       return;
     }
-    console.log('SANG TEST', refresh);
     lastRefreshTime = refresh || new Date().getTime();
     checkShowWelcome(listDevice)
       .then((isShow) => {
@@ -133,26 +131,14 @@ const nodeEnhance = WrappedComp => props => {
     // Check old product code
     checkIfVerifyCodeIsExisting()
       .then(({showModal, verifyProductCode}) => {
-        setShowModalMissingSetup(showModal);
-        setVerifyProductCode(verifyProductCode);
+        dispatch(updateMissingSetup({
+          visible: showModal,
+          verifyProductCode
+        }));
       });
 
     // Refresh newest
     refreshData().then();
-  };
-
-  /*missing setup modal actions*/
-  const onMissingSetupResume = () => {
-    setShowModalMissingSetup(false);
-    navigation.navigate(routeNames.RepairingSetupNode, {
-      isRepairing: true,
-      verifyProductCode: verifyProductCode
-    });
-  };
-
-  const onMissingSetupGoBack = () => {
-    setShowModalMissingSetup(false);
-    navigation.navigate(routeNames.Home);
   };
 
   const onClearNetworkNextTime = async () => {
@@ -261,7 +247,6 @@ const nodeEnhance = WrappedComp => props => {
 
   const handleGetNodeInfoCompleted = async ({ device, index }) => {
     const _listDevice     = _.cloneDeep(listDevice);
-    const _loadedDevices  = _.cloneDeep(loadedDevices);
     const _withdrawTxs    = _.cloneDeep(withdrawTxs);
 
     if (device) {
@@ -271,11 +256,10 @@ const nodeEnhance = WrappedComp => props => {
         await LocalDatabase.saveListDevices(_listDevice);
       }
     }
-    _loadedDevices.push(index);
-    setLoadedDevices(_loadedDevices);
-    dispatch(updateListNode({
-      listDevice: _listDevice
-    }));
+
+    loadedDevices.push(index);
+
+    dispatch(updateListNode({ listDevice: _listDevice }));
 
     let _noRewards = true;
     let rewardsList = [];
@@ -297,6 +281,7 @@ const nodeEnhance = WrappedComp => props => {
         });
       }
     });
+
     rewardsList = _.orderBy(rewardsList, item => item.displayBalance, 'desc');
 
     const validNodes = listDevice.filter(device => device.AccountName &&
@@ -310,9 +295,12 @@ const nodeEnhance = WrappedComp => props => {
     const vNodeWithdrawable = vNodes.length && vNodes.length !== _withdrawTxs?.length;
     const pNodeWithdrawable = pNodes.length && pNodes.some(item => item.IsFundedStakeWithdrawable);
     const _withdrawable = !_noRewards && (vNodeWithdrawable || pNodeWithdrawable);
-    setRewards(rewardsList);
-    setWithdrawable(_withdrawable);
-    setNoRewards(_noRewards);
+
+    dispatch(updateCombineRewards({
+      rewards:      rewardsList,
+      withdrawable: _withdrawable,
+      noRewards:    _noRewards
+    }));
   };
 
   const handleConfirmRemoveDevice = async () => {
@@ -349,8 +337,6 @@ const nodeEnhance = WrappedComp => props => {
           listDevice,
           wallet,
           isFetching,
-          showModalMissingSetup,
-          verifyProductCode,
           withdrawing,
           withdrawable,
           withdrawTxs,
@@ -363,8 +349,6 @@ const nodeEnhance = WrappedComp => props => {
           loadedDevices,
 
           refreshData,
-          onMissingSetupGoBack,
-          onMissingSetupResume,
           onClearNetworkNextTime,
           handleAddVirtualNodePress,
           handleAddNodePress,
