@@ -20,7 +20,8 @@ import {
   actionUpdateListNodeDevice as updateListNode,
   actionUpdateWithdrawing,
   actionUpdateCombineRewards as updateCombineRewards,
-  actionUpdateMissingSetup as updateMissingSetup
+  actionUpdateMissingSetup as updateMissingSetup,
+  actionGetNodesInfo as getNodesInfo
 } from '@screens/Node/Node.actions';
 import {ExHandler} from '@services/exception';
 import routeNames from '@routers/routeNames';
@@ -104,7 +105,6 @@ const nodeEnhance = WrappedComp => props => {
 
     let list = (await LocalDatabase.getListDevices()) || [];
     list = list.map(item => Device.getInstance(item));
-
     if (!isFetching && !_.isEmpty(list)) {
       dispatch(updateListNode({
         listDevice: list,
@@ -126,15 +126,6 @@ const nodeEnhance = WrappedComp => props => {
     checkShowWelcome(listDevice)
       .then((isShow) => {
         setShowWelcome(isShow);
-      });
-
-    // Check old product code
-    checkIfVerifyCodeIsExisting()
-      .then(({showModal, verifyProductCode}) => {
-        dispatch(updateMissingSetup({
-          visible: showModal,
-          verifyProductCode
-        }));
       });
 
     // Refresh newest
@@ -316,6 +307,7 @@ const nodeEnhance = WrappedComp => props => {
   };
 
   useEffect(() => {
+    dispatch(getNodesInfo());
     reloadData(true).then();
   }, []);
 

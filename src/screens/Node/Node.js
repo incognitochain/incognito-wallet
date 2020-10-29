@@ -68,7 +68,6 @@ const Node = (props) => {
     );
   };
 
-  console.log('SANG NGUYEN', listDevice, loadedDevices);
   const renderTotalRewards = () => {
     if (listDevice?.length > loadedDevices?.length) {
       return (
@@ -139,7 +138,6 @@ const Node = (props) => {
               onPress={onBuyNodePress}
             />
           </View>
-          {renderModalActionsForNodePrevSetup()}
           <SuccessModal
             title="Remove from display"
             extraInfo={'Are you sure?\nYou can add this Node again later.'}

@@ -2,9 +2,15 @@ import {persistReducer} from 'redux-persist';
 import AsyncStorage from '@react-native-community/async-storage';
 import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 import {
-  ACTION_FETCH_FULL_INFO_FAIL, ACTION_FETCHED_FULL_INFO, ACTION_FETCHING_FULL_INFO, ACTION_UPDATE_COMBINE_REWARDS,
+  ACTION_FETCH_FULL_INFO_FAIL, ACTION_FETCH_NODES_INFO_FAIL,
+  ACTION_FETCHED_FULL_INFO, ACTION_FETCHED_NODES_INFO,
+  ACTION_FETCHING_FULL_INFO,
+  ACTION_FETCHING_NODES_INFO,
+  ACTION_UPDATE_COMBINE_REWARDS,
   ACTION_UPDATE_FETCHING,
-  ACTION_UPDATE_LIST_NODE_DEVICE, ACTION_UPDATE_MISSING_SETUP, ACTION_UPDATE_WITH_DRAWING
+  ACTION_UPDATE_LIST_NODE_DEVICE,
+  ACTION_UPDATE_MISSING_SETUP,
+  ACTION_UPDATE_WITH_DRAWING
 } from '@screens/Node/Node.constant';
 import {PRV} from '@services/wallet/tokenService';
 
@@ -111,6 +117,26 @@ const nodeReducer = (state = initialState, action) => {
         visible,
         verifyProductCode
       }
+    };
+  }
+  case ACTION_FETCHING_NODES_INFO: {
+    return {
+      ...state,
+      isFetching: true
+    };
+  }
+  case ACTION_FETCH_NODES_INFO_FAIL: {
+    return {
+      ...state,
+      isFetching: false
+    };
+  }
+  case ACTION_FETCHED_NODES_INFO: {
+    const { listNodes } = action?.payload;
+    return {
+      ...state,
+      isFetching: false,
+      listNodes
     };
   }
   default:

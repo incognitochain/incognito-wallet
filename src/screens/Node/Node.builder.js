@@ -1,4 +1,5 @@
 import LocalDatabase from '@utils/LocalDatabase';
+import Device from '@models/device';
 
 export const formatNodeAccount = async (data) => {
   if (data) {
@@ -39,4 +40,35 @@ export const formatNodeAccount = async (data) => {
   }
   /* Because sign_up mean didnt add NODE */
   return [];
+};
+
+export const formatBodyGetNodesInfo = async () => {
+  let devices = (await LocalDatabase.getListDevices()) || [];
+  return devices.map(item => {
+    const nodeDevice  = Device.getInstance(item);
+    const { IsPNode, QRCode, PublicKey, PublicKeyMining : BLS } = nodeDevice;
+    return IsPNode ? { QRCode } : { PublicKey, BLS };
+  });
+};
+
+export const formatNodesInfoFromApi = (listNodes) => {
+  return (listNodes || []).map(node => ({
+    qrCode:                   node?.QRCode,
+    publicKey:                node?.PublicKey,
+    bls:                      node?.BLS,
+    isInAutoStaking:          node?.IsInAutoStaking,
+    isInCommittee:            node?.IsInCommittee,
+    isAutoStake:              node?.IsAutoStake,
+    pendingWithdrawal:        node?.PendingWithdrawal,
+    pendingUnstake:           node?.PendingUnstake,
+    isUnstaked:               node?.IsUnstaked,
+    isStaked:                 node?.IsStaked,
+    lastestFirmwareVersion:   node?.LastestFirmwareVersion,
+    rewards:                  (node?.Rewards || []).map((reward) => ({
+      tokenID: reward?.TokenID,
+      decimals: reward?.Decimals,
+      Symbol: reward?.Symbol,
+      amount: reward?.Amount
+    }))
+  }));
 };

@@ -1,7 +1,7 @@
 import {
-  ACTION_FETCH_FULL_INFO_FAIL,
-  ACTION_FETCHED_FULL_INFO,
-  ACTION_FETCHING_FULL_INFO,
+  ACTION_FETCH_FULL_INFO_FAIL, ACTION_FETCH_NODES_INFO_FAIL,
+  ACTION_FETCHED_FULL_INFO, ACTION_FETCHED_NODES_INFO,
+  ACTION_FETCHING_FULL_INFO, ACTION_FETCHING_NODES_INFO,
   ACTION_UPDATE_COMBINE_REWARDS,
   ACTION_UPDATE_FETCHING,
   ACTION_UPDATE_LIST_NODE_DEVICE,
@@ -19,6 +19,33 @@ import {
   ErrorCode
 } from '@services/exception';
 import { getTokenList } from '@services/api/token';
+import { apiGetNodesInfo } from '@screens/Node/Node.services';
+import { formatNodesInfoFromApi } from '@screens/Node/Node.builder';
+
+export const actionFetchingNodesInfo = () => ({
+  type: ACTION_FETCHING_NODES_INFO,
+});
+
+export const actionFetchedNodesInfo = payload => ({
+  type: ACTION_FETCHED_NODES_INFO,
+  payload,
+});
+
+export const actionFetchNodesInfoFail = () => ({
+  type: ACTION_FETCH_NODES_INFO_FAIL,
+});
+
+export const actionGetNodesInfo = () => async (dispatch, getState) => {
+  try {
+    await dispatch(actionFetchingNodesInfo());
+    const result = await apiGetNodesInfo();
+    await dispatch(actionFetchedNodesInfo({
+      listNodes: formatNodesInfoFromApi(result)
+    }));
+  } catch (error) {
+    await dispatch(actionFetchNodesInfoFail());
+  }
+};
 
 /**
 * @param {Object<{

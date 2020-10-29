@@ -2,42 +2,15 @@ import React, {memo} from 'react';
 import PropTypes from 'prop-types';
 import style from '@screens/Node/style';
 import { SuccessModal } from '@src/components';
-import { useDispatch, useSelector } from 'react-redux';
-import { missingSetupNodeSelector } from '@screens/Node/Node.selector';
-import {
-  actionUpdateMissingSetup as updateMissingSetup
-} from '@screens/Node/Node.actions';
-import {useNavigation} from 'react-navigation-hooks';
-import routeNames from '@routers/routeNames';
+import withEnhance from '@screens/Node/components/ModalMissingSetup/ModalMissingSetup.enhance';
 
-const ModalMissingSetup = () => {
-  const dispatch    = useDispatch();
-  const navigation  = useNavigation();
+const ModalMissingSetup = (props) => {
 
   const {
     visible,
-    verifyProductCode
-  } = useSelector(missingSetupNodeSelector);
-
-  const onResume = () => {
-    dispatch(updateMissingSetup({
-      visible: false,
-      verifyProductCode
-    }));
-
-    navigation.navigate(routeNames.RepairingSetupNode, {
-      isRepairing: true,
-      verifyProductCode
-    });
-  };
-
-  const onGoBack = () => {
-    dispatch(updateMissingSetup({
-      visible: false,
-      verifyProductCode
-    }));
-    navigation.navigate(routeNames.Home);
-  };
+    onResume,
+    onGoBack
+  } = props;
 
   return (
     <SuccessModal
@@ -54,6 +27,9 @@ const ModalMissingSetup = () => {
 };
 
 ModalMissingSetup.propTypes = {
+  visible: PropTypes.bool.isRequired,
+  onResume: PropTypes.func.isRequired,
+  onGoBack: PropTypes.func.isRequired
 };
 
-export default memo(ModalMissingSetup);
+export default withEnhance(memo(ModalMissingSetup));
