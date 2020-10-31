@@ -7,7 +7,7 @@ import NavigationService from '@src/services/NavigationService';
 import routeNames from '@src/router/routeNames';
 import PRVRewards from '@screens/Node/components/PRVRewards';
 import { parseNodeRewardsToArray } from '@screens/Node/utils';
-import styles from './style';
+import styles, {nodeItemStyle} from './style';
 import Loader from './Loader';
 
 class PNode extends React.Component {
@@ -21,12 +21,12 @@ class PNode extends React.Component {
       onUnstake,
       onWithdraw,
     } = this.props;
-    const labelName = item.Name;
 
+    const labelName     = item.Name;
     const unstakedPNode = item.IsFundedUnstaked;
-    const hasStaked = item.IsStaked;
-    const hasAccount = item?.AccountName;
-    const colorStatus = item.StatusColor;
+    const hasStaked     = item.IsStaked;
+    const hasAccount    = item?.AccountName;
+    const colorStatus   = item.StatusColor;
 
     return (
       <View>
@@ -47,7 +47,7 @@ class PNode extends React.Component {
                 })}
             >
               <View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }}>
+                <View style={nodeItemStyle.wrapperRaw}>
                   <BtnStatus backgroundColor={colorStatus} />
                   <Text style={[styles.itemLeft]} numberOfLines={1}>{labelName || '-'}</Text>
                 </View>

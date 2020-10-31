@@ -2,7 +2,6 @@ import User from '@models/user';
 import AsyncStorage from '@react-native-community/async-storage';
 import {CONSTANT_KEYS} from '@src/constants';
 import _ from 'lodash';
-import moment from 'moment';
 
 const TAG = 'LocalDatabase';
 export const KEY_SAVE = {
@@ -31,8 +30,7 @@ export const KEY_SAVE = {
 export default class LocalDatabase {
   static async getValue(key: String): String {
     // console.log(TAG, ' getValue begin ', key);
-    const s = await AsyncStorage.getItem(key);
-    return s;
+    return await AsyncStorage.getItem(key);
   }
   static saveValue = async (key: String, value: Object) => {
     // console.log(TAG, ' saveValue begin ', value);

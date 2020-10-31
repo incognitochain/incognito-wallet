@@ -76,6 +76,7 @@
     "formik": "^1.5.3",
     "https-browserify": "0.0.1",
     "immutability-helper": "^3.0.1",
+    "immutable": "^4.0.0-rc.12",
     "incognito-chain-web-js": "https://github.com/incognitochain/incognito-chain-web-js#3.10.7",
     "intl": "^1.2.5",
     "jetifier": "^1.6.5",

@@ -11,8 +11,8 @@ import _ from 'lodash';
 import Rewards from '@screens/Node/components/Rewards';
 import { ActivityIndicator, RoundCornerButton } from '@components/core';
 import theme from '@src/styles/theme';
-import NodeItem from '@screens/Node/components/NodeItem';
 import {SuccessModal} from '@src/components';
+import NodeItem from '@screens/Node/components/NodeItem/NodeItem';
 
 const Node = (props) => {
   const {
@@ -25,13 +25,12 @@ const Node = (props) => {
     listDevice,
     showWelcome,
     isFetching,
+    isRefreshing,
     removingDevice,
     onClearNetworkNextTime,
     handleAddVirtualNodePress,
     handleAddNodePress,
     handleWithdrawAll,
-    loadedDevices,
-    rewards,
     withdrawable,
     withdrawing,
     withdrawTxs,
@@ -52,7 +51,7 @@ const Node = (props) => {
       <NodeItem
         wallet={wallet}
         committees={committees}
-        nodeRewards={nodeRewards}
+        // nodeRewards={nodeRewards}
         allTokens={allTokens}
         item={item}
         isFetching={isFetching}
@@ -69,24 +68,26 @@ const Node = (props) => {
   };
 
   const renderTotalRewards = () => {
-    if (listDevice?.length > loadedDevices?.length) {
+    if (isRefreshing) return null;
+    if (isFetching || !nodeRewards) {
       return (
-        <ActivityIndicator />
+        <View style={{ height: '20%', justifyContent: 'center' }}>
+          <ActivityIndicator />
+        </View>
       );
     }
+
     return (
       <View style={{ paddingHorizontal: 25 }}>
-        { !!rewards &&
-          <Rewards rewards={rewards} />
-        }
-        { !noRewards && (
+        <Rewards rewards={nodeRewards} />
+        { !noRewards &&
           <RoundCornerButton
             onPress={handleWithdrawAll}
-            style={[theme.BUTTON.NODE_BUTTON, { marginBottom: 50 }]}
+            style={[theme.BUTTON.NODE_BUTTON, {marginBottom: 50}]}
             title={!withdrawable || withdrawing ? 'Withdrawing all rewards...' : 'Withdraw all rewards'}
             disabled={!withdrawable || withdrawing}
           />
-        ) }
+        }
       </View>
     );
   };
@@ -129,7 +130,7 @@ const Node = (props) => {
             keyExtractor={item => String(item.ProductId)}
             renderItem={renderNode}
             onRefresh={refreshData}
-            refreshing={isFetching}
+            refreshing={isRefreshing}
           />
           <View style={{ marginHorizontal: 25 }}>
             <RoundCornerButton
@@ -175,7 +176,6 @@ Node.propTypes = {
   onClearNetworkNextTime: PropTypes.func.isRequired,
   handleAddVirtualNodePress: PropTypes.func.isRequired,
   handleAddNodePress: PropTypes.func.isRequired,
-  loadedDevices: PropTypes.array.isRequired,
   handleWithdrawAll: PropTypes.func.isRequired,
   withdrawing: PropTypes.bool.isRequired,
   withdrawable: PropTypes.bool.isRequired,
@@ -189,9 +189,9 @@ Node.propTypes = {
   importAccount: PropTypes.func.isRequired,
   handleGetNodeInfoCompleted: PropTypes.func.isRequired,
   noRewards: PropTypes.bool.isRequired,
-  rewards: PropTypes.object.isRequired,
   handleConfirmRemoveDevice: PropTypes.func.isRequired,
   handleCancelRemoveDevice: PropTypes.func.isRequired,
+  isRefreshing: PropTypes.bool.isRequired
 };
 
 

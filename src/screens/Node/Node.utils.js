@@ -1,8 +1,11 @@
 import LocalDatabase from '@utils/LocalDatabase';
-import Device from '@models/device';
+import Device, {MAX_ERROR_COUNT} from '@models/device';
 import NodeService from '@services/NodeService';
 import APIService from '@src/services/api/miner/APIService';
 import LogManager from '@src/services/LogManager';
+import VirtualNodeService from '@services/VirtualNodeService';
+import { map, isEmpty, isNumber } from 'lodash';
+import {getTransactionByHash} from '@services/wallet/RpcClientService';
 
 /**
 * @param {array} listDevice
@@ -67,3 +70,78 @@ export const checkIfVerifyCodeIsExisting = async () => {
   });
 };
 
+export const getTotalVNode = async () => {
+  let listDevice = await LocalDatabase.getListDevices();
+  listDevice = map(listDevice, item => Device.getInstance(item));
+  let hasVNode        = false;
+  let vNodeNotHaveBLS = 0;
+  listDevice.forEach(item => {
+    if (item.IsVNode) {
+      hasVNode = true;
+      if (isEmpty(item.PublicKeyMining)) {
+        vNodeNotHaveBLS++;
+      }
+    }
+  });
+
+  return {
+    hasVNode,
+    vNodeNotHaveBLS
+  };
+};
+
+export const getBLSWithVNode = async (device) => {
+  return await VirtualNodeService.getPublicKeyMining(device);
+};
+
+export const formatTxNode = async (device) => {
+  // reward set on API result
+  // device.Rewards = rewards || {};
+  if (device.SelfUnstakeTx) {
+    console.debug('CHECK UNSTAKE TX STATUS', device.SelfUnstakeTx, device.Name);
+    try {
+      const res = await getTransactionByHash(device.SelfUnstakeTx);
+      console.debug('CHECK UNSTAKE TX STATUS RESPONSE', res, device.Name);
+
+      if (res.isInBlock && !device.IsAutoStake) {
+        device.SelfUnstakeTx = null;
+      } else if (res.err) {
+        if (!isNumber(device.SelfUnstakeTxErrorCount)) {
+          device.SelfUnstakeTxErrorCount = MAX_ERROR_COUNT;
+        }
+
+        if (device.SelfUnstakeTxErrorCount <= 0) {
+          device.SelfUnstakeTx = null;
+        } else {
+          device.SelfUnstakeTxErrorCount = device.SelfUnstakeTxErrorCount - 1;
+        }
+      }
+    } catch {
+      device.SelfUnstakeTx = null;
+    }
+  }
+
+  if (device.SelfStakeTx) {
+    console.debug('CHECK STAKE TX STATUS', device.SelfStakeTx, device.Name);
+    try {
+      const res = await getTransactionByHash(device.SelfStakeTx);
+      console.debug('CHECK STAKE TX STATUS RESPONSE', res, device.Name);
+      if (res.isInBlock && device.IsAutoStake) {
+        device.SelfStakeTx = null;
+      } else if (res.err) {
+        if (!isNumber(device.SelfStakeTxErrorCount)) {
+          device.SelfStakeTxErrorCount = MAX_ERROR_COUNT;
+        }
+
+        if (device.SelfStakeTxErrorCount <= 0) {
+          device.SelfStakeTx = null;
+        } else {
+          device.SelfStakeTxErrorCount = device.SelfStakeTxErrorCount - 1;
+        }
+      }
+    } catch {
+      device.SelfStakeTx = null;
+    }
+  }
+  return device;
+};

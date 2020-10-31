@@ -1,5 +1,7 @@
 import LocalDatabase from '@utils/LocalDatabase';
 import Device from '@models/device';
+import VirtualNodeService from '@services/VirtualNodeService';
+import {isEmpty} from 'lodash';
 
 export const formatNodeAccount = async (data) => {
   if (data) {
@@ -44,31 +46,18 @@ export const formatNodeAccount = async (data) => {
 
 export const formatBodyGetNodesInfo = async () => {
   let devices = (await LocalDatabase.getListDevices()) || [];
-  return devices.map(item => {
+  let result = [];
+  devices.forEach(item => {
     const nodeDevice  = Device.getInstance(item);
-    const { IsPNode, QRCode, PublicKey, PublicKeyMining : BLS } = nodeDevice;
-    return IsPNode ? { QRCode } : { PublicKey, BLS };
+    const { IsPNode, QRCode, PublicKeyMining : BLS } = nodeDevice;
+    if (IsPNode && !isEmpty(QRCode)) {
+      result.push({ QRCode });
+    } else if (!isEmpty(BLS)) {
+      result.push({
+        BLS,
+        PublicKey: '1aKBZ58X9Z4GZxbrdTCMTYZpoWmULVr6NFVSuf71Q5jLCrtRm6'
+      });
+    }
   });
-};
-
-export const formatNodesInfoFromApi = (listNodes) => {
-  return (listNodes || []).map(node => ({
-    qrCode:                   node?.QRCode,
-    publicKey:                node?.PublicKey,
-    bls:                      node?.BLS,
-    isInAutoStaking:          node?.IsInAutoStaking,
-    isInCommittee:            node?.IsInCommittee,
-    isAutoStake:              node?.IsAutoStake,
-    pendingWithdrawal:        node?.PendingWithdrawal,
-    pendingUnstake:           node?.PendingUnstake,
-    isUnstaked:               node?.IsUnstaked,
-    isStaked:                 node?.IsStaked,
-    lastestFirmwareVersion:   node?.LastestFirmwareVersion,
-    rewards:                  (node?.Rewards || []).map((reward) => ({
-      tokenID: reward?.TokenID,
-      decimals: reward?.Decimals,
-      Symbol: reward?.Symbol,
-      amount: reward?.Amount
-    }))
-  }));
+  return result;
 };

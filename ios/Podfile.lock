@@ -654,9 +654,9 @@ SPEC CHECKSUMS:
   Base64: cecfb41a004124895a7bcee567a89bae5a89d49b
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CodePush: 58d8b6595f46057ca1f49c55fb6860ad7fd38ce3
-  Crashlytics: 2dfd686bcb918dc10ee0e76f7f853fe42c7bd552
+  Crashlytics: d3e5090419ddee1003192c98ac0e6dfdb1dba266
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
-  Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
+  Fabric: ea977e3cd9c20425516d3dafd3bf8c941c51223f
   FBLazyVector: 68b6a76960fbd8ecd9fb7ce0aadd3329c3340a99
   FBReactNativeSpec: 5a764c60abdc3336a213e5310c40b74741f32839
   Firebase: 8432d732974498afd5987e9001a05f90f1a3d625

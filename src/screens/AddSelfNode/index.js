@@ -1,4 +1,4 @@
-import { ButtonExtension as Button, RoundCornerButton, TextInput } from '@components/core';
+import { RoundCornerButton, TextInput } from '@components/core';
 import Loader from '@components/DialogLoader';
 import routeNames from '@routers/routeNames';
 import BaseScreen from '@screens/BaseScreen';
@@ -16,6 +16,8 @@ import Header from '@src/components/Header';
 import theme from '@src/styles/theme';
 import { COLORS } from '@src/styles';
 import { withLayout_2 } from '@components/Layout';
+import VirtualNodeService from '@services/VirtualNodeService';
+import Device from '@models/device';
 import styles from './style';
 
 const SHORT_DOMAIN_REGEX = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$/;
@@ -167,24 +169,35 @@ class AddSelfNode extends BaseScreen {
     };
   }
 
-  handleSetUpPress = onClickView(async ()=>{
+  handleSetUpPress = onClickView( ()=>{
     try {
-      const userJson = await LocalDatabase.getUserInfo();
-      const host = _.trim(this.inputView.current?.getText()).toLowerCase();
+      this.setState({
+        loading: true,
+      }, async () => {
+        const userJson = await LocalDatabase.getUserInfo();
+        const host = _.trim(this.inputView.current?.getText()).toLowerCase();
 
-      console.log(TAG,'handleSetUpPress host = ',host);
-      if (userJson && !_.isEmpty(host)) {
-        await this.validateHost(host);
-        let listLocalDevice = await LocalDatabase.getListDevices();
-        // const isImportPrivateKey = _.isEmpty(selectedAccount?.PrivateKey);
-        const deviceJSON = await this.parseHost(host);
-        listLocalDevice = [deviceJSON, ...listLocalDevice];
-        await LocalDatabase.saveListDevices(listLocalDevice);
-        this.goToScreen(routeNames.Node, {
-          refresh: new Date().getTime()
-        });
-        return true;
-      }
+        console.log(TAG,'handleSetUpPress host = ',host);
+        if (userJson && !_.isEmpty(host)) {
+          await this.validateHost(host);
+          let listLocalDevice = await LocalDatabase.getListDevices();
+          // const isImportPrivateKey = _.isEmpty(selectedAccount?.PrivateKey);
+          const deviceJSON = await this.parseHost(host);
+          const device = Device.getInstance(deviceJSON);
+          const newBLSKey  = await VirtualNodeService.getPublicKeyMining(device);
+          if (newBLSKey) {
+            device.PublicKeyMining = newBLSKey;
+          }
+          listLocalDevice = [device, ...listLocalDevice];
+          this.setState({loading: true});
+          await LocalDatabase.saveListDevices(listLocalDevice);
+          this.goToScreen(routeNames.Node, {
+            refresh: new Date().getTime()
+          });
+          return true;
+        }
+      });
+
     } catch (error) {
       new ExHandler(error,'Can\'t add virtual node').showErrorToast();
     }
