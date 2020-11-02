@@ -2,6 +2,9 @@ import { DEVICES } from '@src/constants/miner';
 import accountService from '@src/services/wallet/accountService';
 import _ from 'lodash';
 import { COLORS } from '@src/styles';
+import {PRV_ID} from '@screens/Dex/constants';
+import {parseNodeRewardsToArray} from '@screens/Node/utils';
+import {PRV} from '@services/wallet/tokenService';
 
 export const DEVICE_STATUS = {
   CODE_UNKNOWN : -1,
@@ -31,6 +34,7 @@ export const template = {
     isUpdating:false,
     publicKey: '',
     rewards: {},
+    allRewards: parseNodeRewardsToArray({ [PRV_ID]: 0 }, [PRV]),
     isOnline: 0,
     accountName: '',
     stakeTx: '',
@@ -96,6 +100,12 @@ export default class Device {
   }
   get Rewards() {
     return this.data.minerInfo.rewards;
+  }
+  set AllRewards(rewards) {
+    this.data.minerInfo.allRewards = rewards;
+  }
+  get AllRewards() {
+    return this.data.minerInfo.allRewards;
   }
   get Account() {
     return this.data?.minerInfo?.account;

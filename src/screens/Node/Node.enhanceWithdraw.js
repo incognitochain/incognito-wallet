@@ -1,22 +1,21 @@
-import React, {useMemo, useState} from 'react';
+import React, { useMemo, useState } from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
-import {MESSAGES} from '@src/constants';
-import {useSelector} from 'react-redux';
-import {nodeSelector} from '@screens/Node/Node.selector';
-import {Toast} from '@components/core';
+import { MESSAGES } from '@src/constants';
+import { useSelector } from 'react-redux';
+import { nodeSelector } from '@screens/Node/Node.selector';
+import { Toast } from '@components/core';
 import APIService from '@services/api/miner/APIService';
 import NodeService from '@services/NodeService';
-import {ExHandler} from '@services/exception';
+import { ExHandler } from '@services/exception';
 import _ from 'lodash';
 import accountService from '@services/wallet/accountService';
-import {getTransactionByHash} from '@services/wallet/RpcClientService';
-import {onClickView} from '@utils/ViewUtil';
+import { getTransactionByHash } from '@services/wallet/RpcClientService';
+import { onClickView } from '@utils/ViewUtil';
 
 const enhanceWithdraw = WrappedComp => props => {
-  const { listDevice, noRewards }
-    = useSelector(nodeSelector);
-  const wallet
-    = useSelector(state => state.wallet);
+  const { listDevice } = props; // Value from @enhanceWelcome
+  const { noRewards } = useSelector(nodeSelector);
+  const wallet = useSelector(state => state.wallet);
 
   const [withdrawTxs, setWithdrawTxs] = useState({});
   const [withdrawing, setWithdrawing] = useState(false);
@@ -102,7 +101,6 @@ const enhanceWithdraw = WrappedComp => props => {
 
   const handleWithdrawAll = async () => {
     setWithdrawing(true);
-    // dispatch(actionUpdateWithdrawing(true));
     for (const device of listDevice) {
       try {
         await handleWithdraw(device, false);
@@ -118,13 +116,15 @@ const enhanceWithdraw = WrappedComp => props => {
       <WrappedComp
         {...{
           ...props,
+
+          wallet,
+          withdrawing,
+          withdrawable,
+          noRewards,
+
           checkWithdrawTxsStatus,
           handleWithdrawAll,
           handlePressWithdraw,
-
-          withdrawing,
-          withdrawable,
-          noRewards
         }}
       />
     </ErrorBoundary>

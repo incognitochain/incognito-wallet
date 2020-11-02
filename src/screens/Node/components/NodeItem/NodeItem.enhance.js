@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { useDispatch, useSelector } from 'react-redux';
 import { nodeSelector } from '@screens/Node/Node.selector';
@@ -12,22 +12,28 @@ const enhance = WrappedComp => props => {
   const dispatch = useDispatch();
   const {
     item: device,
-    onImport
+    isFetching,
+
+    onImport,
+    onRemove,
+    onStake,
+    onUnstake,
+    onWithdraw
   } = props;
 
-  const {
-    isRefreshing
-  } = useSelector(nodeSelector);
+  const { isRefreshing: isRefresh } = useSelector(nodeSelector);
 
   const [loading, setLoading] = useState(false);
 
   const getVNodeInfo = async () => {
     const blsKey    = device?.PublicKeyMining;
+    const publicKey = device?.PublicKey;
     const productId = device?.ProductId;
+
     dispatch(updateDeviceItem(
       { blsKey, productId, device },
       () => {
-        if (isEmpty(blsKey)) {
+        if (isEmpty(blsKey) || isEmpty(publicKey)) {
           dispatch(actionUpdateNumberLoadedVNodeBLS());
         }
         setLoading(false);
@@ -54,10 +60,10 @@ const enhance = WrappedComp => props => {
   }, []);
 
   useEffect(() => {
-    if (isRefreshing) {
+    if (isRefresh) {
       fetchData();
     }
-  }, [isRefreshing]);
+  }, [isRefresh]);
 
   return (
     <ErrorBoundary>
@@ -65,9 +71,13 @@ const enhance = WrappedComp => props => {
         {...{
           ...props,
           item: device,
-          loading: loading,
+          loading: loading || isFetching || isRefresh,
 
-          onImport
+          onImport,
+          onRemove,
+          onStake,
+          onUnstake,
+          onWithdraw,
         }}
       />
     </ErrorBoundary>

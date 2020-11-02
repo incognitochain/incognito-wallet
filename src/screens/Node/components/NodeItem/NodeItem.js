@@ -16,7 +16,8 @@ const NodeItem = (props) => {
     onStake,
     onUnstake,
     onRemove,
-    onImport
+    onImport,
+    onWithdraw
   } = props;
 
   const renderNode = () => {
@@ -28,6 +29,7 @@ const NodeItem = (props) => {
           onImportAccount={onImport}
           onUnstake={onUnstake}
           onStake={onStake}
+          onWithdraw={onWithdraw}
         />
       );
     }
@@ -39,6 +41,7 @@ const NodeItem = (props) => {
         onImportAccount={onImport}
         onStake={onStake}
         onUnstake={onUnstake}
+        onWithdraw={onWithdraw}
       />
     );
   };
@@ -65,7 +68,8 @@ NodeItem.propTypes = {
   onImport:  PropTypes.func.isRequired,
   onStake:   PropTypes.func.isRequired,
   onUnstake: PropTypes.func.isRequired,
-  onRemove:  PropTypes.func.isRequired
+  onRemove:  PropTypes.func.isRequired,
+  onWithdraw: PropTypes.func.isRequired,
 };
 
 

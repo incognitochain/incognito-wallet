@@ -59,7 +59,7 @@ const VNode = memo((props) => {
         onUnstake: onUnstake,
         onWithdraw: onWithdraw,
         onStake: onStake,
-        rewardsList: parseNodeRewardsToArray(item?.Rewards, allTokens),
+        rewardsList: item?.AllRewards,
         item: item,
         onImport: onImportAccount,
         withdrawTxs,

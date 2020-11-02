@@ -1,5 +1,5 @@
 import React, {memo} from 'react';
-import {FlatList, View} from 'react-native';
+import { FlatList, View } from 'react-native';
 import nodeEnhance from '@screens/Node/Node.enhance';
 import DialogLoader from '@components/DialogLoader';
 import PropTypes from 'prop-types';
@@ -7,7 +7,7 @@ import style from '@screens/Node/style';
 import ModalMissingSetup from '@screens/Node/components/ModalMissingSetup/ModalMissingSetup';
 import WelcomeFirstTime from '@screens/Node/components/WelcomeFirstTime';
 import WelcomeNodes from '@screens/Node/components/Welcome';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 import Rewards from '@screens/Node/components/Rewards';
 import { ActivityIndicator, RoundCornerButton } from '@components/core';
 import theme from '@src/styles/theme';
@@ -16,12 +16,10 @@ import NodeItem from '@screens/Node/components/NodeItem/NodeItem';
 
 const Node = (props) => {
   const {
-    wallet,
+    wallet,  // value from @enhanceWithdraw
     refreshData,
-    committees,
     nodeRewards,
-    allTokens,
-    loading,
+    loading, // creating account from @enhanceSignIn
     listDevice,
     showWelcome,
     isFetching,
@@ -30,29 +28,27 @@ const Node = (props) => {
     onClearNetworkNextTime,
     handleAddVirtualNodePress,
     handleAddNodePress,
-    handleWithdrawAll,
-    withdrawable,
-    withdrawing,
-    withdrawTxs,
     noRewards,
     onBuyNodePress,
     handlePressStake,
     handlePressUnstake,
-    handlePressWithdraw,
     handlePressRemoveDevice,
     importAccount,
-    handleGetNodeInfoCompleted,
     handleConfirmRemoveDevice,
-    handleCancelRemoveDevice
+    handleCancelRemoveDevice,
+
+    // Withdraw
+    withdrawable,
+    withdrawing,
+    withdrawTxs,
+    handleWithdrawAll,
+    handlePressWithdraw,
   } = props;
 
   const renderNode = ({ item, index }) => {
     return (
       <NodeItem
         wallet={wallet}
-        committees={committees}
-        // nodeRewards={nodeRewards}
-        allTokens={allTokens}
         item={item}
         isFetching={isFetching}
         index={index}
@@ -60,7 +56,6 @@ const Node = (props) => {
         onUnstake={handlePressUnstake}
         onWithdraw={handlePressWithdraw}
         onRemove={handlePressRemoveDevice}
-        onGetInfoCompleted={handleGetNodeInfoCompleted}
         onImport={importAccount}
         withdrawTxs={withdrawTxs}
       />
@@ -71,7 +66,7 @@ const Node = (props) => {
     if (isRefreshing) return null;
     if (isFetching || !nodeRewards) {
       return (
-        <View style={{ height: '20%', justifyContent: 'center' }}>
+        <View style={style.loading}>
           <ActivityIndicator />
         </View>
       );
@@ -107,7 +102,7 @@ const Node = (props) => {
       );
     }
 
-    if (!isFetching && _.isEmpty(listDevice)) {
+    if (!isFetching && isEmpty(listDevice)) {
       return (
         <View style={{ marginHorizontal: 25 }}>
           <WelcomeNodes
@@ -165,9 +160,7 @@ const Node = (props) => {
 
 Node.propTypes = {
   wallet: PropTypes.object.isRequired,
-  committees: PropTypes.object.isRequired,
   nodeRewards: PropTypes.object.isRequired,
-  allTokens: PropTypes.array.isRequired,
   loading: PropTypes.bool.isRequired,
   isFetching: PropTypes.bool.isRequired,
   listDevice: PropTypes.array.isRequired,
@@ -187,12 +180,10 @@ Node.propTypes = {
   handlePressWithdraw: PropTypes.func.isRequired,
   handlePressRemoveDevice: PropTypes.func.isRequired,
   importAccount: PropTypes.func.isRequired,
-  handleGetNodeInfoCompleted: PropTypes.func.isRequired,
   noRewards: PropTypes.bool.isRequired,
   handleConfirmRemoveDevice: PropTypes.func.isRequired,
   handleCancelRemoveDevice: PropTypes.func.isRequired,
   isRefreshing: PropTypes.bool.isRequired
 };
-
 
 export default nodeEnhance(memo(Node));

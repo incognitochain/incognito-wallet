@@ -7,21 +7,13 @@ export const nodeSelector = createSelector(
     return {
       ...node, 
       isFetching:   node?.isFetching,
-      withdrawing:  node?.withdrawing,
-      allTokens:    node?.allTokens,
-      // nodeRewards:  node?.nodeRewards,
-      // committees:   node?.committees,
-
+      isRefreshing: node?.isRefreshing,
       missingSetup: node?.missingSetup,
 
-      //Combine awards below
-      rewards:      node?.rewards,
-      withdrawable: node?.withdrawable,
-
-      //new flow
-      listDevice:   node?.listDevice, //List node device
+      listDevice:   node?.listDevice, // List node device
       nodesFromApi: node?.nodesFromApi,
       noRewards:    node?.noRewards,
+      nodeRewards:  node?.nodeRewards
     };
   }
 );

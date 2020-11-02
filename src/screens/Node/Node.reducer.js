@@ -8,25 +8,12 @@ import {
   ACTION_UPDATE_LIST_NODE_DEVICE,
   ACTION_UPDATE_MISSING_SETUP,
   ACTION_SET_TOTAL_VNODE,
-  ACTION_UPDATE_NUMBER_LOADED_VNODE_BLS, ACTION_UPDATE_FETCHING
+  ACTION_UPDATE_NUMBER_LOADED_VNODE_BLS,
+  ACTION_UPDATE_FETCHING,
+  ACTION_CLEAR_NODE_DATA
 } from '@screens/Node/Node.constant';
+import { cloneDeep } from 'lodash';
 import {PRV} from '@services/wallet/tokenService';
-
-const initCommittees = {
-  AutoStaking: [],
-  ShardPendingValidator: {},
-  CandidateShardWaitingForNextRandom: [],
-  CandidateShardWaitingForCurrentRandom: [],
-  ShardCommittee: {}
-};
-
-const initAllTokens = [PRV];
-
-const initCombineRewards = {
-  rewards:      null,
-  withdrawable: false,
-  noRewards:    true
-};
 
 const initMissingSetup = {
   visible: false,
@@ -38,23 +25,22 @@ const initVNodeOptions = {
   vNodeNotHaveBLS:  -1,
 };
 
-const initialState = {
-  // withdrawing:    false,
-  committees:     initCommittees,
-  allTokens:      initAllTokens,
-  combineRewards: initCombineRewards,
-
-  //New Flow
+const initialStateClear = {
   isFetching:     false,
   isFetched:      false,
   isRefreshing:   false,
   noRewards:      true,
 
-  listDevice:     [], //List nodACTION_FETCHING_NODES_INFO_FROM_APIe device
-  nodesFromApi:   [], //api support cached node info from Chain
+  nodesFromApi:   [], // Api support cached node info from Chain
   vNodeOptions:   initVNodeOptions,
   nodeRewards:    null,
+  allTokens:      [PRV],
   missingSetup:   initMissingSetup,
+};
+
+const initialState = {
+  ...initialStateClear,
+  listDevice:     [], // List nodACTION_FETCHING_NODES_INFO_FROM_APIe device
 };
 
 const nodeReducer = (state = initialState, action) => {
@@ -101,17 +87,24 @@ const nodeReducer = (state = initialState, action) => {
     };
   }
   case ACTION_FETCHED_NODES_INFO_API: {
-    const { nodesFromApi, listDevice, nodeRewards, noRewards } = action?.payload;
+    const {
+      nodesFromApi,
+      listDevice,
+      nodeRewards,
+      noRewards,
+      allTokens
+    } = action?.payload;
 
     return {
       ...state,
       isFetching: false,
       isRefreshing: false,
+      isFetched: true,
       listDevice: listDevice || [],
       nodesFromApi,
       nodeRewards,
-      isFetched: true,
-      noRewards
+      noRewards,
+      allTokens
     };
   }
   case ACTION_SET_TOTAL_VNODE: {
@@ -144,6 +137,12 @@ const nodeReducer = (state = initialState, action) => {
     return {
       ...state,
       isFetching,
+    };
+  }
+  case ACTION_CLEAR_NODE_DATA: {
+    return {
+      ...state,
+      ...cloneDeep(initialStateClear)
     };
   }
   default:

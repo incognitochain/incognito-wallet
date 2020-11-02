@@ -5,6 +5,7 @@ import {nodeSelector, vNodeOptionsSelector} from '@screens/Node/Node.selector';
 import {useFocusEffect} from 'react-navigation-hooks';
 import {getTotalVNode} from '@screens/Node/Node.utils';
 import {
+  actionClearNodeData as clearNodeData,
   actionGetNodesInfoFromApi as getNodesInfoFromApi,
   actionSetTotalVNode as setTotalVNode,
   actionUpdateListNodeDevice as updateListNode
@@ -14,13 +15,11 @@ import LocalDatabase from '@utils/LocalDatabase';
 let lastRefreshTime;
 
 const enhanceFetchData = WrappedComp => props => {
+  const { listDevice } = props; // Value from @enhanceWelcome
   const dispatch    = useDispatch();
   const { refresh } = props?.navigation?.state?.params || {};
 
-  const {
-    listDevice,
-    isFetched,
-  } = useSelector(nodeSelector);
+  const { isFetched } = useSelector(nodeSelector);
 
   const {
     hasVNode,
@@ -31,6 +30,8 @@ const enhanceFetchData = WrappedComp => props => {
     if (firstTime !== true && (!refresh || (refresh === lastRefreshTime))) {
       return;
     }
+    //clear data
+    dispatch(clearNodeData());
 
     lastRefreshTime = refresh || new Date().getTime();
 
@@ -40,10 +41,10 @@ const enhanceFetchData = WrappedComp => props => {
 
     //add loading here
     getTotalVNode()
-      .then(async ({ hasVNode, vNodeNotHaveBLS }) => {
+      .then(async ({ hasVNode, vNodeNotHaveBLS, hasNode }) => {
         //check vNode have blsKey
         dispatch(setTotalVNode({ hasVNode, vNodeNotHaveBLS }));
-        if ((hasVNode && vNodeNotHaveBLS === 0) || !hasVNode) {
+        if (hasNode && ((hasVNode && vNodeNotHaveBLS === 0) || !hasVNode)) {
           dispatch(getNodesInfoFromApi());
         }
       });

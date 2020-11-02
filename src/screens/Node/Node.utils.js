@@ -5,29 +5,7 @@ import APIService from '@src/services/api/miner/APIService';
 import LogManager from '@src/services/LogManager';
 import VirtualNodeService from '@services/VirtualNodeService';
 import { map, isEmpty, isNumber } from 'lodash';
-import {getTransactionByHash} from '@services/wallet/RpcClientService';
-
-/**
-* @param {array} listDevice
-*/
-
-export const checkShowWelcome = (listDevice) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const clearedNode = await LocalDatabase.getNodeCleared();
-      const list = (await LocalDatabase.getListDevices()) || [];
-      if (!clearedNode && listDevice.length === 0 && list.length > 0) {
-        const firstDevice = Device.getInstance(list[0]);
-        if (firstDevice.IsPNode && !firstDevice.IsLinked) {
-          resolve(true);
-        }
-      }
-      resolve(false);
-    } catch (e) {
-      reject(e);
-    }
-  });
-};
+import { getTransactionByHash } from '@services/wallet/RpcClientService';
 
 export const checkIfVerifyCodeIsExisting = async () => {
   return new Promise(async (resolve, reject) => {
@@ -78,7 +56,7 @@ export const getTotalVNode = async () => {
   listDevice.forEach(item => {
     if (item.IsVNode) {
       hasVNode = true;
-      if (isEmpty(item.PublicKeyMining)) {
+      if (isEmpty(item.PublicKeyMining) || isEmpty(item.PublicKey)) {
         vNodeNotHaveBLS++;
       }
     }
@@ -86,7 +64,8 @@ export const getTotalVNode = async () => {
 
   return {
     hasVNode,
-    vNodeNotHaveBLS
+    vNodeNotHaveBLS,
+    hasNode: listDevice.length > 0,
   };
 };
 

@@ -1,7 +1,6 @@
 import LocalDatabase from '@utils/LocalDatabase';
 import Device from '@models/device';
-import VirtualNodeService from '@services/VirtualNodeService';
-import {isEmpty} from 'lodash';
+import { isEmpty } from 'lodash';
 
 export const formatNodeAccount = async (data) => {
   if (data) {
@@ -49,13 +48,13 @@ export const formatBodyGetNodesInfo = async () => {
   let result = [];
   devices.forEach(item => {
     const nodeDevice  = Device.getInstance(item);
-    const { IsPNode, QRCode, PublicKeyMining : BLS } = nodeDevice;
+    const { IsPNode, QRCode, PublicKeyMining : BLS, PublicKey } = nodeDevice;
     if (IsPNode && !isEmpty(QRCode)) {
       result.push({ QRCode });
     } else if (!isEmpty(BLS)) {
       result.push({
         BLS,
-        PublicKey: '1aKBZ58X9Z4GZxbrdTCMTYZpoWmULVr6NFVSuf71Q5jLCrtRm6'
+        PublicKey
       });
     }
   });
