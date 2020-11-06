@@ -1,20 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, WebView, TouchableOpacity } from '@src/components/core';
+import { View, WebView, TouchableOpacity, Modal } from '@src/components/core';
 import SimpleInfo from '@src/components/SimpleInfo';
 import convertUtil from '@src/utils/convert';
 import { ExHandler, CustomError, ErrorCode } from '@src/services/exception';
 import { CONSTANT_COMMONS } from '@src/constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '@src/styles';
-import { openQrScanner } from '@components/QrCodeScanner';
-import { Modal } from 'react-native';
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import { Modal as RNModal, SafeAreaView} from 'react-native';
+import styleSheet from '@components/core/Modal/style';
+import { Icon } from 'react-native-elements';
 import Validator from './sdk/validator';
 import RequestSendTx from './RequestSendTx';
 import { APPSDK, ERRORSDK, CONSTANTSDK } from './sdk';
 import styles from './style';
 
-let sdk: APPSDK = null;
+let sdk: APPSDK   = null;
+let callBack      = null;
 
 const updateDataToPapp = (data) => {
   if (!sdk) return;
@@ -64,7 +67,8 @@ class PappView extends Component {
       modalData: null,
       isLoaded: false,
       hasWebViewError: false,
-      url: props?.url || ''
+      url: props?.url || '',
+      openQrScanner: false
     };
 
     this.webviewInstance = null;
@@ -146,6 +150,12 @@ class PappView extends Component {
     onSetListSupportTokenById(filterIds);
   }
 
+  onReadQrCode = (data) => {
+    if (data && data?.data) {
+      callBack && callBack(data?.data);
+    }
+  };
+
   onWebViewData = async (e) => {
     try {
       const payload = e.nativeEvent.data;
@@ -169,10 +179,15 @@ class PappView extends Component {
           this.onSdkSetSupportListTokenById(parsedData?.tokenIds);
           break;
         case CONSTANTSDK.COMMANDS.REQUEST_OPEN_CAMERA_QR_CODE: {
-          const callBack = eval(parsedData.callBack);
-          openQrScanner((qrCode) => {
-            callBack && callBack(qrCode);
-          });
+          callBack = eval(parsedData.callBack);
+          this.setState({ openQrScanner: true });
+          setTimeout(() => {
+            this.setState({ openQrScanner: false });
+          }, 20000);
+          break;
+        }
+        case CONSTANTSDK.COMMANDS.REQUEST_CLOSE_CAMERA: {
+          this.setState({ openQrScanner: false });
           break;
         }}
       }
@@ -237,6 +252,43 @@ class PappView extends Component {
       </View>
     );
   };
+
+  renderHeaderQRCode = () => {
+    return (
+      <SafeAreaView>
+        <View style={{ height: 40 }}>
+          <TouchableOpacity
+            onPress={() => this.setState({ openQrScanner: false })}
+            style={styleSheet.closeBtn}
+          >
+            <Icon
+              name="close"
+              type="material"
+              size={30}
+              color={COLORS.colorGreyBold}
+            />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  };
+
+  renderQrCodeCamera = () => {
+    const { openQrScanner } = this.state;
+    return (
+      <RNModal visible={openQrScanner}>
+        <View style={styles.container}>
+          {this.renderHeaderQRCode()}
+          <QRCodeScanner
+            showMarker
+            onRead={this.onReadQrCode}
+            cameraStyle={styles.scanner}
+          />
+        </View>
+      </RNModal>
+    );
+  }
+
   render() {
     const { modalData, hasWebViewError } = this.state;
     const { url } = this.state;
@@ -250,35 +302,38 @@ class PappView extends Component {
     }
 
     return (
-      <View style={styles.container}>
-        <WebView
-          ref={webview => {
-            if (webview?.webViewRef?.current) {
-              sdk = new APPSDK(webview);
-              this.webviewInstance = webview;
+      <>
+        <View style={styles.container}>
+          <WebView
+            ref={webview => {
+              if (webview?.webViewRef?.current) {
+                sdk = new APPSDK(webview);
+                this.webviewInstance = webview;
+              }
+            }}
+            containerStyle={styles.webview}
+            source={{ uri: url }}
+            allowsBackForwardNavigationGestures
+            onLoad={
+              e => {
+                // Update the state so url changes could be detected by React and we could load the mainUrl.
+                this.setState({ url: e.nativeEvent.url });
+              }
             }
-          }}
-          containerStyle={styles.webview}
-          source={{ uri: url }}
-          allowsBackForwardNavigationGestures
-          onLoad={
-            e => {
-              // Update the state so url changes could be detected by React and we could load the mainUrl.
-              this.setState({ url: e.nativeEvent.url });
-            }
-          }
-          bounces
-          cacheEnabled={false}
-          cacheMode='LOAD_NO_CACHE'
-          onError={this.onLoadPappError}
-          onLoadEnd={this.onPappLoaded}
-          onMessage={this.onWebViewData}
-        />
-        {!hasWebViewError ? this.renderBottomBar() : null}
-        <Modal visible={!!modalData}>
-          {modalData}
-        </Modal>
-      </View>
+            bounces
+            cacheEnabled={false}
+            cacheMode='LOAD_NO_CACHE'
+            onError={this.onLoadPappError}
+            onLoadEnd={this.onPappLoaded}
+            onMessage={this.onWebViewData}
+          />
+          {!hasWebViewError ? this.renderBottomBar() : null}
+          <Modal visible={!!modalData}>
+            {modalData}
+          </Modal>
+        </View>
+        {this.renderQrCodeCamera()}
+      </>
     );
   }
 }
