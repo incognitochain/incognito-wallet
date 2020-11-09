@@ -66,7 +66,7 @@ const ExportAccount = ({ account, token, title }) => {
           {renderItem('Readonly key', account?.ReadonlyKey)}
           {renderItem('Validator key', account?.ValidatorKey)}
           {__DEV__ || global.isDEV
-            ? renderItem('Bls key', account?.ValidatorKey)
+            ? renderItem('BLS key', account?.BLSPublicKey)
             : null}
           {__DEV__ || global.isDEV ? renderItem('Device token', token) : null}
           {__DEV__ || global.isDEV

@@ -243,7 +243,11 @@ export default class Device {
   }
 
   get Name(){
-    return this.AccountName || '-';
+    if (this.Account) {
+      return this.Account.FullName;
+    }
+
+    return '-';
   }
 
   get Type(){

@@ -13,13 +13,12 @@ import {
 import {ScrollView, Keyboard, TouchableWithoutFeedback, VirtualizedList} from 'react-native';
 import accountService from '@services/wallet/accountService';
 import { isExchangeRatePToken } from '@src/services/wallet/RpcClientService';
-import {CONSTANT_COMMONS, CONSTANT_EVENTS} from '@src/constants';
+import { CONSTANT_COMMONS } from '@src/constants';
 import convertUtil from '@utils/convert';
 import formatUtil from '@utils/format';
 import {ExHandler} from '@services/exception';
 import {Icon, Overlay} from 'react-native-elements';
 import {COLORS} from '@src/styles';
-import accountIcon from '@src/assets/images/icons/account_icon.png';
 import leftArrow from '@src/assets/images/icons/left_arrow.png';
 import CryptoIcon from '@components/CryptoIcon';
 import EstimateFee from '@components/EstimateFee';
@@ -70,10 +69,9 @@ class Transfer extends React.PureComponent {
   }
 
   checkCorrectBalance = (account, token, value) => {
-    const { wallet } = this.props;
     let tried = 0;
     return async (resolve, reject) => {
-      const balance = await accountService.getBalance(account, wallet, token.id);
+      const balance = await accountService.getBalance(account, account.Wallet, token.id);
       if (balance >= value) {
         clearInterval(this.interval);
         WithdrawHistory.currentWithdraw.checking = true;
@@ -87,8 +85,6 @@ class Transfer extends React.PureComponent {
   };
 
   sendPToken = (fromAccount, toAccount, token, amount, paymentInfo, prvFee = 0, tokenFee = 0) => {
-    const { wallet } = this.props;
-
     const tokenObject = {
       Privacy: true,
       TokenID: token.id,
@@ -102,29 +98,29 @@ class Transfer extends React.PureComponent {
       }]
     };
 
-    console.debug('SEND PTOKEN', paymentInfo, fromAccount.AccountName, toAccount.AccountName, amount, prvFee, tokenFee, tokenObject);
-
     return tokenService.createSendPToken(
       tokenObject,
       prvFee,
       fromAccount,
-      wallet,
+      fromAccount.Wallet,
       paymentInfo,
       tokenFee,
     );
   };
 
   sendPRV = async (fromAccount, toAccount, amount, prvFee = 0) => {
-    const { wallet } = this.props;
-
     const paymentInfos = [{
       paymentAddressStr: toAccount.PaymentAddress,
       amount: amount
     }];
 
-    console.debug('SEND PRV', paymentInfos, fromAccount.AccountName, toAccount.AccountName, amount, prvFee);
-
-    return accountService.createAndSendNativeToken(paymentInfos, prvFee, true, fromAccount, wallet);
+    return accountService.createAndSendNativeToken(
+      paymentInfos,
+      prvFee,
+      true,
+      fromAccount,
+      fromAccount.Wallet,
+    );
   };
 
   waitUntil = (func, ms) => {
@@ -194,7 +190,7 @@ class Transfer extends React.PureComponent {
   }
 
   transfer = async () => {
-    const { onLoadData, wallet, dexMainAccount } = this.props;
+    const { onLoadData, dexMainAccount } = this.props;
     const { transfer, sending } = this.state;
     const { action, error, token, amount, account, fee, feeUnit } = transfer;
     let prvBalance = 0;
@@ -210,8 +206,8 @@ class Transfer extends React.PureComponent {
       try {
         this.setState({ sending: true });
         if (token.id !== PRV_ID && feeUnit === PRV?.symbol) {
-          prvBalance = await accountService.getBalance(prvAccount, wallet);
-          prvBalance = await accountService.getBalance(prvAccount, wallet);
+          prvBalance = await accountService.getBalance(prvAccount, prvAccount.Wallet);
+          prvBalance = await accountService.getBalance(prvAccount, prvAccount.Wallet);
           prvFee = fee;
           if (prvFee > prvBalance) {
             return this.updateTransfer({chainError: MESSAGES.NOT_ENOUGH_NETWORK_FEE});
@@ -229,14 +225,14 @@ class Transfer extends React.PureComponent {
   };
 
   async getBalances(token) {
-    const { accounts, wallet } = this.props;
+    const { accounts } = this.props;
     const balances = accounts.map(() => undefined);
 
     if (accounts.length === 1) {
       this.selectAccount(accounts[0]);
     } else {
       accounts.forEach((account, index) => {
-        accountService.getBalance(account, wallet, token.id)
+        accountService.getBalance(account, account.Wallet, token.id)
           .then(balance => {
             balances[index] = balance;
             this.setState({balances: [...balances]});
@@ -248,11 +244,11 @@ class Transfer extends React.PureComponent {
   selectAccount = (account, index) => {
     const { transfer, balances } = this.state;
     const { token } = transfer;
-    const { wallet, dexMainAccount } = this.props;
+    const { dexMainAccount } = this.props;
     if (transfer.action === 'deposit') {
       if (index === undefined) {
         this.updateTransfer({ account }, () => {
-          accountService.getBalance(account, wallet, token.id)
+          accountService.getBalance(account, account.Wallet, token.id)
             .then(balance => {
               this.updateTransfer({ balance });
             });
@@ -265,7 +261,7 @@ class Transfer extends React.PureComponent {
       }
     } else {
       this.updateTransfer({ account }, () => {
-        accountService.getBalance(dexMainAccount, wallet, token.id)
+        accountService.getBalance(dexMainAccount, account.Wallet, token.id)
           .then(balance => {
             this.updateTransfer({ balance });
           });
@@ -434,9 +430,6 @@ class Transfer extends React.PureComponent {
         >
           {formatUtil.amount(balances[index], token?.pDecimals)}
         </Text>
-        <Text style={[tokenStyle.name, tokenStyle.modalName, mainStyle.textRight, mainStyle.accountBalance]}>
-          &nbsp;{token?.symbol}
-        </Text>
       </View>
     );
   }
@@ -469,8 +462,9 @@ class Transfer extends React.PureComponent {
                   style={[mainStyle.modalItem, index === accounts.length - 1 && mainStyle.lastItem]}
                   activeOpacity={0.5}
                 >
-                  <Image source={accountIcon} style={mainStyle.accountIcon} />
-                  <Text numberOfLines={1} style={mainStyle.accountName}>{item.AccountName}</Text>
+                  <Text numberOfLines={1} style={mainStyle.accountName}>
+                    {item.FullName}
+                  </Text>
                   {this.renderAccountBalance(token, index)}
                 </TouchableOpacity>
               ))}
@@ -588,7 +582,7 @@ class Transfer extends React.PureComponent {
                 <View style={[mainStyle.twoColumns, mainStyle.center, tokenStyle.wrapper, mainStyle.padding]}>
                   <Text style={tokenStyle.name}>{action === 'deposit' ? 'Deposit from' : 'Withdraw to'}:</Text>
                   <Text style={[mainStyle.textRight, mainStyle.longAccountName]} numberOfLines={1}>
-                    {transfer?.account?.AccountName}
+                    {transfer?.account?.FullName}
                   </Text>
                 </View>
                 <View style={[mainStyle.twoColumns, mainStyle.center, tokenStyle.wrapper, mainStyle.padding]}>
@@ -689,7 +683,6 @@ Transfer.propTypes = {
   dexWithdrawAccount: PropTypes.object,
   onAddHistory: PropTypes.func.isRequired,
   onUpdateHistory: PropTypes.func.isRequired,
-  wallet: PropTypes.object.isRequired,
   tokens: PropTypes.array.isRequired,
   accounts: PropTypes.array.isRequired,
   action: PropTypes.string,

@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 const Storage = {
   setItem(key:string, value:string, callback:function) {
+    console.debug('SET ITEM', key);
     return new Promise((resolve, reject) => {
       AsyncStorage.setItem(key, value, (err)=> {
         if (typeof callback === 'function') {
@@ -15,6 +16,7 @@ const Storage = {
     });
   },
   getItem(key:string, callback:function) {
+    console.debug('GET ITEM', key);
     return new Promise((resolve, reject) => {
       AsyncStorage.getItem(key, (err, rs)=> {
         if (typeof callback === 'function') {
@@ -28,6 +30,7 @@ const Storage = {
     });
   },
   removeItem(key:string, callback:function) {
+    console.debug('REMOVE ITEM', key);
     return new Promise((resolve, reject) => {
       AsyncStorage.removeItem(key, (err)=> {
         if (typeof callback === 'function') {

@@ -6,10 +6,10 @@ import {
   InputField,
   InputQRField,
 } from '@src/components/core/reduxForm';
-import React from 'react';
-import Header from '@src/components/Header';
+import React, { useState } from 'react';
 import { View } from 'react-native';
 import { ButtonBasic } from '@src/components/Button';
+import MainLayout from '@components/MainLayout/index';
 import styleSheet from './ImportAccount.styled';
 // eslint-disable-next-line import/no-cycle
 import withImportAccount from './ImportAccount.enhance';
@@ -23,19 +23,22 @@ export const formImportAccount = {
 const Form = createForm(formImportAccount.formName);
 
 const ImportAccount = (props) => {
+  const [wantImport, setWantImport] = useState(false);
+
   const {
     getAccountValidator,
     getPrivateKeyValidator,
     handleImportAccount,
+    handleImportMasterKey,
     toggle,
     randomName,
     handleChangeRandomName,
     disabledForm,
   } = props;
-  return (
-    <View style={styleSheet.container}>
-      <Header title="Import keychain" />
-      <Form style={styleSheet.form}>
+
+  const renderForm = () => {
+    return (
+      <Form>
         {({ handleSubmit, submitting }) => (
           <View>
             {toggle && randomName ? (
@@ -75,7 +78,7 @@ const ImportAccount = (props) => {
               validate={getPrivateKeyValidator()}
             />
             <ButtonBasic
-              title={submitting ? 'Importing keychain...' : 'Import keychain'}
+              title={submitting ? 'Importing...' : 'Import'}
               btnStyle={styleSheet.submitBtn}
               onPress={handleSubmit(handleImportAccount)}
               disabled={disabledForm || submitting}
@@ -83,7 +86,35 @@ const ImportAccount = (props) => {
           </View>
         )}
       </Form>
-    </View>
+    );
+  };
+
+  const renderConfirm = () => {
+    return (
+      <View>
+        <Text style={styleSheet.actionText}>
+          This keychain is not linked to any of your current master keys. Import its master key to restore all associated keychains, or import this keychain only.
+        </Text>
+        <View style={styleSheet.actions}>
+          <ButtonBasic
+            title="Import master key"
+            btnStyle={[styleSheet.submitBtn, styleSheet.action]}
+            onPress={handleImportMasterKey}
+          />
+          <ButtonBasic
+            title="Import keychain only"
+            btnStyle={[styleSheet.submitBtn, styleSheet.action]}
+            onPress={() => setWantImport(true)}
+          />
+        </View>
+      </View>
+    );
+  };
+
+  return (
+    <MainLayout header="Import keychain">
+      {!wantImport ? renderConfirm() : renderForm()}
+    </MainLayout>
   );
 };
 
@@ -97,6 +128,7 @@ ImportAccount.propTypes = {
   toggle: PropTypes.bool.isRequired,
   randomName: PropTypes.string.isRequired,
   handleChangeRandomName: PropTypes.func.isRequired,
+  handleImportMasterKey: PropTypes.func.isRequired,
 };
 
 export default withImportAccount(ImportAccount);

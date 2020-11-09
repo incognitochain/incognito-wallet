@@ -42,7 +42,7 @@ const createItem = (
       ...(onDelete
         ? [
           {
-            text: 'Delete',
+            text: 'Remove',
             backgroundColor: COLORS.red,
             onPress: () => onDelete(account),
           },
@@ -83,6 +83,7 @@ const AccountSection = ({
   listAccount,
   removeAccount,
   switchAccount,
+  label,
 }) => {
   const { devices } = useSelector(settingSelector);
   const navigation = useNavigation();
@@ -109,7 +110,7 @@ const AccountSection = ({
   const handleDelete = (account) => {
     Alert.alert(
       `Delete keychain "${account?.name}"?`,
-      'Do you want to delete this keychain?',
+      'Add it again using its private key or associated master key.',
       [
         {
           text: 'Cancel',
@@ -141,7 +142,7 @@ const AccountSection = ({
 
   return (
     <Section
-      label="Your keychains"
+      label={label}
       labelStyle={accountSection.labelStyle}
       customItems={listAccount?.map((account, index) => (
         <View key={account?.name} style={accountSection.itemWrapper}>
@@ -165,6 +166,7 @@ AccountSection.propTypes = {
   listAccount: PropTypes.arrayOf(PropTypes.object).isRequired,
   switchAccount: PropTypes.func.isRequired,
   removeAccount: PropTypes.func.isRequired,
+  label: PropTypes.string.isRequired,
 };
 
 const mapState = (state) => ({

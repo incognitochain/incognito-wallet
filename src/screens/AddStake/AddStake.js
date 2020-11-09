@@ -34,9 +34,10 @@ class AddStake extends BaseScreen {
   };
 
   handleBuy = async () => {
-    const { amount, fee, balance, onSwitchAccount, account } = this.props;
+    const { amount, fee, balance, onSwitchAccount, account, onSwitchMasterKey } = this.props;
     const outputValue = balance - (amount + fee);
 
+    await onSwitchMasterKey(account.MasterKey.name);
     await onSwitchAccount(accountService.getAccountName(account));
 
     NavigationService.navigate(routeNames.Trade, {
@@ -92,7 +93,7 @@ class AddStake extends BaseScreen {
         </TouchableOpacity>
       </View>
     );
-  }
+  };
 
   renderSelfStake() {
     const {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { compose } from 'recompose';
 import { withNavigation } from 'react-navigation';
@@ -29,6 +29,9 @@ import {
   withSyncIncognitoAddress,
   withSyncDetectNetwork,
 } from '@screens/FrequentReceivers';
+import { loadAllMasterKeyAccounts } from '@src/redux/actions/masterKey';
+import { masterKeysSelector } from '@src/redux/selectors/masterKey';
+import { configRPC } from '@services/wallet/WalletService';
 import { homeSelector } from './Home.selector';
 import { actionFetch as actionFetchHomeConfigs } from './Home.actions';
 import Airdrop from './features/Airdrop';
@@ -48,6 +51,7 @@ const enhance = (WrappedComp) => (props) => {
   const isFollowedDefaultPTokens = useSelector(isFollowDefaultPTokensSelector)(
     CONSTANT_KEYS.IS_FOLLOW_DEFAULT_PTOKENS,
   );
+  const masterKeys = useSelector(masterKeysSelector);
   const dispatch = useDispatch();
 
   const getHomeConfiguration = async () => {
@@ -106,6 +110,7 @@ const enhance = (WrappedComp) => (props) => {
     retryLastTxsUnshieldDecentralized();
     retryLastTxsUnshieldCentralized();
     airdrop();
+    configRPC();
   }, []);
 
   React.useEffect(() => {
@@ -120,6 +125,12 @@ const enhance = (WrappedComp) => (props) => {
       getHomeConfiguration();
     }, []),
   );
+
+  useEffect(() => {
+    if (masterKeys && masterKeys.length > 0) {
+      dispatch(loadAllMasterKeyAccounts());
+    }
+  }, [masterKeys]);
 
   return (
     <ErrorBoundary>

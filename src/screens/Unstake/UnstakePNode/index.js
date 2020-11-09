@@ -5,7 +5,7 @@ import { Toast } from '@components/core';
 import { unstakePNode } from '@services/api/node';
 import Unstake from './Unstake';
 
-const UnstakePNode = ({ device, wallet, onFinish }) => {
+const UnstakePNode = ({ device, onFinish }) => {
   const [isUnstaking, setUnstaking] = React.useState(false);
   const handleUnstake = async () => {
     if (isUnstaking) {
@@ -17,7 +17,6 @@ const UnstakePNode = ({ device, wallet, onFinish }) => {
       await unstakePNode({
         qrCode: device.qrCodeDeviceId,
         productId: device.ProductId,
-        wallet,
         paymentAddress: device.PaymentAddress,
       });
       Toast.showInfo('Unstaking complete.');
@@ -39,7 +38,6 @@ const UnstakePNode = ({ device, wallet, onFinish }) => {
 };
 
 UnstakePNode.propTypes = {
-  wallet: PropTypes.object.isRequired,
   device: PropTypes.object.isRequired,
   onFinish: PropTypes.object.isRequired,
 };

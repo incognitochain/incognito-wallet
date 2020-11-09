@@ -16,7 +16,6 @@ import { chooseBestCoinToSpent } from 'incognito-chain-web-js/lib/tx/utils';
 import bn from 'bn.js';
 import Server from '@services/wallet/Server';
 import { CustomError, ErrorCode } from '../exception';
-import { getActiveShard } from './RpcClientService';
 import tokenService from './tokenService';
 import {
   loadListAccountWithBLSPubKey,
@@ -39,7 +38,7 @@ export const getBalanceNoCache = (
   );
 
   if (Object.keys(account.derivatorToSerialNumberCache).length < 10000) {
-    await account.saveAccountCached(wallet.Storage);
+    await account.saveAccountCached(wallet.storage, `${wallet.Name}-${account.name}-cached`);
   }
 
   return balance;
@@ -101,7 +100,7 @@ export default class Account {
     // console.log("Wallet when import account: ", wallet);
     let account;
     try {
-      account = wallet.importAccount(privakeyStr, accountName, passPhrase);
+      account = await wallet.importAccount(privakeyStr, accountName, passPhrase);
     } catch (e) {
       console.log(`Error when importing account:  ${e}`);
       throw e;
@@ -330,19 +329,14 @@ export default class Account {
       }
 
       wallet.MasterAccount.child.push(newAccount);
-      wallet.save(wallet.PassPhrase);
+      await saveWallet(wallet);
 
       return newAccount;
     }
 
-    const activeShardNumber = await getActiveShard();
     let shardID = _.isNumber(initShardID) ? initShardID : undefined;
-    if (
-      shardID &&
-      (parseInt(shardID) >= parseInt(activeShardNumber) ||
-        parseInt(shardID) < 0)
-    ) {
-      shardID = Math.floor(Math.random() * (activeShardNumber - 1));
+    if (shardID && parseInt(shardID) < 0) {
+      shardID = 0;
     }
 
     return await wallet.createNewAccount(accountName, shardID);
@@ -374,6 +368,15 @@ export default class Account {
     return false;
   }
 
+  static validatePrivateKey(privateKey) {
+    try {
+      const keyWallet = KeyWallet.base58CheckDeserialize(privateKey);
+      return !!keyWallet;
+    } catch (e) {
+      return false;
+    }
+  }
+
   /**
    *
    * @param {object} account
@@ -383,7 +386,7 @@ export default class Account {
    * If `tokenId` is not passed, this method will return native token (PRV) balance, else custom token balance (from `tokenId`)
    */
   static async getBalance(account, wallet, tokenId) {
-    const key = `balance-${account.name || account.AccountName}-${tokenId ||
+    const key = `balance-${wallet.Name}-${account.name || account.AccountName}-${tokenId ||
       '0000000000000000000000000000000000000000000000000000000000000004'}`;
     const indexAccount = wallet.getAccountIndexByName(
       this.getAccountName(account),
@@ -403,20 +406,21 @@ export default class Account {
   }
 
   static getFollowingTokens(account, wallet) {
-    const indexAccount = wallet.getAccountIndexByName(account.name);
+    const indexAccount = wallet.getAccountIndexByName(this.getAccountName(account));
     return wallet.MasterAccount.child[indexAccount]
       .listFollowingTokens()
       ?.map(tokenModel.fromJson);
   }
 
   static async addFollowingTokens(tokens, account, wallet) {
-    const indexAccount = wallet.getAccountIndexByName(account.name);
-    await wallet.MasterAccount.child[indexAccount].addFollowingToken(...tokens);
+    const indexAccount = wallet.getAccountIndexByName(this.getAccountName(account));
+    const walletAccount = wallet.MasterAccount.child[indexAccount];
+    await walletAccount.addFollowingToken(...tokens);
     return wallet;
   }
 
   static async removeFollowingToken(tokenId, account, wallet) {
-    const indexAccount = wallet.getAccountIndexByName(account.name);
+    const indexAccount = wallet.getAccountIndexByName(this.getAccountName(account));
     await wallet.MasterAccount.child[indexAccount].removeFollowingToken(
       tokenId,
     );

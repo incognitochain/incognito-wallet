@@ -146,10 +146,10 @@ class Dex extends React.Component {
       tokens,
       pairs,
       dexMainAccount,
-      accounts,
       pairTokens,
       shares,
       isLoading,
+      masterKeyAccounts,
     } = this.props;
     const { addLiquidityParams, mode, removeLiquidityParams } = this.state;
 
@@ -174,7 +174,7 @@ class Dex extends React.Component {
 
     return (
       <RemovePool
-        accounts={accounts}
+        accounts={masterKeyAccounts}
         wallet={wallet}
         histories={histories}
         onAddHistory={onAddHistory}
@@ -202,22 +202,22 @@ class Dex extends React.Component {
       wallet,
       accounts,
       tokens,
-      pairTokens,
       onAddHistory,
       onUpdateHistory,
       onLoadData,
       onSelectPrivacyByTokenID,
       navigation,
     } = this.props;
-    const { mode, addLiquidityParams, tradeParams, transferAction } = this.state;
+    const {
+      mode,
+      addLiquidityParams,
+      transferAction,
+    } = this.state;
 
     let inputToken;
     let transferTokens = tokens;
 
-    if (mode === MODES.SWAP) {
-      inputToken = tradeParams.inputToken;
-      transferTokens = pairTokens;
-    } else if (mode === MODES.ADD) {
+    if (mode === MODES.ADD) {
       inputToken = addLiquidityParams.inputToken;
     }
 
@@ -290,6 +290,7 @@ Dex.propTypes = {
   pairTokens: PropTypes.array.isRequired,
   isLoading: PropTypes.bool.isRequired,
   shares: PropTypes.object.isRequired,
+  masterKeyAccounts: PropTypes.array.isRequired,
 };
 
 export default Dex;

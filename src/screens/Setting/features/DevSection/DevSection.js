@@ -1,7 +1,6 @@
 import React from 'react';
 import { Text, TouchableOpacity, Switch, Toast } from '@components/core/index';
 import Section, { sectionStyle } from '@screens/Setting/features/Section';
-import LocalDatabase from '@utils/LocalDatabase';
 import RNRestart from 'react-native-restart';
 import { AsyncStorage, Clipboard } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
@@ -17,6 +16,7 @@ import {
 } from '@src/screens/Dev';
 import { CONSTANT_KEYS } from '@src/constants';
 import { accountSeleclor } from '@src/redux/selectors';
+import storage from '@services/storage';
 
 const DevSection = () => {
   const [homeConfig] = React.useState(global.homeConfig);
@@ -52,6 +52,14 @@ const DevSection = () => {
   const onCopySerialNumberCache = () => {
     Clipboard.setString(JSON.stringify(account?.derivatorToSerialNumberCache));
     Toast.showSuccess('Copied');
+  };
+
+  const handleBackUpAllData = () => {
+
+  };
+
+  const handleRestoreAllData = () => {
+
   };
 
   const customItems = [
@@ -133,6 +141,21 @@ const DevSection = () => {
       id: 'serial-number',
       desc: 'Copy serial number',
       onPress: onCopySerialNumberCache,
+    },
+    {
+      id: 'manage-storage',
+      desc: 'Manage local storage',
+      onPress: () => navigation.navigate(routeNames.ManageStorage),
+    },
+    {
+      id: 'backup',
+      desc: 'Backup all app data',
+      onPress: () => navigation.navigate(routeNames.BackUpAllData),
+    },
+    {
+      id: 'restore',
+      desc: 'Restore all app data',
+      onPress: () => navigation.navigate(routeNames.RestoreAllData),
     },
   ];
 

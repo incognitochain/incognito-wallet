@@ -1,34 +1,52 @@
 import LoadingContainer from '@src/components/LoadingContainer';
 import { getBalance, getInternalTokenList, getPTokenList, setListToken } from '@src/redux/actions/token';
 import { setDefaultAccount } from '@src/redux/actions/account';
-import {addHistory, getHistories, updateHistory, getHistoryStatus, updatePairs} from '@src/redux/actions/dex';
+import { addHistory, getHistories, updateHistory, getHistoryStatus, updatePairs } from '@src/redux/actions/dex';
 import { setSelectedPrivacy } from '@src/redux/actions/selectedPrivacy';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {DEX} from '@utils/dex';
+import { DEX } from '@utils/dex';
 import { getTokenList } from '@services/api/token';
 import { getPDEPairs } from '@services/wallet/RpcClientService';
 import tokenService from '@services/wallet/tokenService';
 import _ from 'lodash';
 import { MESSAGES, PRIORITY_LIST } from '@screens/Dex/constants';
-import {CustomError, ErrorCode, ExHandler} from '@services/exception';
-import {accountSeleclor, selectedPrivacySeleclor} from '@src/redux/selectors';
+import { CustomError, ErrorCode, ExHandler } from '@services/exception';
+import { accountSeleclor, selectedPrivacySeleclor } from '@src/redux/selectors';
 import convertUtil from '@utils/convert';
+import { listAllMasterKeyAccounts } from '@src/redux/selectors/masterKey';
+import { reloadAccountList } from '@src/redux/actions/wallet';
+import { createDefaultAccounts, saveWallet } from '@services/wallet/WalletService';
 import Dex from './Dex';
 
 class DexContainer extends Component {
   state = {
     dexMainAccount: {},
     dexWithdrawAccount: {},
-    accounts: [],
     tokens: [],
     pairTokens: [],
     pairs: [],
     loading: false,
   };
 
-  componentDidMount() {
+  async componentDidMount() {
+    const { wallet, reloadAccountList } = this.props;
+    const accounts = (await wallet.listAccount())
+      .map(item => ({
+        ...item,
+        Wallet: wallet,
+      }));
+
+    const dexMainAccount = accounts.find(item => item.AccountName.toLowerCase() === DEX.MAIN_ACCOUNT.toLowerCase());
+    const dexWithdrawAccount = accounts.find(item => item.AccountName.toLowerCase() === DEX.WITHDRAW_ACCOUNT.toLowerCase());
+
+    if (!dexMainAccount || !dexWithdrawAccount) {
+      await createDefaultAccounts(wallet);
+      await saveWallet(wallet);
+      await reloadAccountList();
+    }
+
     this.loadData();
   }
 
@@ -43,10 +61,16 @@ class DexContainer extends Component {
 
   async updateAccount() {
     const { wallet } = this.props;
-    const accounts = await wallet.listAccount();
-    const dexMainAccount = accounts.find(item => item.AccountName === DEX.MAIN_ACCOUNT);
-    const dexWithdrawAccount = accounts.find(item => item.AccountName === DEX.WITHDRAW_ACCOUNT);
-    this.setState({ dexMainAccount, dexWithdrawAccount, accounts });
+    const accounts = (await wallet.listAccount())
+      .map(item => ({
+        ...item,
+        Wallet: wallet,
+      }));
+
+    const dexMainAccount = accounts.find(item => item.AccountName.toLowerCase() === DEX.MAIN_ACCOUNT.toLowerCase());
+    const dexWithdrawAccount = accounts.find(item => item.AccountName.toLowerCase() === DEX.WITHDRAW_ACCOUNT.toLowerCase());
+
+    this.setState({ dexMainAccount, dexWithdrawAccount, masterKeyAccounts: accounts });
   }
 
   loadData = async () => {
@@ -62,7 +86,7 @@ class DexContainer extends Component {
     }
 
     try {
-      this.updateAccount();
+      await this.updateAccount();
       getHistories();
       this.setState({ loading: true });
       const pTokens = await getTokenList();
@@ -121,10 +145,24 @@ class DexContainer extends Component {
       getHistories,
       account,
       selectPrivacyByTokenID,
+      accounts,
     } = this.props;
-    const { dexMainAccount, dexWithdrawAccount, accounts, tokens, pairTokens, pairs, loading, shares } = this.state;
+    const {
+      dexMainAccount,
+      dexWithdrawAccount,
+      tokens,
+      pairTokens,
+      pairs,
+      loading,
+      shares,
+      masterKeyAccounts,
+    } = this.state;
 
-    if (!wallet) return <LoadingContainer />;
+    if (!wallet || !dexMainAccount?.AccountName || !dexWithdrawAccount?.AccountName) {
+      return (
+        <LoadingContainer />
+      );
+    }
 
     return (
       <Dex
@@ -146,6 +184,7 @@ class DexContainer extends Component {
         isLoading={loading}
         account={account}
         shares={shares}
+        masterKeyAccounts={masterKeyAccounts}
       />
     );
   }
@@ -156,6 +195,7 @@ const mapState = state => ({
   wallet: state.wallet,
   histories: state.dex.histories.filter(item => item.type !== MESSAGES.TRADE),
   selectPrivacyByTokenID: selectedPrivacySeleclor.getPrivacyDataByTokenID(state),
+  accounts: listAllMasterKeyAccounts(state),
 });
 
 const mapDispatch = {
@@ -170,6 +210,7 @@ const mapDispatch = {
   updateHistory,
   getHistoryStatus,
   updatePairs,
+  reloadAccountList,
 };
 
 DexContainer.propTypes = {
@@ -183,6 +224,8 @@ DexContainer.propTypes = {
   getHistoryStatus: PropTypes.func.isRequired,
   selectPrivacyByTokenID: PropTypes.func.isRequired,
   updatePairs: PropTypes.func.isRequired,
+  accounts: PropTypes.array.isRequired,
+  reloadAccountList: PropTypes.func.isRequired,
 };
 
 export default connect(

@@ -11,6 +11,7 @@ import { accountSeleclor } from '@src/redux/selectors';
 import { getStatusData } from '@src/components/HistoryList/HistoryList.utils';
 import { clearCache } from '@src/services/cache';
 import { getBalance as getAccountBalance } from '@src/redux/actions/account';
+import { walletSelector } from '@src/redux/selectors/wallet';
 import {
   actionInitProccess,
   actionTogglePending,
@@ -20,6 +21,7 @@ import { useStreamLine } from './Streamline.useStreamline';
 
 const enhance = (WrappedComp) => (props) => {
   const account = useSelector(accountSeleclor.defaultAccountSelector);
+  const wallet = useSelector(walletSelector);
   const dispatch = useDispatch();
   const [state, setState] = React.useState({
     refresh: false,
@@ -56,7 +58,7 @@ const enhance = (WrappedComp) => (props) => {
       if (!_isPending && utxos.length > 0) {
         const payload = { address: account?.paymentAddress };
         await dispatch(actionRemoveLocalUTXOs(payload));
-        const key = `balance-${account?.accountName}-${CONSTANT_COMMONS.PRV.id}`;
+        const key = `balance-${wallet.Name}-${account?.accountName}-${CONSTANT_COMMONS.PRV.id}`;
         clearCache(key);
         await dispatch(getAccountBalance(account));
       }

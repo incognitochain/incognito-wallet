@@ -4,6 +4,8 @@ import { compose } from 'recompose';
 import { View, ScrollView, FlexView, LoadingContainer } from '@components/core';
 import { withLayout_2 } from '@components/Layout';
 import Header from '@components/Header/index';
+import RightBtn from '@screens/Setting/features/Keychain/RightBtn';
+import BtnInfo from '@screens/Setting/features/Keychain/BtnInfo';
 import styles from './style';
 
 const MainLayout = ({
@@ -11,10 +13,22 @@ const MainLayout = ({
   children,
   scrollable,
   loading,
+  hideBackButton,
+  noPadding,
+  rightHeader,
+  customHeaderTitle,
+  onGoBack,
 }) => {
   return (
-    <FlexView>
-      <Header title={header} />
+    <FlexView style={noPadding && styles.noPaddingStyle}>
+      <Header
+        title={header}
+        hideBackButton={hideBackButton}
+        style={noPadding && styles.paddingHeader}
+        rightHeader={rightHeader}
+        customHeaderTitle={customHeaderTitle}
+        onGoBack={onGoBack}
+      />
       {loading ? <LoadingContainer /> :
         scrollable ? (
           <ScrollView paddingBottom contentContainerStyle={[styles.content]}>
@@ -35,6 +49,11 @@ MainLayout.propTypes = {
   children: PropTypes.any,
   scrollable: PropTypes.bool,
   loading: PropTypes.bool,
+  hideBackButton: PropTypes.bool,
+  noPadding: PropTypes.bool,
+  rightHeader: PropTypes.any,
+  customHeaderTitle: PropTypes.any,
+  onGoBack: PropTypes.func,
 };
 
 MainLayout.defaultProps = {
@@ -42,6 +61,11 @@ MainLayout.defaultProps = {
   children: null,
   scrollable: false,
   loading: false,
+  hideBackButton: false,
+  noPadding: false,
+  rightHeader: undefined,
+  customHeaderTitle: undefined,
+  onGoBack: undefined,
 };
 
 export default compose(

@@ -1,11 +1,6 @@
 import { CONSTANT_COMMONS } from '@src/constants';
 import { accountSeleclor, selectedPrivacySeleclor } from '@src/redux/selectors';
 import { CustomError, ErrorCode, ExHandler } from '@src/services/exception';
-import {
-  getEstimateFeeForNativeToken,
-  getEstimateFeeForPToken,
-} from '@src/services/wallet/RpcClientService';
-import convertUtil from '@src/utils/convert';
 import formatUtil from '@src/utils/format';
 import { debounce } from 'lodash';
 import memmoize from 'memoize-one';
@@ -259,138 +254,16 @@ class EstimateFeeContainer extends Component {
   };
 
   _estimateFeeForMainCrypto = async () => {
-    try {
-      const {
-        account,
-        wallet,
-        selectedPrivacy,
-        toAddress,
-        amount,
-        dexBalance,
-      } = this.props;
-      const fromAddress = selectedPrivacy?.paymentAddress;
-      const accountWallet = wallet.getAccountByName(account?.name);
-
-      if (!selectedPrivacy.amount && !dexBalance)
-        throw new CustomError(ErrorCode.estimate_fee_with_zero_balance);
-
-      const fee = await getEstimateFeeForNativeToken(
-        fromAddress,
-        toAddress,
-        convertUtil.toOriginalAmount(
-          convertUtil.toNumber(amount),
-          selectedPrivacy?.pDecimals,
-        ),
-        accountWallet,
-      );
-
-      return fee;
-    } catch (e) {
-      throw e;
-    }
+    return 100;
   };
 
   _estimateFeeForToken = async () => {
-    try {
-      const {
-        account,
-        wallet,
-        selectedPrivacy,
-        toAddress,
-        amount,
-        dexBalance,
-      } = this.props;
-      const fromAddress = selectedPrivacy?.paymentAddress;
-      const accountWallet = wallet.getAccountByName(account?.name);
-      const originalAmount = convertUtil.toOriginalAmount(
-        convertUtil.toNumber(amount),
-        selectedPrivacy?.pDecimals,
-      );
-      const tokenObject = {
-        Privacy: true,
-        TokenID: selectedPrivacy?.tokenId,
-        TokenName: selectedPrivacy?.name,
-        TokenSymbol: selectedPrivacy?.symbol,
-        TokenTxType: CONSTANT_COMMONS.TOKEN_TX_TYPE.SEND,
-        TokenAmount: originalAmount,
-        TokenReceivers: {
-          PaymentAddress: toAddress,
-          Amount: originalAmount,
-        },
-      };
-
-      if (!selectedPrivacy.amount && !dexBalance)
-        throw new CustomError(ErrorCode.estimate_fee_with_zero_balance);
-
-      const fee = await getEstimateFeeForPToken(
-        fromAddress,
-        toAddress,
-        originalAmount,
-        tokenObject,
-        accountWallet,
-      );
-    
-      return fee;
-    } catch (e) {
-      throw e;
-    }
+    return 100;
   };
 
   _handleEstimateTokenFee = async () => {
-    try {
-      const {
-        account,
-        wallet,
-        selectedPrivacy,
-        toAddress,
-        amount,
-        dexBalance,
-      } = this.props;
-      const fromAddress = selectedPrivacy?.paymentAddress;
-      const accountWallet = wallet.getAccountByName(account?.name);
-      const originalAmount = convertUtil.toOriginalAmount(
-        convertUtil.toNumber(amount),
-        selectedPrivacy?.pDecimals,
-      );
-      const tokenObject = {
-        Privacy: true,
-        TokenID: selectedPrivacy?.tokenId,
-        TokenName: selectedPrivacy?.name,
-        TokenSymbol: selectedPrivacy?.symbol,
-        TokenTxType: CONSTANT_COMMONS.TOKEN_TX_TYPE.SEND,
-        TokenAmount: originalAmount,
-        TokenReceivers: {
-          PaymentAddress: toAddress,
-          Amount: originalAmount,
-        },
-      };
-
-      if (!selectedPrivacy.amount && !dexBalance)
-        throw new CustomError(ErrorCode.estimate_fee_with_zero_balance);
-
-      const fee = await getEstimateFeeForPToken(
-        fromAddress,
-        toAddress,
-        originalAmount,
-        tokenObject,
-        accountWallet,
-        true, // get token fee flag
-      );
-
-      return fee;
-    } catch (e) {
-      throw e;
-    }
+    return 100;
   };
-
-  getFeeTypesByTokenId = memmoize(selectedPrivacy => {
-    const ids = [CONSTANT_COMMONS.PRV_TOKEN_ID];
-
-    if (!ids.includes(selectedPrivacy?.tokenId)) {
-      ids.unshift(selectedPrivacy?.tokenId);
-    }
-    return ids;
-  });
 
   getPDecimals = memmoize((selectedPrivacy, defaultFeeTokenId) => {
     if (defaultFeeTokenId === CONSTANT_COMMONS.PRV_TOKEN_ID) {

@@ -25,9 +25,9 @@ class UnstakeVNode extends PureComponent {
   }
 
   async getBalance() {
-    const { wallet, device } = this.props;
+    const { device } = this.props;
     const account = device.Account;
-    const balance = await accountService.getBalance(account, wallet);
+    const balance = await accountService.getBalance(account, account.Wallet);
     this.setState({ balance });
   }
 
@@ -40,12 +40,12 @@ class UnstakeVNode extends PureComponent {
 
     try {
       this.setState({ isUnstaking: true });
-      const { wallet, onFinish, device } = this.props;
+      const { onFinish, device } = this.props;
       const account = device.Account;
       const validatorKey = account.ValidatorKey;
       const name = device.AccountName;
       const rs = await accountService.createAndSendStopAutoStakingTx(
-        wallet,
+        account.Wallet,
         account,
         fee,
         account.PaymentAddress,
@@ -88,7 +88,6 @@ class UnstakeVNode extends PureComponent {
 }
 
 UnstakeVNode.propTypes = {
-  wallet: PropTypes.object.isRequired,
   device: PropTypes.object.isRequired,
   onFinish: PropTypes.func.isRequired,
 };

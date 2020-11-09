@@ -180,14 +180,14 @@ export const mainStyle = StyleSheet.create({
   },
   accountBalance: {
     marginTop: 0,
-    maxWidth: 100,
+    maxWidth: 120,
     color: COLORS.dark1,
   },
   accountName: {
-    maxWidth: 80,
+    maxWidth: 140,
   },
   longAccountName: {
-    maxWidth: 120,
+    maxWidth: 140,
   },
   error: {
     fontSize: 15,

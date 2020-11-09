@@ -5,9 +5,16 @@ const style = StyleSheet.create({
   container: {
     flex: 1,
   },
-  form: {
-    marginTop: 42,
-    flex: 1,
+  actionText: {
+    lineHeight: 24,
+    ...THEME.text.mediumText,
+  },
+  actions: {
+    marginTop: 50,
+  },
+  action: {
+    marginVertical: 0,
+    marginBottom: 30,
   },
   submitBtn: {
     marginVertical: 50,

@@ -1,6 +1,6 @@
 import User from '@models/user';
-import AsyncStorage from '@react-native-community/async-storage';
-import {CONSTANT_KEYS} from '@src/constants';
+import AsyncStorage from '@services/storage';
+import { CONSTANT_KEYS, MESSAGES } from '@src/constants';
 import _ from 'lodash';
 
 const TAG = 'LocalDatabase';
@@ -18,6 +18,7 @@ export const KEY_SAVE = {
   PROVIDE_TXS: CONSTANT_KEYS.PROVIDE_TXS,
   NODECLEARED: '$node_cleared',
   SHIP_ADDRESS: '$ship_address',
+  MASTER_KEY_LIST: CONSTANT_KEYS.MASTER_KEY_LIST,
 };
 export default class LocalDatabase {
   static async getValue(key: String): String {
@@ -109,16 +110,22 @@ export default class LocalDatabase {
     return _.isEmpty(userJson) ? null : new User(JSON.parse(userJson));
   }
 
-  static async saveDexHistory(swapHistory) {
+  static async getOldDexHistory() {
+    const swapHistory =
+      (await LocalDatabase.getValue(KEY_SAVE.DEX_HISTORY)) || '';
+    return _.isEmpty(swapHistory) ? [] : JSON.parse(swapHistory);
+  }
+
+  static async saveDexHistory(dexHistories, walletName) {
     await LocalDatabase.saveValue(
-      KEY_SAVE.DEX_HISTORY,
-      JSON.stringify(swapHistory),
+      `${walletName}-dex-histories`,
+      JSON.stringify(dexHistories),
     );
   }
 
-  static async getDexHistory() {
+  static async getDexHistory(walletName) {
     const swapHistory =
-      (await LocalDatabase.getValue(KEY_SAVE.DEX_HISTORY)) || '';
+      (await LocalDatabase.getValue(`${walletName}-dex-histories`)) || '';
     return _.isEmpty(swapHistory) ? [] : JSON.parse(swapHistory);
   }
 
@@ -203,5 +210,23 @@ export default class LocalDatabase {
 
   static setShipAddress = (value) => {
     return LocalDatabase.saveValue(KEY_SAVE.SHIP_ADDRESS, JSON.stringify(value || {}));
+  };
+
+  static getMasterKeyList = async () => {
+    const value = await LocalDatabase.getValue(KEY_SAVE.MASTER_KEY_LIST);
+    return JSON.parse(value || '[]');
+  };
+
+  static setMasterKeyList = (value) => {
+    if (!_.isArray(value)) {
+      throw new Error(MESSAGES.MUST_BE_ARRAY);
+    }
+
+    return LocalDatabase.saveValue(KEY_SAVE.MASTER_KEY_LIST,
+      JSON.stringify(
+        value.map(item => ({ ...item, wallet: undefined })) ||
+        [],
+      )
+    );
   };
 }

@@ -6,7 +6,6 @@ import withTokenSelect from '@src/components/TokenSelect/TokenSelect.enhance';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from 'react-navigation-hooks';
 import routeNames from '@src/router/routeNames';
-import { ExHandler } from '@src/services/exception';
 import PropTypes from 'prop-types';
 import { selectedPrivacySeleclor } from '@src/redux/selectors';
 import { withTokenVerified } from '@src/components/Token';

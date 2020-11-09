@@ -73,6 +73,7 @@ const Header = ({
   styledContainerHeaderTitle,
   placeHolder,
   ignoredAccounts,
+  hideBackButton,
 }) => {
   const { goBack } = useNavigation();
   const handleGoBack = () =>
@@ -125,7 +126,7 @@ const Header = ({
       }}
     >
       <View style={[styled.container, style]}>
-        <BtnCircleBack onPress={_handleGoBack} />
+        {!hideBackButton && <BtnCircleBack onPress={_handleGoBack} />}
         {renderHeaderTitle()}
         {!!rightHeader && rightHeader}
         {accountSelectable && (
@@ -137,6 +138,7 @@ const Header = ({
     </HeaderContext.Provider>
   );
 };
+
 Header.defaultProps = {
   rightHeader: null,
   titleStyled: null,
@@ -152,7 +154,9 @@ Header.defaultProps = {
   styledContainerHeaderTitle: null,
   placeHolder: '',
   ignoredAccounts: [],
+  hideBackButton: false,
 };
+
 Header.propTypes = {
   title: PropTypes.string.isRequired,
   rightHeader: PropTypes.element,
@@ -171,5 +175,7 @@ Header.propTypes = {
   styledContainerHeaderTitle: PropTypes.any,
   placeHolder: PropTypes.string,
   ignoredAccounts: PropTypes.array,
+  hideBackButton: PropTypes.bool,
 };
+
 export default withHeader(React.memo(Header));

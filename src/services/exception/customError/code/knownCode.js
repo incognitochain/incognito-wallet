@@ -19,6 +19,7 @@ const app = {
   wallet_can_not_create_new_wallet: knownError(-14),
   wallet_can_not_load_existed_wallet: knownError(-15),
   user_login_failed: knownError(-27),
+  master_key_name_existed: knownError(-100),
 };
 
 const document_picker = {
@@ -105,6 +106,12 @@ const chain = {
   FULLNODE_DOWN: knownError(-9999),
 };
 
+const masterKey = {
+  invalid_master_key_name: knownError(-101),
+  invalid_mnemonic: knownError(-102),
+  duplicate_mnemonic: knownError(-103),
+};
+
 
 export default {
   ...app,
@@ -123,4 +130,5 @@ export default {
   ...dex,
   ...document_picker,
   ...chain,
+  ...masterKey,
 };

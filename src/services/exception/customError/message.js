@@ -56,4 +56,8 @@ export default {
   [CODE.api_insufficient_funds]: 'Incognito is currently experiencing high volume. Please try again later.',
   [CODE.web_js_can_not_send_main_crypto]: 'Streamline this keychain now for efficient transactions',
   [CODE.api_tx_hash_invalid]: 'This is taking a little longer than usual, but will be automatically retried soon. Simply check back later.',
+  [CODE.master_key_name_existed]: 'You already have a master key with this name. Please choose another.',
+  [CODE.invalid_master_key_name]: 'Master key names must be alphanumeric. Please choose another.',
+  [CODE.invalid_mnemonic]: 'That’s not quite right. Please try again.',
+  [CODE.duplicate_mnemonic]: 'This master key already exists on your device. Please try another.',
 };

@@ -8,15 +8,12 @@ import { Divider } from 'react-native-elements';
 import ExchangeRate from '@screens/Dex/components/ExchangeRate';
 import PoolSize from '@screens/Dex/components/PoolSize';
 import {
-  getEstimateFeeForNativeToken,
-  getEstimateFeeForPToken,
   getTransactionByHash
 } from '@services/wallet/RpcClientService';
 import { PRV } from '@services/wallet/tokenService';
 import dexUtils from '@utils/dex';
 import { AddLiquidityHistory } from '@models/dexHistory';
 import addLiquidityIcon from '@src/assets/images/icons/add_liquidity.png';
-import { CONSTANT_COMMONS } from '@src/constants';
 import NetworkFee from '@screens/Dex/components/NetworkFee';
 import AddSuccessDialog from '@screens/Dex/components/AddSuccessDialog';
 import CODE from '@src/services/exception/customError/code';
@@ -24,7 +21,7 @@ import { ExHandler } from '@services/exception';
 import { MAX_FEE_PER_TX } from '@components/EstimateFee/EstimateFee.utils';
 import Input from '../Input';
 import Loading from '../Loading';
-import { DEX_CHAIN_ACCOUNT, MESSAGES, MIN_INPUT, PRV_ID, SECOND } from '../../constants';
+import { MESSAGES, MIN_INPUT, PRV_ID, SECOND } from '../../constants';
 import { mainStyle } from '../../style';
 
 class Pool extends React.Component {

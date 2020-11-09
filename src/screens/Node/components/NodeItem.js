@@ -106,19 +106,17 @@ class NodeItem extends React.Component {
     }
 
     if (device.PaymentAddress) {
-      const { wallet } = this.props;
+      const { accounts } = this.props;
 
-      const listAccount = await wallet.listAccount();
       device.IsFundedStakeWithdrawable = await NodeService.isWithdrawable(device);
       device.FundedUnstakeStatus = await getUnstakePNodeStatus({ paymentAddress: device.PaymentAddress });
-      device.Account = listAccount.find(item => item.PaymentAddress === device.PaymentAddress);
+      device.Account = accounts.find(item => item.PaymentAddress === device.PaymentAddress);
 
       if (device.Account) {
         device.ValidatorKey = device.Account.ValidatorKey;
         device.PublicKey = device.Account.PublicKeyCheckEncode;
 
-        const listAccounts = await wallet.listAccountWithBLSPubKey();
-        const account = listAccounts.find(item=> _.isEqual(item.AccountName, device.AccountName));
+        const account = accounts.find(item=> _.isEqual(item.AccountName, device.AccountName));
 
         device.PublicKeyMining = account.BLSPublicKey;
       }
@@ -185,7 +183,7 @@ class NodeItem extends React.Component {
 
   async getVNodeInfo(device, skipGetNewKey = false) {
     const { nodeRewards } = this.props;
-    const { wallet, committees } = this.props;
+    const { accounts, committees } = this.props;
     let publicKey = device.PublicKey;
     let blsKey = device.PublicKeyMining;
 
@@ -228,9 +226,7 @@ class NodeItem extends React.Component {
         device.StakeTx = null;
       }
 
-      const listAccount = await wallet.listAccount();
-      const rawAccount = await accountService.getAccountWithBLSPubKey(blsKey, wallet);
-      device.Account = listAccount.find(item => item.AccountName === rawAccount?.name);
+      device.Account = accounts.find(item => item.BLSPublicKey === blsKey || item.PublicKeyCheckEncode === publicKey);
 
       if (device.Account) {
         device.ValidatorKey = device.Account.ValidatorKey;
@@ -391,7 +387,7 @@ class NodeItem extends React.Component {
 }
 
 NodeItem.propTypes = {
-  wallet: PropTypes.object.isRequired,
+  accounts: PropTypes.array.isRequired,
   committees: PropTypes.object.isRequired,
   nodeRewards: PropTypes.object.isRequired,
   allTokens: PropTypes.array.isRequired,

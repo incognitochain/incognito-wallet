@@ -8,6 +8,7 @@ import {
 import { CONSTANT_COMMONS } from '@src/constants';
 import { setSelectedPrivacy } from '@src/redux/actions/selectedPrivacy';
 import { actionAddFollowToken } from '@src/redux/actions/token';
+import { defaultAccountSelector } from '@src/redux/selectors/account';
 import {
   ACTION_FETCHING,
   ACTION_FETCHED,
@@ -37,7 +38,7 @@ export const actionGetMinMaxShield = async ({ tokenId }) => {
   }
 };
 
-export const actionGetAddressToShield = async ({ selectedPrivacy }) => {
+export const actionGetAddressToShield = async ({ selectedPrivacy, account }) => {
   try {
     let address;
     if (!selectedPrivacy?.isPToken) {
@@ -47,23 +48,23 @@ export const actionGetAddressToShield = async ({ selectedPrivacy }) => {
       selectedPrivacy?.externalSymbol === CONSTANT_COMMONS.CRYPTO_SYMBOL.ETH
     ) {
       address = await genETHDepositAddress({
-        paymentAddress: selectedPrivacy?.paymentAddress,
-        walletAddress: selectedPrivacy?.paymentAddress,
+        paymentAddress: account.PaymentAddress,
+        walletAddress: account.PaymentAddress,
         tokenId: selectedPrivacy?.tokenId,
         currencyType: selectedPrivacy?.currencyType,
       });
     } else if (selectedPrivacy?.isErc20Token) {
       address = await genERC20DepositAddress({
-        paymentAddress: selectedPrivacy?.paymentAddress,
-        walletAddress: selectedPrivacy?.paymentAddress,
+        paymentAddress: account.PaymentAddress,
+        walletAddress: account.PaymentAddress,
         tokenId: selectedPrivacy?.tokenId,
         tokenContractID: selectedPrivacy?.contractId,
         currencyType: selectedPrivacy?.currencyType,
       });
     } else {
       address = await genCentralizedDepositAddress({
-        paymentAddress: selectedPrivacy?.paymentAddress,
-        walletAddress: selectedPrivacy?.paymentAddress,
+        paymentAddress: account.PaymentAddress,
+        walletAddress: account.PaymentAddress,
         tokenId: selectedPrivacy?.tokenId,
         currencyType: selectedPrivacy?.currencyType,
       });
@@ -81,6 +82,7 @@ export const actionFetch = ({ tokenId }) => async (dispatch, getState) => {
   try {
     await dispatch(setSelectedPrivacy(tokenId));
     const state = getState();
+    const account = defaultAccountSelector(state);
     const { isFetching } = shieldSelector(state);
     const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
     if (!selectedPrivacy || isFetching) {
@@ -89,7 +91,7 @@ export const actionFetch = ({ tokenId }) => async (dispatch, getState) => {
     await dispatch(actionFetching());
     await dispatch(actionAddFollowToken(tokenId));
     const dataMinMax = await actionGetMinMaxShield({ tokenId });
-    const address = await actionGetAddressToShield({ selectedPrivacy });
+    const address = await actionGetAddressToShield({ selectedPrivacy, account });
     const [min, max] = dataMinMax;
     await dispatch(
       actionFetched({

@@ -12,7 +12,11 @@ import tokenService, {PRV} from '@services/wallet/tokenService';
 import accountService from '@services/wallet/accountService';
 import Toast from '@components/core/Toast/Toast';
 import {DEX} from '@utils/dex';
-import {deleteHistory, getHistoryStatus, updateHistory} from '@src/redux/actions/dex';
+import {
+  deleteHistory,
+  getHistoryStatus,
+  updateHistory,
+} from '@src/redux/actions/dex';
 import {connect} from 'react-redux';
 import {ExHandler} from '@services/exception';
 import AddPin from '@screens/AddPIN';
@@ -55,8 +59,6 @@ const sendPToken = (wallet, fromAccount, toAccount, token, amount, paymentInfo, 
     }]
   };
 
-  console.debug('SEND PTOKEN', tokenObject, amount, prvFee, tokenFee, fromAccount.AccountName);
-
   return tokenService.createSendPToken(
     tokenObject,
     prvFee,
@@ -72,8 +74,6 @@ const sendPRV = async (wallet, fromAccount, toAccount, amount, prvFee = 0) => {
     paymentAddressStr: toAccount.PaymentAddress,
     amount: amount
   }];
-
-  console.debug('SEND PRV', paymentInfos, amount, prvFee, fromAccount.AccountName);
 
   return accountService.createAndSendNativeToken(paymentInfos, prvFee, true, fromAccount, wallet);
 };
@@ -108,7 +108,13 @@ const addToken = (wallet, account, token, value, pairId, fee) => {
   }
 };
 
-const DexHistoryDetail = ({ navigation, wallet, updateHistory, getHistoryStatus, deleteHistory }) => {
+const DexHistoryDetail = ({
+  navigation,
+  wallet,
+  updateHistory,
+  getHistoryStatus,
+  deleteHistory
+}) => {
   const { params } = navigation.state;
   const { history } = params;
   const [loading, setLoading] = React.useState(false);

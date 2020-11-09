@@ -1,5 +1,6 @@
 const isMainnet = global.isMainnet ?? true;
 const prefix_network = 'testnet';
+
 export const KEYS = {
   PASSPHRASE_KEY: '$password',
   DEFAULT_ACCOUNT_NAME: '$DEFAULT_ACCOUNT_NAME',
@@ -35,6 +36,7 @@ export const KEYS = {
   UTXOS_DATA: '$UTXOS_DATA',
   DEV_TEST_TOGGLE_HISTORY_DETAIL: '$DEV_TEST_TOGGLE_HISTORY_DETAIL',
   DEV_TEST_TOGGLE_LOG_APP: '$DEV_TEST_TOGGLE_LOG_APP',
+  MASTER_KEY_LIST: '$master_key_list',
 };
 
 const KEYS_TESTNET = {
@@ -71,6 +73,7 @@ const KEYS_TESTNET = {
   UTXOS_DATA: `${prefix_network}_$UTXOS_DATA`,
   DEV_TEST_TOGGLE_HISTORY_DETAIL: `${prefix_network}_DEV_TEST_TOGGLE_HISTORY_DETAIL`,
   DEV_TEST_TOGGLE_LOG_APP: `${prefix_network}_$DEV_TEST_TOGGLE_LOG_APP`,
+  MASTER_KEY_LIST: 'testnet_$master_key_list',
 };
 
 const PASSPHRASE_KEY_REVERVE = isMainnet

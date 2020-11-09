@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { ActivityIndicator } from '@components/core/index';
 import routeNames from '@routers/routeNames';
 import UnstakeVNode from './UnstakeVNode';
@@ -26,7 +25,6 @@ class UnstakeContainer extends PureComponent {
   };
 
   render() {
-    const { wallet } = this.props;
     const { device } = this.state;
 
     if (!device) {
@@ -38,7 +36,6 @@ class UnstakeContainer extends PureComponent {
         <>
           <UnstakePNode
             device={device}
-            wallet={wallet}
             onFinish={this.handleCompleteUnstake}
           />
         </>
@@ -49,7 +46,6 @@ class UnstakeContainer extends PureComponent {
       <>
         <UnstakeVNode
           device={device}
-          wallet={wallet}
           onFinish={this.handleCompleteUnstake}
         />
       </>
@@ -58,14 +54,8 @@ class UnstakeContainer extends PureComponent {
 }
 
 UnstakeContainer.propTypes = {
-  wallet: PropTypes.object.isRequired,
   navigation: PropTypes.object.isRequired,
 };
 
-UnstakeContainer.defaultProps = {};
 
-const mapStateToProps = (state) => ({
-  wallet: state?.wallet,
-});
-
-export default connect(mapStateToProps)(UnstakeContainer);
+export default UnstakeContainer;

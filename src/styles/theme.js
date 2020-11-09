@@ -139,7 +139,12 @@ const text = {
     color: COLORS.black,
     fontSize: fontSizes.medium,
     fontFamily: FONTS.NAME.medium,
-  }
+  },
+  superMediumTextMotto: {
+    color: COLORS.newGrey,
+    fontSize: fontSizes.superMedium,
+    fontFamily: FONTS.NAME.medium,
+  },
 };
 
 const MARGIN = {

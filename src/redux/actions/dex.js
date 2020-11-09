@@ -14,6 +14,7 @@ import {
   AddLiquidityHistory,
   RemoveLiquidityHistory
 } from '@models/dexHistory';
+import { currentMasterKeySelector } from '@src/redux/selectors/masterKey';
 
 export const TRANSFER_STATUS = {
   PROCESSING: 'processing',
@@ -208,13 +209,16 @@ async function getStatus(history) {
   return getStatusByType[history.type](history);
 }
 
-export const getHistoriesSuccess = (histories) => ({
+export const getHistoriesSuccess = (histories, walletName) => ({
   type: types.GET_HISTORIES,
   payload: histories,
+  extra: walletName,
 });
 
-export const getHistories = () => async (dispatch) => {
-  const histories = await LocalDatabase.getDexHistory();
+export const getHistories = () => async (dispatch, getState) => {
+  const state = getState();
+  const masterKey = currentMasterKeySelector(state);
+  const histories = await LocalDatabase.getDexHistory(masterKey.getStorageName());
   const formattedHistories = histories.map(item => {
     const history = HISTORY_TYPES[item.type].load(item);
 
@@ -229,7 +233,7 @@ export const getHistories = () => async (dispatch) => {
     return history;
   });
 
-  dispatch(getHistoriesSuccess(formattedHistories));
+  dispatch(getHistoriesSuccess(formattedHistories, masterKey.getStorageName()));
 
   return formattedHistories;
 };

@@ -6,7 +6,7 @@ import Button from '../Button';
 const RoundCornerButton = ({ style, titleStyle, title, isLoading, disabled, ...props }) => (
   <Button
     style={[styles.button, style]}
-    titleStyle={styles.buttonTitle}
+    titleStyle={[styles.buttonTitle, titleStyle]}
     title={title}
     isLoading={isLoading}
     disabled={isLoading || disabled}

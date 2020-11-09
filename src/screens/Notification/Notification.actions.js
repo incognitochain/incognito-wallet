@@ -1,12 +1,12 @@
 import { ExHandler } from '@src/services/exception';
 import routeNames from '@src/router/routeNames';
-import { accountSeleclor, selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySeleclor } from '@src/redux/selectors';
 import { actionSwitchAccount } from '@src/redux/actions/account';
 import { setSelectedPrivacy } from '@src/redux/actions/selectedPrivacy';
 import { actionAddFollowToken } from '@src/redux/actions/token';
-import { CONSTANT_EVENTS } from '@src/constants';
-import { logEvent } from '@services/firebase';
 import { actionToggleModal } from '@src/components/Modal';
+import { listAllMasterKeyAccounts } from '@src/redux/selectors/masterKey';
+import { switchMasterKey } from '@src/redux/actions/masterKey';
 import { ACTION_INIT } from './Notification.constant';
 import { apiInitNotifications } from './Notification.services';
 import { delay } from './Notification.utils';
@@ -14,13 +14,13 @@ import { delay } from './Notification.utils';
 export const actionInit = () => async (dispatch, getState) => {
   try {
     const state = getState();
-    const list = accountSeleclor.listAccount(state);
+    const list = listAllMasterKeyAccounts(state);
     const body = {
       Data: [
         ...list.map((item) => ({
           PublicKey: item?.PublicKeyCheckEncode,
           Wallet: item?.PaymentAddress,
-          AccountName: item?.AccountName || item?.name,
+          AccountName: item?.FullName,
         })),
       ],
     };
@@ -43,12 +43,24 @@ export const actionNavigate = (item, navigation) => async (
     const { type, publicKey, tokenId, screen, screenParams } = item;
     const rootState = getState();
     const pin = rootState?.pin?.pin;
-    const accountList = accountSeleclor.listAccount(rootState);
+    const accountList = listAllMasterKeyAccounts(rootState);
     const getPrivacyDataByTokenID = selectedPrivacySeleclor.getPrivacyDataByTokenID(
       rootState,
     );
     await dispatch(actionToggleModal());
-    await logEvent(CONSTANT_EVENTS.CLICK_NOTIFICATION, { type });
+
+    if (publicKey) {
+      const accountUpdated = accountList.find(
+        (item) => item.PublicKeyCheckEncode === publicKey,
+      );
+      await dispatch(switchMasterKey(accountUpdated.MasterKey.name));
+      await dispatch(
+        actionSwitchAccount(
+          accountUpdated?.AccountName || accountUpdated?.name,
+        ),
+      );
+    }
+
     switch (type) {
     case 'broadcast': {
       navigation.navigate(routeNames.Home);
@@ -82,14 +94,6 @@ export const actionNavigate = (item, navigation) => async (
         id: tokenId,
         ID: tokenId,
       };
-      const accountUpdated = accountList.find(
-        (item) => item.PublicKeyCheckEncode === publicKey,
-      );
-      await dispatch(
-        actionSwitchAccount(
-            accountUpdated?.AccountName || accountUpdated?.name,
-        ),
-      );
       if (token?.isToken && !token?.isMainCrypto) {
         await dispatch(actionAddFollowToken(tokenId));
       }
@@ -102,16 +106,6 @@ export const actionNavigate = (item, navigation) => async (
         const parts = param.split('=');
         params[parts[0]] = parts[1];
       });
-      if (publicKey) {
-        const accountUpdated = accountList.find(
-          (item) => item.PublicKeyCheckEncode === publicKey,
-        );
-        await dispatch(
-          actionSwitchAccount(
-              accountUpdated?.AccountName || accountUpdated?.name,
-          ),
-        );
-      }
       if (tokenId) {
         await dispatch(setSelectedPrivacy(tokenId));
       }

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import BaseScreen from '@screens/BaseScreen';
@@ -17,6 +16,7 @@ import { MAX_FEE_PER_TX } from '@src/components/EstimateFee/EstimateFee.utils';
 import Header from '@src/components/Header';
 import { withLayout_2 } from '@components/Layout';
 import { actionSwitchAccount } from '@src/redux/actions/account';
+import { switchMasterKey } from '@src/redux/actions/masterKey';
 import AddStake from './AddStake';
 
 export const TAG = 'AddStake';
@@ -58,10 +58,9 @@ class AddStakeContainer extends BaseScreen {
   }
 
   async getBalance() {
-    const { wallet } = this.props;
     const { device } = this.state;
     const account = device.Account;
-    const balance = await accountService.getBalance(account, wallet);
+    const balance = await accountService.getBalance(account, account.Wallet);
     this.setState({ balance });
   }
 
@@ -97,7 +96,6 @@ class AddStakeContainer extends BaseScreen {
   handleStake = async () => {
     try {
       const { device, fee } = this.state;
-      const { wallet } = this.props;
       const account = device.Account;
       const paymentAddress = account.PaymentAddress;
       this.setState({ isStaking: true });
@@ -107,7 +105,7 @@ class AddStakeContainer extends BaseScreen {
         fee,
         paymentAddress,
         account,
-        wallet,
+        account.Wallet,
         paymentAddress,
         true,
       );
@@ -120,7 +118,7 @@ class AddStakeContainer extends BaseScreen {
   };
 
   render() {
-    const { navigation, wallet, actionSwitchAccount } = this.props;
+    const { navigation, actionSwitchAccount, switchMasterKey } = this.props;
     const { device, amount, fee, isStaking, balance } = this.state;
     const account = device.Account;
     return (
@@ -129,7 +127,6 @@ class AddStakeContainer extends BaseScreen {
         <AddStake
           account={account}
           navigation={navigation}
-          wallet={wallet}
           type={stakeType}
           amount={amount}
           fee={fee}
@@ -139,26 +136,18 @@ class AddStakeContainer extends BaseScreen {
           balance={balance}
           isVNode={device.IsVNode}
           onSwitchAccount={actionSwitchAccount}
+          onSwitchMasterKey={switchMasterKey}
         />
       </FlexView>
     );
   }
 }
 
-AddStakeContainer.propTypes = {
-  wallet: PropTypes.object.isRequired,
-};
-
-AddStakeContainer.defaultProps = {};
-
-const mapStateToProps = state => ({
-  wallet: state?.wallet,
-});
-
 const mapDispatch = {
-  actionSwitchAccount
+  actionSwitchAccount,
+  switchMasterKey,
 };
 
-export default compose(connect(mapStateToProps, mapDispatch))(
+export default compose(connect(null, mapDispatch))(
   withLayout_2(AddStakeContainer)
 );

@@ -42,6 +42,8 @@ import {
   getDurationShowMessage,
   handleGetFunctionConfigs
 } from '@src/shared/hooks/featureConfig';
+import { listAllMasterKeyAccounts } from '@src/redux/selectors/masterKey';
+import { loadAllMasterKeyAccounts } from '@src/redux/actions/masterKey';
 import style from './style';
 import WelcomeFirstTime from './components/WelcomeFirstTime';
 
@@ -157,13 +159,15 @@ class Node extends BaseScreen {
   }
 
   loadData = async (firstTime = false) => {
-    const { navigation } = this.props;
+    const { navigation, loadAllAccounts } = this.props;
     const { listDevice } = this.state;
     const { refresh } = navigation?.state?.params || {};
 
     if (firstTime !== true && (!refresh || (refresh === lastRefreshTime))) {
       return;
     }
+
+    await loadAllAccounts();
 
     lastRefreshTime = refresh || new Date().getTime();
 
@@ -231,12 +235,11 @@ class Node extends BaseScreen {
   }
 
   sendWithdrawTx = async (paymentAddress, tokenIds) => {
-    const { wallet } = this.props;
+    const { accounts } = this.props;
     const { withdrawTxs } = this.state;
-    const listAccount = await wallet.listAccount();
     for (const tokenId of tokenIds) {
-      const account = listAccount.find(item => item.PaymentAddress === paymentAddress);
-      await accountService.createAndSendWithdrawRewardTx(tokenId, account, wallet)
+      const account = accounts.find(item => item.PaymentAddress === paymentAddress);
+      await accountService.createAndSendWithdrawRewardTx(tokenId, account, account.Wallet)
         .then((res) => withdrawTxs[paymentAddress] = res?.txId)
         .catch(() => null);
     }
@@ -517,7 +520,7 @@ class Node extends BaseScreen {
   };
 
   renderNode({ item, index }) {
-    const { wallet } = this.props;
+    const { accounts } = this.props;
     const {
       isFetching,
       withdrawTxs,
@@ -525,7 +528,7 @@ class Node extends BaseScreen {
 
     return (
       <NodeItem
-        wallet={wallet}
+        accounts={accounts}
         committees={committees}
         nodeRewards={nodeRewards}
         allTokens={allTokens}
@@ -708,16 +711,19 @@ class Node extends BaseScreen {
 }
 
 Node.propTypes = {
-  wallet: PropTypes.object.isRequired,
+  accounts: PropTypes.array.isRequired,
+  loadAllAccounts: PropTypes.func.isRequired,
 };
 
-Node.defaultProps = {};
-
 const mapState = state => ({
-  wallet: state.wallet,
+  accounts: listAllMasterKeyAccounts(state),
+});
+
+const mapDispatch = ({
+  loadAllAccounts: loadAllMasterKeyAccounts,
 });
 
 export default connect(
   mapState,
-  null,
+  mapDispatch,
 )(Node);

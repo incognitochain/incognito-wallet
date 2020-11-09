@@ -97,6 +97,14 @@ target 'Incognito' do
   pod 'react-native-settings', :path => '../node_modules/react-native-settings'
   pod 'RNCPushNotificationIOS', :path => '../node_modules/@react-native-community/push-notification-ios'
 
+  pre_install do |installer|
+    puts("Image fix for ios14: remove this when upgradeing to >= 0.63.3")
+    find = "_currentFrame.CGImage;"
+    replace = "_currentFrame.CGImage ;} else { [super displayLayer:layer];"
+    op = `sed -ie "s/#{find}/#{replace}/" ../node_modules/react-native/Libraries/Image/RCTUIImageViewAnimated.m`
+    puts("Image fix for ios14 done")
+  end
+
   post_install do |installer|
     installer.pods_project.targets.each do |target|
       if target.name == "React"

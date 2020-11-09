@@ -6,6 +6,8 @@ export default {
   PNODE_UNSTAKE_DESC: 'Stop funded staking',
   ACCOUNT_NOT_FOUND: 'Missing account',
   UNSTAKING: 'unstaking in process',
+
+
   // error
   CAN_NOT_GET_PDEX_TRADE_HISTORIES: 'Can not get pdex trade histories.',
   CAN_NOT_GET_PDEX_DATA: 'Can not get pdex data.',
@@ -25,4 +27,5 @@ export default {
   NODE_NOT_SUPPORTED_UPDATE_WIFI_DESCRIPTION: 'Your Node is not up to date. Please reach out to go@incognito.org for support.',
   UPDATE_WIFI_INSTRUCTION: 'Please turn off cellular data on your device. Using Wi-Fi only, make sure your Node is online before proceeding to change networks.',
   PENDING_TRANSACTIONS: 'Please wait for your previous transaction to finish processing. Simply try again later.',
+  MUST_BE_ARRAY: 'Data must be an array.',
 };
