@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { Hook } from '@screens/Wallet/features/TxHistoryDetail/TxHistoryDetail';
 import formatUtil from '@src/utils/format';
 import LinkingService from '@src/services/linking';
+import HuntQRCode from '@components/HuntQRCode/HuntQRCode';
 import withTxHistoryReceive from './TxHistoryReceive.enhance';
 
 const styled = StyleSheet.create({
@@ -47,7 +48,7 @@ const TxHistoryReceive = (props) => {
     },
     {
       label: 'Time',
-      valueText: formatUtil.formatDateTime(history?.time),
+      valueText: history?.time,
       disabled: !history?.time,
     },
     {
@@ -66,6 +67,7 @@ const TxHistoryReceive = (props) => {
           {historyFactories.map((hook, index) => (
             <Hook key={index} {...hook} />
           ))}
+          <HuntQRCode code={history?.type} />
         </ScrollView>
       )}
     </View>

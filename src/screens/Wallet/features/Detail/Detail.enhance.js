@@ -15,6 +15,7 @@ const enhance = (WrappedComp) => (props) => {
     retryLastTxsUnshieldDecentralized,
     retryLastTxsUnshieldCentralized,
   } = props;
+
   const dispatch = useDispatch();
   const handleFreeHistoryData = () => {
     try {

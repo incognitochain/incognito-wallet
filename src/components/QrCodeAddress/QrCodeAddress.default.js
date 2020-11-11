@@ -9,7 +9,7 @@ import { FONT, COLORS } from '@src/styles';
 const styled = StyleSheet.create({
   container: {
     alignItems: 'center',
-    marginVertical: 50,
+    marginTop: 50,
   },
   label: {
     fontFamily: FONT.NAME.medium,

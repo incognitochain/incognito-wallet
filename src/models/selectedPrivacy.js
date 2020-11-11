@@ -1,4 +1,5 @@
 import { CONSTANT_COMMONS, CONSTANT_CONFIGS } from '@src/constants';
+import { BIG_COINS } from '@src/screens/DexV2/constants';
 import PToken from './pToken';
 
 function getNetworkName() {
@@ -125,6 +126,8 @@ class SelectedPrivacy {
     const { networkName, rootNetworkName } = getNetworkName.call(this);
     this.networkName = networkName;
     this.rootNetworkName = rootNetworkName;
+    this.isUSDT = this.tokenId === BIG_COINS.USDT;
+    this.isPRV = this.tokenId === BIG_COINS.PRV;
   }
 }
 

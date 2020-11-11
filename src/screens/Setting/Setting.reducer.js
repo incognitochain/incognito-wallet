@@ -5,6 +5,7 @@ import {
   ACTION_FETCHED_SERVER,
   ACTION_FETCHED_DEVICES,
   ACTION_TOGGLE_DECIMAL_DIGITS,
+  ACTION_TOGGLE_CURRENCY,
 } from './Setting.constant';
 
 const initialState = {
@@ -12,6 +13,7 @@ const initialState = {
   devices: [],
   server: null,
   decimalDigits: true,
+  isToggleUSD: true
 };
 
 const settingReducer = (state = initialState, action) => {
@@ -34,6 +36,12 @@ const settingReducer = (state = initialState, action) => {
       decimalDigits: !state?.decimalDigits,
     };
   }
+  case ACTION_TOGGLE_CURRENCY: {
+    return {
+      ...state,
+      isToggleUSD: !state?.isToggleUSD,
+    };
+  }
   default:
     return state;
   }
@@ -42,7 +50,7 @@ const settingReducer = (state = initialState, action) => {
 const persistConfig = {
   key: 'setting',
   storage: AsyncStorage,
-  whitelist: ['decimalDigits'],
+  whitelist: ['decimalDigits', 'isToggleUSD'],
   stateReconciler: autoMergeLevel2,
 };
 

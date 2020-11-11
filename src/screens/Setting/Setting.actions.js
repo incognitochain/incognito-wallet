@@ -4,6 +4,7 @@ import serverService from '@src/services/wallet/Server';
 import {
   ACTION_FETCHED_DEVICES,
   ACTION_FETCHED_SERVER,
+  ACTION_TOGGLE_CURRENCY,
   ACTION_TOGGLE_DECIMAL_DIGITS,
 } from './Setting.constant';
 
@@ -44,3 +45,7 @@ export const actionFetchServers = () => async (dispatch, getState) => {
     dispatch(actionFetchedServer(server));
   }
 };
+
+export const actionToggleCurrency = () => ({
+  type: ACTION_TOGGLE_CURRENCY,
+});

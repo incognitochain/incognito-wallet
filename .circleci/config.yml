@@ -170,7 +170,16 @@ jobs:
       - run: bundle exec fastlane ios release
       - run: chmod +x .circleci/slack-upload.sh
       - run: curl -X POST -H 'Content-type:application/json' --data '{"text":"'"Push iOS $APP_VERSION to the app store successfully!"'"}' $SLACK_HOOK
-
+  publish_github_release:
+    docker:
+      - image: cibuilds/github:0.13
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            ghr -t ${GITHUB_TOKEN} -u incognitochain -r incognito-wallet -c ${CIRCLE_SHA1} -soft ${APP_VERSION} .
 orbs:
   rn: react-native-community/react-native@4.1.0
 version: 2.1
@@ -260,6 +269,9 @@ workflows:
           requires:
             - generate_data
       - push_play_store:
+          requires:
+            - generate_data
+      - publish_github_release:
           requires:
             - generate_data
   push_production:

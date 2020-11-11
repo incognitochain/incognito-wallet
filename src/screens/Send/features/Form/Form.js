@@ -78,11 +78,12 @@ const SendForm = (props) => {
     'decentralized',
     handleSend,
   );
-  const placeholderAddress = `Incognito ${
+  const placeholderAddress = `Incognito${
     selectedPrivacy?.isMainCrypto || selectedPrivacy?.isIncognitoToken
-      ? ''
-      : `or ${selectedPrivacy?.rootNetworkName}`
-  } address`;
+      ? ' '
+      : ` or ${selectedPrivacy?.rootNetworkName} `
+  }address`;
+
   const renderMemo = () => {
     if (isUnShield) {
       if (selectedPrivacy?.isBep2Token || selectedPrivacy?.currencyType === 4) {

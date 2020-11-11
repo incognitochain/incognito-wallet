@@ -5,6 +5,7 @@ import Header from '@src/components/Header';
 import { useNavigation } from 'react-navigation-hooks';
 import routeNames from '@src/router/routeNames';
 import { useSelector } from 'react-redux';
+import CurrencySection from '@screens/Setting/features/CurrencySection/CurrencySection';
 import PINSection from './features/PINSection';
 import SeparatorSection from './features/SeparatorSection';
 import DevSection from './features/DevSection';
@@ -43,6 +44,7 @@ const Setting = () => {
           <PINSection />
           <SeparatorSection />
           <DecimalDigitsSection />
+          <CurrencySection />
           <AddressBookSection />
           <UTXOSection />
           {global.isDebug() && <DevSection />}

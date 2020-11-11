@@ -17,13 +17,14 @@ const withPairs = WrappedComp => (props) => {
   const [shares, setShares] = useState([]);
   const [erc20Tokens, setERC20Tokens] = useState([]);
 
+  // isClear handle case onTradeSuccess reload all rate
   const loadPairs = async () => {
     try {
       setLoading(true);
-      const pTokens = await getTokenList();
+      const pTokens     = await getTokenList();
       const chainTokens = await tokenService.getPrivacyTokens();
-      const chainPairs = await getPDEState();
-      let tokens = tokenService.mergeTokens(chainTokens, pTokens);
+      const chainPairs  = await getPDEState();
+      let tokens        = tokenService.mergeTokens(chainTokens, pTokens);
       const erc20Tokens = await getAllTradingTokens();
 
       // const erc20Tokens = [];

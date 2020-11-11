@@ -1,8 +1,11 @@
 import React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import {useNavigation, useNavigationParam} from 'react-navigation-hooks';
 import TradeSuccessModal from '@screens/DexV2/components/TradeSuccessModal';
 
 const withSuccess = WrappedComp => (props) => {
+  // when trade success reload rate
+  const onTradeSuccess  = useNavigationParam('onTradeSuccess');
+
   const [tradeSuccess, setTradeSuccess] = React.useState(false);
   const navigation = useNavigation();
 
@@ -15,6 +18,7 @@ const withSuccess = WrappedComp => (props) => {
 
   const closeSuccess = () => {
     setTradeSuccess(false);
+    onTradeSuccess && onTradeSuccess();
     navigation.goBack();
   };
 

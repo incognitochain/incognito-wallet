@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { isNumber, isNaN } from 'lodash';
 import convertUtil from '@utils/convert';
 import { MESSAGES, MIN_INPUT } from '@screens/Dex/constants';
@@ -12,12 +12,21 @@ const withValidate = WrappedComp => (props) => {
     inputFee,
     feeToken,
     inputMin,
+    prvBalance,
+    fee,
+    isPrv
   } = props;
+
+  /**case provide All PRV
+   **fee be subtract from the PRV Balance*/
+  const [payOnOrigin, setPayOnOrigin] = useState(false);
+
   const validate = () => {
     try {
       const newValue = inputText;
       const min = isNumber(inputMin) ? inputMin : MIN_INPUT;
       let number = convertUtil.toNumber(inputText);
+
       if (!newValue || newValue.length === 0) {
         setError('');
       } else if (isNaN(number)) {
@@ -28,16 +37,40 @@ const withValidate = WrappedComp => (props) => {
         }
       } else {
         number = convertUtil.toOriginalAmount(number, inputToken.pDecimals, inputToken.pDecimals !== 0);
-        if (inputFee && number <= inputFee) {
+        setPayOnOrigin(false);
+        if ((
+          !isPrv &&
+          inputBalance !== null &&
+          inputFee !== null &&
+          number > inputBalance
+        ) || (
+          isPrv && (prvBalance < number)
+        )) {
+          setError(MESSAGES.BALANCE_INSUFFICIENT);
+        } else if (inputFee && number <= inputFee) {
           setError(MESSAGES.GREATER(inputFee, inputToken.pDecimals));
         } else if (number < min) {
           setError(MESSAGES.GREATER_OR_EQUAL(min, inputToken.pDecimals));
+        } else if (
+          prvBalance < fee ||
+          (isPrv && (
+            (prvBalance < min + fee)
+            ||
+            (
+              prvBalance === fee + min &&
+              number !== min &&
+              number !== prvBalance
+            )
+          ))
+        ) {
+          setError(MESSAGES.NOT_ENOUGH_PRV_NETWORK_FEE);
         } else if (!Number.isInteger(number)) {
           setError(MESSAGES.MUST_BE_INTEGER);
-        } else if (inputBalance !== null && inputFee !== null && number > inputBalance) {
-          setError(MESSAGES.BALANCE_INSUFFICIENT);
         } else {
           setError('');
+          /** user provide all PRV
+           *** fee will be subtract from the PRV Balance **/
+          setPayOnOrigin(isPrv && prvBalance === number);
         }
       }
     } catch (error) {
@@ -56,6 +89,7 @@ const withValidate = WrappedComp => (props) => {
       {...{
         ...props,
         error,
+        payOnOrigin
       }}
     />
   );

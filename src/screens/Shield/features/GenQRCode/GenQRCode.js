@@ -13,6 +13,8 @@ import { ClockWiseIcon } from '@src/components/Icons';
 import Tooltip from '@src/components/Tooltip/Tooltip';
 import { COLORS } from '@src/styles';
 import { ScrollView } from '@src/components/core';
+import routeNames from '@routers/routeNames';
+import { useNavigation } from 'react-navigation-hooks';
 import withGenQRCode from './GenQRCode.enhance';
 import { styled } from './GenQRCode.styled';
 import { useCountDown } from './GenQRCode.useEffect';
@@ -112,9 +114,10 @@ const Content = () => {
 
 const GenQRCode = (props) => {
   const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const navigation      = useNavigation();
   const { hasError, handleShield, isFetching } = props;
   const [toggle, setToggle] = React.useState(true);
-  const handleToggleTootip = () => setToggle(!toggle);
+  const handleToggleTooltip = () => navigation.navigate(routeNames.CoinInfo);
   React.useEffect(() => {
     if (toggle) {
       const timeout = setTimeout(() => {
@@ -139,7 +142,7 @@ const GenQRCode = (props) => {
       <Header
         title={`Shield ${selectedPrivacy?.externalSymbol}`}
         titleStyled={styled.titleStyled}
-        rightHeader={<BtnInfo isBlack onPress={handleToggleTootip} />}
+        rightHeader={<BtnInfo isBlack onPress={handleToggleTooltip} />}
       />
       {toggle && (
         <Tooltip

@@ -1,7 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
-import { View, Text, RoundCornerButton, ScrollView, FlexView } from '@components/core';
+import {
+  View,
+  Text,
+  RoundCornerButton,
+  ScrollView,
+  FlexView,
+} from '@components/core';
 import Balance from '@screens/DexV2/components/Balance';
 import ExtraInfo from '@screens/DexV2/components/ExtraInfo';
 import format from '@utils/format';
@@ -13,7 +19,6 @@ import withAccount from '@screens/DexV2/components/account.enhance';
 import Help from '@components/Help/index';
 import Powered from '@screens/DexV2/components/Powered';
 import PoolSize from '@screens/DexV2/components/PoolSize';
-import { TRADING } from '@src/constants';
 import withSuccess from './success.enhance';
 import withTrade from './trade.enhance';
 import withData from './data.enhance';
@@ -28,9 +33,7 @@ const Trade = ({
   fee,
   feeToken,
   onTrade,
-
   trading,
-
   error,
   warning,
   isErc20,
@@ -43,7 +46,10 @@ const Trade = ({
       <ScrollView paddingBottom>
         <View style={styles.mainInfo}>
           <Text style={styles.bigText}>Buy at least</Text>
-          <Text style={styles.bigText} numberOfLines={3}>{format.amountFull(minimumAmount, outputToken.pDecimals)} {outputToken.symbol}</Text>
+          <Text style={styles.bigText} numberOfLines={3}>
+            {format.amountFull(minimumAmount, outputToken.pDecimals)}{' '}
+            {outputToken.symbol}
+          </Text>
         </View>
         <ExtraInfo
           left="Pay with"
@@ -56,50 +62,80 @@ const Trade = ({
           title="Purchase"
           style={styles.extra}
         />
-        { !isErc20 && (
-        <>
-          <ExtraInfo
-            token={feeToken}
-            left={(
-              <View style={styles.row}>
-                <Text style={styles.extra}>Network fee</Text>
-                <Help title="Network fee" content="Network fees go to validators. There is no trading fee." />
-              </View>
-            )}
-            right={`${format.amount(fee, feeToken.pDecimals)} ${feeToken.symbol}`}
-            style={styles.extra}
-          />
-          <PoolSize outputToken={outputToken} inputToken={inputToken} pair={pair} />
-        </>
+        {!isErc20 && (
+          <>
+            <ExtraInfo
+              token={feeToken}
+              left={(
+                <View style={styles.row}>
+                  <Text style={styles.extra}>Network fee</Text>
+                  <Help
+                    title="Network fee"
+                    content="Network fees go to validators. There is no trading fee."
+                  />
+                </View>
+              )}
+              right={`${format.amount(fee, feeToken.pDecimals)} ${
+                feeToken.symbol
+              }`}
+              style={styles.extra}
+            />
+            <PoolSize
+              outputToken={outputToken}
+              inputToken={inputToken}
+              pair={pair}
+            />
+          </>
         )}
-        { !!isErc20 && (
-        <>
-          <ExtraInfo
-            token={feeToken}
-            left={(
-              <View style={styles.row}>
-                <Text style={styles.extra}>Network fee</Text>
-                <Help title="Network fee" content="Network fees go to validators." />
-              </View>
+        {!!isErc20 && (
+          <>
+            <ExtraInfo
+              token={feeToken}
+              left={(
+                <View style={styles.row}>
+                  <Text style={styles.extra}>Network fee</Text>
+                  <Help
+                    title="Network fee"
+                    content="Network fees go to validators."
+                  />
+                </View>
+              )}
+              right={`${format.amount(fee, feeToken.pDecimals)} ${
+                feeToken.symbol
+              }`}
+              style={styles.extra}
+            />
+            {quote?.crossTrade && (
+              <PoolSize
+                outputToken={outputToken}
+                inputToken={inputToken}
+                pair={pair}
+              />
             )}
-            right={`${format.amount(fee, feeToken.pDecimals)} ${feeToken.symbol}`}
-            style={styles.extra}
-          />
-          <ExtraInfo
-            token={feeToken}
-            left={(
-              <View style={styles.row}>
-                <Text style={styles.extra}>Trading fee</Text>
-                <Help title="Trading fee" content="This is a Kyber pool. You are trading anonymously on the Ethereum network which will incur trading fees. Incognito does not charge trading fees." />
-              </View>
+            {!!quote?.erc20Fee && (
+              <ExtraInfo
+                token={feeToken}
+                left={(
+                  <View style={styles.row}>
+                    <Text style={styles.extra}>Trading fee</Text>
+                    <Help
+                      title="Trading fee"
+                      content="This is a Kyber pool. You are trading anonymously on the Ethereum network which will incur trading fees. Incognito does not charge trading fees."
+                    />
+                  </View>
+                )}
+                right={`${format.amount(quote?.erc20Fee, feeToken.pDecimals)} ${
+                  feeToken.symbol
+                }`}
+                style={styles.extra}
+              />
             )}
-            right={`${format.amount(TRADING.getFees()[quote.protocol || 'Kyber'], feeToken.pDecimals)} ${feeToken.symbol}`}
-            style={styles.extra}
-          />
-        </>
+          </>
         )}
-        <Powered network={isErc20 ? quote?.protocol : 'Incognito'} />
-        {!!warning && <ExtraInfo left={warning} right="" style={styles.warning} />}
+        <Powered network={quote?.network} />
+        {!!warning && (
+          <ExtraInfo left={warning} right="" style={styles.warning} />
+        )}
         {!!error && <Text style={styles.error}>{error}</Text>}
         <RoundCornerButton
           style={styles.button}
@@ -129,10 +165,7 @@ Trade.propTypes = {
   error: PropTypes.string,
   warning: PropTypes.string,
   isErc20: PropTypes.bool,
-  pair: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.array,
-  ]),
+  pair: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   quote: PropTypes.object,
 };
 

@@ -16,11 +16,15 @@ import {
   normalizeData,
   getTypeHistoryReceive,
   handleFilterHistoryReceiveByTokenId,
+  mergeReceiveAndLocalHistory,
 } from '@src/redux/utils/token';
 import { getBalance as getAccountBalance } from '@src/redux/actions/account';
 import internalTokenModel from '@models/token';
 import Util from '@src/utils/Util';
-import { getReceiveHistoryByRPC } from '@src/services/wallet/RpcClientService';
+import {
+  getReceiveHistoryByRPC,
+  getTxTransactionByHash,
+} from '@src/services/wallet/RpcClientService';
 import { actionLogEvent } from '@src/screens/Performance';
 import { ConfirmedTx } from '@src/services/wallet/WalletService';
 import { CONSTANT_COMMONS } from '@src/constants';
@@ -210,6 +214,9 @@ export const actionAddFollowTokenSuccess = (payload) => ({
 export const actionAddFollowToken = (tokenId) => async (dispatch, getState) => {
   const state = getState();
   let wallet = state.wallet;
+  if(!tokenId){
+    return;
+  }
   try {
     const isTokenFollowed = isTokenFollowedSelector(state)(tokenId);
     const isFetchingFollowToken = followingTokenSelector(state)(tokenId);
@@ -242,6 +249,9 @@ export const actionRemoveFollowToken = (tokenId) => async (
 ) => {
   const state = getState();
   let wallet = state.wallet;
+  if(!tokenId){
+    return;
+  }
   try {
     const isFetchingFollowToken = followingTokenSelector(state)(tokenId);
     const isTokenFollowed = isTokenFollowedSelector(state)(tokenId);
@@ -312,26 +322,10 @@ export const actionFetchHistoryToken = (refreshing = false) => async (
         historiesTokenFromApi,
         receiveHistory,
       ] = await Promise.all(task);
-      const rcHistoryFilByTokenHistory = receiveHistory
-        ? receiveHistory?.filter(
-            (rcHistory) =>
-              !historiesToken?.some(
-                (history) => history?.txID === rcHistory?.txID,
-              ),
-          )
-        : [];
-      const rcHistoryFilByTokenHistoryFromApi = rcHistoryFilByTokenHistory
-        ? rcHistoryFilByTokenHistory?.filter(
-            (rcHistory) =>
-              !historiesTokenFromApi?.some(
-                (history) => history?.incognitoTxID === rcHistory?.txID,
-              ),
-          )
-        : [];
-      const mergeHistories = [
-        ...historiesToken,
-        ...rcHistoryFilByTokenHistoryFromApi,
-      ];
+      const mergeHistories = mergeReceiveAndLocalHistory({
+        localHistory: historiesToken,
+        receiveHistory,
+      });
       histories = combineHistory({
         histories: mergeHistories,
         historiesFromApi: historiesTokenFromApi,
@@ -368,15 +362,10 @@ export const actionFetchHistoryMainCrypto = (refreshing = false) => async (
         dispatch(loadAccountHistory()),
         dispatch(actionFetchReceiveHistory(refreshing)),
       ]);
-      const rcHistoryFilByAccHistory = receiveHistory
-        ? receiveHistory?.filter(
-            (rcHistory) =>
-              !accountHistory?.some(
-                (accHistory) => accHistory?.txID === rcHistory?.txID,
-              ),
-          )
-        : [];
-      const mergeHistories = [...accountHistory, ...rcHistoryFilByAccHistory];
+      const mergeHistories = mergeReceiveAndLocalHistory({
+        localHistory: accountHistory,
+        receiveHistory,
+      });
       histories = normalizeData(
         mergeHistories,
         selectedPrivacy?.decimals,
@@ -447,7 +436,7 @@ export const actionFetchReceiveHistory = (refreshing = false) => async (
       histories,
     });
     data = await new Promise.all([
-      ...historiesFilterByTokenId?.map((history) => {
+      ...historiesFilterByTokenId?.map(async (history) => {
         const txID = history?.txID;
         let type = getTypeHistoryReceive({
           account,
@@ -472,7 +461,6 @@ export const actionFetchReceiveHistory = (refreshing = false) => async (
         (history) => history?.type === CONSTANT_COMMONS.HISTORY.TYPE.RECEIVE,
       )
       .filter((history) => !!history?.amount);
-
     data = refreshing ? [...data, ...oldData] : [...oldData, ...data];
     data = uniqBy(data, (item) => item?.id) || [];
     const oversize = histories?.length < curLimit;

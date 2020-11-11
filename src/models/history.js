@@ -84,6 +84,7 @@ class History {
       statusDetail: data?.StatusDetail,
       isShieldTx,
       isDecentralized,
+      incognitoTx: data?.IncognitoTx,
     };
     return history;
   }

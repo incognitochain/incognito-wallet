@@ -24,7 +24,7 @@ class TxHistoryDetailContainer extends Component {
     navigation.pop();
   };
 
-  retryExpiredDeposit = async (data, isDecentralized) => {
+  handleRetryExpiredDeposit = async (data, isDecentralized) => {
     try {
       if (data) {
         const { txOutchain } = this.state;
@@ -107,8 +107,8 @@ class TxHistoryDetailContainer extends Component {
                     onPress={async () => {
                       const { txOutchain } = this.state;
                       const { data } = this.props;
-                      if (txOutchain != '') {
-                        await this.retryExpiredDeposit(data, true);
+                      if (txOutchain !== '') {
+                        await this.handleRetryExpiredDeposit(data, true);
                         this.setState({
                           shouldShowTxModal: false,
                           errorTx: false,
@@ -144,7 +144,7 @@ class TxHistoryDetailContainer extends Component {
             if (decentralized) {
               this.setState({ shouldShowTxModal: true });
             } else {
-              this.retryExpiredDeposit(data?.history, false);
+              this.handleRetryExpiredDeposit(data?.history, false);
             }
           }}
         />

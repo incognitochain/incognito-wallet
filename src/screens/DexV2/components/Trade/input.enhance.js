@@ -1,9 +1,12 @@
 import React from 'react';
-import _ from 'lodash';
+import { isNaN } from 'lodash';
 import convertUtil from '@utils/convert';
 import formatUtil from '@utils/format';
+import { useNavigationParam } from 'react-navigation-hooks';
 
 const withChangeInput = WrappedComp => (props) => {
+  const fromTrade = useNavigationParam('fromTrade');
+
   const [inputValue, setInputValue] = React.useState(null);
   const [inputText, setInputText] = React.useState('');
 
@@ -27,13 +30,17 @@ const withChangeInput = WrappedComp => (props) => {
   React.useEffect(() => {
     if (feeToken && inputText) {
       const number = convertUtil.toNumber(inputText);
-      if (!_.isNaN(number) && number > 0) {
+      if (!isNaN(number) && number > 0) {
         const originalAmount = convertUtil.toOriginalAmount(number, inputToken.pDecimals, inputToken.pDecimals !== 0);
-        const value = feeToken.id === inputToken.id ? originalAmount - fee : originalAmount;
-        setInputValue(value);
+        if (fromTrade) {
+          const value = feeToken.id === inputToken.id ? originalAmount - fee : originalAmount;
+          setInputValue(value);
+          return;
+        }
+        setInputValue(originalAmount);
       }
     }
-  }, [fee, feeToken, inputText, inputToken]);
+  }, [fee, feeToken, inputText, inputToken, fromTrade]);
 
   return (
     <WrappedComp

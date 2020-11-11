@@ -6,7 +6,8 @@ import { useFocusEffect, useNavigationParam } from 'react-navigation-hooks';
 import { useSelector } from 'react-redux';
 import { compose } from 'recompose';
 import ErrorBoundary from '@src/components/ErrorBoundary';
-import moment from 'moment';
+import formatUtil from '@src/utils/format';
+import { endsWith } from 'lodash';
 import { getTypeOfHistoryReceive } from './TxHistoryReceive.utils';
 
 const enhance = (WrappedComp) => (props) => {
@@ -50,7 +51,11 @@ const enhance = (WrappedComp) => (props) => {
         history: {
           ...history,
           typeOf,
-          time: moment(tx?.LockTime).add(7, 'hours') || history?.time,
+          time: formatUtil.formatDateTime(
+            endsWith(tx?.LockTime, 'Z')
+              ? tx?.LockTime
+              : `${tx?.LockTime}Z` || history?.time,
+          ),
         },
       });
     }

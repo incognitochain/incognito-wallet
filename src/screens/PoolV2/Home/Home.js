@@ -78,6 +78,7 @@ Home.propTypes = {
   onLoad: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   account: PropTypes.object.isRequired,
+  isLoadingHistories: PropTypes.bool.isRequired
 };
 
 Home.defaultProps = {

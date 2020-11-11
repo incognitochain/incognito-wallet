@@ -4,6 +4,12 @@ const PROTOCOLS = {
   UNISWAP: 'Uniswap',
 };
 
+const ERC20_NETWORK = {
+  Kyber: 'Kyber',
+  Uniswap: 'Uniswap',
+  PDex: 'Incognito',
+};
+
 let kyberTradeAddress = '';
 let uniswapTradeAddress = '';
 let kyberFee = 0;
@@ -55,6 +61,7 @@ const setFees = ({
 
 export default {
   PROTOCOLS,
+  ERC20_NETWORK,
   setDAppAddresses,
   getDAppAddresses,
   setFees,

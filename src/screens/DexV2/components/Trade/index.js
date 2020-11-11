@@ -1,9 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
-import { Image, TouchableOpacity, View, RoundCornerButton, Text, RefreshControl, ScrollView } from '@components/core';
+import {
+  Image,
+  TouchableOpacity,
+  View,
+  RoundCornerButton,
+  Text,
+  RefreshControl,
+  ScrollView,
+} from '@components/core';
 import withFilter from '@screens/DexV2/components/Trade/filter.enhance';
-import {Divider} from 'react-native-elements';
+import { Divider } from 'react-native-elements';
 import downArrow from '@assets/images/icons/circle_arrow_down.png';
 import withSwap from '@screens/DexV2/components/Trade/swap.enhance';
 import Balance from '@screens/DexV2/components/Balance';
@@ -24,7 +32,7 @@ import Powered from '@screens/DexV2/components/Powered';
 import { ArrowRightGreyIcon } from '@components/Icons';
 import NewInput from '../NewInput';
 import withPair from './pair.enhance';
-import withChangeInput  from './input.enhance';
+import withChangeInput from './input.enhance';
 import withBalanceLoader from './balance.enhance';
 import styles from './style';
 import ExchangeRate from '../ExchangeRate';
@@ -36,32 +44,24 @@ const Trade = ({
   inputText,
   onChangeInputToken,
   onChangeInputText,
-
   onSwapTokens,
-
   onChangeOutputToken,
   outputList,
   outputToken,
   outputText,
   outputValue,
   minimumAmount,
-
   inputBalance,
   prvBalance,
-
   fee,
   feeToken,
   pair,
-
   histories,
-
   error,
   warning,
-
   quote,
   gettingQuote,
   isErc20,
-
   isLoading,
   onLoadPairs,
   inputBalanceText,
@@ -72,36 +72,47 @@ const Trade = ({
       inputToken,
       inputValue,
       inputText,
-
       outputToken,
       outputValue,
       minimumAmount,
-
       fee,
       feeToken,
       pair,
       isErc20,
-
       inputBalance,
       prvBalance,
-
       quote,
+
+      // Reload new rate after trading successfully
+      onTradeSuccess: onLoadPairs
     });
   };
   const navigateHistory = () => {
     navigation.navigate(ROUTE_NAMES.TradeHistory);
   };
 
+  const renderPoolSize = () => {
+    if (pair) {
+      if (!quote || (quote && !!quote?.crossTrade)) {
+        return (
+          <PoolSize
+            outputToken={outputToken}
+            inputToken={inputToken}
+            pair={pair}
+          />
+        );
+      }
+    }
+    return null;
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
         style={styles.scrollContainer}
-        refreshControl={(
-          <RefreshControl
-            refreshing={isLoading}
-            onRefresh={onLoadPairs}
-          />
-        )}
+        refreshControl={
+          <RefreshControl refreshing={isLoading} onRefresh={onLoadPairs} />
+        }
         paddingBottom
       >
         <View style={styles.wrapper}>
@@ -137,29 +148,28 @@ const Trade = ({
             title="Preview your order"
             disabled={
               !!error ||
-          !inputBalance ||
-          !inputValue ||
-          !outputValue ||
-          !minimumAmount ||
-          !inputText ||
-          !!gettingQuote
+              !inputBalance ||
+              !inputValue ||
+              !outputValue ||
+              !minimumAmount ||
+              !inputText ||
+              !!gettingQuote
             }
             onPress={navigateTradeConfirm}
           />
-          { !!(inputToken && outputToken) && (
+          {!!(inputToken && outputToken) && (
             <View style={styles.extraInfo}>
               <Balance token={inputToken} balance={inputBalance} />
               <ExchangeRate
                 inputValue={inputValue}
                 outputValue={outputValue}
                 minimumAmount={minimumAmount}
-
                 inputToken={inputToken}
                 outputToken={outputToken}
                 quote={quote}
               />
-              {!!(!isErc20 && pair) && <PoolSize outputToken={outputToken} inputToken={inputToken} pair={pair} />}
-              <Powered network={isErc20 ? quote?.protocol : 'Incognito'} />
+              {renderPoolSize()}
+              <Powered network={isErc20 ? quote?.network : 'Incognito'} />
               <ExtraInfo left={warning} right="" style={styles.warning} />
             </View>
           )}
@@ -167,7 +177,10 @@ const Trade = ({
       </ScrollView>
       <View style={styles.bottomBar}>
         {!!histories.length && (
-          <TouchableOpacity onPress={navigateHistory} style={styles.bottomFloatBtn}>
+          <TouchableOpacity
+            onPress={navigateHistory}
+            style={styles.bottomFloatBtn}
+          >
             <Text style={styles.bottomText}>Order history</Text>
             <ArrowRightGreyIcon style={{ marginLeft: 10 }} />
           </TouchableOpacity>
@@ -184,35 +197,27 @@ Trade.propTypes = {
   inputText: PropTypes.string,
   onChangeInputToken: PropTypes.func.isRequired,
   onChangeInputText: PropTypes.func.isRequired,
-
   onSwapTokens: PropTypes.func.isRequired,
-
   onChangeOutputToken: PropTypes.func.isRequired,
   outputList: PropTypes.array,
   outputToken: PropTypes.object,
   outputText: PropTypes.string,
   outputValue: PropTypes.number,
   minimumAmount: PropTypes.number,
-
   inputBalance: PropTypes.number,
   prvBalance: PropTypes.number,
-
   fee: PropTypes.number.isRequired,
   feeToken: PropTypes.object.isRequired,
-  pair: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.array,
-  ]),
-
+  pair: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   histories: PropTypes.array,
-
   error: PropTypes.string,
   warning: PropTypes.string,
-
   gettingQuote: PropTypes.bool,
   quote: PropTypes.object,
   isErc20: PropTypes.bool,
   inputBalanceText: PropTypes.string,
+  isLoading: PropTypes.bool.isRequired,
+  onLoadPairs: PropTypes.func.isRequired,
 };
 
 export default compose(

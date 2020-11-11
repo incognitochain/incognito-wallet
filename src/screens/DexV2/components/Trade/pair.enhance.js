@@ -1,27 +1,29 @@
 import React from 'react';
 import { COINS } from '@src/constants';
-import { getDAppAddresses } from '@services/trading';
 
-const withPair = WrappedComp => (props) => {
+const withPair = (WrappedComp) => (props) => {
   const [pair, setPair] = React.useState([]);
-  const { inputToken, outputToken, pairs, isErc20 } = props;
-
+  const { inputToken, outputToken, pairs } = props;
   React.useEffect(() => {
-    if (inputToken && outputToken && !isErc20) {
+    if (inputToken && outputToken) {
       if (inputToken.id === COINS.PRV_ID || outputToken.id === COINS.PRV_ID) {
-        const pair = pairs.find(item =>
-          item.keys.includes(inputToken.id) &&
-          item.keys.includes(outputToken.id)
+        const pair = pairs.find(
+          (item) =>
+            item.keys.includes(inputToken.id) &&
+            item.keys.includes(outputToken.id),
         );
+        
         setPair([pair]);
       } else {
-        const inPair = pairs.find(item =>
-          item.keys.includes(inputToken.id) &&
-          item.keys.includes(COINS.PRV_ID)
+        const inPair = pairs.find(
+          (item) =>
+            item.keys.includes(inputToken.id) &&
+            item.keys.includes(COINS.PRV_ID),
         );
-        const outPair = pairs.find(item =>
-          item.keys.includes(outputToken.id) &&
-          item.keys.includes(COINS.PRV_ID)
+        const outPair = pairs.find(
+          (item) =>
+            item.keys.includes(outputToken.id) &&
+            item.keys.includes(COINS.PRV_ID),
         );
 
         if (inPair && outPair) {
@@ -33,13 +35,7 @@ const withPair = WrappedComp => (props) => {
     } else {
       setPair(null);
     }
-  }, [inputToken, outputToken, pairs, isErc20]);
-
-  React.useEffect(() => {
-    getDAppAddresses()
-      .catch(e => e);
-  }, []);
-
+  }, [inputToken, outputToken, pairs]);
   return (
     <WrappedComp
       {...{

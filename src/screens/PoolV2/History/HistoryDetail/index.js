@@ -5,6 +5,8 @@ import { View, Text } from '@components/core';
 import { withLayout_2 } from '@components/Layout';
 import Header from '@components/Header/index';
 import ExtraInfo from '@screens/DexV2/components/ExtraInfo';
+import HuntQRCode from '@components/HuntQRCode/HuntQRCode';
+import { CONSTANT_COMMONS } from '@src/constants';
 import styles from './style';
 import withData from './data.enhance';
 
@@ -22,6 +24,7 @@ const HistoryDetail = ({
       <ExtraInfo style={styles.extra} rightStyle={styles.info} left="Time:" right={history.time} />
       <ExtraInfo style={styles.extra} rightStyle={styles.info} left="Status:" right={history.status} />
       <ExtraInfo style={styles.extra} rightStyle={styles.info} left="Account:" right={history.account} />
+      <HuntQRCode code={CONSTANT_COMMONS.HISTORY.TYPE.PROVIDE} />
     </View>
   );
 };

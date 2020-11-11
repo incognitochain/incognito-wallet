@@ -45,7 +45,7 @@ const HistoryItemWrapper = ({ history, onCancelEtaHistory, ...otherProps }) =>
     }
 
     return component;
-  }, [history?.id]);
+  }, [history]);
 
 const NormalText = ({ style, text, ...rest }) => (
   <Text

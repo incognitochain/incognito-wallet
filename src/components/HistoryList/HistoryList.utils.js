@@ -107,10 +107,13 @@ export const getTypeData = (type, history, paymentAddress) => {
       ? 'Consolidation'
       : CONSTANT_COMMONS.HISTORY.META_DATA_TYPE[(history?.metaDataType)] ||
           'Send';
+    if (typeText === CONSTANT_COMMONS.HISTORY.META_DATA_TYPE[90]) {
+      typeText = 'Send';
+    }
     break;
   }
   case CONSTANT_COMMONS.HISTORY.TYPE.RECEIVE:
-    typeText = 'Receive';
+    typeText = history?.typeText || 'Receive';
     break;
   }
   return {
