@@ -1,13 +1,11 @@
 import React, {useCallback, useState} from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
-import {useFocusEffect} from 'react-navigation-hooks';
+import { useFocusEffect } from 'react-navigation-hooks';
 import LocalDatabase from '@utils/LocalDatabase';
 import Device from '@models/device';
-import {useSelector} from 'react-redux';
-import {nodeSelector} from '@screens/Node/Node.selector';
 
 const enhance = WrappedComp => props => {
-  const { listDevice } = useSelector(nodeSelector);
+  const { listDevice } = props;
 
   const [showWelcome, setShowWelcome] = useState(false);
 

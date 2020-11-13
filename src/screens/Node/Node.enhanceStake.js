@@ -1,8 +1,8 @@
 import React from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
-import {onClickView} from '@utils/ViewUtil';
+import { onClickView } from '@utils/ViewUtil';
 import routeNames from '@routers/routeNames';
-import {useNavigation} from 'react-navigation-hooks';
+import { useNavigation } from 'react-navigation-hooks';
 
 const enhanceStake = WrappedComp => props => {
   const navigation = useNavigation();
@@ -20,6 +20,7 @@ const enhanceStake = WrappedComp => props => {
       <WrappedComp
         {...{
           ...props,
+
           handlePressStake,
           handlePressUnstake
         }}

@@ -40,27 +40,45 @@ const formatRewards = async (data) => {
   let tokenIds    = [];
   let rewardsList = [];
   let allTokens   = [PRV];
-  let allRewards  = { [PRV_ID]: 0 };
-  let noRewards   = true;
+  // let allRewards  = { [PRV_ID]: 0 };
+  // let noRewards   = true;
   forEach(data, item => {
     rewardsList = rewardsList.concat(item?.Rewards || []);
   });
-  forEach(rewardsList, (reward) => {
-    const tokenId     = reward?.TokenID;
-    const rewardValue = reward?.Amount || 0;
-    tokenIds.push(tokenId);
-    if (rewardValue > 0) {
-      noRewards = false;
-    }
-    if (allRewards.hasOwnProperty(tokenId)) {
-      allRewards[tokenId] += rewardValue;
-    } else {
-      allRewards[tokenId] = rewardValue;
-    }
+  // forEach(rewardsList, (reward) => {
+  //   const tokenId     = reward?.TokenID;
+  //   const rewardValue = reward?.Amount || 0;
+  //   tokenIds.push(tokenId);
+  //   if (rewardValue > 0) {
+  //     noRewards = false;
+  //   }
+  //   if (allRewards.hasOwnProperty(tokenId)) {
+  //     allRewards[tokenId] += rewardValue;
+  //   } else {
+  //     allRewards[tokenId] = rewardValue;
+  //   }
+  // });
+
+  const {
+    allRewards,
+    noRewards
+  } = rewardsList.reduce(( prvValue, curValue) => {
+    const tokenId     = curValue?.TokenID;
+    const rewardValue = curValue?.Amount || 0;
+
+    let allRewards    = prvValue.allRewards;
+    let noRewards     = prvValue.noRewards;
+
+
+  }, {
+    allRewards: { [PRV_ID]: 0 },
+    noRewards: true
   });
+
   tokenIds = uniq(tokenIds);
   let tokenDict = tokenService.flatTokens(allTokens);
   if (tokenIds.some(id => !tokenDict[id])) {
+    console.log('SANG TEST: ', tokenIds.some(id => !tokenDict[id]));
     const pTokens = await getTokenList();
     allTokens = tokenService.mergeTokens(allTokens, pTokens);
     tokenDict = tokenService.flatTokens(allTokens);
@@ -213,8 +231,8 @@ export const updateDeviceItem = (options, callbackResolve) => async (dispatch, g
       productId,
       device: itemDevice
     }  = options;
-    const state           = getState();
-    const wallet          = state?.wallet;
+    const state  = getState();
+    const wallet = state?.wallet;
 
     const now = new Date().getTime();
     const newBLSKey = await VirtualNodeService.getPublicKeyMining(itemDevice);

@@ -1,29 +1,25 @@
 import React, { useMemo, useState } from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { MESSAGES } from '@src/constants';
-import { useSelector } from 'react-redux';
-import { nodeSelector } from '@screens/Node/Node.selector';
 import { Toast } from '@components/core';
 import APIService from '@services/api/miner/APIService';
 import NodeService from '@services/NodeService';
 import { ExHandler } from '@services/exception';
-import _ from 'lodash';
+import { isEmpty, some, forEach, cloneDeep } from 'lodash';
 import accountService from '@services/wallet/accountService';
 import { getTransactionByHash } from '@services/wallet/RpcClientService';
 import { onClickView } from '@utils/ViewUtil';
 
 const enhanceWithdraw = WrappedComp => props => {
-  const { listDevice } = props; // Value from @enhanceWelcome
-  const { noRewards } = useSelector(nodeSelector);
-  const wallet = useSelector(state => state.wallet);
+  const { listDevice, noRewards, wallet } = props;
 
   const [withdrawTxs, setWithdrawTxs] = useState({});
   const [withdrawing, setWithdrawing] = useState(false);
 
   const withdrawable = useMemo(() => {
     const validNodes = listDevice.filter(device => device.AccountName &&
-      !_.isEmpty(device?.Rewards) &&
-      _.some(device.Rewards, value => value),
+      !isEmpty(device?.Rewards) &&
+      some(device.Rewards, value => value),
     );
     const vNodes = validNodes.filter(device => device.IsVNode);
     const pNodes = validNodes.filter(device => device.IsPNode);
@@ -37,8 +33,8 @@ const enhanceWithdraw = WrappedComp => props => {
   };
 
   const checkWithdrawTxsStatus = () => {
-    const _withdrawTxs = _.cloneDeep(withdrawTxs);
-    _.forEach(_withdrawTxs, async (txId, key) => {
+    const _withdrawTxs = cloneDeep(withdrawTxs);
+    forEach(_withdrawTxs, async (txId, key) => {
       const tx = await getTransactionByHash(txId);
 
       if (tx.err || tx.isInBlock) {
@@ -49,7 +45,7 @@ const enhanceWithdraw = WrappedComp => props => {
   };
 
   const sendWithdrawTx = async (paymentAddress, tokenIds) => {
-    const _withdrawTxs = _.cloneDeep(withdrawTxs);
+    const _withdrawTxs = cloneDeep(withdrawTxs);
     const listAccount = await wallet.listAccount();
     for (const tokenId of tokenIds) {
       const account = listAccount.find(item => item.PaymentAddress === paymentAddress);

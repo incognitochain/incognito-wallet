@@ -1,9 +1,9 @@
-import React, {useCallback, useEffect} from 'react';
+import React, { useCallback, useEffect } from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
-import {useDispatch, useSelector} from 'react-redux';
-import {nodeSelector, vNodeOptionsSelector} from '@screens/Node/Node.selector';
-import {useFocusEffect} from 'react-navigation-hooks';
-import {getTotalVNode} from '@screens/Node/Node.utils';
+import { useDispatch, useSelector } from 'react-redux';
+import { vNodeOptionsSelector } from '@screens/Node/Node.selector';
+import { useFocusEffect } from 'react-navigation-hooks';
+import { getTotalVNode } from '@screens/Node/Node.utils';
 import {
   actionClearNodeData as clearNodeData,
   actionGetNodesInfoFromApi as getNodesInfoFromApi,
@@ -15,11 +15,9 @@ import LocalDatabase from '@utils/LocalDatabase';
 let lastRefreshTime;
 
 const enhanceFetchData = WrappedComp => props => {
-  const { listDevice } = props; // Value from @enhanceWelcome
+  const { listDevice, isFetched } = props;
   const dispatch    = useDispatch();
   const { refresh } = props?.navigation?.state?.params || {};
-
-  const { isFetched } = useSelector(nodeSelector);
 
   const {
     hasVNode,
@@ -64,11 +62,6 @@ const enhanceFetchData = WrappedComp => props => {
       dispatch(getNodesInfoFromApi());
     }
 
-    // has VNode && have vNode dont have blsKey
-    // start loading waiting vNode get blsKey
-    // else if (hasVNode && vNodeNotHaveBLS === -1) {
-    //   dispatch(updateFetching(true));
-    // }
   }, [
     isFetched,
     hasVNode,
@@ -92,6 +85,7 @@ const enhanceFetchData = WrappedComp => props => {
       <WrappedComp
         {...{
           ...props,
+
           refreshData
         }}
       />
