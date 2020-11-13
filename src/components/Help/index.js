@@ -12,11 +12,20 @@ import {
 import helpInline from '@src/assets/images/icons/help-inline.png';
 import stylesheet from './style';
 
-const Help = ({ title, content }) => {
+const Help = ({ title, content, onPress }) => {
   const [ visible, setVisible ] = React.useState(false);
+
+  const onBtnPress = () => {
+    if (onPress) {
+      onPress();
+      return;
+    }
+    setVisible(true);
+  };
+
   return (
     <TouchableOpacity
-      onPress={() => setVisible(true)}
+      onPress={onBtnPress}
       style={{ justifyContent: 'center', alignItems: 'center' }}
     >
       <Image source={helpInline} style={stylesheet.icon} />
@@ -41,6 +50,7 @@ const Help = ({ title, content }) => {
 Help.defaultProps = {
   title: '',
   marginLeft: 10,
+  onPress: null
 };
 
 Help.propTypes = {
@@ -50,6 +60,7 @@ Help.propTypes = {
     PropTypes.element,
   ]).isRequired,
   marginLeft: PropTypes.number,
+  onPress: PropTypes.func
 };
 
 export default React.memo(Help);

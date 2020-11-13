@@ -48,7 +48,7 @@ export default StyleSheet.create({
   },
   bottomFloatBtn: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   bottomText: {
@@ -61,9 +61,15 @@ export default StyleSheet.create({
     backgroundColor: 'white',
     height: bottomBarHeight,
     justifyContent: 'center',
-    alignItems: 'flex-end',
+    // alignItems: 'flex-end',
     left: 0,
     right: 0,
     paddingBottom: 25,
   },
+  row: {
+    flexDirection: 'row'
+  },
+  textLeft: {
+    marginRight: 0
+  }
 });

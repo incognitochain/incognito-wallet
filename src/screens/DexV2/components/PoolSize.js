@@ -3,14 +3,23 @@ import PropTypes from 'prop-types';
 import formatUtil from '@utils/format';
 import ExtraInfo from '@screens/DexV2/components/ExtraInfo';
 import { COINS } from '@src/constants';
+import { PowerTrade } from '@screens/DexV2/components/Powered';
 
 const EmptyPoolSize = React.memo(() => (
   <ExtraInfo left="Pool size" right="Loading" />
 ));
 
-const PoolSize = ({ inputToken, outputToken, pair }) => {
+const PoolSize = ({ inputToken, outputToken, pair, network, hasPower, quote }) => {
   const renderMain = () => {
     try {
+      if(hasPower && !(pair && (!quote || (quote && !!quote?.crossTrade)))) {
+        return(
+          <ExtraInfo
+            left={hasPower ? <PowerTrade network={network} /> : 'Pool size'}
+            right=""
+          />
+        );
+      }
       if (!pair || !pair.length || !inputToken || !outputToken) {
         return <EmptyPoolSize />;
       }
@@ -37,7 +46,7 @@ const PoolSize = ({ inputToken, outputToken, pair }) => {
         }
         return (
           <ExtraInfo
-            left="Pool size"
+            left={hasPower ? <PowerTrade network={network} /> : 'Pool size'}
             right={`${formattedInputPool} ${inputToken?.symbol} + ${formattedOutputPool} ${outputToken?.symbol}`}
           />
         );
@@ -82,11 +91,11 @@ const PoolSize = ({ inputToken, outputToken, pair }) => {
       return (
         <>
           <ExtraInfo
-            left="Pool size"
+            left={hasPower ? <PowerTrade network={network} /> : 'Pool size'}
             right={`${formattedInputPool1} ${inputToken?.symbol} + ${formattedOutputPool1} ${COINS.PRV.symbol}`}
           />
           <ExtraInfo
-            left="Pool size"
+            left={hasPower ? <PowerTrade network={network} /> : 'Pool size'}
             right={`${formattedInputPool2} ${COINS.PRV.symbol} + ${formattedOutputPool2} ${outputToken?.symbol}`}
           />
         </>
@@ -99,9 +108,18 @@ const PoolSize = ({ inputToken, outputToken, pair }) => {
 };
 
 PoolSize.propTypes = {
-  inputToken: PropTypes.object.isRequired,
+  inputTokenPoolSize: PropTypes.object.isRequired,
   outputToken: PropTypes.object.isRequired,
   pair: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
+  network: PropTypes.string,
+  hasPower: PropTypes.bool,
+  quote: PropTypes.object
+};
+
+PoolSize.defaultProps = {
+  network: null,
+  hasPower: false,
+  quote: null
 };
 
 export default React.memo(PoolSize);

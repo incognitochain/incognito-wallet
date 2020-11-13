@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
 import { CONSTANT_COMMONS } from '@src/constants';
-import { fromPairs } from 'lodash';
 import {
   pTokensSelector,
   internalTokensSelector,
@@ -8,8 +7,7 @@ import {
   isGettingBalance as isGettingBalanceToken,
 } from '@src/redux/selectors/token';
 import { selectedPrivacySeleclor } from '@src/redux/selectors';
-import uniqBy from 'lodash/uniqBy';
-import isNaN from 'lodash/isNaN';
+import { uniqBy, isNaN, compact, fromPairs } from 'lodash';
 import convert from '@src/utils/convert';
 import { BIG_COINS } from '@src/screens/DexV2/constants';
 import { currencySelector } from '@screens/Setting';
@@ -99,7 +97,7 @@ export const totalShieldedTokensSelector = createSelector(
       ...getPrivacyDataByTokenID(CONSTANT_COMMONS.PRV.id),
       amount: accountBalance,
     };
-    const totalShieldedTokens = [...tokens, prv].reduce(
+    const totalShieldedTokens = compact([...tokens, prv]).reduce(
       (prevValue, currentValue) => {
         const totalShieldByPRV = prevValue.totalShieldByPRV;
         const totalShieldByUSD = prevValue.totalShieldByUSD;
@@ -116,7 +114,7 @@ export const totalShieldedTokensSelector = createSelector(
         }
 
         let _currentUsdValue = priceUsd * convert.toNumber(humanAmount);
-        if (isNaN(_currentPrvValue)) {
+        if (isNaN(_currentUsdValue)) {
           _currentUsdValue = 0;
         }
         return {

@@ -68,6 +68,7 @@ import Streamline from '@screens/Streamline';
 import WhyStreamline from '@screens/Streamline/features/WhyStreamLine';
 import TxHistoryReceive from '@screens/Wallet/features/TxHistoryReceive';
 import Event from '@screens/Event';
+import Helper from '@screens/Helper/Helper';
 
 const routes = [
   {
@@ -345,6 +346,10 @@ const routes = [
   {
     screen: Event,
     name: routeNames.Event,
+  },
+  {
+    screen: Helper,
+    name: routeNames.Helper,
   },
 ];
 

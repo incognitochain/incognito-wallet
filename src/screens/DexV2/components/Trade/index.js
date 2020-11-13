@@ -28,14 +28,14 @@ import withParams from '@screens/DexV2/components/Trade/params.enhance';
 import withAccount from '@screens/DexV2/components/account.enhance';
 import withERC20 from '@screens/DexV2/components/Trade/with.erc20';
 import PoolSize from '@screens/DexV2/components/PoolSize';
-import Powered from '@screens/DexV2/components/Powered';
 import { ArrowRightGreyIcon } from '@components/Icons';
+import PDexFee from '@screens/DexV2/components/PDexFee';
 import NewInput from '../NewInput';
 import withPair from './pair.enhance';
 import withChangeInput from './input.enhance';
 import withBalanceLoader from './balance.enhance';
 import styles from './style';
-import ExchangeRate from '../ExchangeRate';
+import ExchangeRate from '../ExchangeRate/ExchangeRateImpact';
 
 const Trade = ({
   pairTokens,
@@ -92,19 +92,27 @@ const Trade = ({
   };
 
   const renderPoolSize = () => {
-    if (pair) {
-      if (!quote || (quote && !!quote?.crossTrade)) {
-        return (
-          <PoolSize
-            outputToken={outputToken}
-            inputToken={inputToken}
-            pair={pair}
-          />
-        );
-      }
-    }
-    return null;
+    return (
+      <PoolSize
+        outputToken={outputToken}
+        inputToken={inputToken}
+        pair={pair}
+        quote={quote}
+        hasPower
+        network={isErc20 ? quote?.network : 'Incognito'}
+      />
+    );
   };
+
+  const renderFee = () => (
+    <PDexFee
+      isErc20={isErc20}
+      feeToken={feeToken}
+      fee={fee}
+      quote={quote}
+      leftStyle={styles.textLeft}
+    />
+  );
 
   return (
     <View style={styles.container}>
@@ -159,7 +167,7 @@ const Trade = ({
           />
           {!!(inputToken && outputToken) && (
             <View style={styles.extraInfo}>
-              <Balance token={inputToken} balance={inputBalance} />
+              <Balance title='Balance' token={inputToken} balance={inputBalance} />
               <ExchangeRate
                 inputValue={inputValue}
                 outputValue={outputValue}
@@ -168,8 +176,8 @@ const Trade = ({
                 outputToken={outputToken}
                 quote={quote}
               />
+              {renderFee()}
               {renderPoolSize()}
-              <Powered network={isErc20 ? quote?.network : 'Incognito'} />
               <ExtraInfo left={warning} right="" style={styles.warning} />
             </View>
           )}

@@ -1,12 +1,24 @@
 import React, {memo, useEffect, useState} from 'react';
-import {ActivityIndicator, Clipboard, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { ActivityIndicator, Clipboard, Text, TouchableOpacity, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import PropTypes from 'prop-types';
-import { COLORS, FONT } from '@src/styles';
+import { COLORS } from '@src/styles';
 import { apiGetQrCodeHunt } from '@components/HuntQRCode/HuntQRCode.sevice';
 import { Toast } from '@components/core';
+import { ArrowRightGreyIcon } from '@components/Icons';
+import { useNavigation } from 'react-navigation-hooks';
+import routeNames from '@routers/routeNames';
+import styles from './Hunt.styles';
+
+const TEXT_CONST = {
+  title:      'Booya! You found a code.',
+  head:       'Scan it from the Quest',
+  subHead:    'tab to unlock a prize. ',
+  learnMore:  'Learn more'
+};
 
 const HuntQRCode = ({ code }) => {
+  const navigation = useNavigation();
 
   const [qrCode, setQrCode] = useState(null);
   const [loaded, setLoaded] = useState(false);
@@ -23,10 +35,58 @@ const HuntQRCode = ({ code }) => {
     }
   };
 
+  const onLearnMorePress = () => {
+    if (!qrCode) return;
+    navigation?.navigate(routeNames.pApp, { url: qrCode });
+  };
+
   const onCopyQRCode = () => {
     Clipboard.setString(qrCode);
     Toast.showSuccess('Copied');
   };
+
+  const renderHeader = () => (
+    <View style={styles.wrapperHeader}>
+      <Text style={styles.labelBold}>
+        {TEXT_CONST.title}
+      </Text>
+      <Text style={styles.labelGray}>
+        {TEXT_CONST.head}
+      </Text>
+      <View style={styles.row}>
+        <Text style={styles.labelGray}>
+          {TEXT_CONST.subHead}
+        </Text>
+        <TouchableOpacity onPress={onLearnMorePress} style={styles.row}>
+          <Text style={[styles.labelGray, { color: COLORS.black }]}>
+            {TEXT_CONST.learnMore}
+          </Text>
+          <ArrowRightGreyIcon style={styles.arrow} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  const renderContent = () => (
+    <TouchableOpacity
+      style={styles.wrapper}
+      onPress={onCopyQRCode}
+    >
+      <View style={styles.wrapperCode}>
+        <QRCode
+          value={qrCode}
+          size={121}
+          color={COLORS.black}
+          backgroundColor={COLORS.white}
+        />
+      </View>
+      <View style={styles.wrapperBottom}>
+        <Text style={styles.label}>
+          GUEST
+        </Text>
+      </View>
+    </TouchableOpacity >
+  );
 
   useEffect(() => {
     getQrcode().then();
@@ -37,24 +97,10 @@ const HuntQRCode = ({ code }) => {
   return (
     <>
       {!!qrCode && (
-        <TouchableOpacity
-          style={styles.wrapper}
-          onPress={onCopyQRCode}
-        >
-          <View style={styles.wrapperCode}>
-            <QRCode
-              value={qrCode}
-              size={98}
-              color={COLORS.black}
-              backgroundColor={COLORS.white}
-            />
-          </View>
-          <View style={styles.wrapperBottom}>
-            <Text style={styles.label}>
-              GUEST
-            </Text>
-          </View>
-        </TouchableOpacity >
+        <>
+          {renderHeader()}
+          {renderContent()}
+        </>
       )}
     </>
   );
@@ -73,38 +119,5 @@ HuntQRCode.propTypes = {
 HuntQRCode.defaultProps = {
   code: null
 };
-
-
-const styles = StyleSheet.create({
-  wrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    paddingHorizontal: 4,
-    paddingTop: 4,
-    backgroundColor: '#333335',
-    borderRadius: 6,
-    marginTop: 50,
-    marginBottom: 50
-  },
-  wrapperCode: {
-    padding: 12,
-    backgroundColor: COLORS.white,
-    borderRadius: 3
-  },
-  wrapperBottom: {
-    height: 35,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  label: {
-    ...FONT.STYLE.medium,
-    fontSize: 19,
-    color: COLORS.white
-  },
-  wrapperLoading: {
-    marginTop: 20
-  }
-});
 
 export default memo(HuntQRCode);
