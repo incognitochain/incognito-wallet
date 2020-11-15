@@ -11,7 +11,6 @@ export const nodeSelector = createSelector(
       missingSetup: node?.missingSetup,
 
       listDevice:   node?.listDevice, // List node device
-      nodesFromApi: node?.nodesFromApi,
       noRewards:    node?.noRewards,
       nodeRewards:  node?.nodeRewards
     };

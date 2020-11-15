@@ -1,11 +1,15 @@
 import LocalDatabase from '@utils/LocalDatabase';
-import Device, {MAX_ERROR_COUNT} from '@models/device';
+import Device, {MAX_ERROR_COUNT, VALIDATOR_STATUS} from '@models/device';
 import NodeService from '@services/NodeService';
 import APIService from '@src/services/api/miner/APIService';
 import LogManager from '@src/services/LogManager';
 import VirtualNodeService from '@services/VirtualNodeService';
-import { map, isEmpty, isNumber } from 'lodash';
+import { map, isEmpty, isNumber, forEach, uniq } from 'lodash';
 import { getTransactionByHash } from '@services/wallet/RpcClientService';
+import tokenService, { PRV } from '@services/wallet/tokenService';
+import { PRV_ID } from '@screens/Dex/constants';
+import { getTokenList } from '@services/api/token';
+import { parseNodeRewardsToArray } from '@screens/Node/utils';
 
 export const checkIfVerifyCodeIsExisting = async () => {
   return new Promise(async (resolve, reject) => {
@@ -122,5 +126,132 @@ export const formatTxNode = async (device) => {
       device.SelfStakeTx = null;
     }
   }
+  return device;
+};
+
+export const parseRewards = async (nodesInfo, skipAllTokens = false) => {
+  let tokenIds    = [];
+  let rewardsList = [];
+  let allTokens   = [PRV];
+  let allRewards  = { [PRV_ID]: 0 };
+  let noRewards   = true;
+
+  forEach(nodesInfo, item => {
+    rewardsList = rewardsList.concat(item?.Rewards || []);
+  });
+  forEach(rewardsList, (reward) => {
+    const tokenId     = reward?.TokenID;
+    const rewardValue = reward?.Amount || 0;
+    tokenIds.push(tokenId);
+    if (rewardValue > 0) {
+      noRewards = false;
+    }
+    if (allRewards.hasOwnProperty(tokenId)) {
+      allRewards[tokenId] += rewardValue;
+    } else {
+      allRewards[tokenId] = rewardValue;
+    }
+  });
+
+  const prvRewards = { [PRV_ID]: allRewards[PRV_ID] };
+
+  if (!skipAllTokens) {
+    tokenIds = uniq(tokenIds);
+    let tokenDict = tokenService.flatTokens(allTokens);
+    if (tokenIds.some(id => !tokenDict[id])) {
+      const pTokens = await getTokenList();
+      allTokens = tokenService.mergeTokens(allTokens, pTokens);
+      tokenDict = tokenService.flatTokens(allTokens);
+      if (tokenIds.some(id => !tokenDict[id])) {
+        const chainTokens = await tokenService.getPrivacyTokens();
+        allTokens = tokenService.mergeTokens(chainTokens, allTokens);
+      }
+    }
+  }
+
+  /**
+  * // RETURN VALUE
+  * // All tokens in all rewards
+  * @return {Object<{
+  *   displayName:     string,
+  *   hasIcon:         boolean
+  *   id:              string
+  *   isVerified:      boolean
+  *   name:            string
+  *   originalSymbol:  string
+  *   pDecimals:       number
+  *   symbol:          string
+  * }>} allTokens
+  *
+  * // All rewards
+  * // Exp: { 0000000000004: 150 }
+  * @return {Object<{
+  *   tokenId: string,
+  *   tokenReward: number
+  * }>} allRewards
+  *
+  * // Nodes All rewards
+  * // Exp: { 0000000000004: 150 }
+  * @return {Object<{
+  *   tokenId: string,
+  *   tokenReward: number
+  * }>} allRewards
+  *
+  * // Check have rewards
+  * @return {boolean} noRewards
+  *
+  * // PRV rewards from Node
+  * // Exp: { 0000000000004: 150 }
+  * @return {Object<{
+  *   PRV_ID: string,
+  *   PRV_REWARD: number
+  * }>} prvRewards
+  */
+
+  return {
+    allTokens,
+    allRewards,
+    noRewards,
+    prvRewards
+  };
+};
+
+export const combineNodesInfoToObject = (nodesInfo) => {
+  let object = {};
+  nodesInfo.forEach(item => {
+    object[isEmpty(item?.BLS) ? item?.QR_CODE : item?.BLS] = item;
+  });
+  return object;
+};
+
+export const formatNodeItemFromApi = async (device, listNodeObject, allTokens) => {
+  const nodeItem = listNodeObject[
+    device.IsVNode ? device.PublicKeyMining : device.PublicKey
+  ];
+  if (!nodeItem) return device;
+  const {
+    IsInCommittee,
+    IsInAutoStaking,
+    IsAutoStake,
+  } = nodeItem;
+
+  if (IsInCommittee) {
+    device.Status = VALIDATOR_STATUS.WORKING;
+  } else if ( IsInAutoStaking ) {
+    device.Status = VALIDATOR_STATUS.WAITING;
+  } else {
+    device.Status = null;
+  }
+
+  device.IsAutoStake  = IsAutoStake;
+
+  const {
+    allRewards,
+    prvRewards
+  } = await parseRewards([nodeItem], true);
+
+  device.Rewards    = prvRewards;
+  device.AllRewards = parseNodeRewardsToArray(allRewards, allTokens);
+
   return device;
 };

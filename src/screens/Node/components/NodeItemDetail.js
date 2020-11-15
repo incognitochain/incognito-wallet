@@ -88,12 +88,12 @@ class NodeItemDetail extends Component {
       withdrawTxs,
     } = navigation.state.params;
 
-    const ip = item.Host;
-    const name = item.Name;
+    const ip         = item.Host;
+    const name       = item.Name;
     const hasAccount = !!item?.AccountName;
 
     let shouldShowWithdraw = false;
-    rewardsList.forEach(element => {
+    item?.AllRewards.forEach(element => {
       if (element?.balance > 0) {
         shouldShowWithdraw = true;
       }
@@ -121,7 +121,7 @@ class NodeItemDetail extends Component {
           rightHeader={<BtnMoreInfo onPress={()=>NavigationService.navigate(routeNames.NodeItemsHelp)} />}
         />
         <ScrollView>
-          <Rewards rewards={rewardsList} />
+          <Rewards rewards={item?.AllRewards} />
           <View style={[{ flexDirection: 'row' }, theme.MARGIN.marginBottomDefault]}>
             {!hasAccount ? this.renderBtn('Import a keychain', onImport) : (
               <>

@@ -31,7 +31,6 @@ const initialStateClear = {
   isRefreshing:   false,
   noRewards:      true,
 
-  nodesFromApi:   [], // Api support cached node info from Chain
   vNodeOptions:   initVNodeOptions,
   nodeRewards:    null,
   allTokens:      [PRV],
@@ -88,7 +87,6 @@ const nodeReducer = (state = initialState, action) => {
   }
   case ACTION_FETCHED_NODES_INFO_API: {
     const {
-      nodesFromApi,
       listDevice,
       nodeRewards,
       noRewards,
@@ -101,7 +99,6 @@ const nodeReducer = (state = initialState, action) => {
       isRefreshing: false,
       isFetched: true,
       listDevice: listDevice || [],
-      nodesFromApi,
       nodeRewards,
       noRewards,
       allTokens

@@ -8,7 +8,7 @@ export const apiGetNodesInfo = async () => {
       http
         .post('pnode/get-node-info', body)
         .then((res) => {
-          resolve(res);
+          resolve(res || []);
         })
         .catch((error) => {
           throw error;
