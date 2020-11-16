@@ -2,16 +2,14 @@ import {
   ACTION_FETCHED_NODES_INFO_API,
   ACTION_FETCHING_NODES_INFO_FROM_API,
   ACTION_FETCH_NODES_INFO_FROM_API_FAIL,
-  ACTION_UPDATE_FETCHING,
   ACTION_UPDATE_LIST_NODE_DEVICE,
   ACTION_UPDATE_MISSING_SETUP,
   ACTION_SET_TOTAL_VNODE,
   ACTION_UPDATE_NUMBER_LOADED_VNODE_BLS,
-  ACTION_CLEAR_NODE_DATA
+  ACTION_CLEAR_NODE_DATA, UPDATE_WITHDRAW_TXS
 } from '@screens/Node/Node.constant';
 import { ExHandler } from '@services/exception';
 import { apiGetNodesInfo } from '@screens/Node/Node.services';
-import accountService from '@services/wallet/accountService';
 import Device from '@models/device';
 import LocalDatabase from '@utils/LocalDatabase';
 import VirtualNodeService from '@services/VirtualNodeService';
@@ -19,10 +17,15 @@ import { parseNodeRewardsToArray } from '@screens/Node/utils';
 import {
   parseRewards,
   combineNodesInfoToObject,
-  formatNodeItemFromApi
+  formatNodeItemFromApi,
+  combineNode
 } from '@screens/Node/Node.utils';
+import NodeService from '@services/NodeService';
+import moment from 'moment';
+import { isEqual } from 'lodash';
 
 const MAX_RETRY = 5;
+const TIMEOUT   = 5; // 2 minutes
 
 export const actionFetchingNodesInfoFromAPI = (isRefresh) => ({
   type: ACTION_FETCHING_NODES_INFO_FROM_API,
@@ -42,27 +45,31 @@ export const actionFetchNodesInfoFromAPIFail = () => ({
 export const actionGetNodesInfoFromApi = (isRefresh) => async (dispatch, getState) => {
   const state = getState();
   let { listDevice, isFetching, isRefreshing } = state?.node;
+  const wallet = state?.wallet;
   if (isFetching || isRefreshing) return;
   try {
     await dispatch(actionFetchingNodesInfoFromAPI(isRefresh));
     const nodesInfo = await apiGetNodesInfo();
+    console.debug('Node Info From API: ', nodesInfo);
+
     const {
       allTokens,
       allRewards,
       noRewards
     } = await parseRewards(nodesInfo);
+    const nodeRewards = parseNodeRewardsToArray(allRewards, allTokens);
 
     // convert nodesInfo from API to Object
     let combineNodeInfo = combineNodesInfoToObject(nodesInfo);
 
     // format listDevice with new Data get from API
     listDevice = await Promise.all(listDevice.map(async (device) => (
-      await formatNodeItemFromApi(device, combineNodeInfo, allTokens)
+      await formatNodeItemFromApi(device, combineNodeInfo, allTokens, wallet)
     )));
 
     await dispatch(actionFetchedNodesInfoFromAPI({
       listDevice,
-      nodeRewards: parseNodeRewardsToArray(allRewards, allTokens),
+      nodeRewards,
       noRewards,
       allTokens
     }));
@@ -73,8 +80,9 @@ export const actionGetNodesInfoFromApi = (isRefresh) => async (dispatch, getStat
   }
 };
 
-export const actionClearNodeData = () => ({
-  type: ACTION_CLEAR_NODE_DATA
+export const actionClearNodeData = (clearListNode) => ({
+  type: ACTION_CLEAR_NODE_DATA,
+  clearListNode
 });
 
 /**
@@ -88,10 +96,21 @@ export const updateListNodeDevice = (payload) => ({
   payload,
 });
 
+export const actionUpdateNodeAt = (deviceIndex, device) => async (dispatch, getState) => {
+  try {
+    const state             = getState();
+    let { listDevice }      = state?.node;
+    listDevice[deviceIndex] = device;
+    await LocalDatabase.saveListDevices(listDevice);
+    dispatch(updateListNodeDevice({ listDevice }));
+  } catch (error) {
+    new ExHandler(error).showErrorToast();
+  }
+};
+
 export const actionUpdateListNodeDevice = (payload) => async (dispatch) => {
   try {
     let { listDevice } = payload;
-    // listDevice = await Promise.all(listDevice.map(async item => await formatTxNode(Device.getInstance(item))));
     listDevice = listDevice.map(item => Device.getInstance(item));
     await LocalDatabase.saveListDevices(listDevice);
     dispatch(updateListNodeDevice({
@@ -102,14 +121,6 @@ export const actionUpdateListNodeDevice = (payload) => async (dispatch) => {
     throw error;
   }
 };
-
-/**
-* @param {boolean} isFetching
-*/
-export const actionUpdateFetching = (isFetching) => ({
-  type: ACTION_UPDATE_FETCHING,
-  isFetching,
-});
 
 export const actionUpdateMissingSetup = (payload) => ({
   type: ACTION_UPDATE_MISSING_SETUP,
@@ -125,7 +136,84 @@ export const actionUpdateNumberLoadedVNodeBLS = () => ({
   type: ACTION_UPDATE_NUMBER_LOADED_VNODE_BLS,
 });
 
-export const updateDeviceItem = (options, callbackResolve) => async (dispatch, getState) => {
+export const actionUpdatePNodeItem = (options, callbackResolve) => async (dispatch, getState) => {
+  try {
+    const state           = getState();
+    const { listDevice }  = state?.node;
+    const wallet          = state?.wallet;
+    let { productId }     = options;
+    const deviceIndex
+      = listDevice.findIndex(item => item.ProductId === productId);
+    let device = {};
+    if (deviceIndex > -1) {
+      device = listDevice[deviceIndex];
+    }
+    const deviceData = await NodeService.fetchAndSavingInfoNodeStake(device);
+    device = Device.getInstance(deviceData);
+    if (device.IsSetupViaLan) {
+      const res = await NodeService.getLog(device);
+      const log = res.Data;
+      const { updatedAt, description } = log;
+      let data;
+      try { data = JSON.parse(description); } catch {/*Ignore the error*/}
+      if (updatedAt) {
+        const startTime = moment(updatedAt);
+        const endTime   = moment();
+        const duration  = moment.duration(endTime.diff(startTime));
+        const minutes   = duration.asMinutes();
+        if (minutes > TIMEOUT) {
+          device.setIsOnline(Math.max(device.IsOnline - 1, 0));
+        } else {
+          device.setIsOnline(MAX_RETRY);
+          device.Host = data?.ip?.lan;
+        }
+      }
+    } else {
+      const ip = await NodeService.pingGetIP(device);
+      if (ip) {
+        device.Host = ip;
+        device.setIsOnline(MAX_RETRY);
+      } else {
+        device.Host = '';
+        device.setIsOnline(Math.max(device.IsOnline - 1, 0));
+      }
+    }
+
+    if (device.IsOnline && device.Host) {
+      try {
+        const version = await NodeService.checkVersion(device);
+        const latestVersion = await NodeService.getLatestVersion();
+        device.Firmware = version;
+        if (version && version !== latestVersion) {
+          NodeService.updateFirmware(device, latestVersion)
+            .then(res => console.debug('UPDATE FIRMWARE SUCCESS', device.QRCode, res))
+            .catch(e => console.debug('UPDATE FIRMWARE FAILED', device.QRCode, e));
+        }
+      } catch (e) {
+        console.debug('CHECK VERSION ERROR', device.QRCode, e);
+      }
+    }
+    if (device.PaymentAddress) {
+      const listAccount = await wallet.listAccount();
+      device.Account = listAccount.find(item => item.PaymentAddress === device.PaymentAddress);
+      if (device.Account) {
+        device.ValidatorKey = device.Account.ValidatorKey;
+        device.PublicKey = device.Account.PublicKeyCheckEncode;
+        const listAccounts = await wallet.listAccountWithBLSPubKey();
+        const account = listAccounts.find(item=> isEqual(item.AccountName, device.AccountName));
+        device.PublicKeyMining = account.BLSPublicKey;
+      }
+    }
+    await dispatch(actionUpdateNodeAt(deviceIndex, device));
+  } catch (error) {
+    new ExHandler(error).showErrorToast();
+  } finally {
+    // CallBack
+    callbackResolve && callbackResolve();
+  }
+};
+
+export const actionUpdateVNodeItem = (options, callbackResolve) => async (dispatch, getState) => {
   try {
     let {
       blsKey,
@@ -153,31 +241,16 @@ export const updateDeviceItem = (options, callbackResolve) => async (dispatch, g
     }
     if (newBLSKey) {
       device?.setIsOnline(MAX_RETRY);
-      const listAccount
-        = await wallet.listAccount();
-      const rawAccount
-        = await accountService.getAccountWithBLSPubKey(newBLSKey, wallet);
-
-      device.Account = listAccount.find(item =>
-        item.AccountName === rawAccount?.name
-      );
-
-      if (device.Account) {
-        device.ValidatorKey = device.Account.ValidatorKey;
-        if (device?.Account?.PublicKeyCheckEncode && !device.PublicKey) {
-          device.PublicKey = device.Account.PublicKeyCheckEncode;
-        }
-      }
+      device = await combineNode(device, wallet, newBLSKey);
     } else {
       device?.setIsOnline(Math.max(device?.IsOnline - 1, 0));
     }
 
-    await LocalDatabase.saveListDevices(listDevice);
-    await dispatch(updateListNodeDevice({ listDevice }));
+    await dispatch(actionUpdateNodeAt(deviceIndex, device));
 
     // Log Time load Node
     const end = new Date().getTime();
-    console.log('Loaded Node in: ', end - now);
+    console.debug('Loaded Node in: ', end - now);
   } catch (error) {
     new ExHandler(error).showErrorToast();
   } finally {
@@ -185,5 +258,10 @@ export const updateDeviceItem = (options, callbackResolve) => async (dispatch, g
     callbackResolve && callbackResolve();
   }
 };
+
+export const updateWithdrawTxs = (withdrawTxs) => ({
+  type: UPDATE_WITHDRAW_TXS,
+  withdrawTxs
+});
 
 

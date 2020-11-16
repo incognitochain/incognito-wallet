@@ -10,6 +10,7 @@ import tokenService, { PRV } from '@services/wallet/tokenService';
 import { PRV_ID } from '@screens/Dex/constants';
 import { getTokenList } from '@services/api/token';
 import { parseNodeRewardsToArray } from '@screens/Node/utils';
+import accountService from '@services/wallet/accountService';
 
 export const checkIfVerifyCodeIsExisting = async () => {
   return new Promise(async (resolve, reject) => {
@@ -73,13 +74,18 @@ export const getTotalVNode = async () => {
   };
 };
 
-export const getBLSWithVNode = async (device) => {
-  return await VirtualNodeService.getPublicKeyMining(device);
-};
-
-export const formatTxNode = async (device) => {
-  // reward set on API result
-  // device.Rewards = rewards || {};
+export const combineNode = async (device, wallet, newBLSKey) => {
+  const listAccount = await wallet.listAccount();
+  const rawAccount  = await accountService.getAccountWithBLSPubKey(newBLSKey, wallet);
+  device.Account = listAccount.find(item =>
+    item.AccountName === rawAccount?.name
+  );
+  if (device.Account) {
+    device.ValidatorKey = device.Account.ValidatorKey;
+    if (device?.Account?.PublicKeyCheckEncode && !device.PublicKey) {
+      device.PublicKey = device.Account.PublicKeyCheckEncode;
+    }
+  }
   if (device.SelfUnstakeTx) {
     console.debug('CHECK UNSTAKE TX STATUS', device.SelfUnstakeTx, device.Name);
     try {
@@ -219,20 +225,23 @@ export const parseRewards = async (nodesInfo, skipAllTokens = false) => {
 export const combineNodesInfoToObject = (nodesInfo) => {
   let object = {};
   nodesInfo.forEach(item => {
-    object[isEmpty(item?.BLS) ? item?.QR_CODE : item?.BLS] = item;
+    object[isEmpty(item?.BLS) ? item?.QRCode : item?.BLS] = item;
   });
   return object;
 };
 
-export const formatNodeItemFromApi = async (device, listNodeObject, allTokens) => {
+export const formatNodeItemFromApi = async (device, listNodeObject, allTokens, wallet) => {
   const nodeItem = listNodeObject[
-    device.IsVNode ? device.PublicKeyMining : device.PublicKey
+    device.IsVNode ? device.PublicKeyMining : device.QRCode
   ];
   if (!nodeItem) return device;
   const {
     IsInCommittee,
     IsInAutoStaking,
     IsAutoStake,
+    PendingUnstake,
+    IsUnstaked,
+    PendingWithdrawal
   } = nodeItem;
 
   if (IsInCommittee) {
@@ -245,11 +254,24 @@ export const formatNodeItemFromApi = async (device, listNodeObject, allTokens) =
 
   device.IsAutoStake  = IsAutoStake;
 
+  if (device.IsPNode) {
+    device.IsFundedUnstakedRequestProcessed = IsUnstaked;
+    device.IsFundedUnstaking                = PendingUnstake;
+    device.IsFundedStakeWithdrawable        = PendingWithdrawal;
+    if (device.IsFundedUnstakedRequestProcessed) {
+      device.IsFundedStakeWithdrawable = true;
+      device.StakerAddress = null;
+      let blsKey = device.PublicKeyMining;
+      if (device.IsFundedUnstaked && blsKey) {
+        device = await combineNode(device, wallet, blsKey);
+      }
+    }
+  }
+
   const {
     allRewards,
     prvRewards
   } = await parseRewards([nodeItem], true);
-
   device.Rewards    = prvRewards;
   device.AllRewards = parseNodeRewardsToArray(allRewards, allTokens);
 

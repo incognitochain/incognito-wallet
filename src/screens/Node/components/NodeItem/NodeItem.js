@@ -1,23 +1,26 @@
-import React, {memo} from 'react';
+import React, { memo } from 'react';
 import { View } from 'react-native';
 import { withNodeItemEnhance } from '@screens/Node/components/NodeItem';
 import styles from '@screens/Node/components/style';
-import {COLORS} from '@src/styles';
+import { COLORS } from '@src/styles';
 import Swipeout from 'react-native-swipeout';
 import PropTypes from 'prop-types';
 import PNode from '@screens/Node/components/PNode';
 import VNode from '@screens/Node/components/VNode';
+import string from '@src/constants/string';
 
 const NodeItem = (props) => {
   const {
     item,
     loading,
+    withdrawTxs,
 
+    // Actions
     onStake,
     onUnstake,
     onRemove,
     onImport,
-    onWithdraw
+    onWithdraw,
   } = props;
 
   const renderNode = () => {
@@ -30,6 +33,7 @@ const NodeItem = (props) => {
           onUnstake={onUnstake}
           onStake={onStake}
           onWithdraw={onWithdraw}
+          withdrawTxs={withdrawTxs}
         />
       );
     }
@@ -42,15 +46,16 @@ const NodeItem = (props) => {
         onStake={onStake}
         onUnstake={onUnstake}
         onWithdraw={onWithdraw}
+        withdrawTxs={withdrawTxs}
       />
     );
   };
 
   return (
     <Swipeout
-      style={[styles.container]}
+      style={styles.container}
       right={[{
-        text: 'Remove',
+        text: string.remove,
         backgroundColor: COLORS.red,
         onPress: () => onRemove(item),
       }]}
@@ -63,13 +68,14 @@ const NodeItem = (props) => {
 };
 
 NodeItem.propTypes = {
-  item:      PropTypes.object.isRequired,
-  loading:   PropTypes.bool.isRequired,
-  onImport:  PropTypes.func.isRequired,
-  onStake:   PropTypes.func.isRequired,
-  onUnstake: PropTypes.func.isRequired,
-  onRemove:  PropTypes.func.isRequired,
-  onWithdraw: PropTypes.func.isRequired,
+  item:         PropTypes.object.isRequired,
+  loading:      PropTypes.bool.isRequired,
+  onImport:     PropTypes.func.isRequired,
+  onStake:      PropTypes.func.isRequired,
+  onUnstake:    PropTypes.func.isRequired,
+  onRemove:     PropTypes.func.isRequired,
+  onWithdraw:   PropTypes.func.isRequired,
+  withdrawTxs:  PropTypes.object.isRequired,
 };
 
 

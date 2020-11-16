@@ -3,8 +3,8 @@ import ErrorBoundary from '@src/components/ErrorBoundary';
 import { useDispatch, useSelector } from 'react-redux';
 import { nodeSelector } from '@screens/Node/Node.selector';
 import {
-  actionUpdateNumberLoadedVNodeBLS,
-  updateDeviceItem
+  actionUpdateNumberLoadedVNodeBLS, actionUpdatePNodeItem,
+  actionUpdateVNodeItem
 } from '@screens/Node/Node.actions';
 import { isEmpty } from 'lodash';
 
@@ -21,16 +21,15 @@ const enhance = WrappedComp => props => {
     onWithdraw
   } = props;
 
-  const { isRefreshing: isRefresh } = useSelector(nodeSelector);
-
   const [loading, setLoading] = useState(false);
+  const { isRefreshing: isRefresh } = useSelector(nodeSelector);
 
   const getVNodeInfo = async () => {
     const blsKey    = device?.PublicKeyMining;
     const publicKey = device?.PublicKey;
     const productId = device?.ProductId;
 
-    dispatch(updateDeviceItem(
+    dispatch(actionUpdateVNodeItem(
       { blsKey, productId, device },
       () => {
         if (isEmpty(blsKey) || isEmpty(publicKey)) {
@@ -41,13 +40,18 @@ const enhance = WrappedComp => props => {
   };
 
   const getPNodeInfo = async () => {
-
+    const productId = device?.ProductId;
+    dispatch(actionUpdatePNodeItem(
+      { productId },
+      () => {
+        setLoading(false);
+      }));
   };
 
   const getNodeInfo = async () => {
     device.IsVNode
       ? getVNodeInfo().then()
-      : getVNodeInfo().then();
+      : getPNodeInfo().then();
   };
 
   const fetchData = () => {

@@ -9,11 +9,13 @@ import { isEmpty, some, forEach, cloneDeep } from 'lodash';
 import accountService from '@services/wallet/accountService';
 import { getTransactionByHash } from '@services/wallet/RpcClientService';
 import { onClickView } from '@utils/ViewUtil';
+import { useDispatch } from 'react-redux';
+import { updateWithdrawTxs } from '@screens/Node/Node.actions';
 
 const enhanceWithdraw = WrappedComp => props => {
-  const { listDevice, noRewards, wallet } = props;
+  const dispatch = useDispatch();
+  const { listDevice, noRewards, wallet, withdrawTxs } = props;
 
-  const [withdrawTxs, setWithdrawTxs] = useState({});
   const [withdrawing, setWithdrawing] = useState(false);
 
   const withdrawable = useMemo(() => {
@@ -41,11 +43,11 @@ const enhanceWithdraw = WrappedComp => props => {
         delete _withdrawTxs[key];
       }
     });
-    setWithdrawTxs(_withdrawTxs);
+    dispatch(updateWithdrawTxs(_withdrawTxs));
   };
 
   const sendWithdrawTx = async (paymentAddress, tokenIds) => {
-    const _withdrawTxs = cloneDeep(withdrawTxs);
+    const _withdrawTxs = {};
     const listAccount = await wallet.listAccount();
     for (const tokenId of tokenIds) {
       const account = listAccount.find(item => item.PaymentAddress === paymentAddress);
@@ -53,7 +55,7 @@ const enhanceWithdraw = WrappedComp => props => {
         .then((res) => _withdrawTxs[paymentAddress] = res?.txId)
         .catch(() => null);
     }
-    setWithdrawTxs(_withdrawTxs);
+    dispatch(updateWithdrawTxs(Object.assign(withdrawTxs, _withdrawTxs)));
     return _withdrawTxs;
   };
 
@@ -112,11 +114,11 @@ const enhanceWithdraw = WrappedComp => props => {
       <WrappedComp
         {...{
           ...props,
-
           wallet,
           withdrawing,
           withdrawable,
           noRewards,
+          withdrawTxs,
 
           checkWithdrawTxsStatus,
           handleWithdrawAll,

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { useDispatch, useSelector } from 'react-redux';
 import { vNodeOptionsSelector } from '@screens/Node/Node.selector';
-import { useFocusEffect } from 'react-navigation-hooks';
+import {useFocusEffect, useNavigationParam} from 'react-navigation-hooks';
 import { getTotalVNode } from '@screens/Node/Node.utils';
 import {
   actionClearNodeData as clearNodeData,
@@ -15,9 +15,13 @@ import LocalDatabase from '@utils/LocalDatabase';
 let lastRefreshTime;
 
 const enhanceFetchData = WrappedComp => props => {
-  const { listDevice, isFetched } = props;
+  const {
+    listDevice,
+    isFetched
+  } = props;
+
   const dispatch    = useDispatch();
-  const { refresh } = props?.navigation?.state?.params || {};
+  const refresh     = useNavigationParam('refresh');
 
   const {
     hasVNode,
@@ -71,8 +75,12 @@ const enhanceFetchData = WrappedComp => props => {
 
   useEffect(() => {
     fetchData(true).then();
-  }, []);
 
+    return () => {
+      // Screen removed clear List Node
+      dispatch(clearNodeData(true));
+    };
+  }, []);
 
   useFocusEffect(
     useCallback(() => {

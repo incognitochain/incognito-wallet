@@ -10,7 +10,7 @@ import {
   ACTION_SET_TOTAL_VNODE,
   ACTION_UPDATE_NUMBER_LOADED_VNODE_BLS,
   ACTION_UPDATE_FETCHING,
-  ACTION_CLEAR_NODE_DATA
+  ACTION_CLEAR_NODE_DATA, UPDATE_WITHDRAW_TXS
 } from '@screens/Node/Node.constant';
 import { cloneDeep } from 'lodash';
 import {PRV} from '@services/wallet/tokenService';
@@ -39,7 +39,8 @@ const initialStateClear = {
 
 const initialState = {
   ...initialStateClear,
-  listDevice:     [], // List nodACTION_FETCHING_NODES_INFO_FROM_APIe device
+  listDevice:   [], // List node,
+  withdrawTxs:  {}
 };
 
 const nodeReducer = (state = initialState, action) => {
@@ -137,9 +138,25 @@ const nodeReducer = (state = initialState, action) => {
     };
   }
   case ACTION_CLEAR_NODE_DATA: {
+    const { clearListNode } = action;
+    if (clearListNode) {
+      state = {
+        ...state,
+        listDevice: [],
+      };
+    } else {
+      state = {
+        ...state,
+        ...cloneDeep(initialStateClear)
+      };
+    }
+    return { ...state };
+  }
+  case UPDATE_WITHDRAW_TXS: {
+    const withdrawTxs = action?.withdrawTxs;
     return {
       ...state,
-      ...cloneDeep(initialStateClear)
+      withdrawTxs
     };
   }
   default:

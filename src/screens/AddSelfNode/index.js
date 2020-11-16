@@ -169,37 +169,35 @@ class AddSelfNode extends BaseScreen {
     };
   }
 
-  handleSetUpPress = onClickView( ()=>{
+  handleSetUpPress = onClickView( async ()=>{
+    this.setState({ loading: true });
     try {
-      this.setState({
-        loading: true,
-      }, async () => {
-        const userJson = await LocalDatabase.getUserInfo();
-        const host = _.trim(this.inputView.current?.getText()).toLowerCase();
+      const userJson = await LocalDatabase.getUserInfo();
+      const host = _.trim(this.inputView.current?.getText()).toLowerCase();
 
-        console.log(TAG,'handleSetUpPress host = ',host);
-        if (userJson && !_.isEmpty(host)) {
-          await this.validateHost(host);
-          let listLocalDevice = await LocalDatabase.getListDevices();
-          // const isImportPrivateKey = _.isEmpty(selectedAccount?.PrivateKey);
-          const deviceJSON = await this.parseHost(host);
-          const device = Device.getInstance(deviceJSON);
-          const newBLSKey  = await VirtualNodeService.getPublicKeyMining(device);
-          if (newBLSKey) {
-            device.PublicKeyMining = newBLSKey;
-          }
-          listLocalDevice = [device, ...listLocalDevice];
-          this.setState({loading: true});
-          await LocalDatabase.saveListDevices(listLocalDevice);
-          this.goToScreen(routeNames.Node, {
-            refresh: new Date().getTime()
-          });
-          return true;
+      console.log(TAG,'handleSetUpPress host = ',host);
+      if (userJson && !_.isEmpty(host)) {
+        await this.validateHost(host);
+        let listLocalDevice = await LocalDatabase.getListDevices();
+        // const isImportPrivateKey = _.isEmpty(selectedAccount?.PrivateKey);
+        const deviceJSON = await this.parseHost(host);
+        const device = Device.getInstance(deviceJSON);
+        const newBLSKey  = await VirtualNodeService.getPublicKeyMining(device);
+        if (newBLSKey) {
+          device.PublicKeyMining = newBLSKey;
         }
-      });
-
+        listLocalDevice = [device, ...listLocalDevice];
+        this.setState({ loading: false });
+        await LocalDatabase.saveListDevices(listLocalDevice);
+        this.goToScreen(routeNames.Node, {
+          refresh: new Date().getTime()
+        });
+        return true;
+      }
     } catch (error) {
       new ExHandler(error,'Can\'t add virtual node').showErrorToast();
+    } finally {
+      this.setState({ loading: false });
     }
   });
 

@@ -13,10 +13,11 @@ import { ActivityIndicator, RoundCornerButton } from '@components/core';
 import theme from '@src/styles/theme';
 import {SuccessModal} from '@src/components';
 import NodeItem from '@screens/Node/components/NodeItem/NodeItem';
+import string from '@src/constants/string';
 
 const Node = (props) => {
   const {
-    wallet,  // value from @enhanceWithdraw
+    wallet,
     refreshData,
     nodeRewards,
     loading, // creating account from @enhanceSignIn
@@ -75,14 +76,14 @@ const Node = (props) => {
     return (
       <View style={{ paddingHorizontal: 25 }}>
         <Rewards rewards={nodeRewards} />
-        { !noRewards &&
+        { !noRewards && (
           <RoundCornerButton
             onPress={handleWithdrawAll}
             style={[theme.BUTTON.NODE_BUTTON, {marginBottom: 50}]}
-            title={!withdrawable || withdrawing ? 'Withdrawing all rewards...' : 'Withdraw all rewards'}
+            title={!withdrawable || withdrawing ? string.withdrawing : string.withdraw_all}
             disabled={!withdrawable || withdrawing}
           />
-        }
+        )}
       </View>
     );
   };
@@ -130,18 +131,18 @@ const Node = (props) => {
           <View style={{ marginHorizontal: 25 }}>
             <RoundCornerButton
               style={[style.buyButton, theme.BUTTON.BLACK_TYPE]}
-              title="Get a Node Device"
+              title={string.get_node_device}
               onPress={onBuyNodePress}
             />
           </View>
           <SuccessModal
-            title="Remove from display"
-            extraInfo={'Are you sure?\nYou can add this Node again later.'}
+            title={string.remove_from_display}
+            extraInfo={string.add_node_again}
             visible={!!removingDevice}
-            buttonTitle="Remove"
+            buttonTitle={string.remove}
             closeSuccessDialog={handleConfirmRemoveDevice}
             onSuccess={handleCancelRemoveDevice}
-            successTitle="Cancel"
+            successTitle={string.cancel}
             buttonStyle={theme.BUTTON.NODE_BUTTON}
           />
         </View>
@@ -160,7 +161,7 @@ const Node = (props) => {
 
 Node.propTypes = {
   wallet: PropTypes.object.isRequired,
-  nodeRewards: PropTypes.object.isRequired,
+  nodeRewards: PropTypes.array.isRequired,
   loading: PropTypes.bool.isRequired,
   isFetching: PropTypes.bool.isRequired,
   listDevice: PropTypes.array.isRequired,

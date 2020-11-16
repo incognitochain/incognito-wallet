@@ -38,7 +38,7 @@ const Rewards = ({ rewards }) => {
 };
 
 Rewards.propTypes = {
-  rewards: PropTypes.object.isRequired,
+  rewards: PropTypes.array.isRequired,
 };
 
 export default Rewards;

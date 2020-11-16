@@ -1,11 +1,10 @@
+import React, { memo } from 'react';
 import { Text, View, TouchableOpacity } from '@components/core';
 import PropTypes from 'prop-types';
-import React, {memo} from 'react';
 import BtnStatus from '@src/components/Button/BtnStatus';
 import routeNames from '@src/router/routeNames';
 import BtnWithBlur from '@src/components/Button/BtnWithBlur';
 import PRVRewards from '@screens/Node/components/PRVRewards';
-import { parseNodeRewardsToArray } from '@screens/Node/utils';
 import { ActivityIndicator } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styles, { nodeItemStyle } from './style';
@@ -15,7 +14,6 @@ const VNode = memo((props) => {
 
   const {
     item,
-    allTokens,
     onImportAccount,
     onStake,
     onUnstake,
@@ -40,22 +38,21 @@ const VNode = memo((props) => {
     return (<BtnStatus backgroundColor={colorStatus} />);
   };
 
-  const renderItemRight = () => {
-    return (
-      <View style={styles.itemRight}>
-        {!hasAccount
-          ? <BtnWithBlur text='Import' onPress={onImportAccount} />
-          : !hasStaked
-            ? <BtnWithBlur text='Stake' onPress={() => onStake(item)} />
-            : null}
-      </View>
-    );
-  };
+  // If Fetching not show
+  const renderItemRight = () => (
+    <View style={styles.itemRight}>
+      {!hasAccount
+        ? <BtnWithBlur text='Import' onPress={onImportAccount} />
+        : !hasStaked
+          ? <BtnWithBlur text='Stake' onPress={() => onStake(item)} />
+          : null}
+    </View>
+  );
 
   const onVNodePress = () => {
+    if (isFetching) return;
     navigation.navigate(routeNames.NodeItemDetail,
       {
-        allTokens: allTokens,
         onUnstake: onUnstake,
         onWithdraw: onWithdraw,
         onStake: onStake,
@@ -75,7 +72,7 @@ const VNode = memo((props) => {
         <View>
           <View style={nodeItemStyle.wrapperRaw}>
             {renderStatusView()}
-            <Text style={styles.itemLeft} numberOfLines={1} >
+            <Text style={styles.itemLeft} numberOfLines={1}>
               {labelName || '-'}
             </Text>
           </View>
@@ -83,7 +80,7 @@ const VNode = memo((props) => {
             <PRVRewards isDefault item={item} rewards={item.Rewards} />
           </View>
         </View>
-        {renderItemRight()}
+        {!isFetching && renderItemRight()}
       </TouchableOpacity>
     </View>
   );
@@ -92,7 +89,6 @@ const VNode = memo((props) => {
 
 VNode.propTypes = {
   item: PropTypes.object.isRequired,
-  allTokens: PropTypes.array.isRequired,
   onImportAccount: PropTypes.func.isRequired,
   onStake: PropTypes.func.isRequired,
   onWithdraw: PropTypes.func.isRequired,

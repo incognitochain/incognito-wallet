@@ -13,6 +13,7 @@ import { accountSeleclor } from '@src/redux/selectors';
 import handleRandomName from '@src/utils/randomName';
 import { Keyboard } from 'react-native';
 import { actionFetchImportAccount } from '@src/redux/actions/account';
+import { actionClearNodeData as clearNodeData } from '@screens/Node/Node.actions';
 import { formImportAccount } from './ImportAccount';
 
 const enhance = (WrappedComponent) => (props) => {
@@ -58,10 +59,10 @@ const enhance = (WrappedComponent) => (props) => {
         }),
       );
       if (!isImported) throw new CustomError(ErrorCode.importAccount_failed);
-
       if (!onGoBack) {
         navigation.pop();
       } else {
+        dispatch(clearNodeData(true));
         onGoBack();
       }
 

@@ -207,12 +207,19 @@ export default class Device {
     return this.IsFundedUnstakedRequestProcessed && !this.IsFundedAutoStake;
   }
 
-  get IsFundedUnstakedRequestProcessed() {
-    return this.FundedUnstakeStatus === 2;
+  set IsFundedUnstakedRequestProcessed(status) {
+    this.data.minerInfo.isUnstaked = status;
   }
 
+  get IsFundedUnstakedRequestProcessed() {
+    return this.data.minerInfo.isUnstaked;
+  }
+
+  set IsFundedUnstaking(status) {
+    this.data.minerInfo.pendingUnstake = status;
+  }
   get IsFundedUnstaking() {
-    return this.FundedUnstakeStatus === 1;
+    return this.data.minerInfo.pendingUnstake;
   }
 
   get IsFundedStaked() {

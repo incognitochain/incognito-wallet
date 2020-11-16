@@ -12,7 +12,8 @@ export const nodeSelector = createSelector(
 
       listDevice:   node?.listDevice, // List node device
       noRewards:    node?.noRewards,
-      nodeRewards:  node?.nodeRewards
+      nodeRewards:  node?.nodeRewards,
+      withdrawTxs:  node?.withdrawTxs
     };
   }
 );

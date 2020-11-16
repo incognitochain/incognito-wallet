@@ -11,7 +11,8 @@ const enhanceData = WrappedComp => props => {
     nodeRewards,
     isFetching,
     isRefreshing,
-    isFetched
+    isFetched,
+    withdrawTxs
   } = useSelector(nodeSelector);
 
   return (
@@ -25,7 +26,8 @@ const enhanceData = WrappedComp => props => {
           nodeRewards,
           isFetching,
           isRefreshing,
-          isFetched
+          isFetched,
+          withdrawTxs
         }}
       />
     </ErrorBoundary>
