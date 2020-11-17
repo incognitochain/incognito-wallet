@@ -5,9 +5,8 @@ import { Toast } from '@components/core';
 import APIService from '@services/api/miner/APIService';
 import NodeService from '@services/NodeService';
 import { ExHandler } from '@services/exception';
-import { isEmpty, some, forEach, cloneDeep } from 'lodash';
+import { isEmpty, some } from 'lodash';
 import accountService from '@services/wallet/accountService';
-import { getTransactionByHash } from '@services/wallet/RpcClientService';
 import { onClickView } from '@utils/ViewUtil';
 import { useDispatch } from 'react-redux';
 import { updateWithdrawTxs } from '@screens/Node/Node.actions';
@@ -34,18 +33,7 @@ const enhanceWithdraw = WrappedComp => props => {
     message && Toast.showInfo(message, { duration: 10000 });
   };
 
-  const checkWithdrawTxsStatus = () => {
-    const _withdrawTxs = cloneDeep(withdrawTxs);
-    forEach(_withdrawTxs, async (txId, key) => {
-      const tx = await getTransactionByHash(txId);
-
-      if (tx.err || tx.isInBlock) {
-        delete _withdrawTxs[key];
-      }
-    });
-    dispatch(updateWithdrawTxs(_withdrawTxs));
-  };
-
+  // Support withdraw VNode | PNode unstaked
   const sendWithdrawTx = async (paymentAddress, tokenIds) => {
     const _withdrawTxs = {};
     const listAccount = await wallet.listAccount();
@@ -63,19 +51,25 @@ const enhanceWithdraw = WrappedComp => props => {
     try {
       const account = device.Account;
       const rewards = device.Rewards;
+      // Case withdraw VNode | PNode unstaked
       if ((device.IsVNode) || (device.IsFundedUnstaked)) {
         const { PaymentAddress } = (account || {});
         const tokenIds = Object.keys(rewards)
           .filter(id => rewards[id] > 0);
         const txs = await sendWithdrawTx(PaymentAddress, tokenIds);
+        console.debug('Handle withdraw', txs);
         const message = MESSAGES.VNODE_WITHDRAWAL;
 
         if (showToast) {
           showToastMessage(message);
         }
-
         return txs;
       } else {
+        // PNode requesting withdraw rewards
+        if (device.IsPNode && !device?.IsFundedStakeWithdrawable) {
+          return true;
+        }
+        // Case withdraw PNode
         await APIService.requestWithdraw({
           ProductID: device.ProductId,
           QRCode: device.qrCodeDeviceId,
@@ -120,7 +114,6 @@ const enhanceWithdraw = WrappedComp => props => {
           noRewards,
           withdrawTxs,
 
-          checkWithdrawTxsStatus,
           handleWithdrawAll,
           handlePressWithdraw,
         }}

@@ -1,12 +1,12 @@
 import React, { memo } from 'react';
-import {Text, Toast, TouchableOpacity, View} from '@components/core';
+import { Text, TouchableOpacity, View } from '@components/core';
 import PropTypes from 'prop-types';
 import BtnStatus from '@src/components/Button/BtnStatus';
 import BtnWithBlur from '@src/components/Button/BtnWithBlur';
 import routeNames from '@src/router/routeNames';
 import PRVRewards from '@screens/Node/components/PRVRewards';
+import { useNavigation } from 'react-navigation-hooks';
 import { ActivityIndicator } from 'react-native';
-import {useNavigation} from 'react-navigation-hooks';
 import styles, { nodeItemStyle } from './style';
 
 const PNode = memo((props) => {
@@ -30,7 +30,7 @@ const PNode = memo((props) => {
   const renderStatusView = () => {
     if (isFetching) {
       return (
-        <View style={nodeItemStyle.btnStyle}>
+        <View style={[nodeItemStyle.btnStyle, nodeItemStyle.wrapperLoading]}>
           <ActivityIndicator size='small' />
         </View>
       );

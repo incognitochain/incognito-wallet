@@ -30,7 +30,7 @@ const VNode = memo((props) => {
   const renderStatusView = () => {
     if (isFetching) {
       return (
-        <View style={nodeItemStyle.btnStyle}>
+        <View style={[nodeItemStyle.btnStyle, nodeItemStyle.wrapperLoading]}>
           <ActivityIndicator size='small' />
         </View>
       );

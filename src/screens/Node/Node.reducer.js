@@ -10,10 +10,13 @@ import {
   ACTION_SET_TOTAL_VNODE,
   ACTION_UPDATE_NUMBER_LOADED_VNODE_BLS,
   ACTION_UPDATE_FETCHING,
-  ACTION_CLEAR_NODE_DATA, UPDATE_WITHDRAW_TXS
+  ACTION_CLEAR_NODE_DATA,
+  UPDATE_WITHDRAW_TXS,
+  ACTION_CLEAR_WITHDRAW_TXS,
+  ACTION_CLEAR_LIST_NODES
 } from '@screens/Node/Node.constant';
 import { cloneDeep } from 'lodash';
-import {PRV} from '@services/wallet/tokenService';
+import { PRV } from '@services/wallet/tokenService';
 
 const initMissingSetup = {
   visible: false,
@@ -137,20 +140,26 @@ const nodeReducer = (state = initialState, action) => {
       isFetching,
     };
   }
+  // When start loading data, clear all older data
   case ACTION_CLEAR_NODE_DATA: {
-    const { clearListNode } = action;
-    if (clearListNode) {
-      state = {
-        ...state,
-        listDevice: [],
-      };
-    } else {
-      state = {
-        ...state,
-        ...cloneDeep(initialStateClear)
-      };
-    }
-    return { ...state };
+    return {
+      ...state,
+      ...cloneDeep(initialStateClear)
+    };
+  }
+  // Clear list nodes when import account | close Node screen
+  case ACTION_CLEAR_LIST_NODES: {
+    return {
+      ...state,
+      listDevice: [],
+    };
+  }
+  // Clear list nodes when close Node screen
+  case ACTION_CLEAR_WITHDRAW_TXS: {
+    return {
+      ...state,
+      withdrawTxs: {}
+    };
   }
   case UPDATE_WITHDRAW_TXS: {
     const withdrawTxs = action?.withdrawTxs;

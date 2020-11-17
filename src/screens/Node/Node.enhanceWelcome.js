@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, { useCallback, useState } from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { useFocusEffect } from 'react-navigation-hooks';
 import LocalDatabase from '@utils/LocalDatabase';

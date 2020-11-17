@@ -3,7 +3,6 @@ import Device, {MAX_ERROR_COUNT, VALIDATOR_STATUS} from '@models/device';
 import NodeService from '@services/NodeService';
 import APIService from '@src/services/api/miner/APIService';
 import LogManager from '@src/services/LogManager';
-import VirtualNodeService from '@services/VirtualNodeService';
 import { map, isEmpty, isNumber, forEach, uniq } from 'lodash';
 import { getTransactionByHash } from '@services/wallet/RpcClientService';
 import tokenService, { PRV } from '@services/wallet/tokenService';
@@ -53,7 +52,9 @@ export const checkIfVerifyCodeIsExisting = async () => {
   });
 };
 
-export const getTotalVNode = async () => {
+// Func support for VNode
+// Get Total VNode dont have BLSKey | PublicKey
+export const getTotalVNodeNotHaveBlsKey = async () => {
   let listDevice = await LocalDatabase.getListDevices();
   listDevice = map(listDevice, item => Device.getInstance(item));
   let hasVNode        = false;
@@ -66,7 +67,6 @@ export const getTotalVNode = async () => {
       }
     }
   });
-
   return {
     hasVNode,
     vNodeNotHaveBLS,
@@ -74,6 +74,8 @@ export const getTotalVNode = async () => {
   };
 };
 
+// Update Node Info
+// support for VNode and VNode
 export const combineNode = async (device, wallet, newBLSKey) => {
   const listAccount = await wallet.listAccount();
   const rawAccount  = await accountService.getAccountWithBLSPubKey(newBLSKey, wallet);
@@ -135,6 +137,22 @@ export const combineNode = async (device, wallet, newBLSKey) => {
   return device;
 };
 
+/*
+* Return value
+// *All tokens in all rewards
+// @allTokens = [{ displayName, hasIcon, id, isVerified, isVerified, name, pDecimals, symbol }]
+*
+// *All Nodes rewards
+// Exp: { 0000000000004: 150 }
+// @allRewards = { tokenId: tokenReward }
+*
+// *Check have rewards
+// @noRewards = { boolean }
+*
+// *PRV rewards from Node
+// Exp: { 0000000000004: 150 }
+// @prvRewards = { PRV_ID: PRV_REWARD }
+* */
 export const parseRewards = async (nodesInfo, skipAllTokens = false) => {
   let tokenIds    = [];
   let rewardsList = [];
@@ -174,46 +192,6 @@ export const parseRewards = async (nodesInfo, skipAllTokens = false) => {
       }
     }
   }
-
-  /**
-  * // RETURN VALUE
-  * // All tokens in all rewards
-  * @return {Object<{
-  *   displayName:     string,
-  *   hasIcon:         boolean
-  *   id:              string
-  *   isVerified:      boolean
-  *   name:            string
-  *   originalSymbol:  string
-  *   pDecimals:       number
-  *   symbol:          string
-  * }>} allTokens
-  *
-  * // All rewards
-  * // Exp: { 0000000000004: 150 }
-  * @return {Object<{
-  *   tokenId: string,
-  *   tokenReward: number
-  * }>} allRewards
-  *
-  * // Nodes All rewards
-  * // Exp: { 0000000000004: 150 }
-  * @return {Object<{
-  *   tokenId: string,
-  *   tokenReward: number
-  * }>} allRewards
-  *
-  * // Check have rewards
-  * @return {boolean} noRewards
-  *
-  * // PRV rewards from Node
-  * // Exp: { 0000000000004: 150 }
-  * @return {Object<{
-  *   PRV_ID: string,
-  *   PRV_REWARD: number
-  * }>} prvRewards
-  */
-
   return {
     allTokens,
     allRewards,
@@ -230,6 +208,7 @@ export const combineNodesInfoToObject = (nodesInfo) => {
   return object;
 };
 
+// Format Node Info get from API
 export const formatNodeItemFromApi = async (device, listNodeObject, allTokens, wallet) => {
   const nodeItem = listNodeObject[
     device.IsVNode ? device.PublicKeyMining : device.QRCode
@@ -245,23 +224,42 @@ export const formatNodeItemFromApi = async (device, listNodeObject, allTokens, w
   } = nodeItem;
 
   if (IsInCommittee) {
+    // Node is in Committee
     device.Status = VALIDATOR_STATUS.WORKING;
   } else if ( IsInAutoStaking ) {
+    // Node is waiting to join Committee
     device.Status = VALIDATOR_STATUS.WAITING;
   } else {
+    // Nothing to show status => gray
     device.Status = null;
   }
 
-  device.IsAutoStake  = IsAutoStake;
+  device.IsAutoStake = IsAutoStake;
 
   if (device.IsPNode) {
+
+    // PNode unstaked => IsUnstaked = true
     device.IsFundedUnstakedRequestProcessed = IsUnstaked;
+
+    // PNode waiting unstake => PendingUnstake = true
     device.IsFundedUnstaking                = PendingUnstake;
-    device.IsFundedStakeWithdrawable        = PendingWithdrawal;
+
+    // PendingWithdrawal === true
+    // PNode is requesting Withdraw => cant withdraw, disable button withdraw
+    // PendingWithdrawal === false
+    // PNode is not request withdraw => can withdraw
+    // It's mean IsFundedStakeWithdrawable === true => can withdraw, opposite
+    device.IsFundedStakeWithdrawable = !PendingWithdrawal;
+
+    // PNode has been Unstaked
     if (device.IsFundedUnstakedRequestProcessed) {
+      // always allow withdraw
       device.IsFundedStakeWithdrawable = true;
       device.StakerAddress = null;
       let blsKey = device.PublicKeyMining;
+
+      // IsFundedUnstakedRequestProcessed = true => PNode unstaked
+      // IsFundedAutoStake = false =>
       if (device.IsFundedUnstaked && blsKey) {
         device = await combineNode(device, wallet, blsKey);
       }

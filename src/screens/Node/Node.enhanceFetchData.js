@@ -2,10 +2,13 @@ import React, { useCallback, useEffect } from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { useDispatch, useSelector } from 'react-redux';
 import { vNodeOptionsSelector } from '@screens/Node/Node.selector';
-import {useFocusEffect, useNavigationParam} from 'react-navigation-hooks';
-import { getTotalVNode } from '@screens/Node/Node.utils';
+import { useFocusEffect, useNavigationParam } from 'react-navigation-hooks';
+import { getTotalVNodeNotHaveBlsKey } from '@screens/Node/Node.utils';
 import {
+  actionCheckWithdrawTxs as checkWithdrawTxs,
+  actionClearListNodes as clearListNodes,
   actionClearNodeData as clearNodeData,
+  actionClearWithdrawTxs as clearWithdrawTxs,
   actionGetNodesInfoFromApi as getNodesInfoFromApi,
   actionSetTotalVNode as setTotalVNode,
   actionUpdateListNodeDevice as updateListNode
@@ -34,6 +37,7 @@ const enhanceFetchData = WrappedComp => props => {
     }
     //clear data
     dispatch(clearNodeData());
+    dispatch(checkWithdrawTxs());
 
     lastRefreshTime = refresh || new Date().getTime();
 
@@ -41,8 +45,8 @@ const enhanceFetchData = WrappedComp => props => {
     let listDevice = await LocalDatabase.getListDevices();
     dispatch(updateListNode({ listDevice }));
 
-    //add loading here
-    getTotalVNode()
+    // Add loading here
+    getTotalVNodeNotHaveBlsKey()
       .then(async ({ hasVNode, vNodeNotHaveBLS, hasNode }) => {
         //check vNode have blsKey
         dispatch(setTotalVNode({ hasVNode, vNodeNotHaveBLS }));
@@ -77,8 +81,10 @@ const enhanceFetchData = WrappedComp => props => {
     fetchData(true).then();
 
     return () => {
-      // Screen removed clear List Node
-      dispatch(clearNodeData(true));
+      // When screen removed from stack
+      // Clear List Node and withdrawTxs
+      dispatch(clearListNodes());
+      dispatch(clearWithdrawTxs());
     };
   }, []);
 

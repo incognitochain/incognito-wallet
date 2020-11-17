@@ -191,6 +191,10 @@ export default class Device {
     this.data.minerInfo.isDrawable = bool;
   }
 
+  // *PNode requesting withdraw,
+  // waiting approve withdraw IsFundedStakeWithdrawable = false, disable button withdraw
+  // *PNode has rewards and not requesting withdraw,
+  // return IsFundedStakeWithdrawable = true, enable button withdraw
   get IsFundedStakeWithdrawable() {
     return this.data.minerInfo.isDrawable;
   }
@@ -211,6 +215,7 @@ export default class Device {
     this.data.minerInfo.isUnstaked = status;
   }
 
+  // PNode has been approved Unstaked return true
   get IsFundedUnstakedRequestProcessed() {
     return this.data.minerInfo.isUnstaked;
   }
@@ -218,6 +223,8 @@ export default class Device {
   set IsFundedUnstaking(status) {
     this.data.minerInfo.pendingUnstake = status;
   }
+
+  // PNode requesting Unstake and waiting approve unstake
   get IsFundedUnstaking() {
     return this.data.minerInfo.pendingUnstake;
   }

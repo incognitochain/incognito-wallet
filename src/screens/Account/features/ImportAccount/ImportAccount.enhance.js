@@ -13,7 +13,9 @@ import { accountSeleclor } from '@src/redux/selectors';
 import handleRandomName from '@src/utils/randomName';
 import { Keyboard } from 'react-native';
 import { actionFetchImportAccount } from '@src/redux/actions/account';
-import { actionClearNodeData as clearNodeData } from '@screens/Node/Node.actions';
+import {
+  actionClearListNodes as clearListNodes
+} from '@screens/Node/Node.actions';
 import { formImportAccount } from './ImportAccount';
 
 const enhance = (WrappedComponent) => (props) => {
@@ -62,7 +64,10 @@ const enhance = (WrappedComponent) => (props) => {
       if (!onGoBack) {
         navigation.pop();
       } else {
-        dispatch(clearNodeData(true));
+        // In case import account from Node screen
+        // Import success clear listNode devices from redux store
+        // Reload all UI Node screen
+        dispatch(clearListNodes());
         onGoBack();
       }
 

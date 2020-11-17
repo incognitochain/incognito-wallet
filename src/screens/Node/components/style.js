@@ -196,6 +196,12 @@ export const nodeItemStyle = StyleSheet.create({
     alignContent: 'center',
     justifyContent: 'center',
   },
+  // This style support ActivityIndicator because
+  // ActivityIndicator to large than status view
+  wrapperLoading: {
+    marginLeft: -8,
+    width: 38
+  }
 });
 
 export default style;

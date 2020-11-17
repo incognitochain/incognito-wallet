@@ -6,7 +6,10 @@ import {
   ACTION_UPDATE_MISSING_SETUP,
   ACTION_SET_TOTAL_VNODE,
   ACTION_UPDATE_NUMBER_LOADED_VNODE_BLS,
-  ACTION_CLEAR_NODE_DATA, UPDATE_WITHDRAW_TXS
+  ACTION_CLEAR_NODE_DATA,
+  UPDATE_WITHDRAW_TXS,
+  ACTION_CLEAR_LIST_NODES,
+  ACTION_CLEAR_WITHDRAW_TXS
 } from '@screens/Node/Node.constant';
 import { ExHandler } from '@services/exception';
 import { apiGetNodesInfo } from '@screens/Node/Node.services';
@@ -22,7 +25,8 @@ import {
 } from '@screens/Node/Node.utils';
 import NodeService from '@services/NodeService';
 import moment from 'moment';
-import { isEqual } from 'lodash';
+import { forEach, isEqual } from 'lodash';
+import { getTransactionByHash } from '@services/wallet/RpcClientService';
 
 const MAX_RETRY = 5;
 const TIMEOUT   = 5; // 2 minutes
@@ -42,13 +46,16 @@ export const actionFetchNodesInfoFromAPIFail = () => ({
 });
 
 // Make sure VNode have BLS key before call action.
+// Get NodesInfo from API
 export const actionGetNodesInfoFromApi = (isRefresh) => async (dispatch, getState) => {
   const state = getState();
   let { listDevice, isFetching, isRefreshing } = state?.node;
   const wallet = state?.wallet;
   if (isFetching || isRefreshing) return;
   try {
+    // Start loading
     await dispatch(actionFetchingNodesInfoFromAPI(isRefresh));
+
     const nodesInfo = await apiGetNodesInfo();
     console.debug('Node Info From API: ', nodesInfo);
 
@@ -80,17 +87,18 @@ export const actionGetNodesInfoFromApi = (isRefresh) => async (dispatch, getStat
   }
 };
 
+// Clear data on Node screen
 export const actionClearNodeData = (clearListNode) => ({
   type: ACTION_CLEAR_NODE_DATA,
   clearListNode
 });
 
-/**
-* @param {Object<{
-*   listDevice: array,
-*   isFetching: boolean
-* }>} payload
-*/
+// Clear List Node on store
+export const actionClearListNodes = () => ({
+  type: ACTION_CLEAR_LIST_NODES,
+});
+
+// payload = { listDevice: array, isFetching: boolean };
 export const updateListNodeDevice = (payload) => ({
   type: ACTION_UPDATE_LIST_NODE_DEVICE,
   payload,
@@ -127,15 +135,24 @@ export const actionUpdateMissingSetup = (payload) => ({
   payload
 });
 
+// check VNode have blsKey, account, total VNode
+// if dont have VNode dont call this action
+// payload = { hasVNode, vNodeNotHaveBLS }
 export const actionSetTotalVNode = (payload) => ({
   type: ACTION_SET_TOTAL_VNODE,
   payload
 });
 
+// VNode dont have BLSKey | PublicKey
+// Loaded blsKey | account success, call this action
+// Enough loaded VNode call api load NodesInfo
 export const actionUpdateNumberLoadedVNodeBLS = () => ({
   type: ACTION_UPDATE_NUMBER_LOADED_VNODE_BLS,
 });
 
+// @actionUpdatePNodeItem update PNode
+// update Account, Host, Firmware, PublicKeyMining, check is Online
+// When callback load end, hide loading cell
 export const actionUpdatePNodeItem = (options, callbackResolve) => async (dispatch, getState) => {
   try {
     const state           = getState();
@@ -178,7 +195,6 @@ export const actionUpdatePNodeItem = (options, callbackResolve) => async (dispat
         device.setIsOnline(Math.max(device.IsOnline - 1, 0));
       }
     }
-
     if (device.IsOnline && device.Host) {
       try {
         const version = await NodeService.checkVersion(device);
@@ -213,6 +229,10 @@ export const actionUpdatePNodeItem = (options, callbackResolve) => async (dispat
   }
 };
 
+// @actionUpdateVNodeItem update VNode
+// update Account, BLSKey, check is Online
+// If VNode dont have BLSKey | PublicKey, dispatch action update success
+// When callback load end, hide loading cell
 export const actionUpdateVNodeItem = (options, callbackResolve) => async (dispatch, getState) => {
   try {
     let {
@@ -263,5 +283,26 @@ export const updateWithdrawTxs = (withdrawTxs) => ({
   type: UPDATE_WITHDRAW_TXS,
   withdrawTxs
 });
+
+export const actionClearWithdrawTxs = () => ({
+  type: ACTION_CLEAR_WITHDRAW_TXS,
+});
+
+export const actionCheckWithdrawTxs = () =>  async (dispatch, getState) => {
+  try {
+    const state = getState();
+    let { withdrawTxs } = state?.node;
+    forEach(withdrawTxs, async (txId, key) => {
+      const tx = await getTransactionByHash(txId);
+      if (tx.err || tx.isInBlock) {
+        delete withdrawTxs[key];
+      }
+    });
+    dispatch(updateWithdrawTxs(withdrawTxs));
+  } catch (error) {
+    console.debug('Check Withdraw Txs with Error: ', error);
+  }
+};
+
 
 
