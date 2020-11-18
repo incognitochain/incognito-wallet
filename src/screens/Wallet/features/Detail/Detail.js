@@ -14,6 +14,7 @@ import routeNames from '@src/router/routeNames';
 import {
   Amount,
   AmountBasePRV,
+  AmountBaseUSDT,
   ChangePrice,
 } from '@src/components/Token/Token';
 import HistoryToken from '@screens/Wallet/features/HistoryToken';
@@ -68,7 +69,7 @@ const Balance = React.memo(() => {
     ...tokenData,
     showSymbol: false,
   };
-  const amountBasePRVProps = {
+  const amountBaseUSDTProps = {
     customStyle: balanceStyled.amountBasePRV,
     customPSymbolStyle: [balanceStyled.pSymbol],
     ...tokenData,
@@ -81,7 +82,7 @@ const Balance = React.memo(() => {
     <View style={balanceStyled.container}>
       <Amount {...amountProps} />
       <View style={balanceStyled.hook}>
-        <AmountBasePRV {...amountBasePRVProps} />
+        <AmountBaseUSDT {...amountBaseUSDTProps} />
         <ChangePrice {...changePriceProps} />
       </View>
     </View>

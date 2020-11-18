@@ -2,6 +2,9 @@ import { DEVICES } from '@src/constants/miner';
 import accountService from '@src/services/wallet/accountService';
 import _ from 'lodash';
 import { COLORS } from '@src/styles';
+import {PRV_ID} from '@screens/Dex/constants';
+import {parseNodeRewardsToArray} from '@screens/Node/utils';
+import {PRV} from '@services/wallet/tokenService';
 
 export const DEVICE_STATUS = {
   CODE_UNKNOWN : -1,
@@ -31,6 +34,7 @@ export const template = {
     isUpdating:false,
     publicKey: '',
     rewards: {},
+    allRewards: parseNodeRewardsToArray({ [PRV_ID]: 0 }, [PRV]),
     isOnline: 0,
     accountName: '',
     stakeTx: '',
@@ -60,10 +64,10 @@ export const VALIDATOR_STATUS = {
 export const MAX_ERROR_COUNT = 5;
 
 export default class Device {
-  static CODE_STOP = DEVICE_STATUS.CODE_STOP;
+  static CODE_STOP    = DEVICE_STATUS.CODE_STOP;
   static CODE_PENDING = DEVICE_STATUS.CODE_PENDING;
-  static CODE_START = DEVICE_STATUS.CODE_START;
-  static CODE_MINING = DEVICE_STATUS.CODE_MINING;
+  static CODE_START   = DEVICE_STATUS.CODE_START;
+  static CODE_MINING  = DEVICE_STATUS.CODE_MINING;
   static CODE_SYNCING = DEVICE_STATUS.CODE_SYNCING;
 
   constructor(data){
@@ -96,6 +100,12 @@ export default class Device {
   }
   get Rewards() {
     return this.data.minerInfo.rewards;
+  }
+  set AllRewards(rewards) {
+    this.data.minerInfo.allRewards = rewards;
+  }
+  get AllRewards() {
+    return this.data.minerInfo.allRewards;
   }
   get Account() {
     return this.data?.minerInfo?.account;
@@ -181,6 +191,10 @@ export default class Device {
     this.data.minerInfo.isDrawable = bool;
   }
 
+  // *PNode requesting withdraw,
+  // waiting approve withdraw IsFundedStakeWithdrawable = false, disable button withdraw
+  // *PNode has rewards and not requesting withdraw,
+  // return IsFundedStakeWithdrawable = true, enable button withdraw
   get IsFundedStakeWithdrawable() {
     return this.data.minerInfo.isDrawable;
   }
@@ -197,12 +211,22 @@ export default class Device {
     return this.IsFundedUnstakedRequestProcessed && !this.IsFundedAutoStake;
   }
 
-  get IsFundedUnstakedRequestProcessed() {
-    return this.FundedUnstakeStatus === 2;
+  set IsFundedUnstakedRequestProcessed(status) {
+    this.data.minerInfo.isUnstaked = status;
   }
 
+  // PNode has been approved Unstaked return true
+  get IsFundedUnstakedRequestProcessed() {
+    return this.data.minerInfo.isUnstaked;
+  }
+
+  set IsFundedUnstaking(status) {
+    this.data.minerInfo.pendingUnstake = status;
+  }
+
+  // PNode requesting Unstake and waiting approve unstake
   get IsFundedUnstaking() {
-    return this.FundedUnstakeStatus === 1;
+    return this.data.minerInfo.pendingUnstake;
   }
 
   get IsFundedStaked() {

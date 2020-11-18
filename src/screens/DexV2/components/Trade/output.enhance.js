@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import formatUtils from '@utils/format';
 import { MIN_PERCENT } from '@screens/DexV2/constants';
-import { getQuote as getQuoteAPI } from '@services/trading';
+import { apiGetQuote } from '@screens/DexV2';
 import { v4 } from 'uuid';
 import { calculateOutputValueCrossPool } from './utils';
 
@@ -36,25 +36,19 @@ const withCalculateOutput = WrappedComp => (props) => {
   const getQuote = async (inputToken, outputToken, value, id) => {
     try {
       setGettingQuote(true);
-
-      const quote = await getQuoteAPI({
-        sellToken: inputToken,
-        sellAmount: value,
-        buyToken: outputToken,
+      const quote = await apiGetQuote({
+        inputToken,
+        outputToken,
         protocol: 'Kyber',
+        amount: value,
       });
-
       if (id !== currentDebounceId) {
         return;
       }
-
-      const { amount } = quote;
-      const minimumAmount = _.floor(amount * MIN_PERCENT);
-
-      setOutputValue(amount);
+      const { maxAmountOut: outputValue } = quote;
+      const minimumAmount = outputValue;
+      setOutputValue(outputValue);
       setMinimumAmount(minimumAmount);
-
-
       if (minimumAmount === 0 || isNaN(minimumAmount)) {
         setOutputText(0);
       } else {

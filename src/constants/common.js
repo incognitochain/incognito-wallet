@@ -107,6 +107,7 @@ const TRACK_LOG_EVENT_STATUS = {
 const YEAR_SECONDS = 365 * 24 * 60 * 60;
 
 const PRV_SPECIAL_SYMBOL = 'ℙ';
+const USD_SPECIAL_SYMBOL = '$';
 
 const NETWORK_NAME = {
   BINANCE: 'Binance',
@@ -166,7 +167,8 @@ export default {
       SHIELD: 1, // same with PRIVATE_TOKEN_HISTORY_ADDRESS_TYPE.DEPOSIT
       UNSHIELD: 2, // same with PRIVATE_TOKEN_HISTORY_ADDRESS_TYPE.WITHDRAW
       SEND: 3, // custom
-      RECEIVE: 4, // custom
+      RECEIVE: 4, // custom,
+      PROVIDE: -999
     },
     STATUS_TEXT: {
       SUCCESS: 'SUCCESS',
@@ -220,11 +222,12 @@ export default {
     TYPE_HISTORY_RECEIVE: {
       41: 'Unstake Node',
       45: 'Node withdraw',
-      81: 'Shield',
+      81: 'Shield',//decentralized
       94: 'Remove liquidity',
       95: 'Add liquidity',
       96: 'Shield Amount',
-      25: 'Shield',
+      25: 'Shield',//centralized
+      92: 'Trade',
     },
   },
   TRACK_LOG_EVENT,
@@ -243,5 +246,6 @@ export default {
   },
   YEAR_SECONDS,
   PRV_SPECIAL_SYMBOL,
+  USD_SPECIAL_SYMBOL,
   NETWORK_NAME,
 };

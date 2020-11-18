@@ -11,7 +11,7 @@ import routeNames from '@src/router/routeNames';
 import { CONSTANT_COMMONS } from '@src/constants';
 import {
   totalShieldedTokensSelector,
-  isGettingBalance as isGettingTotalBalanceSelector,
+  isGettingBalance as isGettingTotalBalanceSelector, pTokenSelector,
 } from '@src/redux/selectors/shared';
 import { Amount } from '@src/components/Token/Token';
 import { shieldStorageSelector } from '@src/screens/Shield/Shield.selector';
@@ -22,6 +22,8 @@ import isNaN from 'lodash/isNaN';
 import { BottomBar, ScrollView, TouchableOpacity } from '@src/components/core';
 import useFeatureConfig from '@src/shared/hooks/featureConfig';
 import { useStreamLine } from '@src/screens/Streamline';
+import { BIG_COINS } from '@src/screens/DexV2/constants';
+import { getPrivacyDataByTokenID } from '@src/redux/selectors/selectedPrivacy';
 import {
   styled,
   styledHook,
@@ -110,6 +112,8 @@ const Balance = React.memo(() => {
   let totalShielded = useSelector(totalShieldedTokensSelector);
   const isGettingTotalBalance =
     useSelector(isGettingTotalBalanceSelector).length > 0;
+  const { pToken } = useSelector(pTokenSelector);
+
   if (isNaN(totalShielded)) {
     totalShielded = 0;
   }
@@ -117,7 +121,7 @@ const Balance = React.memo(() => {
     <View style={[styledBalance.container, styled.hook]}>
       <Amount
         amount={totalShielded}
-        pDecimals={CONSTANT_COMMONS.PRV.pDecimals}
+        pDecimals={pToken?.pDecimals}
         showSymbol={false}
         isGettingBalance={isGettingTotalBalance}
         showGettingBalance

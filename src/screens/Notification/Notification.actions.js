@@ -3,20 +3,12 @@ import routeNames from '@src/router/routeNames';
 import { accountSeleclor, selectedPrivacySeleclor } from '@src/redux/selectors';
 import { actionSwitchAccount } from '@src/redux/actions/account';
 import { setSelectedPrivacy } from '@src/redux/actions/selectedPrivacy';
-import {
-  actionAddFollowToken,
-  actionFetchHistoryMainCrypto,
-  actionFetchHistoryToken,
-} from '@src/redux/actions/token';
+import { actionAddFollowToken } from '@src/redux/actions/token';
 import { CONSTANT_EVENTS } from '@src/constants';
 import { logEvent } from '@services/firebase';
 import { actionToggleModal } from '@src/components/Modal';
-import {
-  ACTION_INIT,
-} from './Notification.constant';
-import {
-  apiInitNotifications,
-} from './Notification.services';
+import { ACTION_INIT } from './Notification.constant';
+import { apiInitNotifications } from './Notification.services';
 import { delay } from './Notification.utils';
 
 export const actionInit = () => async (dispatch, getState) => {
@@ -57,7 +49,6 @@ export const actionNavigate = (item, navigation) => async (
     );
     await dispatch(actionToggleModal());
     await logEvent(CONSTANT_EVENTS.CLICK_NOTIFICATION, { type });
-
     switch (type) {
     case 'broadcast': {
       navigation.navigate(routeNames.Home);
@@ -102,39 +93,28 @@ export const actionNavigate = (item, navigation) => async (
       if (token?.isToken && !token?.isMainCrypto) {
         await dispatch(actionAddFollowToken(tokenId));
       }
-      if (token?.isMainCrypto) {
-        await dispatch(actionFetchHistoryMainCrypto());
-      }
-      if (token?.isToken) {
-        await dispatch(actionFetchHistoryToken());
-      }
       break;
     }
     case 'go-to-screen': {
       const params = {};
-
       const rawParams = (screenParams || '').split('&');
-
       rawParams.forEach((param) => {
         const parts = param.split('=');
         params[parts[0]] = parts[1];
       });
-
       if (publicKey) {
         const accountUpdated = accountList.find(
           (item) => item.PublicKeyCheckEncode === publicKey,
         );
         await dispatch(
           actionSwitchAccount(
-            accountUpdated?.AccountName || accountUpdated?.name,
+              accountUpdated?.AccountName || accountUpdated?.name,
           ),
         );
       }
-
       if (tokenId) {
         await dispatch(setSelectedPrivacy(tokenId));
       }
-
       navigation.navigate(screen, params);
       break;
     }

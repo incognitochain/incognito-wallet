@@ -125,6 +125,10 @@ const style = StyleSheet.create({
   rightButton: {
     width: 22,
     height: 22,
+  },
+  loading: {
+    height: '10%',
+    justifyContent: 'center'
   }
 });
 

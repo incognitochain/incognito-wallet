@@ -53,6 +53,8 @@ import BuyNodeScreen from '@screens/BuyNodeScreen';
 import NodeHelp from '@screens/NodeHelp';
 import PaymentBuyNodeScreen from '@screens/PaymentBuyNodeScreen';
 import Node from '@screens/Node';
+// import Node from '@screens/Node/Node';
+
 import AddNode from '@screens/AddNode';
 import LinkDevice from '@screens/LinkDevice';
 import AddStake from '@screens/AddStake';
@@ -66,6 +68,7 @@ import Streamline from '@screens/Streamline';
 import WhyStreamline from '@screens/Streamline/features/WhyStreamLine';
 import TxHistoryReceive from '@screens/Wallet/features/TxHistoryReceive';
 import Event from '@screens/Event';
+import Helper from '@screens/Helper/Helper';
 
 const routes = [
   {
@@ -343,6 +346,10 @@ const routes = [
   {
     screen: Event,
     name: routeNames.Event,
+  },
+  {
+    screen: Helper,
+    name: routeNames.Helper,
   },
 ];
 

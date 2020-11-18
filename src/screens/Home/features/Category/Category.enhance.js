@@ -53,7 +53,7 @@ const enhance = WrappedComp => props => {
       );
       break;
     case 'trade':
-      goToScreen(item?.route || '', {}, CONSTANT_EVENTS.CLICK_HOME_TRADE);
+      goToScreen(item?.route || '', { fromTrade: true }, CONSTANT_EVENTS.CLICK_HOME_TRADE);
       break;
     case 'feedback':
       sendFeedback();

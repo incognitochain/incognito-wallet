@@ -1,7 +1,4 @@
 import React from 'react';
-import { MESSAGES } from '@screens/Dex/constants';
-import { PRV } from '@services/wallet/tokenService';
-import { COINS } from '@src/constants';
 import { ExHandler } from '@services/exception';
 import accountService from '@services/wallet/accountService';
 import { provide } from '@services/api/pool';
@@ -15,16 +12,14 @@ const withConfirm = WrappedComp => (props) => {
     value,
     coin,
     fee,
-    feeToken,
     onSuccess,
     wallet,
     account,
-    prvBalance,
+    isPrv,
+    originProvide,
   } = props;
 
   const confirm = async () => {
-    let prvFee = 0;
-    let tokenFee = 0;
     if (providing) {
       return;
     }
@@ -33,21 +28,8 @@ const withConfirm = WrappedComp => (props) => {
     setError('');
 
     try {
-      if (coin?.id === PRV.id) {
-        prvFee = fee;
-        tokenFee = fee;
-      } else {
-        prvFee = feeToken.id === COINS.PRV_ID ? fee : 0;
-        tokenFee = prvFee > 0 ? 0 : fee;
-      }
-
-      if (coin.balance < value + tokenFee) {
-        return setError(MESSAGES.NOT_ENOUGH_BALANCE(coin.symbol));
-      }
-
-      if (prvBalance < prvFee) {
-        return setError(MESSAGES.NOT_ENOUGH_PRV_NETWORK_FEE);
-      }
+      let provideValue = isPrv ? originProvide : value;
+      let providerFee  = fee;
 
       const signPublicKeyEncode = await getSignPublicKey(account.PrivateKey);
       const txs = await LocalDatabase.getProvideTxs();
@@ -55,21 +37,20 @@ const withConfirm = WrappedComp => (props) => {
         account,
         wallet,
         coin.masterAddress,
-        value,
+        provideValue,
         coin.id,
-        prvFee,
-        tokenFee,
+        providerFee,
+        0,
       );
-
       if (result && result.txId) {
         txs.push({
           paymentAddress: account.PaymentAddress,
           txId: result.txId,
           signPublicKeyEncode,
-          value
+          provideValue
         });
         await LocalDatabase.saveProvideTxs(txs);
-        await provide(account.PaymentAddress, result.txId, signPublicKeyEncode, value);
+        await provide(account.PaymentAddress, result.txId, signPublicKeyEncode, provideValue);
         txs.splice(txs.length - 1, 1);
         await LocalDatabase.saveProvideTxs(txs);
         onSuccess(true);

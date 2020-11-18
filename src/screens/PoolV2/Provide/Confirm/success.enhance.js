@@ -29,7 +29,7 @@ const withSuccess = WrappedComp => (props) => {
       <SuccessModal
         closeSuccessDialog={closeSuccess}
         title={`You provided ${provide} ${coin.symbol}`}
-        buttonTitle="Provide more"
+        buttonTitle="Sure thing"
         buttonStyle={mainStyles.button}
         description='Thanks for helping people trade with freedom.'
         visible={success}

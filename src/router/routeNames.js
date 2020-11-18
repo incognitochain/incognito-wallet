@@ -109,4 +109,5 @@ export default {
   WhyStreamline: 'WhyStreamline',
   TxHistoryReceive: 'TxHistoryReceive',
   Event: 'Event',
+  Helper: 'Helper'
 };

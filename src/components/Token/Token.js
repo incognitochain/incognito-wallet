@@ -16,14 +16,24 @@ import { COLORS } from '@src/styles';
 import { followingTokenSelector } from '@src/redux/selectors/token';
 import { useSelector } from 'react-redux';
 import { CONSTANT_COMMONS } from '@src/constants';
-import { decimalDigitsSelector } from '@src/screens/Setting';
+import {
+  currencySelector,
+  decimalDigitsSelector
+} from '@src/screens/Setting';
+import { getPrivacyDataByTokenID } from '@src/redux/selectors/selectedPrivacy';
+import { BIG_COINS } from '@src/screens/DexV2/constants';
+import {
+  prefixCurrency,
+  pTokenSelector
+} from '@src/redux/selectors/shared';
 import { styled } from './Token.styled';
 
 export const NormalText = (props) => {
+  const prefix = useSelector(prefixCurrency);
   const { style, stylePSymbol, containerStyle, text, hasPSymbol } = props;
   return (
     <View style={[styled.normalText, containerStyle]}>
-      {hasPSymbol && <Text style={[styled.pSymbol, stylePSymbol]}>ℙ</Text>}
+      {hasPSymbol && <Text style={[styled.pSymbol, stylePSymbol]}>{prefix}</Text>}
       <Text numberOfLines={1} style={[styled.text, style]} ellipsizeMode="tail">
         {trim(text)}
       </Text>
@@ -115,6 +125,40 @@ AmountBasePRV.propTypes = {
   pDecimals: PropTypes.number.isRequired,
 };
 
+export const AmountBaseUSDT = React.memo((props) => {
+  const {
+    amount,
+    pDecimals,
+    priceUsd,
+    customPSymbolStyle,
+    customStyle,
+  } = props;
+  const pUSDT = useSelector(getPrivacyDataByTokenID)(BIG_COINS.USDT);
+  const decimalDigits = useSelector(decimalDigitsSelector);
+  const hunmanAmount = convert.toNumber(
+    convert.toHumanAmount(amount, pDecimals),
+  );
+  const priceBaseUSDT = hunmanAmount * priceUsd;
+  const originalAmount = convert.toOriginalAmount(
+    priceBaseUSDT,
+    pUSDT?.pDecimals,
+  );
+  const _amount = format.amount(
+    floor(originalAmount),
+    pUSDT?.pDecimals,
+    true,
+    decimalDigits,
+  );
+  return (
+    <NormalText
+      hasPSymbol
+      text={`${_amount}`}
+      style={[styled.rightText, customStyle]}
+      stylePSymbol={[customPSymbolStyle]}
+    />
+  );
+});
+
 export const ChangePrice = (props) => {
   const { change, customStyle } = props;
   const isTokenDecrease = change[0] === '-';
@@ -148,11 +192,16 @@ ChangePrice.defaultProps = {
 };
 
 const Price = (props) => {
-  const { pricePrv } = props;
+  const { priceUsd, pricePrv } = props;
+  const { pToken, isToggleUSD } = useSelector(pTokenSelector);
+
   return (
     <View style={styled.priceContainer}>
       <NormalText
-        text={format.amount(floor(pricePrv, 9), 0)}
+        text={format.amount(floor(
+          isToggleUSD ? priceUsd : pricePrv,
+          pToken?.pDecimals
+        ), 0)}
         hasPSymbol
         style={styled.bottomText}
       />
@@ -161,11 +210,13 @@ const Price = (props) => {
 };
 
 Price.propTypes = {
-  pricePrv: PropTypes.number,
+  priceUsd: PropTypes.number,
+  pricePrv: PropTypes.number
 };
 
 Price.defaultProps = {
-  pricePrv: 0,
+  priceUsd: 0,
+  pricePrv: 0
 };
 
 export const Amount = (props) => {
@@ -292,6 +343,21 @@ const TokenDefault = (props) => (
   </TouchableOpacity>
 );
 
+const TokenPairUSDT = (props) => (
+  <TouchableOpacity onPress={props?.onPress}>
+    <View style={[styled.container, props?.style]}>
+      <View style={[styled.extra, styled.extraTop]}>
+        <Name {...props} />
+        <Amount {...props} />
+      </View>
+      <View style={styled.extra}>
+        <Price {...props} />
+        <AmountBaseUSDT {...props} />
+      </View>
+    </View>
+  </TouchableOpacity>
+);
+
 export const Follow = (props) => {
   const { shouldShowFollowed, isFollowed, tokenId } = props;
   const isFetchingFollowToken = useSelector(followingTokenSelector)(tokenId);
@@ -317,15 +383,31 @@ const Token = (props) => {
   const {
     handleRemoveToken = null,
     swipable = false,
+    priceUsd,
     pricePrv,
-    isMainCrypto,
+    isUSDT,
+    isPRV
   } = props;
-  const pairWithPrv = pricePrv !== 0 && !isMainCrypto;
-  let TokenComponent = pairWithPrv ? (
-    <TokenPairPRV {...props} />
-  ) : (
-    <TokenDefault {...props} />
-  );
+  const isToggleUSD = useSelector(currencySelector);
+  let TokenComponent;
+  if (isToggleUSD) {
+    const pairWithUSDT = priceUsd !== 0 && !isUSDT;
+    TokenComponent = pairWithUSDT ? (
+      <TokenPairUSDT {...props} />
+    ) : (
+      <TokenDefault {...props} />
+    );
+  }
+  else {
+    const pairWithPRV = pricePrv !== 0 && !isPRV;
+    TokenComponent = pairWithPRV ? (
+      <TokenPairPRV {...props} />
+    ) : (
+      <TokenDefault {...props} />
+    );
+  }
+
+
   if (swipable === true) {
     return (
       <Swipeout

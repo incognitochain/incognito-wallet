@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from '@components/core';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 import { COINS } from '@src/constants';
 import Reward from './Reward';
 
 const PRVRewards = ({ rewards }) => {
-  const rewardsT = !_.isEmpty(rewards) ? rewards : { [COINS.PRV_ID] : 0};
-
+  const rewardsT = !isEmpty(rewards) ? rewards : { [COINS.PRV_ID] : 0};
   return (
     <View style={{ marginTop: 10 }}>
       <Reward

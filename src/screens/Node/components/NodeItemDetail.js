@@ -76,28 +76,40 @@ class NodeItemDetail extends Component {
     );
   };
 
+  renderRewards = () => {
+    const { navigation } = this.props;
+    const { rewardsList } = navigation.state.params;
+    if (rewardsList && rewardsList.length > 0) {
+      return (<Rewards rewards={rewardsList} />);
+    }
+    return null;
+  };
+
   render() {
     const { navigation } = this.props;
     const { processing } = this.state;
     const {
-      rewardsList,
       onUnstake,
       onStake,
       item,
       onImport,
       withdrawTxs,
+      rewardsList
     } = navigation.state.params;
 
-    const ip = item.Host;
-    const name = item.Name;
+    const ip         = item.Host;
+    const name       = item.Name;
     const hasAccount = !!item?.AccountName;
 
     let shouldShowWithdraw = false;
-    rewardsList.forEach(element => {
-      if (element?.balance > 0) {
-        shouldShowWithdraw = true;
-      }
-    });
+
+    if (rewardsList && rewardsList.length > 0) {
+      rewardsList.forEach(element => {
+        if (element?.balance > 0) {
+          shouldShowWithdraw = true;
+        }
+      });
+    }
 
     const shouldRenderUnstake = item.IsUnstakable;
     let withdrawable;
@@ -121,7 +133,7 @@ class NodeItemDetail extends Component {
           rightHeader={<BtnMoreInfo onPress={()=>NavigationService.navigate(routeNames.NodeItemsHelp)} />}
         />
         <ScrollView>
-          <Rewards rewards={rewardsList} />
+          {this.renderRewards()}
           <View style={[{ flexDirection: 'row' }, theme.MARGIN.marginBottomDefault]}>
             {!hasAccount ? this.renderBtn('Import a keychain', onImport) : (
               <>
@@ -154,6 +166,7 @@ NodeItemDetail.propTypes = {
   onWithdraw: PropTypes.func.isRequired,
   onUnstake: PropTypes.func.isRequired,
   onStake: PropTypes.func.isRequired,
+  rewardsList: PropTypes.array.isRequired,
 };
 
 export default NodeItemDetail;

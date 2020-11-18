@@ -1,21 +1,24 @@
-import React, { PureComponent, Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, WebView, Modal, TouchableOpacity } from '@src/components/core';
+import { View, WebView, TouchableOpacity, Modal } from '@src/components/core';
 import SimpleInfo from '@src/components/SimpleInfo';
 import convertUtil from '@src/utils/convert';
 import { ExHandler, CustomError, ErrorCode } from '@src/services/exception';
 import { CONSTANT_COMMONS } from '@src/constants';
-import LogManager from '@src/services/LogManager';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '@src/styles';
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import { SafeAreaView} from 'react-native';
+import styleSheet from '@components/core/Modal/style';
+import { Icon } from 'react-native-elements';
+import { isEmpty } from 'lodash';
+import { COMMANDS } from 'papp-sdk/src/base/constants';
 import Validator from './sdk/validator';
 import RequestSendTx from './RequestSendTx';
 import { APPSDK, ERRORSDK, CONSTANTSDK } from './sdk';
 import styles from './style';
 
-
-let sdk: APPSDK = null;
-
+let sdk: APPSDK   = null;
 const updateDataToPapp = (data) => {
   if (!sdk) return;
 
@@ -64,7 +67,8 @@ class PappView extends Component {
       modalData: null,
       isLoaded: false,
       hasWebViewError: false,
-      url: props?.url || ''
+      url: props?.url || '',
+      openQrScanner: false
     };
 
     this.webviewInstance = null;
@@ -158,7 +162,6 @@ class PappView extends Component {
       if (data) {
         new Validator('onWebViewData data', data).string();
         const parsedData = JSON.parse(data);
-
         switch (command) {
         case CONSTANTSDK.COMMANDS.SEND_TX:
           this.onRequestSendTx(parsedData);
@@ -168,7 +171,14 @@ class PappView extends Component {
           break;
         case CONSTANTSDK.COMMANDS.SET_LIST_SUPPORT_TOKEN_BY_ID:
           this.onSdkSetSupportListTokenById(parsedData?.tokenIds);
-        }
+          break;
+        case CONSTANTSDK.COMMANDS.REQUEST_OPEN_CAMERA_QR_CODE: {
+          this.setState({ openQrScanner: true });
+          setTimeout(() => {
+            this.setState({ openQrScanner: false });
+          }, 30000);
+          break;
+        }}
       }
     } catch (e) {
       new ExHandler(e, 'The pApp occured an error. Please try again.').showErrorToast();
@@ -176,12 +186,14 @@ class PappView extends Component {
   }
 
   onPappLoaded = (syntheticEvent) => {
-    const { selectedPrivacy, listSupportedToken, onChangeUrl } = this.props;
+    const { selectedPrivacy, listSupportedToken, onChangeUrl, onLoadEnd } = this.props;
     const { nativeEvent } = syntheticEvent;
 
     if (typeof onChangeUrl === 'function') {
       onChangeUrl(nativeEvent?.url);
     }
+
+    onLoadEnd && onLoadEnd();
 
     setTimeout(() => {
       this.setState({ isLoaded: true }, () => {
@@ -191,6 +203,8 @@ class PappView extends Component {
   }
 
   onLoadPappError = (e) => {
+    const { onLoadError } = this.props;
+    onLoadError && onLoadError();
     this.setState({ hasWebViewError: true });
     new ExHandler(new CustomError(ErrorCode.papp_can_not_opened, { rawError: e }));
   }
@@ -227,6 +241,58 @@ class PappView extends Component {
       </View>
     );
   };
+
+  onReadQrCode = (result) => {
+    const qrCode = result?.data;
+    if (!isEmpty(qrCode)) {
+      const command   = COMMANDS.ON_RECEIVE_QR_CODE;
+      const data      = { qrCode };
+      const payload   = `${command}|${JSON.stringify(data)}`;
+      this.webviewInstance.postMessage(payload);
+      this.setState({ openQrScanner: false });
+    }
+  };
+
+  onCloseQrCode = () => {
+    this.setState({ openQrScanner: false });
+  };
+
+  renderHeaderQRCode = () => {
+    return (
+      <SafeAreaView>
+        <View style={{ height: 40 }}>
+          <TouchableOpacity
+            onPress={this.onCloseQrCode}
+            style={styleSheet.closeBtn}
+          >
+            <Icon
+              name="close"
+              type="material"
+              size={30}
+              color={COLORS.colorGreyBold}
+            />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  };
+
+  renderQrCodeCamera = () => {
+    const { openQrScanner } = this.state;
+    return (
+      <Modal animationType='fade' visible={openQrScanner} >
+        <View style={styles.container}>
+          { this.renderHeaderQRCode() }
+          <QRCodeScanner
+            showMarker
+            cameraStyle={styles.scanner}
+            onRead={this.onReadQrCode}
+          />
+        </View>
+      </Modal>
+    );
+  };
+
   render() {
     const { modalData, hasWebViewError } = this.state;
     const { url } = this.state;
@@ -240,35 +306,38 @@ class PappView extends Component {
     }
 
     return (
-      <View style={styles.container}>
-        <WebView
-          ref={webview => {
-            if (webview?.webViewRef?.current) {
-              sdk = new APPSDK(webview);
-              this.webviewInstance = webview;
+      <>
+        <View style={styles.container}>
+          <WebView
+            ref={webview => {
+              if (webview?.webViewRef?.current) {
+                sdk = new APPSDK(webview);
+                this.webviewInstance = webview;
+              }
+            }}
+            containerStyle={styles.webview}
+            source={{ uri: url }}
+            allowsBackForwardNavigationGestures
+            onLoad={
+              e => {
+                // Update the state so url changes could be detected by React and we could load the mainUrl.
+                this.setState({ url: e.nativeEvent.url });
+              }
             }
-          }}
-          containerStyle={styles.webview}
-          source={{ uri: url }}
-          allowsBackForwardNavigationGestures
-          onLoad={
-            e => {
-              // Update the state so url changes could be detected by React and we could load the mainUrl.
-              this.setState({ url: e.nativeEvent.url });
-            }
-          }
-          bounces
-          cacheEnabled={false}
-          cacheMode='LOAD_NO_CACHE'
-          onError={this.onLoadPappError}
-          onLoadEnd={this.onPappLoaded}
-          onMessage={this.onWebViewData}
-        />
-        {!hasWebViewError ? this.renderBottomBar() : null}
-        <Modal visible={!!modalData}>
-          {modalData}
-        </Modal>
-      </View>
+            bounces
+            cacheEnabled={false}
+            cacheMode='LOAD_NO_CACHE'
+            onError={this.onLoadPappError}
+            onLoadEnd={this.onPappLoaded}
+            onMessage={this.onWebViewData}
+          />
+          {!hasWebViewError ? this.renderBottomBar() : null}
+          <Modal visible={!!modalData}>
+            {modalData}
+          </Modal>
+          { this.renderQrCodeCamera() }
+        </View>
+      </>
     );
   }
 }
@@ -280,6 +349,13 @@ PappView.propTypes = {
   listSupportedToken: PropTypes.arrayOf(PropTypes.object).isRequired,
   onSetListSupportTokenById: PropTypes.func.isRequired,
   onChangeUrl: PropTypes.func.isRequired,
+  onLoadError: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
+  onLoadEnd: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
+};
+
+PappView.defaultProps = {
+  onLoadError: null,
+  onLoadEnd: null
 };
 
 export default PappView;

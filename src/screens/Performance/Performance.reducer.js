@@ -1,4 +1,8 @@
-import { ACTION_LOG_EVENT, ACTION_TOGGLE } from './Performance.constant';
+import {
+  ACTION_CLEAR_HISTORY,
+  ACTION_LOG_EVENT,
+  ACTION_TOGGLE
+} from './Performance.constant';
 
 const initialState = {
   data: [],
@@ -23,6 +27,12 @@ export default (state = initialState, action) => {
     return {
       ...state,
       toggle: !state.toggle,
+    };
+  }
+  case ACTION_CLEAR_HISTORY: {
+    return {
+      ...state,
+      data: [],
     };
   }
   default:

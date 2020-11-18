@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash';
+import { isNumber, isNaN } from 'lodash';
 import convertUtil from '@utils/convert';
 import { MESSAGES, MIN_INPUT } from '@screens/Dex/constants';
 
@@ -16,11 +16,11 @@ const withValidate = WrappedComp => (props) => {
   const validate = () => {
     try {
       const newValue = inputText;
-      const min = _.isNumber(inputMin) ? inputMin : MIN_INPUT;
+      const min = isNumber(inputMin) ? inputMin : MIN_INPUT;
       let number = convertUtil.toNumber(inputText);
       if (!newValue || newValue.length === 0) {
         setError('');
-      } else if (_.isNaN(number)) {
+      } else if (isNaN(number)) {
         if (inputFee) {
           setError(MESSAGES.GREATER(inputFee, inputToken.pDecimals));
         } else {

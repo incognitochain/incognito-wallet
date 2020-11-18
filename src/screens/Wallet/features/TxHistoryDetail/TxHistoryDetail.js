@@ -19,11 +19,13 @@ import formatUtil from '@src/utils/format';
 import linkingService from '@src/services/linking';
 import { QrCodeAddressDefault } from '@src/components/QrCodeAddress';
 import { CopyIcon, OpenUrlIcon } from '@src/components/Icons';
-import { BtnRetry, BtnChevron, ButtonBasic } from '@src/components/Button';
+import {BtnRetry, BtnChevron, ButtonBasic, BtnResume} from '@src/components/Button';
 import { useSelector } from 'react-redux';
 import { selectedPrivacySeleclor } from '@src/redux/selectors';
 import HTML from 'react-native-render-html';
 import { devSelector } from '@src/screens/Dev';
+import includes from 'lodash/includes';
+import HuntQRCode from '@components/HuntQRCode/HuntQRCode';
 import styled from './styles';
 import { getFeeFromTxHistory } from './TxHistoryDetail.utils';
 
@@ -86,8 +88,8 @@ export const Hook = (props) => {
             {valueText}
           </Text>
           {canRetryExpiredDeposit && (
-            <BtnRetry
-              style={styled.btnRetry}
+            <BtnResume
+              style={styled.btnResume}
               onPress={
                 typeof handleRetryExpiredDeposit === 'function' &&
                 handleRetryExpiredDeposit
@@ -189,9 +191,16 @@ const TxHistoryDetail = (props) => {
   const historyFactories = [
     {
       label: 'ID',
-      valueText: `#${history?.id}`,
       disabled: !history?.id,
       copyable: true,
+      openUrl: !!history?.isIncognitoTx,
+      valueText: `#${history?.id}`,
+      handleOpenLink: () =>
+        history?.isIncognitoTx
+          ? linkingService.openUrl(
+            `${CONSTANT_CONFIGS.EXPLORER_CONSTANT_CHAIN_URL}/tx/${history?.id}`,
+          )
+          : null,
     },
     {
       label: typeText,
@@ -230,8 +239,10 @@ const TxHistoryDetail = (props) => {
       valueText: `${CONSTANT_CONFIGS.EXPLORER_CONSTANT_CHAIN_URL}/tx/${history.incognitoTxID}`,
       openUrl: true,
       disabled:
-        (!!history?.isUnshieldTx && selectedPrivacy?.isDecentralized) ||
-        !history?.incognitoTxID,
+        history?.id === history?.incognitoTxID ||
+        !history.incognitoTxID ||
+        includes(history?.inchainTx, history.incognitoTxID) ||
+        (!!history?.isUnshieldTx && selectedPrivacy?.isDecentralized),
     },
     {
       label: 'Inchain TxID',
@@ -273,7 +284,10 @@ const TxHistoryDetail = (props) => {
         fromApi && (
           <RefreshControl
             refreshing={isRefresh}
-            onRefresh={() => onPullRefresh && onPullRefresh(historyId)}
+            onRefresh={() =>
+              onPullRefresh &&
+              onPullRefresh(historyId, data?.history?.currencyType)
+            }
           />
         )
       }
@@ -294,6 +308,7 @@ const TxHistoryDetail = (props) => {
           onPress={onCopyData}
         />
       )}
+      <HuntQRCode code={history?.type} />
     </ScrollView>
   );
 };

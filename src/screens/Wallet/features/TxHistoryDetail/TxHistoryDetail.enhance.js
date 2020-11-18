@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 import { compose } from 'recompose';
@@ -24,11 +24,13 @@ import {
   clearHistoryDetail,
   updateHistoryDetail
 } from '@screens/Wallet/features/TxHistoryDetail/TxHistoryDetail.actions';
+import Header from '@components/Header';
+import routeNames from '@routers/routeNames';
 
 const enhance = (WrappedComp) => (props) => {
   const data            = useNavigationParam('data');
   const history         = data?.history;
-  const historyId       = history?.id || history?.incognitoTxID;
+  const historyId       = history?.id;
   const historyData     = useSelector(txHistoryDetailViewerSelector);
   const wallet          = useSelector(walletSelector);
   const navigation      = useNavigation();
@@ -68,6 +70,11 @@ const enhance = (WrappedComp) => (props) => {
     }
   };
 
+  const onGoBack = useCallback(() => {
+    navigation.navigate(routeNames.WalletDetail);
+  }, []);
+
+
   /*
   * Handle fetch data showing
   * */
@@ -86,21 +93,25 @@ const enhance = (WrappedComp) => (props) => {
     };
   }, []);
 
-  if (!historyData) {
-    return <LoadingContainer />;
-  }
   return (
     <ErrorBoundary>
-      <WrappedComp {...{
-        ...props,
-        navigation,
-        data: historyData,
-        onRetryHistoryStatus,
-        showReload: historyData && historyData.showReload,
-        fetchingHistory: isFetching,
-        historyId
-      }}
-      />
+      <Header title="Transaction details" onGoBack={onGoBack} />
+      {
+        !historyData
+          ? (<LoadingContainer />)
+          : (
+            <WrappedComp {...{
+              ...props,
+              navigation,
+              data: historyData,
+              onRetryHistoryStatus,
+              showReload: historyData && historyData.showReload,
+              fetchingHistory: isFetching,
+              historyId
+            }}
+            />
+          )
+      }
     </ErrorBoundary>
   );
 };

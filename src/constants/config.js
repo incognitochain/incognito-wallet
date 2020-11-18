@@ -36,7 +36,7 @@ const MASTER_NODE_ADDRESS = isMainnet ? MAINNET_FULLNODE : TESTNET_FULLNODE;
 const NODE_URL = 'https://node.incognito.org/node.html';
 const USDT_TOKEN_ID = isMainnet
   ? '716fd1009e2a1669caacc36891e707bfdf02590f96ebd897548e8963c95ebac0'
-  : '880ea0787f6c1555e59e3958a595086b7802fc7a38276bcd80d4525606557fbc';
+  : '4946b16a08a9d4afbdf416edf52ef15073db0fc4a63e78eb9de80f94f6c0852a';
 const TRACK_LOG_URL = 'https://device-network.incognito.org';
 
 const ETH_TOKEN_ID = isMainnet
@@ -62,6 +62,16 @@ const HOME_CONFIG_EVENT = () => {
     title: content,
     url: prefix + content
   };
+};
+
+const HUNT_CONFIG_QR_CODE = () => {
+  const isStaging = global.homeConfig !== 'staging';
+  const prefix = 'https://api-hunt';
+  const content = `${
+    isStaging
+      ? ''
+      : '-staging'}.incognito.org/api/app/txqrcode/`;
+  return prefix + content;
 };
 
 const APP_VERSION = isMainnet
@@ -95,5 +105,6 @@ export default {
   HOME_CONFIG_DATA,
   API_BASE_URL2,
   APP_VERSION,
-  HOME_CONFIG_EVENT
+  HOME_CONFIG_EVENT,
+  HUNT_CONFIG_QR_CODE
 };

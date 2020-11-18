@@ -19,9 +19,9 @@ const SelectCoin = ({
 
   const handleSelect = (coin) => {
     const prv = coins.find(item => item.id === COINS.PRV_ID);
-
     navigation.navigate(ROUTE_NAMES.PoolV2ProvideInput, {
       coin,
+      isPrv: coin.id && coin.id === COINS.PRV_ID,
       prvBalance: prv.balance,
     });
   };

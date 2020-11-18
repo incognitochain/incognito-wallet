@@ -1,20 +1,28 @@
 import React from 'react';
 import { useNavigationParam } from 'react-navigation-hooks';
-import convertUtil from '@utils/convert';
 import formatUtil from '@utils/format';
 
 const withData = WrappedComp => (props) => {
-  const coin = useNavigationParam('coin');
-  const value = useNavigationParam('value');
-  const rawText = useNavigationParam('text');
-  const fee = useNavigationParam('fee');
-  const feeToken = useNavigationParam('feeToken');
-  const prvBalance = useNavigationParam('prvBalance');
+  const coin        = useNavigationParam('coin');
+  const value       = useNavigationParam('value');
+  const fee         = useNavigationParam('fee');
+  const feeToken    = useNavigationParam('feeToken');
+  const prvBalance  = useNavigationParam('prvBalance');
+  const payOnOrigin = useNavigationParam('payOnOrigin');
+  const isPrv       = useNavigationParam('isPrv');
 
-  const humanAmount = convertUtil.toNumber(rawText);
-  const deposit = humanAmount < 0 ? formatUtil.toFixed(humanAmount, coin.pDecimals)
-    : formatUtil.amountFull(humanAmount, 0);
-  const provide = formatUtil.amountFull(value, coin.pDecimals);
+  const formatDeposit = (_value, _fee) => {
+    return isPrv ? (payOnOrigin ? _value : (_value + _fee)) : _value;
+  };
+
+  const originProvide = payOnOrigin ? (value - fee) : value;
+  const provide = formatUtil.amountFull(
+    originProvide,
+    coin.pDecimals
+  );
+
+  const originDeposit = formatDeposit(value, fee);
+  const deposit       = formatUtil.amountFull(originDeposit, feeToken.pDecimals);
 
   return (
     <WrappedComp
@@ -27,6 +35,9 @@ const withData = WrappedComp => (props) => {
         fee,
         feeToken,
         prvBalance,
+        payOnOrigin,
+        isPrv,
+        originProvide,
       }}
     />
   );

@@ -7904,7 +7904,7 @@ pako@~0.2.0:
 
 "papp-sdk@https://github.com/incognitochain/sdk#papp-client-sdk":
   version "1.0.2"
-  resolved "https://github.com/incognitochain/sdk#77b423afc878e22843d2d0b0d22ce47219fe3a6e"
+  resolved "https://github.com/incognitochain/sdk#9eb28999e77e92434896a2454c4fec0c0048ac33"
 
 parent-module@^1.0.0:
   version "1.0.1"

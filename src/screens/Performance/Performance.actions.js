@@ -1,5 +1,5 @@
 import { currentScreenSelector } from '@screens/Navigation';
-import { ACTION_LOG_EVENT, ACTION_TOGGLE } from './Performance.constant';
+import {ACTION_CLEAR_HISTORY, ACTION_LOG_EVENT, ACTION_TOGGLE} from './Performance.constant';
 import { performanceSelector } from './Performance.selector';
 
 export const actionLogEvent = (data) => async (dispatch, getState) => {
@@ -26,3 +26,4 @@ export const actionLogEvent = (data) => async (dispatch, getState) => {
 };
 
 export const actionToggle = () => ({ type: ACTION_TOGGLE });
+export const actionClearPerformance = () => ({ type: ACTION_CLEAR_HISTORY });

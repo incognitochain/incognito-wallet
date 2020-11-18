@@ -184,4 +184,24 @@ export const rewardStyle = StyleSheet.create({
   },
 });
 
+export const nodeItemStyle = StyleSheet.create({
+  wrapperRaw: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'center'
+  },
+  btnStyle: {
+    width: 30,
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+  // This style support ActivityIndicator because
+  // ActivityIndicator to large than status view
+  wrapperLoading: {
+    marginLeft: -8,
+    width: 38
+  }
+});
+
 export default style;

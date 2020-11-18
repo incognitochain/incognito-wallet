@@ -53,6 +53,19 @@ const style = StyleSheet.create({
     flexDirection: 'row', 
     flex: 1, 
     justifyContent: 'flex-end'
+  },
+  wrapperLoading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: 0,
+    justifyContent: 'center',
+    alignSelf: 'center'
+  },
+  scanner: {
+    width: '100%',
+    height: '100%',
   }
 });
 
@@ -114,6 +127,14 @@ export const containerStyle = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  wrapperIndicator: {
+    position: 'absolute',
+    left: 0,
+    top: 0, right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 });
 export default style;

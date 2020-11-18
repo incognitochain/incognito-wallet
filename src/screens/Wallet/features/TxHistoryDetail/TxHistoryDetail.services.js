@@ -1,18 +1,12 @@
 import http from '@services/http';
 
-export const apiRefreshHistory = async (txID) => {
-  /*const result = await http.get(`eta/history/detail/${txID}`, {
-    params: {
-      ID: txID,
-      CurrencyType: 1
-    },
-  });*/
+export const apiRefreshHistory = async (txID, currencyType) => {
   return new Promise((resolve, reject) => {
     return http
       .get(`eta/history/detail/${txID}`, {
         params: {
           ID: txID,
-          CurrencyType: 1
+          CurrencyType: currencyType
         },
       })
       .then((res) => {

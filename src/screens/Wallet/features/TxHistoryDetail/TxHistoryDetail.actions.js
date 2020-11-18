@@ -26,14 +26,14 @@ export const actionRefreshFail = () => ({
   type: ACTION_REFRESH_FAIL,
 });
 
-export const actionRefreshHistoryDetail = (txID) => async (dispatch, getState) => {
+export const actionRefreshHistoryDetail = (txID, currencyType) => async (dispatch, getState) => {
   let data = null;
   const state = getState();
   const { isRefreshing } = getState().txHistoryDetail;
   if (isRefreshing) return;
   try {
     await dispatch(actionRefreshing());
-    data = await apiRefreshHistory(txID);
+    data = await apiRefreshHistory(txID, currencyType);
   } catch (error) {
     await dispatch(actionRefreshFail());
     Toast.showError(new ExHandler(error).getMessage());

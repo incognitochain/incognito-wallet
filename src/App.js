@@ -9,12 +9,15 @@ import AppContainer from '@src/router';
 import ROUTE_NAMES from '@src/router/routeNames';
 import NavigationService from '@src/services/NavigationService';
 import React, { useEffect, useState } from 'react';
-import { Provider, useDispatch } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import NetInfo from '@react-native-community/netinfo';
 import { Linking, Text } from 'react-native';
 import { compose } from 'recompose';
 import PropTypes from 'prop-types';
+import Performance from '@screens/Performance';
+import { devSelector } from '@screens/Dev';
+import { CONSTANT_KEYS } from '@src/constants';
 import { MAIN_WEBSITE } from './constants/config';
 import LocalDatabase from './utils/LocalDatabase';
 import ModalConnection from './components/Modal/ModalConnection';
@@ -43,22 +46,27 @@ function getActiveRouteName(navigationState) {
 const App = (props) => {
   const { setCurrentScreen } = props;
   const dispatch = useDispatch();
+  const dev = useSelector(devSelector);
+  const logApp = dev[CONSTANT_KEYS.DEV_TEST_TOGGLE_LOG_APP];
   return (
-    <AppContainer
-      ref={(navigatorRef) =>
-        NavigationService.setTopLevelNavigator(navigatorRef)
-      }
-      onNavigationStateChange={(prevState, currentState) => {
-        const prevScreen = getActiveRouteName(prevState);
-        const currentScreen = getActiveRouteName(currentState);
-        setCurrentScreen(currentScreen);
-        dispatch(actionSetCurrentScreen(currentScreen));
-        if (currentScreen !== prevScreen) {
-          dispatch(actionSetPrevScreen(prevScreen));
-          console.debug('CurrentScreen', currentScreen);
+    <>
+      <AppContainer
+        ref={(navigatorRef) =>
+          NavigationService.setTopLevelNavigator(navigatorRef)
         }
-      }}
-    />
+        onNavigationStateChange={(prevState, currentState) => {
+          const prevScreen = getActiveRouteName(prevState);
+          const currentScreen = getActiveRouteName(currentState);
+          setCurrentScreen(currentScreen);
+          dispatch(actionSetCurrentScreen(currentScreen));
+          if (currentScreen !== prevScreen) {
+            dispatch(actionSetPrevScreen(prevScreen));
+            console.debug('CurrentScreen', currentScreen);
+          }
+        }}
+      />
+      {logApp && <Performance />}
+    </>
   );
 };
 

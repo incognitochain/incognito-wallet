@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { ScrollView } from '@src/components/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { BtnClose } from '@src/components/Button';
 import { performanceSelector } from './Performance.selector';
 import { styled } from './Performance.styled';
-import { actionToggle } from './Performance.actions';
+import {actionClearPerformance, actionToggle} from './Performance.actions';
 
 const NormalText = ({ text }) => {
   return <Text style={styled.text}>{text}</Text>;
@@ -24,6 +24,19 @@ const Performance = () => {
   const isDev = global.isDebug();
   const { data, toggle } = useSelector(performanceSelector);
   const dispatch = useDispatch();
+
+  const renderButtonClear = () => {
+    return(
+      <TouchableOpacity
+        onPress={() => dispatch(actionClearPerformance())}
+        activeOpacity={0.7}
+        style={styled.btnClear}
+      >
+        <Text>Clear</Text>
+      </TouchableOpacity>
+    );
+  };
+
   if (!isDev) {
     return null;
   }
@@ -35,16 +48,21 @@ const Performance = () => {
     );
   }
   return (
-    <ScrollView style={styled.scrollview}>
+    <View style={styled.wrapper}>
       <View style={styled.btn}>
+        {renderButtonClear()}
         <BtnClose onPress={() => dispatch(actionToggle())} />
       </View>
-      <View style={{ flex: 1 }}>
-        {data.map((item, index) => (
-          <Item {...{ ...item, id: index }} key={item?.id || index} />
-        ))}
+      <View style={styled.wrapContent}>
+        <ScrollView style={{ backgroundColor: 'transparent', marginHorizontal: 4 }}>
+          <View>
+            {data.map((item, index) => (
+              <Item {...{ ...item, id: index }} key={item?.id || index} />
+            ))}
+          </View>
+        </ScrollView>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 

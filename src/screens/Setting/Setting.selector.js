@@ -9,3 +9,8 @@ export const decimalDigitsSelector = createSelector(
   settingSelector,
   (setting) => setting?.decimalDigits,
 );
+
+export const currencySelector = createSelector(
+  settingSelector,
+  (setting) => setting?.isToggleUSD,
+);
