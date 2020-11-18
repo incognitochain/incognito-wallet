@@ -1,4 +1,4 @@
-import {persistReducer} from 'redux-persist';
+import { persistReducer } from 'redux-persist';
 import AsyncStorage from '@react-native-community/async-storage';
 import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 import {
@@ -17,6 +17,7 @@ import {
 } from '@screens/Node/Node.constant';
 import { cloneDeep } from 'lodash';
 import { PRV } from '@services/wallet/tokenService';
+import { checkNoRewards } from '@screens/Node/Node.utils';
 
 const initMissingSetup = {
   visible: false,
@@ -60,6 +61,7 @@ const nodeReducer = (state = initialState, action) => {
     return {
       ...state,
       listDevice,
+      noRewards: checkNoRewards(state?.nodeRewards, listDevice)
     };
   }
   case ACTION_UPDATE_MISSING_SETUP: {
@@ -93,10 +95,8 @@ const nodeReducer = (state = initialState, action) => {
     const {
       listDevice,
       nodeRewards,
-      noRewards,
       allTokens
     } = action?.payload;
-
     return {
       ...state,
       isFetching: false,
@@ -104,7 +104,7 @@ const nodeReducer = (state = initialState, action) => {
       isFetched: true,
       listDevice: listDevice || [],
       nodeRewards,
-      noRewards,
+      noRewards: checkNoRewards(nodeRewards, listDevice),
       allTokens
     };
   }

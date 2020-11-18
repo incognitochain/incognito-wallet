@@ -62,7 +62,7 @@ export const getTotalVNodeNotHaveBlsKey = async () => {
   listDevice.forEach(item => {
     if (item.IsVNode) {
       hasVNode = true;
-      if (isEmpty(item.PublicKeyMining) || isEmpty(item.PublicKey)) {
+      if (isEmpty(item.PublicKeyMining) || isEmpty(item.PublicKey) || (item?.IsPNode && !item?.AccountName)) {
         vNodeNotHaveBLS++;
       }
     }
@@ -158,18 +158,15 @@ export const parseRewards = async (nodesInfo, skipAllTokens = false) => {
   let rewardsList = [];
   let allTokens   = [PRV];
   let allRewards  = { [PRV_ID]: 0 };
-  let noRewards   = true;
 
   forEach(nodesInfo, item => {
     rewardsList = rewardsList.concat(item?.Rewards || []);
   });
+
   forEach(rewardsList, (reward) => {
     const tokenId     = reward?.TokenID;
     const rewardValue = reward?.Amount || 0;
     tokenIds.push(tokenId);
-    if (rewardValue > 0) {
-      noRewards = false;
-    }
     if (allRewards.hasOwnProperty(tokenId)) {
       allRewards[tokenId] += rewardValue;
     } else {
@@ -178,7 +175,7 @@ export const parseRewards = async (nodesInfo, skipAllTokens = false) => {
   });
 
   const prvRewards = { [PRV_ID]: allRewards[PRV_ID] };
-
+  // Need get AllTokens in get Nodes Info from API, skipAllTokens = false
   if (!skipAllTokens) {
     tokenIds = uniq(tokenIds);
     let tokenDict = tokenService.flatTokens(allTokens);
@@ -195,9 +192,26 @@ export const parseRewards = async (nodesInfo, skipAllTokens = false) => {
   return {
     allTokens,
     allRewards,
-    noRewards,
     prvRewards
   };
+};
+
+export const checkNoRewards = (nodeRewards, listDevice) => {
+  let noRewards = true;
+  if (nodeRewards && nodeRewards.length > 0) {
+    forEach(nodeRewards, (reward) => {
+      // Just need 1 rewards > 0, open flag noRewards = false
+      // help enable button withdraw
+      if (reward?.balance > 0) {
+        noRewards = false;
+      }
+    });
+  }
+  if (listDevice && listDevice.length > 0) {
+    const validNodes = listDevice.filter(device => device.AccountName);
+    noRewards = noRewards || validNodes.length === 0;
+  }
+  return noRewards;
 };
 
 export const combineNodesInfoToObject = (nodesInfo) => {

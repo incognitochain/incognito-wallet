@@ -303,6 +303,3 @@ export const actionCheckWithdrawTxs = () =>  async (dispatch, getState) => {
     console.debug('Check Withdraw Txs with Error: ', error);
   }
 };
-
-
-
