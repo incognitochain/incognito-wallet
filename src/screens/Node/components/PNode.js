@@ -52,7 +52,6 @@ const PNode = memo((props) => {
   );
 
   const onPNodePress = () => {
-    if (isFetching) return;
     dispatch(
       actionLogEvent({
         desc: JSON.stringify({
@@ -66,11 +65,9 @@ const PNode = memo((props) => {
     navigation.navigate(routeNames.NodeItemDetail, {
       onUnstake: onUnstake,
       onWithdraw: onWithdraw,
-      colorStatus: colorStatus,
       onStake: onStake,
-      item: item,
-      rewardsList: item?.AllRewards,
       onImport: onImportAccount,
+      productId: item?.ProductId
     });
   };
 

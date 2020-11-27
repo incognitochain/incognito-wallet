@@ -18,7 +18,6 @@ const enhanceWithdraw = WrappedComp => props => {
   const dispatch = useDispatch();
   const { listDevice, noRewards, wallet, withdrawTxs, withdrawing } = props;
 
-
   const withdrawable = useMemo(() => {
     const validNodes = listDevice.filter(device => device.AccountName &&
       !isEmpty(device?.Rewards) &&

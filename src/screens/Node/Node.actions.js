@@ -10,7 +10,7 @@ import {
   UPDATE_WITHDRAW_TXS,
   ACTION_CLEAR_LIST_NODES,
   ACTION_CLEAR_WITHDRAW_TXS,
-  ACTION_UPDATE_WITHDRAWING
+  ACTION_UPDATE_WITHDRAWING, ACTION_UPDATE_LOADED_NODE
 } from '@screens/Node/Node.constant';
 import { ExHandler } from '@services/exception';
 import { apiGetNodesInfo } from '@screens/Node/Node.services';
@@ -168,6 +168,11 @@ export const actionUpdateWithdrawing = (withdrawing) => ({
   withdrawing
 });
 
+export const actionUpdateLoadedNode = (payload) => ({
+  type: ACTION_UPDATE_LOADED_NODE,
+  payload
+});
+
 // check node finish withdraw
 export const actionCheckWithdrawTxs = () =>  async (dispatch, getState) => {
   try {
@@ -191,12 +196,14 @@ export const actionCheckWithdrawTxs = () =>  async (dispatch, getState) => {
 // @actionUpdatePNodeItem update PNode
 // update Account, Host, Firmware, PublicKeyMining, check is Online
 // When callback load end, hide loading cell
-export const actionUpdatePNodeItem = (options, callbackResolve) => async (dispatch, getState) => {
+export const actionUpdatePNodeItem = (productId) => async (dispatch, getState) => {
   try {
     const state           = getState();
     const { listDevice }  = state?.node;
     const wallet          = state?.wallet;
-    let { productId }     = options;
+    if (productId) {
+      dispatch(actionUpdateLoadedNode({[productId]: false}));
+    }
     const start = new Date().getTime();
     const deviceIndex = findNodeIndexByProductId(listDevice, productId);
     let device = {};
@@ -266,8 +273,9 @@ export const actionUpdatePNodeItem = (options, callbackResolve) => async (dispat
   } catch (error) {
     new ExHandler(error).showErrorToast();
   } finally {
-    // CallBack
-    callbackResolve && callbackResolve();
+    if (productId) {
+      dispatch(actionUpdateLoadedNode({[productId]: true}));
+    }
   }
 };
 
@@ -275,17 +283,18 @@ export const actionUpdatePNodeItem = (options, callbackResolve) => async (dispat
 // update Account, BLSKey, check is Online
 // If VNode dont have BLSKey | PublicKey, dispatch action update success
 // When callback load end, hide loading cell
-export const actionUpdateVNodeItem = (options, callbackResolve) => async (dispatch, getState) => {
+export const actionUpdateVNodeItem = (deviceItem) => async (dispatch, getState) => {
+  const oldBLSKey = deviceItem?.PublicKeyMining;
+  const publicKey = deviceItem?.PublicKey;
+  const productId = deviceItem?.ProductId;
   try {
-    let {
-      oldBLSKey,
-      productId,
-      device: itemDevice
-    }  = options;
+    if (productId) {
+      dispatch(actionUpdateLoadedNode({[productId]: false}));
+    }
+    const start     = new Date().getTime();
     const state     = getState();
     const wallet    = state?.wallet;
-    const start       = new Date().getTime();
-    const newBLSKey = await VirtualNodeService.getPublicKeyMining(itemDevice);
+    const newBLSKey = await VirtualNodeService.getPublicKeyMining(deviceItem);
 
     const { listDevice }  = state?.node;
 
@@ -319,7 +328,11 @@ export const actionUpdateVNodeItem = (options, callbackResolve) => async (dispat
   } catch (error) {
     new ExHandler(error).showErrorToast();
   } finally {
-    // CallBack
-    callbackResolve && callbackResolve();
+    if (isEmpty(oldBLSKey) || isEmpty(publicKey)) {
+      dispatch(actionUpdateNumberLoadedVNodeBLS());
+    }
+    if (productId) {
+      dispatch(actionUpdateLoadedNode({[productId]: true}));
+    }
   }
 };

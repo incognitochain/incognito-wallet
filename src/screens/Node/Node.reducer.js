@@ -14,7 +14,7 @@ import {
   UPDATE_WITHDRAW_TXS,
   ACTION_CLEAR_WITHDRAW_TXS,
   ACTION_CLEAR_LIST_NODES,
-  ACTION_UPDATE_WITHDRAWING
+  ACTION_UPDATE_WITHDRAWING, ACTION_UPDATE_LOADED_NODE
 } from '@screens/Node/Node.constant';
 import { cloneDeep } from 'lodash';
 import { PRV } from '@services/wallet/tokenService';
@@ -41,6 +41,9 @@ const initialStateClear = {
   allTokens:      [PRV],
   missingSetup:   initMissingSetup,
   listDevice:     [], // List node,
+  // when node load loadedNodes contain productId = true,
+  // If loadedNodes dont contain productId or productId = false, node didn't loaded
+  loadedNodes:    {}
 };
 
 const initialState = {
@@ -174,6 +177,14 @@ const nodeReducer = (state = initialState, action) => {
     return {
       ...state,
       withdrawing
+    };
+  }
+  case ACTION_UPDATE_LOADED_NODE: {
+    const { payload } = action;
+    const { loadedNodes }    = state;
+    return {
+      ...state,
+      loadedNodes: Object.assign(loadedNodes, payload || {})
     };
   }
   default:

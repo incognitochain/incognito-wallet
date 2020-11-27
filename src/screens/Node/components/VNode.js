@@ -53,7 +53,6 @@ const VNode = memo((props) => {
   );
 
   const onVNodePress = () => {
-    if (isFetching) return;
     dispatch(
       actionLogEvent({
         desc: JSON.stringify({
@@ -69,10 +68,9 @@ const VNode = memo((props) => {
         onUnstake: onUnstake,
         onWithdraw: onWithdraw,
         onStake: onStake,
-        rewardsList: item?.AllRewards,
-        item: item,
         onImport: onImportAccount,
         withdrawTxs,
+        productId: item?.ProductId
       });
   };
 

@@ -1,19 +1,18 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { useDispatch, useSelector } from 'react-redux';
-import { nodeSelector } from '@screens/Node/Node.selector';
 import {
-  actionUpdateNumberLoadedVNodeBLS, actionUpdatePNodeItem,
-  actionUpdateVNodeItem
+  actionUpdatePNodeItem,
+  actionUpdateVNodeItem as updateVNodeItem,
 } from '@screens/Node/Node.actions';
-import { isEmpty } from 'lodash';
+import {
+  checkLoadingNodeByProductId, nodeSelector
+} from '@screens/Node/Node.selector';
 
 const enhance = WrappedComp => props => {
   const dispatch = useDispatch();
   const {
     item: device,
-    isFetching,
-
     onImport,
     onRemove,
     onStake,
@@ -21,42 +20,22 @@ const enhance = WrappedComp => props => {
     onWithdraw
   } = props;
 
-  const [loading, setLoading] = useState(false);
-  const { isRefreshing: isRefresh } = useSelector(nodeSelector);
+  const {
+    isRefreshing: isRefresh
+  } = useSelector(nodeSelector);
+  const isLoading
+    = useSelector(checkLoadingNodeByProductId)(device?.ProductId);
 
-  const getVNodeInfo = async () => {
-    const oldBLSKey = device?.PublicKeyMining;
-    const publicKey = device?.PublicKey;
-    const productId = device?.ProductId;
-
-    dispatch(actionUpdateVNodeItem(
-      { oldBLSKey, productId, device },
-      () => {
-        if (isEmpty(oldBLSKey) || isEmpty(publicKey)) {
-          dispatch(actionUpdateNumberLoadedVNodeBLS());
-        }
-        setLoading(false);
-      }));
+  const getVNodeInfo = () => {
+    dispatch(updateVNodeItem(device));
   };
 
-  const getPNodeInfo = async () => {
-    const productId = device?.ProductId;
-    dispatch(actionUpdatePNodeItem(
-      { productId },
-      () => {
-        setLoading(false);
-      }));
-  };
-
-  const getNodeInfo = async () => {
-    device.IsVNode
-      ? getVNodeInfo().then()
-      : getPNodeInfo().then();
+  const getPNodeInfo = () => {
+    dispatch(actionUpdatePNodeItem(device?.ProductId));
   };
 
   const fetchData = () => {
-    setLoading(true);
-    getNodeInfo().then();
+    device.IsVNode ? getVNodeInfo() : getPNodeInfo();
   };
 
   useEffect(() => {
@@ -75,7 +54,7 @@ const enhance = WrappedComp => props => {
         {...{
           ...props,
           item: device,
-          loading: loading || isFetching || isRefresh,
+          loading: isLoading,
 
           onImport,
           onRemove,

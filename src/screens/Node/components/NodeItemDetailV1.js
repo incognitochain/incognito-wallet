@@ -12,7 +12,7 @@ import NodeStatus from '@screens/Node/components/NodeStatus';
 import Rewards from '@screens/Node/components/Rewards';
 import styles from './style';
 
-class NodeItemDetail extends Component {
+class NodeItemDetailV1 extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -161,7 +161,7 @@ class NodeItemDetail extends Component {
   }
 }
 
-NodeItemDetail.propTypes = {
+NodeItemDetailV1.propTypes = {
   item: PropTypes.object.isRequired,
   onWithdraw: PropTypes.func.isRequired,
   onUnstake: PropTypes.func.isRequired,
@@ -169,5 +169,5 @@ NodeItemDetail.propTypes = {
   rewardsList: PropTypes.array.isRequired,
 };
 
-export default NodeItemDetail;
+export default NodeItemDetailV1;
 
