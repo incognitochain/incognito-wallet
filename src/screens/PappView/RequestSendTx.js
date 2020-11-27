@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { View, Text, Button, Container } from '@src/components/core';
+import { View, Text, Button, ScrollView } from '@src/components/core';
 import {
   accountSeleclor,
   tokenSeleclor,
@@ -211,7 +211,7 @@ class RequestSendTx extends Component {
       info,
     } = this.props;
     return (
-      <Container style={requestSendTxStyle.container}>
+      <ScrollView style={requestSendTxStyle.container}>
         <Text style={requestSendTxStyle.title}> REQUEST SEND TX </Text>
         {this.renderData('PAPP URL', url)}
         {this.renderData('To address', toAddress)}
@@ -242,7 +242,7 @@ class RequestSendTx extends Component {
           />
         </View>
         {isSending && <LoadingTx />}
-      </Container>
+      </ScrollView>
     );
   }
 }
