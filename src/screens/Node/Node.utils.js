@@ -136,6 +136,15 @@ export const combineNode = async (device, wallet, newBLSKey) => {
   return device;
 };
 
+// Old Node stuck in last round, should not show rewards on app
+const checkOldNodeStuckReward = (nodeInfo) => {
+  const IsInAutoStaking = nodeInfo?.IsInAutoStaking;
+  const IsAutoStake     = nodeInfo?.IsAutoStake;
+  const IsUnstaked      = nodeInfo?.IsUnstaked;
+  const IsStaked        = nodeInfo?.IsStaked;
+  return !IsInAutoStaking && !IsAutoStake && IsUnstaked && IsStaked;
+};
+
 /*
 * Return value
 // *All tokens in all rewards
@@ -159,7 +168,11 @@ export const parseRewards = async (nodesInfo, skipAllTokens = false) => {
   let allRewards  = { [PRV_ID]: 0 };
 
   forEach(nodesInfo, item => {
-    rewardsList = rewardsList.concat(item?.Rewards || []);
+    // Old Node stuck in last round, should not show rewards on app
+    const isStuckLastRound = checkOldNodeStuckReward(item);
+    if (!isStuckLastRound) {
+      rewardsList = rewardsList.concat(item?.Rewards || []);
+    }
   });
 
   forEach(rewardsList, (reward) => {
