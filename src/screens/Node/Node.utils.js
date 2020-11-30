@@ -211,6 +211,17 @@ export const parseRewards = async (nodesInfo, skipAllTokens = false) => {
   };
 };
 
+export const checkValidNode = (device) => (
+  device.AccountName &&
+  !isEmpty(device.AllRewards) &&
+  some(device.AllRewards, rewards => rewards?.balance > 0)
+);
+
+export const getValidNodes = (listDevice) => {
+  if (!listDevice || listDevice.length <= 0) return [];
+  return listDevice.filter(checkValidNode);
+};
+
 export const checkNoRewards = (nodeRewards, listDevice) => {
   let noRewards = true;
   if (nodeRewards && nodeRewards.length > 0) {
@@ -222,14 +233,8 @@ export const checkNoRewards = (nodeRewards, listDevice) => {
       }
     });
   }
-  if (listDevice && listDevice.length > 0) {
-    const validNodes = listDevice.filter(device => (
-      device.AccountName &&
-      !isEmpty(device.Rewards) &&
-      some(device.Rewards, value => value && value > 0)
-    ));
-    noRewards = noRewards || validNodes.length === 0;
-  }
+  const validNodes = getValidNodes(listDevice);
+  noRewards = noRewards || validNodes.length === 0;
   return noRewards;
 };
 

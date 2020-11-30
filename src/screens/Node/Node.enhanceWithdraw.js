@@ -5,7 +5,6 @@ import { Toast } from '@components/core';
 import APIService from '@services/api/miner/APIService';
 import NodeService from '@services/NodeService';
 import { ExHandler } from '@services/exception';
-import { isEmpty, some } from 'lodash';
 import accountService from '@services/wallet/accountService';
 import { onClickView } from '@utils/ViewUtil';
 import { useDispatch } from 'react-redux';
@@ -13,18 +12,19 @@ import {
   actionUpdateWithdrawing as updateWithdrawing,
   updateWithdrawTxs
 } from '@screens/Node/Node.actions';
+import {
+  getValidNodes,
+  checkValidNode
+} from '@screens/Node/Node.utils';
 
 const enhanceWithdraw = WrappedComp => props => {
   const dispatch = useDispatch();
   const { listDevice, noRewards, wallet, withdrawTxs, withdrawing } = props;
 
   const withdrawable = useMemo(() => {
-    const validNodes = listDevice.filter(device => device.AccountName &&
-      !isEmpty(device?.Rewards) &&
-      some(device.Rewards, value => value),
-    );
-    const vNodes = validNodes.filter(device => device.IsVNode);
-    const pNodes = validNodes.filter(device => device.IsPNode);
+    const validNodes  = getValidNodes(listDevice);
+    const vNodes      = validNodes.filter(device => device.IsVNode);
+    const pNodes      = validNodes.filter(device => device.IsPNode);
     const vNodeWithdrawable = vNodes.length && vNodes.length !== withdrawTxs?.length;
     const pNodeWithdrawable = pNodes.length && pNodes.some(item => item.IsFundedStakeWithdrawable);
     return (!noRewards && vNodeWithdrawable || pNodeWithdrawable);
@@ -50,13 +50,19 @@ const enhanceWithdraw = WrappedComp => props => {
 
   const handleWithdraw = async (device, showToast = true) => {
     try {
-      const account = device.Account;
-      const rewards = device.Rewards;
+      const account     = device.Account;
+      const allRewards  = device?.AllRewards;
       // Case withdraw VNode | PNode unstaked
       if ((device.IsVNode) || (device.IsFundedUnstaked)) {
         const { PaymentAddress } = (account || {});
-        const tokenIds = Object.keys(rewards)
-          .filter(id => rewards[id] > 0);
+        const tokenIds = allRewards.reduce((tokens, currentReward) => {
+          let tokenIds = tokens;
+          if (currentReward?.balance > 0) {
+            tokenIds.push(currentReward?.id);
+            return tokenIds;
+          }
+          return tokenIds;
+        }, []);
         const txs = await sendWithdrawTx(PaymentAddress, tokenIds);
         console.debug('Handle withdraw', txs);
         const message = MESSAGES.VNODE_WITHDRAWAL;
@@ -96,7 +102,7 @@ const enhanceWithdraw = WrappedComp => props => {
     dispatch(updateWithdrawing(true));
     for (const device of listDevice) {
       try {
-        if (device.AccountName && some(device.Rewards, reward => reward > 0)) {
+        if (checkValidNode(device)) {
           await handleWithdraw(device, false);
         }
       } catch {/*Ignore the error*/}
