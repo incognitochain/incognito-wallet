@@ -569,7 +569,8 @@ export const actionFetchUserFees = (payload) => async (dispatch, getState) => {
     throw error;
   } finally {
     if (_error && _error?.code === 'API_ERROR(-1027)') {
-      return await dispatch(actionFetchFailUserFees(true));
+      await dispatch(actionFetchFailUserFees(true));
+      throw _error;
     }
     if (!userFeesData.FeeAddress || _error) {
       await dispatch(actionFetchFailUserFees());
