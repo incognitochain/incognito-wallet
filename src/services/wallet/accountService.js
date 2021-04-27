@@ -501,9 +501,9 @@ export default class Account {
     const indexAccount = wallet.getAccountIndexByName(
       account.name || account.AccountName,
     );
-    return wallet.MasterAccount.child[
-      indexAccount
-    ].createAndSendWithdrawRewardTx(tokenID);
+    let accountInstance = wallet.MasterAccount.child[indexAccount];
+    accountInstance.setStorageServices(storage);
+    return accountInstance.createAndSendWithdrawRewardTx(tokenID);
   }
 
   /**

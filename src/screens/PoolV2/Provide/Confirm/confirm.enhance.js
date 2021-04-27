@@ -2,8 +2,9 @@ import React from 'react';
 import { ExHandler } from '@services/exception';
 import accountService from '@services/wallet/accountService';
 import { provide } from '@services/api/pool';
-import { getSignPublicKey } from '@services/gomobile';
 import LocalDatabase from '@utils/LocalDatabase';
+import { accountSeleclor } from '@src/redux/selectors';
+import { useSelector } from 'react-redux';
 
 const withConfirm = WrappedComp => (props) => {
   const [error, setError] = React.useState('');
@@ -19,6 +20,8 @@ const withConfirm = WrappedComp => (props) => {
     originProvide,
   } = props;
 
+  const signPublicKeyEncode = useSelector(accountSeleclor.signPublicKeyEncodeSelector);
+
   const confirm = async () => {
     if (providing) {
       return;
@@ -31,7 +34,6 @@ const withConfirm = WrappedComp => (props) => {
       let provideValue = isPrv ? originProvide : value;
       let providerFee  = fee;
 
-      const signPublicKeyEncode = await getSignPublicKey(account.PrivateKey);
       const txs = await LocalDatabase.getProvideTxs();
 
       const txHandler = async (txHash) => {

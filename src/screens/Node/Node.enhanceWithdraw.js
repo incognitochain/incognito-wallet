@@ -21,7 +21,7 @@ import { listAllMasterKeyAccounts } from '@src/redux/selectors/masterKey';
 const enhanceWithdraw = WrappedComp => props => {
   const dispatch = useDispatch();
   const listAccount = useSelector(listAllMasterKeyAccounts);
-  const { listDevice, noRewards, withdrawTxs, withdrawing } = props;
+  const { listDevice, noRewards, withdrawTxs, withdrawing, wallet } = props;
 
 
   const withdrawable = useMemo(() => {
@@ -42,9 +42,8 @@ const enhanceWithdraw = WrappedComp => props => {
     const _withdrawTxs = {};
     for (const tokenId of tokenIds) {
       const account = listAccount.find(item => item.PaymentAddress === paymentAddress);
-      await accountService.createAndSendWithdrawRewardTx(tokenId, account, account.Wallet)
-        .then((res) => _withdrawTxs[paymentAddress] = res?.txId)
-        .catch(() => null);
+      const res = await accountService.createAndSendWithdrawRewardTx(tokenId, account, wallet);
+      _withdrawTxs[paymentAddress] = res?.txId;
     }
     dispatch(updateWithdrawTxs(Object.assign(withdrawTxs, _withdrawTxs)));
     return _withdrawTxs;

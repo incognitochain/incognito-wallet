@@ -15,6 +15,7 @@ import withAccount from '@screens/DexV2/components/account.enhance';
 import routeNames from '@routers/routeNames';
 import useFeatureConfig from '@src/shared/hooks/featureConfig';
 import appConstant from '@src/constants/app';
+import withWallet from '@screens/Wallet/features/Home/Wallet.enhance';
 
 const nodeEnhance = WrappedComp => props => {
   const navigation  = useNavigation();
@@ -74,6 +75,7 @@ const nodeEnhance = WrappedComp => props => {
 };
 
 export default compose(
+  withWallet,
   withAccount,
   nodeDataEnhance,
   nodeWelcomeEnhance,
