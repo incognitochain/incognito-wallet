@@ -8766,6 +8766,11 @@ react-native-get-random-values@^1.5.0:
   dependencies:
     fast-base64-decode "^1.0.0"
 
+react-native-google-recaptcha-v2@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-google-recaptcha-v2/-/react-native-google-recaptcha-v2-1.1.0.tgz#9dc129c71ffa61c06470d5c95c6ea165bfdf4100"
+  integrity sha512-J8bGXcNqfx3obiDn9wptElO5OzqO55QUUVTZJEIqjZ0GcTx6cPnttGkO96cbTHvG+k6FMLRSm2GeUXmk7otj+Q==
+
 react-native-image-picker@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-1.1.0.tgz#c2a0523886edb4cf2cdc008ad0a71433142a4d53"

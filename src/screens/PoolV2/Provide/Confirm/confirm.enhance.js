@@ -5,6 +5,9 @@ import { provide } from '@services/api/pool';
 import LocalDatabase from '@utils/LocalDatabase';
 import { accountSeleclor } from '@src/redux/selectors';
 import { useSelector } from 'react-redux';
+import ConfirmGoogleCaptcha from 'react-native-google-recaptcha-v2';
+
+const CAPTCHA_KEY = '6LdQUuQZAAAAAK_gLJ5GCvddkPHDObjpEH53VsiL';
 
 const withConfirm = WrappedComp => (props) => {
   const [error, setError] = React.useState('');
@@ -26,9 +29,11 @@ const withConfirm = WrappedComp => (props) => {
     if (providing) {
       return;
     }
+  const captchaForm = React.useRef(null);
 
+  const confirm = async (verifyCode) => {
+    if (!verifyCode) return;
     setProviding(true);
-    setError('');
 
     try {
       let provideValue = isPrv ? originProvide : value;
@@ -61,7 +66,7 @@ const withConfirm = WrappedComp => (props) => {
         txHandler,
       );
       if (!global.isDEV && result && result.txId) {
-        await provide(account.PaymentAddress, result.txId, signPublicKeyEncode, provideValue);
+        await provide(account.PaymentAddress, result.txId, signPublicKeyEncode, provideValue, verifyCode);
         txs.splice(txs.length - 1, 1);
         await LocalDatabase.saveProvideTxs(txs);
         onSuccess(true);
@@ -73,15 +78,49 @@ const withConfirm = WrappedComp => (props) => {
     }
   };
 
+  const onMessage = event => {
+    if (event && event.nativeEvent.data) {
+      if (['cancel', 'error', 'expired'].includes(event.nativeEvent.data)) {
+        return captchaForm.hide();
+      } else {
+        const verifyCode = event.nativeEvent.data;
+        console.log('Verified code from Google', event.nativeEvent.data);
+        setTimeout(() => {
+          if (captchaForm.current) {
+            captchaForm.current.hide();
+          }
+        }, 1500);
+        setTimeout(() => {
+          confirm(verifyCode).then();
+        }, 2500);
+      }
+    }
+  };
+
+  const onConfirmPress = () => {
+    if (providing || !captchaForm.current) return;
+    captchaForm.current.show();
+  };
+
   return (
-    <WrappedComp
-      {...{
-        ...props,
-        providing,
-        onConfirm: confirm,
-        error,
-      }}
-    />
+    <>
+      <WrappedComp
+        {...{
+          ...props,
+          providing,
+          onConfirm: onConfirmPress,
+          error,
+        }}
+      />
+      <ConfirmGoogleCaptcha
+        ref={captchaForm}
+        siteKey={CAPTCHA_KEY}
+        baseUrl="https://incognito.org"
+        languageCode='en'
+        onMessage={onMessage}
+        ca
+      />
+    </>
   );
 };
 

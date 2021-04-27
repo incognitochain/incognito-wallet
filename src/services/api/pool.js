@@ -21,13 +21,14 @@ export async function getUserPoolData(paymentAddress, coins) {
   return cachePromise(KEYS.PoolUserData(paymentAddress), getUserPoolDataNoCache(paymentAddress, coins), 5000);
 }
 
-export async function provide(paymentAddress, tx, signPublicKeyEncode, amount) {
+export async function provide(paymentAddress, tx, signPublicKeyEncode, amount, verifyCode) {
   const url = '/pool/staker/create-stake';
   return http.post(url, {
     'IncognitoTx': tx,
     'PStakeAddress': paymentAddress,
     'SignPublicKeyEncode': signPublicKeyEncode,
-    'Amount': amount
+    'Amount': amount,
+    'g-recaptcha-response': verifyCode,
   });
 }
 
