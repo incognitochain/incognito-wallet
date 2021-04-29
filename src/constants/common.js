@@ -115,6 +115,19 @@ const NETWORK_NAME = {
   TOMO: 'TomoChain',
 };
 
+export const PRV = {
+  id: '0000000000000000000000000000000000000000000000000000000000000004',
+  name: 'Privacy',
+  displayName: 'Privacy',
+  symbol: 'PRV',
+  pDecimals: 9,
+  hasIcon: true,
+  originalSymbol: 'PRV',
+  isVerified: true,
+};
+
+export const PRV_ID = PRV.id;
+
 export default {
   // old varibles, maybe remove later
   STAKING_TYPES: {
@@ -168,7 +181,7 @@ export default {
       UNSHIELD: 2, // same with PRIVATE_TOKEN_HISTORY_ADDRESS_TYPE.WITHDRAW
       SEND: 3, // custom
       RECEIVE: 4, // custom,
-      PROVIDE: -999
+      PROVIDE: -999,
     },
     STATUS_TEXT: {
       SUCCESS: 'SUCCESS',
@@ -222,22 +235,18 @@ export default {
     TYPE_HISTORY_RECEIVE: {
       41: 'Unstake Node',
       45: 'Node withdraw',
-      81: 'Shield',//decentralized
+      81: 'Shield', //decentralized
       94: 'Remove liquidity',
       95: 'Add liquidity',
       96: 'Shield Amount',
-      25: 'Shield',//centralized
+      25: 'Shield', //centralized
       92: 'Trade',
     },
   },
   TRACK_LOG_EVENT,
   TRACK_LOG_EVENT_STATUS,
-  PRV: {
-    id: '0000000000000000000000000000000000000000000000000000000000000004',
-    name: 'PRV',
-    symbol: 'PRV',
-    pDecimals: 9,
-  },
+  PRV,
+  PRV_ID,
   USDT: {
     id: '716fd1009e2a1669caacc36891e707bfdf02590f96ebd897548e8963c95ebac0',
     pDecimals: 9,
