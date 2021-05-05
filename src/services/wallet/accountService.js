@@ -17,7 +17,10 @@ import { chooseBestCoinToSpent } from 'incognito-chain-web-js/lib/tx/utils';
 import bn from 'bn.js';
 import Server from '@services/wallet/Server';
 import { PRV, PRV_ID } from '@src/constants/common';
-import { getAccountWallet } from '@src/services/wallet/Wallet.shared';
+import {
+  getAccountNameByAccount,
+  getAccountWallet,
+} from '@src/services/wallet/Wallet.shared';
 import { CustomError, ErrorCode } from '../exception';
 import tokenService from './tokenService';
 import {
@@ -629,11 +632,7 @@ export default class Account {
   }
 
   static getAccountName(account) {
-    if (account) {
-      return account.name || account.AccountName || account.accountName;
-    }
-
-    return '';
+    return getAccountNameByAccount(account);
   }
 
   static getPaymentAddress(account) {

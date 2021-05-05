@@ -28,28 +28,21 @@ class MasterKeyModel {
     const storageName = this.getStorageName();
     const rawData = await storage.getItem(storageName);
     const passphrase = await getPassphrase();
-
     let wallet;
-
     if (rawData) {
       wallet = await loadWallet(passphrase, storageName);
     }
-
     if (!wallet) {
       wallet = await this.initWallet();
     }
-
     this.mnemonic = wallet.Mnemonic;
     this.wallet = wallet;
     wallet.deletedAccountIds = this.deletedAccountIds || [];
-
     if (this.name.toLowerCase() === 'unlinked') {
       this.name = 'Masterless';
       wallet.Name = this.getStorageName();
-
       wallet.save();
     }
-
     wallet.Name = this.getStorageName();
     return wallet;
   }

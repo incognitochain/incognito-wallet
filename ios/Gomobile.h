@@ -1,5 +1,5 @@
 #import <React/RCTBridgeModule.h>
 #import <Gomobile/Gomobile.h>
 
-@interface Gomobile : NSObject <RCTBridgeModule>
+@interface GomobileInterface : NSObject <RCTBridgeModule>
 @end

@@ -1,83 +1,40 @@
 import { NativeModules } from 'react-native';
 
 const PrivacyGo = NativeModules.PrivacyGo;
-const requiredTimeMethods = [
-  'initPrivacyTx',
-  'stopAutoStaking',
-  'staking',
-  'initPrivacyTokenTx',
-  'initBurningRequestTx',
-  'initWithdrawRewardTx',
-  'initPRVContributionTx',
-  'initPTokenContributionTx',
-  'initPRVTradeTx',
-  'initPTokenTradeTx',
-  'withdrawDexTx',
-];
 const asyncMethods = [
-  'deriveSerialNumber',
-  'randomScalars',
+  'createTransaction',
+  'createConvertTx',
+  'newKeySetFromPrivate',
+  'decryptCoin',
+  'createCoin',
+  'generateBLSKeyPairFromSeed',
+  'hybridEncrypt',
+  'hybridDecrypt',
   'initPrivacyTx',
+  'staking',
+  'stopAutoStaking',
   'initPrivacyTokenTx',
   'initBurningRequestTx',
   'initWithdrawRewardTx',
-  'staking',
-  'generateBLSKeyPairFromSeed',
-  'initPRVContributionTx',
-  'initPTokenContributionTx',
-  'initPRVTradeTx',
-  'initPTokenTradeTx',
-  'withdrawDexTx',
-  'hybridDecryptionASM',
-  'hybridEncryptionASM',
-  'stopAutoStaking',
-  'generateIncognitoContractAddress',
-  'withdrawSmartContractBalance',
-  'sign0x',
-  'signKyber',
+  'generateKeyFromSeed',
+  'scalarMultBase',
+  'randomScalars',
   'getSignPublicKey',
   'signPoolWithdraw',
-  'scalarMultBase',
-  'generateKeyFromSeed',
-  'parseNativeRawTx',
-  'parsePrivacyTokenRawTx',
+  'verifySign',
+  'initPRVContributionTx',
+  'initPTokenContributionTx',
+  'initPRVTradeTx',
+  'initPTokenTradeTx',
+  'withdrawDexTx',
+  'hybridEncryptionASM',
+  'hybridDecryptionASM',
+  'estimateTxSize',
 ];
-
-const log = (...args) => null;
-
 try {
-  asyncMethods.forEach(methodName => {
-    global[methodName] = (data, time) => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          log(`${methodName} called with params`, data);
-
-          if (requiredTimeMethods.includes(methodName)) {
-            PrivacyGo[methodName](data, time, function(error, result) {
-              if (error) {
-                reject(error);
-              }
-
-              log(`${methodName} called successfully with result`, result);
-              return resolve(result);
-            });
-          } else {
-            PrivacyGo[methodName](data, function (error, result) {
-              if (error) {
-                reject(error);
-              }
-
-              log(`${methodName} called successfully with result`, result);
-              return resolve(result);
-            });
-          }
-        } catch (e) {
-          log(`${methodName} called with error`, e);
-          reject(e);
-        }
-      });
-    };
-  });
+  global.__gobridge__ = Object.assign({}, PrivacyGo);
+  global.__gobridge__.ready = true;
+  console.log(asyncMethods.forEach((name) => typeof global.__gobridge__[name]));
   console.log('GO modules were loaded');
 } catch {
   console.error('GO modules can not loaded');
@@ -108,7 +65,7 @@ export const signPoolWithdraw = (privateKey, paymentAddress, amount) => {
       privateKey,
       paymentAddress,
       amount: amount.toString(),
-    }
+    },
   };
 
   return global.signPoolWithdraw(JSON.stringify(args));
@@ -127,7 +84,7 @@ export const getSignPublicKey = (privateKey) => {
   const args = {
     data: {
       privateKey,
-    }
+    },
   };
 
   return global.getSignPublicKey(JSON.stringify(args));

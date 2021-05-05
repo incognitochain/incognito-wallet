@@ -29,7 +29,9 @@ const enhance = (WrappedComp) => (props) => {
   const wallet = useSelector((state) => state?.wallet);
   const isGettingBalance = useSelector(isGettingBalanceSelector);
   const unshieldStorage = useSelector(unShieldStorageDataSelector);
-  const signPublicKeyEncode = useSelector(accountSeleclor.signPublicKeyEncodeSelector);
+  const signPublicKeyEncode = useSelector(
+    accountSeleclor.signPublicKeyEncodeSelector,
+  );
   const dispatch = useDispatch();
   const [state, setState] = React.useState({
     isReloading: false,
@@ -92,7 +94,7 @@ const enhance = (WrappedComp) => (props) => {
                 burningTxId: tx?.burningTxId,
               }),
             );
-            withdraw({...tx, signPublicKeyEncode});
+            withdraw({ ...tx, signPublicKeyEncode });
           }
         });
     } catch (e) {

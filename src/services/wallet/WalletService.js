@@ -53,21 +53,16 @@ export async function loadListAccountWithBLSPubKey(wallet) {
 
 export async function loadWallet(passphrase, name = 'Wallet') {
   const server = await Server.getDefault();
-  // console.log('set randombyte done');
   Wallet.RpcClient = new RpcClient(
     server.address,
     server.username,
     server.password,
   );
-
+  let wallet = new Wallet();
   Wallet.ShardNumber = 8;
-  const wallet = new Wallet();
   wallet.Name = name;
   wallet.Storage = storage;
-
   await wallet.loadWallet(passphrase, name);
-  wallet.Storage = storage;
-
   const accounts = wallet.MasterAccount.child;
   for (const account of accounts) {
     try {
@@ -84,6 +79,7 @@ export async function loadWallet(passphrase, name = 'Wallet') {
       );
     }
   }
+  await saveWallet(wallet);
   return wallet?.Name ? wallet : false;
 }
 
@@ -196,13 +192,18 @@ export async function createDefaultAccounts(wallet) {
 }
 
 export async function configRPC() {
-  const server = await Server.getDefault();
-  Wallet.RpcClient = new RpcClient(
-    server.address,
-    server.username,
-    server.password,
-  );
-  setCoinsServicesURL({ url: server?.coinServices });
+  try {
+    const server = await Server.getDefault();
+    Wallet.RpcClient = new RpcClient(
+      server.address,
+      server.username,
+      server.password,
+    );
+    Wallet.setRpcHTTPCoinServiceClient(server?.coinService);
+  } catch (error) {
+    console.debug('error', error);
+    throw error;
+  }
 }
 
 export async function storeWalletAccountIdsOnAPI(wallet) {

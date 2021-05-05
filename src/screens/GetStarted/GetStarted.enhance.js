@@ -20,7 +20,10 @@ import { LoadingContainer } from '@src/components/core';
 import { actionFetch as actionFetchProfile } from '@screens/Profile';
 import { KEYS } from '@src/constants/keys';
 import { getFunctionConfigs } from '@services/api/misc';
-import { loadAllMasterKeyAccounts, loadAllMasterKeys } from '@src/redux/actions/masterKey';
+import {
+  loadAllMasterKeyAccounts,
+  loadAllMasterKeys,
+} from '@src/redux/actions/masterKey';
 import { masterKeysSelector } from '@src/redux/selectors/masterKey';
 import Welcome from '@screens/GetStarted/Welcome';
 import withPin from '@components/pin.enhance';
@@ -128,7 +131,9 @@ const enhance = (WrappedComp) => (props) => {
   const initApp = async () => {
     let errorMessage = null;
     try {
+      console.debug('LOAD MASTER KEY');
       await dispatch(loadAllMasterKeyAccounts());
+      console.debug('LOADED MASTER KEY');
       await setState({ ...initialState, isInitialing: true });
       await login();
       dispatch(actionFetchHomeConfigs());
@@ -136,7 +141,7 @@ const enhance = (WrappedComp) => (props) => {
       const [servers] = await new Promise.all([
         serverService.get(),
         dispatch(actionFetchProfile()),
-        getFunctionConfigs().catch(e => e),
+        getFunctionConfigs().catch((e) => e),
       ]);
       if (!servers || servers?.length === 0) {
         await serverService.setDefaultList();
@@ -146,8 +151,8 @@ const enhance = (WrappedComp) => (props) => {
       errorMessage = new ExHandler(
         e,
         'Something\'s not quite right. Please make sure you\'re connected to the internet.\n' +
-        '\n' +
-        'If your connection is strong but the app still won\'t load, please contact us at go@incognito.org.\n',
+          '\n' +
+          'If your connection is strong but the app still won\'t load, please contact us at go@incognito.org.\n',
       )?.writeLog()?.message;
     } finally {
       await setState({
@@ -161,18 +166,24 @@ const enhance = (WrappedComp) => (props) => {
 
   React.useEffect(() => {
     requestAnimationFrame(async () => {
-      await dispatch(loadPin());
-      await dispatch(getPTokenList());
-      await dispatch(loadAllMasterKeys());
+      try {
+        await dispatch(loadPin());
+        console.debug('LOAD PTOKEN LIST');
+        await dispatch(getPTokenList());
+        console.debug(';AA');
+        await dispatch(loadAllMasterKeys());
+      } catch (error) {
+        console.debug(error);
+      }
       setLoadMasterKeys(true);
     });
   }, []);
 
   React.useEffect(() => {
+    console.debug('retunr?', !loadMasterKeys);
     if (!masterKeys || !loadMasterKeys || isFetching) {
       return;
     }
-
     if (masterKeys.length) {
       initApp();
     }
