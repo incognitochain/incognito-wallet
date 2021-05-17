@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { accountSeleclor, tokenSeleclor } from '@src/redux/selectors';
+import { accountSelector, tokenSelector } from '@src/redux/selectors';
 import FollowingTokenList from './FollowingTokenList';
 
 
@@ -23,10 +23,10 @@ FollowingTokenListContainer.propTypes = {
 };
 
 const mapState = (state, props) => ({
-  tokens: props?.tokens || tokenSeleclor.followed(state),
-  account: props?.account ||  accountSeleclor.defaultAccount(state),
+  tokens: props?.tokens || tokenSelector.followed(state),
+  account: props?.account ||  accountSelector.defaultAccount(state),
   wallet: state.wallet,
-  getAccountByName: accountSeleclor.getAccountByName(state)
+  getAccountByName: accountSelector.getAccountByName(state)
 });
 
 export default connect(

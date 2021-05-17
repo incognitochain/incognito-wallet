@@ -1,4 +1,4 @@
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import { walletSelector } from '@src/redux/selectors/wallet';
 import { createSelector } from 'reselect';
 import accountServices from '@src/services/wallet/accountService';
@@ -17,7 +17,7 @@ export const streamlineStorageSelector = createSelector(
 
 export const streamlineDataSelector = createSelector(
   walletSelector,
-  accountSeleclor.defaultAccountSelector,
+  accountSelector.defaultAccountSelector,
   streamlineSelector,
   (wallet, account, streamline) => {
     const { consolidated } = streamline;

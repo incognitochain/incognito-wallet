@@ -5,13 +5,13 @@ import { formValueSelector } from 'redux-form';
 import { validator } from '@src/components/core/reduxForm';
 import { CONSTANT_COMMONS } from '@src/constants';
 import accountService from '@src/services/wallet/accountService';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import { feeDataSelector } from '@src/components/EstimateFee/EstimateFee.selector';
 import { formName } from './Form.enhance';
 
 export const enhanceAddressValidation = (WrappedComp) => (props) => {
   const selector = formValueSelector(formName);
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const { externalSymbol, isErc20Token, isMainCrypto } = selectedPrivacy;
   const toAddress = useSelector((state) => selector(state, 'toAddress'));
   const isIncognitoAddress =

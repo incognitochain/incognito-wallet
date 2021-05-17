@@ -11,7 +11,7 @@ import { BtnFast } from '@src/components/Button';
 import { COLORS } from '@src/styles';
 import PropTypes from 'prop-types';
 import { CONSTANT_COMMONS } from '@src/constants';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import { styled } from './EstimateFee.styled';
 import withEstimateFee from './EstimateFee.enhance';
 import { estimateFeeSelector, feeDataSelector } from './EstimateFee.selector';
@@ -169,7 +169,7 @@ const SupportFees = React.memo(() => {
     feePTokenText,
     hasMultiLevel,
   } = useSelector(feeDataSelector);
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const dispatch = useDispatch();
   if (types.length === 0) {
     return;

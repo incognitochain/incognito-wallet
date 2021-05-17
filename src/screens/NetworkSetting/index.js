@@ -2,7 +2,7 @@ import { Toast } from '@src/components/core';
 import LoadingContainer from '@src/components/LoadingContainer';
 import { reloadWallet } from '@src/redux/actions/wallet';
 import { getBalance as getAccountBalance } from '@src/redux/actions/account';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import serverService from '@src/services/wallet/Server';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
@@ -78,7 +78,7 @@ const NetworkSettingContainer = ({
 const mapDispatch = { reloadWallet, getAccountBalance };
 
 const mapState = state => ({
-  account: accountSeleclor.defaultAccount(state)
+  account: accountSelector.defaultAccount(state)
 });
 
 NetworkSettingContainer.propTypes = {

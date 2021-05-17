@@ -6,7 +6,7 @@ export default StyleSheet.create({
     alignItems: 'center',
     backgroundColor: COLORS.overlayBlackDark,
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   desc: {
     color: COLORS.white,
@@ -15,5 +15,13 @@ export default StyleSheet.create({
     width: 200,
     marginTop: 20,
     marginBottom: 10,
+  },
+  percent: {
+    color: COLORS.white,
+    fontFamily: FONT.NAME.bold,
+    fontSize: FONT.SIZE.superMedium,
+    lineHeight: FONT.SIZE.superMedium + 5,
+    textAlign: 'center',
+    marginTop: 12,
   },
 });

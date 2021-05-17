@@ -1,5 +1,5 @@
 import { CONSTANT_COMMONS } from '@src/constants';
-import { accountSeleclor, selectedPrivacySeleclor } from '@src/redux/selectors';
+import { accountSelector, selectedPrivacySelector } from '@src/redux/selectors';
 import { CustomError, ErrorCode, ExHandler } from '@src/services/exception';
 import formatUtil from '@src/utils/format';
 import { debounce } from 'lodash';
@@ -316,8 +316,8 @@ class EstimateFeeContainer extends Component {
 
 const mapState = (state, props) => ({
   selectedPrivacy:
-    props?.selectedPrivacy || selectedPrivacySeleclor.selectedPrivacy(state),
-  account: accountSeleclor.getAccountByName(state)(props.accountName),
+    props?.selectedPrivacy || selectedPrivacySelector.selectedPrivacy(state),
+  account: accountSelector.getAccountByName(state)(props.accountName),
   wallet: state.wallet,
 });
 

@@ -4,9 +4,9 @@ import { Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { View } from '@src/components/core';
 import {
-  accountSeleclor,
-  tokenSeleclor,
-  selectedPrivacySeleclor,
+  accountSelector,
+  tokenSelector,
+  selectedPrivacySelector,
 } from '@src/redux/selectors';
 import { getBalance } from '@src/redux/actions/account';
 import { getBalance as getTokenBalance } from '@src/redux/actions/token';
@@ -245,11 +245,11 @@ const Empty = React.memo(() => (
 ));
 
 const mapState = state => ({
-  account: accountSeleclor.defaultAccount(state),
+  account: accountSelector.defaultAccount(state),
   wallet: state.wallet,
-  tokens: tokenSeleclor.followed(state),
-  followed: tokenSeleclor.followed(state),
-  selectPrivacyByTokenID: selectedPrivacySeleclor.getPrivacyDataByTokenID(
+  tokens: tokenSelector.followed(state),
+  followed: tokenSelector.followed(state),
+  selectPrivacyByTokenID: selectedPrivacySelector.getPrivacyDataByTokenID(
     state,
   ),
 });

@@ -4,7 +4,7 @@ import { styled } from '@screens/Shield/features/ShieldDecentralizeDescription/s
 import Header from '@components/Header/Header';
 import { withLayout_2 } from '@components/Layout';
 import { useSelector } from 'react-redux';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 
 const CONTENTS = [
   {
@@ -19,7 +19,7 @@ const CONTENTS = [
 ];
 
 const ShieldDecentralizeDescription = () => {
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   return (
     <View style={styled.container}>
       <Header title={`Shield ${selectedPrivacy?.externalSymbol || selectedPrivacy?.symbol}`} />

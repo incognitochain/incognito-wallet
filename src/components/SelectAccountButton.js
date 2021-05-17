@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import { COLORS, FONT } from '@src/styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from 'react-navigation-hooks';
@@ -38,7 +38,7 @@ const styled = StyleSheet.create({
 });
 
 const SelectAccountButton = ({ ignoredAccounts }) => {
-  const account = useSelector(accountSeleclor.defaultAccountSelector);
+  const account = useSelector(accountSelector.defaultAccountSelector);
   const accounts = useSelector(listAllMasterKeyAccounts);
   const navigation = useNavigation();
   const dispatch = useDispatch();

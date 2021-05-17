@@ -70,22 +70,3 @@ export const signPoolWithdraw = (privateKey, paymentAddress, amount) => {
 
   return global.signPoolWithdraw(JSON.stringify(args));
 };
-
-/**
- * Get sign public key
- * @param {string} privateKey
- * @returns {Promise<string>} signPublicKeyEncode
- */
-export const getSignPublicKey = (privateKey) => {
-  if (!privateKey) {
-    throw new Error('Private key is missing');
-  }
-
-  const args = {
-    data: {
-      privateKey,
-    },
-  };
-
-  return global.getSignPublicKey(JSON.stringify(args));
-};

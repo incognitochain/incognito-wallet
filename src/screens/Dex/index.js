@@ -13,7 +13,7 @@ import tokenService from '@services/wallet/tokenService';
 import _ from 'lodash';
 import { MESSAGES, PRIORITY_LIST } from '@screens/Dex/constants';
 import { CustomError, ErrorCode, ExHandler } from '@services/exception';
-import { accountSeleclor, selectedPrivacySeleclor } from '@src/redux/selectors';
+import { accountSelector, selectedPrivacySelector } from '@src/redux/selectors';
 import convertUtil from '@utils/convert';
 import { listAllMasterKeyAccounts } from '@src/redux/selectors/masterKey';
 import { reloadAccountList } from '@src/redux/actions/wallet';
@@ -191,10 +191,10 @@ class DexContainer extends Component {
 }
 
 const mapState = state => ({
-  account: accountSeleclor.defaultAccount(state),
+  account: accountSelector.defaultAccount(state),
   wallet: state.wallet,
   histories: state.dex.histories.filter(item => item.type !== MESSAGES.TRADE),
-  selectPrivacyByTokenID: selectedPrivacySeleclor.getPrivacyDataByTokenID(state),
+  selectPrivacyByTokenID: selectedPrivacySelector.getPrivacyDataByTokenID(state),
   accounts: listAllMasterKeyAccounts(state),
 });
 

@@ -9,7 +9,7 @@ import { useFocusEffect } from 'react-navigation-hooks';
 import convert from '@src/utils/convert';
 import { useSelector } from 'react-redux';
 import { PRV_ID } from '@src/screens/DexV2/constants';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 
 const withPoolData = (WrappedComp) => (props) => {
   const [loading, setLoading] = useState(false);
@@ -21,7 +21,7 @@ const withPoolData = (WrappedComp) => (props) => {
   const [displayClipTotalRewards, setDisplayClipTotalRewards] = useState('');
 
   const nativeToken = useSelector(
-    selectedPrivacySeleclor.getPrivacyDataByTokenID,
+    selectedPrivacySelector.getPrivacyDataByTokenID,
   )(PRV_ID);
   const { account } = props;
 

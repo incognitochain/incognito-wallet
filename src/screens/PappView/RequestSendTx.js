@@ -9,9 +9,9 @@ import {
   Container,
 } from '@src/components/core';
 import {
-  accountSeleclor,
-  tokenSeleclor,
-  selectedPrivacySeleclor,
+  accountSelector,
+  tokenSelector,
+  selectedPrivacySelector,
 } from '@src/redux/selectors';
 import formatUtil from '@src/utils/format';
 import accountService from '@src/services/wallet/accountService';
@@ -111,20 +111,6 @@ class RequestSendTx extends Component {
       }
       if (balancePRV < totalFee) {
         throw new Error(MESSAGES.BALANCE_INSUFFICIENT);
-      }
-      const spendingPRV = await accountService.hasSpendingCoins(
-        account,
-        wallet,
-        originalAmount,
-      );
-      const spendingCoin = await accountService.hasSpendingCoins(
-        account,
-        wallet,
-        originalAmount,
-        selectedPrivacy?.tokenId,
-      );
-      if (spendingCoin || spendingPRV) {
-        throw new Error(MESSAGES.PENDING_TRANSACTIONS);
       }
       const res = await tokenService.createSendPToken(
         tokenObject,
@@ -241,10 +227,10 @@ class RequestSendTx extends Component {
 }
 
 const mapState = (state) => ({
-  account: accountSeleclor.defaultAccount(state),
+  account: accountSelector.defaultAccount(state),
   wallet: state.wallet,
-  tokens: tokenSeleclor.followed(state),
-  selectPrivacyByTokenID: selectedPrivacySeleclor.getPrivacyDataByTokenID(
+  tokens: tokenSelector.followed(state),
+  selectPrivacyByTokenID: selectedPrivacySelector.getPrivacyDataByTokenID(
     state,
   ),
 });

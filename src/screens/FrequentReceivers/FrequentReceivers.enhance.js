@@ -3,7 +3,7 @@ import ErrorBoundary from '@src/components/ErrorBoundary';
 import { groupBy, forEach } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import { receiversSelector } from '@src/redux/selectors/receivers';
-import { selectedPrivacySeleclor, accountSeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector, accountSelector } from '@src/redux/selectors';
 import { CONSTANT_KEYS } from '@src/constants';
 import { isIOS } from '@src/utils/platform';
 import { View, KeyboardAvoidingView } from 'react-native';
@@ -16,9 +16,9 @@ import { filterAddressByKey } from './FrequentReceivers.utils';
 
 const enhance = (WrappedComp) => (props) => {
   const dispatch = useDispatch();
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const accounts = useSelector(listAllMasterKeyAccounts);
-  const defaultAccount = useSelector(accountSeleclor?.defaultAccountSelector);
+  const defaultAccount = useSelector(accountSelector?.defaultAccountSelector);
   const filterBySelectedPrivacy = !!useNavigationParam(
     'filterBySelectedPrivacy',
   );

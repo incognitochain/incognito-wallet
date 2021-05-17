@@ -1,12 +1,12 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
+import { walletSelector } from '@src/redux/selectors/wallet';
 
-const withDefaultAccount = WrappedComp => (props) => {
-  const wallet = useSelector(state => state.wallet);
-  const account = useSelector(accountSeleclor.defaultAccount);
-  const accounts = useSelector(accountSeleclor.listAccountSelector);
-
+const withDefaultAccount = (WrappedComp) => (props) => {
+  const wallet = useSelector(walletSelector);
+  const account = useSelector(accountSelector.defaultAccountSelector);
+  const accounts = useSelector(accountSelector.listAccountSelector);
   return (
     <WrappedComp
       {...{

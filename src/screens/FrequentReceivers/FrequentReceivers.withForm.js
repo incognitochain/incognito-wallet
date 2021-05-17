@@ -10,14 +10,14 @@ import { compose } from 'recompose';
 import { withLayout_2 } from '@src/components/Layout';
 import { formValueSelector, isValid, change } from 'redux-form';
 import { Keyboard } from 'react-native';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import { selectedReceiverSelector } from '@src/redux/selectors/receivers';
 import { CONSTANT_KEYS } from '@src/constants';
 import { isEqual, toLower } from 'lodash';
 import { formName } from './FrequentReceivers.form';
 
 const enhance = (WrappedComp) => (props) => {
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const action = useNavigationParam('action') || 'create';
   const info = useNavigationParam('info');
   const keySave = useNavigationParam('keySave');

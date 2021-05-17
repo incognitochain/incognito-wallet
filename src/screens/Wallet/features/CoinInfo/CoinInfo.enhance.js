@@ -2,7 +2,7 @@ import React from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { getTokenInfo } from '@src/services/api/token';
 import { useSelector } from 'react-redux';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import { compose } from 'recompose';
 import { withLayout_2 } from '@src/components/Layout';
 import { useNavigation } from 'react-navigation-hooks';
@@ -17,7 +17,7 @@ const enhance = (WrappedComp) => (props) => {
   const { info } = state;
   const navigation = useNavigation();
 
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const {
     tokenId,
     isVerified,

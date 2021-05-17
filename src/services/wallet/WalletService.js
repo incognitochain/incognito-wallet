@@ -5,10 +5,9 @@ import {
   ConfirmedTx as ConfirmedTxWallet,
   FailedTx as FailedTxWallet,
   genImageFromStr as genImageFromStrWallet,
-  RpcClient,
   SuccessTx as SuccessTxWallet,
   Wallet,
-  setCoinsServicesURL,
+  PrivacyVersion,
 } from 'incognito-chain-web-js/build/wallet';
 import { randomBytes } from 'react-native-randombytes';
 import { DEX } from '@utils/dex';
@@ -52,33 +51,15 @@ export async function loadListAccountWithBLSPubKey(wallet) {
 }
 
 export async function loadWallet(passphrase, name = 'Wallet') {
-  const server = await Server.getDefault();
-  Wallet.RpcClient = new RpcClient(
-    server.address,
-    server.username,
-    server.password,
-  );
   let wallet = new Wallet();
-  Wallet.ShardNumber = 8;
+  const server = await Server.getDefault();
+  wallet.RpcClient = server.address;
+  wallet.RpcCoinService = server?.coinServices;
   wallet.Name = name;
   wallet.Storage = storage;
+  wallet.PrivacyVersion = PrivacyVersion.ver2;
+  wallet.UseLegacyEncoding = true;
   await wallet.loadWallet(passphrase, name);
-  const accounts = wallet.MasterAccount.child;
-  for (const account of accounts) {
-    try {
-      await account.loadAccountCached(
-        storage,
-        `${name}-${account.name}-cached`,
-      );
-    } catch (e) {
-      console.debug('LOAD ACCOUNTS CACHE ERROR', e);
-      await account.clearCached(`${name}-${account.name}-cached`);
-      await account.saveAccountCached(
-        storage,
-        `${name}-${account.name}-cached`,
-      );
-    }
-  }
   await saveWallet(wallet);
   return wallet?.Name ? wallet : false;
 }
@@ -189,21 +170,6 @@ export async function createDefaultAccounts(wallet) {
   }
 
   return isCreatedNewAccount;
-}
-
-export async function configRPC() {
-  try {
-    const server = await Server.getDefault();
-    Wallet.RpcClient = new RpcClient(
-      server.address,
-      server.username,
-      server.password,
-    );
-    Wallet.setRpcHTTPCoinServiceClient(server?.coinService);
-  } catch (error) {
-    console.debug('error', error);
-    throw error;
-  }
 }
 
 export async function storeWalletAccountIdsOnAPI(wallet) {

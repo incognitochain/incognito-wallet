@@ -1,6 +1,6 @@
 import lowerCase from 'lodash/lowerCase';
 import { useSelector } from 'react-redux';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import { validator } from '@src/components/core/reduxForm';
 import { formValueSelector, isValid } from 'redux-form';
 import trim from 'lodash/trim';
@@ -12,7 +12,7 @@ const isRequired = validator.required();
 const useAccount = (props) => {
   const { form } = props;
   const masterKeyAccounts = useSelector(listAllMasterKeyAccounts);
-  const accountList = useSelector(accountSeleclor.listAccountSelector);
+  const accountList = useSelector(accountSelector.listAccountSelector);
   const isFormValid = useSelector((state) => isValid(form?.formName)(state));
   const selector = formValueSelector(form?.formName);
   const accountNameToLowercase = lowerCase(

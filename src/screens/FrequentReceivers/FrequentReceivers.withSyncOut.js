@@ -9,7 +9,7 @@ import {
   actionToggleDetectNetworkName,
 } from '@screens/GetStarted';
 import { CONSTANT_KEYS } from '@src/constants';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import { trim } from 'lodash';
 import { actionUpdate } from '@src/redux/actions/receivers';
 import { getExternalSymbol } from './FrequentReceivers.utils';
@@ -22,7 +22,7 @@ const enhance = (WrappedComp) => (props) => {
     CONSTANT_KEYS.DETECT_NETWORK_NAME
   ];
   const getPrivacyDataByTokenID = useSelector(
-    selectedPrivacySeleclor.getPrivacyDataByTokenID,
+    selectedPrivacySelector.getPrivacyDataByTokenID,
   );
 
   const getRootNetworkNameByAddress = ({ address }) => {

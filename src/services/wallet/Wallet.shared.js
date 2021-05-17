@@ -1,9 +1,7 @@
-import storage from '@services/storage';
+import { Validator } from 'incognito-chain-web-js/build/wallet';
 
 export const getAccountNameByAccount = (account) => {
-  if (!account) {
-    throw new Error('Missing account');
-  }
+  new Validator('account', account).required();
   if (account) {
     return account.name || account.AccountName || account.accountName;
   }
@@ -12,16 +10,18 @@ export const getAccountNameByAccount = (account) => {
 
 export const getAccountWallet = (account, wallet) => {
   try {
-    if (!wallet) {
-      throw new Error('Missing wallet');
-    }
-    if (!account) {
-      throw new Error('Missing account');
-    }
+    new Validator('account', account).required();
+    new Validator('wallet', wallet).required();
     const indexAccount = wallet.getAccountIndexByName(
       getAccountNameByAccount(account),
     );
     let accountWallet = wallet.MasterAccount.child[indexAccount];
+    new Validator('accountWallet', accountWallet).required();
+    accountWallet.setRPCClient(wallet.RpcClient);
+    accountWallet.setStorageServices(wallet.Storage);
+    accountWallet.setRPCCoinServices(wallet.RpcCoinService);
+    accountWallet.setPrivacyVersion(wallet.PrivacyVersion);
+    // accountWallet.setUseLegacyEncoding(wallet.UseLegacyEncoding);
     return accountWallet;
   } catch (error) {
     throw error;

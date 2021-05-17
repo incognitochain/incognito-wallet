@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Text } from '@components/core';
-import {selectedPrivacySeleclor} from '@src/redux/selectors';
+import {selectedPrivacySelector} from '@src/redux/selectors';
 import styles from './style';
 
 const TokenNetworkName = ({ id }) => {
-  const data = useSelector(state => selectedPrivacySeleclor.getPrivacyDataByTokenID(state)(id));
+  const data = useSelector(state => selectedPrivacySelector.getPrivacyDataByTokenID(state)(id));
 
   return (
     <Text style={styles.networkName}>{data.networkName}</Text>

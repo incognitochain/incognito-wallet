@@ -7,7 +7,10 @@ import {
   actionSwitchAccountFetching,
 } from '@src/redux/actions/account';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
-import { defaultAccount, switchAccountSelector, } from '@src/redux/selectors/account';
+import {
+  defaultAccount,
+  switchAccountSelector,
+} from '@src/redux/selectors/account';
 import { Toast, TouchableOpacity } from '@src/components/core';
 import { ExHandler } from '@src/services/exception';
 import debounce from 'lodash/debounce';
@@ -41,10 +44,15 @@ const itemStyled = StyleSheet.create({
     height: 22,
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
 });
 
-const AccountItem = ({ accountName, PrivateKey, PaymentAddress, MasterKeyName }) => {
+const AccountItem = ({
+  accountName,
+  PrivateKey,
+  PaymentAddress,
+  MasterKeyName,
+}) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const onSelect = useNavigationParam('onSelect');
@@ -93,17 +101,17 @@ const AccountItem = ({ accountName, PrivateKey, PaymentAddress, MasterKeyName })
     </View>
   );
 
-  const isCurrentAccount = useMemo(() =>
-    PrivateKey === account.PrivateKey,
-  [PrivateKey, account]
-  );
+  const isCurrentAccount = useMemo(() => PrivateKey === account.PrivateKey, [
+    PrivateKey,
+    account,
+  ]);
 
   if (!switchingAccount) {
     return (
       <TouchableOpacity onPress={debounce(onSelectAccount, 100)}>
         <Row>
           <View style={itemStyled.icon}>
-            { isCurrentAccount && <SimpleCheckedIcon /> }
+            {isCurrentAccount && <SimpleCheckedIcon />}
           </View>
           <Component />
         </Row>

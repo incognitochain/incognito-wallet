@@ -2,7 +2,7 @@ import { Image, Text } from '@src/components/core';
 import { View, StyleSheet } from 'react-native';
 import React from 'react';
 import noTransaction from '@assets/images/icons/shield.png';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import { useSelector } from 'react-redux';
 import { COLORS, FONT } from '@src/styles';
 
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
 });
 
 const EmptyHistory = () => {
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   if (selectedPrivacy?.isDeposable) {
     return (
       <View style={styles.container}>

@@ -2,7 +2,7 @@ import { RefreshControl, ScrollView } from '@src/components/core';
 import HistoryList from '@src/components/HistoryList';
 import LoadingContainer from '@src/components/LoadingContainer';
 import { CONSTANT_COMMONS } from '@src/constants';
-import { accountSeleclor, selectedPrivacySeleclor } from '@src/redux/selectors';
+import { accountSelector, selectedPrivacySelector } from '@src/redux/selectors';
 import { ExHandler } from '@src/services/exception';
 import { loadHistoryByAccount } from '@src/services/wallet/WalletService';
 import PropTypes from 'prop-types';
@@ -120,8 +120,8 @@ class MainCryptoHistory extends Component {
 
 const mapState = state => ({
   wallet: state.wallet,
-  defaultAccount: accountSeleclor.defaultAccount(state),
-  selectedPrivacy: selectedPrivacySeleclor.selectedPrivacy(state),
+  defaultAccount: accountSelector.defaultAccount(state),
+  selectedPrivacy: selectedPrivacySelector.selectedPrivacy(state),
 });
 
 MainCryptoHistory.defaultProps = {

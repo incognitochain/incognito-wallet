@@ -1,7 +1,7 @@
 /* eslint-disable import/no-cycle */
 import BigNumber from 'bignumber.js';
 import AccountModel from '@models/account';
-import { COINS, CONSTANT_COMMONS, CONSTANT_KEYS } from '@src/constants';
+import { COINS, CONSTANT_KEYS } from '@src/constants';
 import tokenModel from '@src/models/token';
 import storage from '@src/services/storage';
 import {
@@ -9,10 +9,10 @@ import {
   KeyWallet,
   Wallet,
   constants,
+  Validator,
 } from 'incognito-chain-web-js/build/wallet';
 import _ from 'lodash';
 import { STACK_TRACE } from '@services/exception/customError/code/webjsCode';
-import { cachePromise } from '@services/cache';
 import { chooseBestCoinToSpent } from 'incognito-chain-web-js/lib/tx/utils';
 import bn from 'bn.js';
 import Server from '@services/wallet/Server';
@@ -21,8 +21,8 @@ import {
   getAccountNameByAccount,
   getAccountWallet,
 } from '@src/services/wallet/Wallet.shared';
-import { CustomError, ErrorCode } from '../exception';
-import tokenService from './tokenService';
+import { PRVIDSTR } from 'incognito-chain-web-js/lib/wallet/constants';
+import { CustomError, ErrorCode, ExHandler } from '../exception';
 import {
   loadListAccountWithBLSPubKey,
   saveWallet,
@@ -30,41 +30,6 @@ import {
 } from './WalletService';
 
 const TAG = 'Account';
-
-export const getBalanceNoCache = (
-  accountWallet,
-  tokenId = PRV.id,
-) => async () => {
-  let balance = 0;
-  balance = (await accountWallet.getBalance(tokenId)) || 0;
-  return new BigNumber(balance).toNumber();
-};
-
-const getPendingHistory = (histories, spendingCoins) => {
-  histories = histories.filter((item) => item.status === SuccessTx);
-
-  const pendingHistory = histories.find(
-    (history) =>
-      spendingCoins.find((coin) =>
-        history.listUTXOForPToken.includes(coin.SNDerivator),
-      ) ||
-      spendingCoins.find((coin) =>
-        history.listUTXOForPRV.includes(coin.SNDerivator),
-      ),
-  );
-
-  return !!pendingHistory;
-};
-
-const _hasSpendingCoins = async (account, amount, tokenId) => {
-  let coins = await account.getUnspentToken(tokenId, Wallet.RpcClient);
-  let histories;
-  histories = await account.getNormalTxHistory();
-  histories = histories.concat(await account.getPrivacyTokenTxHistory());
-  const spendingCoins = chooseBestCoinToSpent(coins, new bn(amount))
-    .resultInputCoins;
-  return getPendingHistory(histories, spendingCoins);
-};
 
 export default class Account {
   static NO_OF_INPUT_PER_DEFRAGMENT_TX = 10;
@@ -88,136 +53,148 @@ export default class Account {
   }
 
   static async importAccount(privakeyStr, accountName, passPhrase, wallet) {
-    // console.log("Wallet when import account: ", wallet);
-    let account;
+    new Validator('privakeyStr', privakeyStr).string().required();
+    new Validator('accountName', accountName).string().required();
+    new Validator('passPhrase', passPhrase).string();
+    new Validator('wallet', wallet).required();
+    let imported = false;
     try {
-      account = await wallet.importAccount(
+      const account = await wallet.importAccount(
         privakeyStr,
         accountName,
         passPhrase,
       );
+      imported = !!account.isImport;
     } catch (e) {
-      console.log(`Error when importing account:  ${e}`);
       throw e;
-      // return false;
     }
-
-    if (account.isImport === false) {
-      console.log('Account is not imported');
-      return false;
-    }
-    console.log('Account is imported');
-    return true;
+    return imported;
   }
 
   static async removeAccount(privateKeyStr, passPhrase, wallet) {
     return wallet.removeAccount(privateKeyStr, passPhrase);
   }
 
-  // paymentInfos = [{ paymentAddressStr: toAddress, amount: amount}];
-  static async createAndSendNativeToken(
-    paymentInfos,
-    fee,
-    isPrivacy,
-    account,
+  static async createAndSendNativeToken({
     wallet,
-    info = '',
-    txHandler,
-    depositId,
-    tradeHandler = null,
-  ) {
-    await Wallet.resetProgressTx();
+    account,
+    prvPayments,
+    info,
+    fee,
+    metadata,
+    isEncryptMessage = true,
+    txType,
+  } = {}) {
+    try {
+      new Validator('wallet', wallet).required();
+      new Validator('account', account).required();
+      new Validator('prvPayments', prvPayments).required().paymentInfoList();
+      new Validator('fee', fee).required().amount();
+      new Validator('info', info).string();
+      new Validator('isEncryptMessage', isEncryptMessage).boolean();
+      new Validator('metadata', metadata).object();
+      new Validator('txType', txType).required().number();
+      const accountWallet = this.getAccount(account, wallet);
+      await accountWallet.resetProgressTx();
+      const infoStr = typeof info !== 'string' ? JSON.stringify(info) : info;
+      const result = await accountWallet.createAndSendNativeToken({
+        transfer: {
+          info: infoStr,
+          prvPayments,
+          fee,
+        },
+        extra: { metadata, isEncryptMessage, txType },
+      });
+      console.log('result', result);
+      // save wallet
+      await saveWallet(wallet);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async createAndSendPrivacyToken({
+    wallet,
+    account,
+    prvPayments,
+    tokenPayments,
+    info,
+    fee,
+    tokenID,
+    metadata,
+    isEncryptMessage = true,
+    isEncryptMessageToken = true,
+    txType,
+  } = {}) {
+    new Validator('wallet', wallet).required();
+    new Validator('account', account).required();
+    new Validator('prvPayments', prvPayments).paymentInfoList();
+    new Validator('tokenPayments', tokenPayments).required().paymentInfoList();
+    new Validator('fee', fee).required().amount();
+    new Validator('info', info).string();
+    new Validator('tokenID', tokenID).string();
+    new Validator('metadata', metadata).object();
+    new Validator('isEncryptMessage', isEncryptMessage).boolean();
+    new Validator('isEncryptMessageToken', isEncryptMessageToken).boolean();
+    new Validator('txType', txType).required().number();
     let result;
     const accountWallet = this.getAccount(account, wallet);
+    await accountWallet.resetProgressTx();
     const infoStr = typeof info !== 'string' ? JSON.stringify(info) : info;
-    result = await accountWallet.createAndSendNativeToken(
-      paymentInfos,
-      fee,
-      isPrivacy,
-      infoStr,
-      false,
-      txHandler,
-      depositId,
-      tradeHandler,
-    );
-    // save wallet
+    result = await accountWallet.createAndSendPrivacyToken({
+      transfer: {
+        info: infoStr,
+        prvPayments,
+        tokenPayments,
+        fee,
+        tokenID,
+      },
+      extra: { metadata, isEncryptMessage, isEncryptMessageToken, txType },
+    });
+    console.log('result', result);
     await saveWallet(wallet);
     return result;
   }
 
-  static createAndSendToken(
+  static async createAndSendTradeRequestTx({
     account,
     wallet,
-    receiverAddress,
-    amount,
-    tokenId,
-    nativeFee,
-    tokenFee,
-    prvAmount,
-    memo = '',
-    txHandler,
-    depositId,
-    tradeHandler = null,
-  ) {
-    if (tokenId === COINS.PRV_ID) {
-      const paymentInfos = [
-        {
-          paymentAddressStr: receiverAddress,
-          amount: Math.floor(amount),
-        },
-      ];
-
-      return Account.createAndSendNativeToken(
-        paymentInfos,
-        Math.floor(nativeFee),
-        true,
-        account,
-        wallet,
-        memo,
-        txHandler,
-        depositId,
-        tradeHandler,
-      );
-    }
-
-    const receivers = [
-      {
-        PaymentAddress: receiverAddress,
-        Amount: Math.floor(amount),
+    fee,
+    tokenIDToBuy = PRVIDSTR,
+    tokenIDToSell = PRVIDSTR,
+    sellAmount,
+    minAcceptableAmount,
+    tradingFee,
+  } = {}) {
+    new Validator('wallet', wallet).required();
+    new Validator('account', account).required();
+    new Validator('tokenIDToBuy', tokenIDToBuy).required().string();
+    new Validator('tokenIDToSell', tokenIDToSell).required().string();
+    new Validator('sellAmount', sellAmount).required().amount();
+    new Validator('minAcceptableAmount', minAcceptableAmount)
+      .required()
+      .amount();
+    new Validator('tradingFee', tradingFee).required().amount();
+    new Validator('fee', fee).required().amount();
+    let result;
+    const accountWallet = this.getAccount(account, wallet);
+    await accountWallet.resetProgressTx();
+    result = await accountWallet.createAndSendTradeRequestTx({
+      transfer: {
+        fee,
       },
-    ];
-
-    let paymentInfos = null;
-    if (prvAmount) {
-      paymentInfos = {
-        paymentAddressStr: receiverAddress,
-        amount: Math.floor(prvAmount),
-      };
-    }
-
-    const tokenObject = {
-      Privacy: true,
-      TokenID: tokenId,
-      TokenName: 'Name',
-      TokenSymbol: 'Symbol',
-      TokenTxType: CONSTANT_COMMONS.TOKEN_TX_TYPE.SEND,
-      TokenAmount: amount,
-      TokenReceivers: receivers,
-    };
-
-    return tokenService.createSendPToken(
-      tokenObject,
-      nativeFee,
-      account,
-      wallet,
-      paymentInfos,
-      tokenFee,
-      memo,
-      null,
-      txHandler,
-      depositId,
-      tradeHandler,
-    );
+      extra: {
+        tokenIDToBuy,
+        tokenIDToSell,
+        sellAmount,
+        minAcceptableAmount,
+        tradingFee,
+      },
+    });
+    console.log('result', result);
+    await saveWallet(wallet);
+    return result;
   }
 
   static async createAndSendStopAutoStakingTx(
@@ -281,11 +258,9 @@ export default class Account {
 
   static async createAccount(accountName, wallet, initShardID) {
     const server = await Server.getDefault();
-
     if (server.id === 'testnode') {
       let lastByte = null;
       let newAccount;
-
       while (lastByte !== 0) {
         newAccount = await wallet.createAccount(
           accountName,
@@ -298,18 +273,14 @@ export default class Account {
             childKey.KeySet.PaymentAddress.Pk.length - 1
           ];
       }
-
       wallet.MasterAccount.child.push(newAccount);
       await saveWallet(wallet);
-
       return newAccount;
     }
-
     let shardID = _.isNumber(initShardID) ? initShardID : undefined;
     if (shardID && parseInt(shardID) < 0) {
       shardID = 0;
     }
-
     return await wallet.createNewAccount(
       accountName,
       shardID,
@@ -317,13 +288,18 @@ export default class Account {
     );
   }
 
-  // get progress tx
-  static getProgressTx() {
-    return Wallet.ProgressTx;
+  static async getProgressTx(defaultAccount, wallet) {
+    new Validator('defaultAccount', defaultAccount).required();
+    new Validator('wallet', wallet).required();
+    const account = this.getAccount(defaultAccount, wallet);
+    return account.getProgressTx();
   }
 
-  static getDebugMessage() {
-    return Wallet.Debug;
+  static async getDebugMessage(defaultAccount, wallet) {
+    new Validator('defaultAccount', defaultAccount).required();
+    new Validator('wallet', wallet).required();
+    const account = this.getAccount(defaultAccount, wallet);
+    return account.getDebugMessage();
   }
 
   static checkPaymentAddress(paymentAddrStr) {
@@ -360,12 +336,17 @@ export default class Account {
    *
    * If `tokenId` is not passed, this method will return native token (PRV) balance, else custom token balance (from `tokenId`)
    */
-  static async getBalance(account, wallet, tokenId) {
-    const key = `balance-${wallet.Name}-${account.name ||
-      account.AccountName}-${tokenId ||
-      '0000000000000000000000000000000000000000000000000000000000000004'}`;
+  static async getBalance(account, wallet, tokenId = PRVIDSTR) {
+    new Validator('account', account).required();
+    new Validator('wallet', wallet).required();
     const accountWallet = this.getAccount(account, wallet);
-    return await cachePromise(key, getBalanceNoCache(accountWallet, tokenId));
+    let balance = 0;
+    try {
+      balance = await accountWallet.getBalance(tokenId);
+      return new BigNumber(balance).toNumber();
+    } catch (error) {
+      throw error;
+    }
   }
 
   static parseShard(account) {
@@ -376,11 +357,12 @@ export default class Account {
   }
 
   static getFollowingTokens(account, wallet) {
+    new Validator('account', account).required();
+    new Validator('wallet', wallet).required();
     const accountWallet = this.getAccount(account, wallet);
     const followedTokens = accountWallet
       .listFollowingTokens()
       ?.map(tokenModel.fromJson);
-
     if (followedTokens && followedTokens.find((item) => item?.id === PRV_ID)) {
       this.removeFollowingToken(PRV_ID, account, wallet);
       return followedTokens.filter((item) => item?.id !== PRV_ID);
@@ -389,16 +371,22 @@ export default class Account {
   }
 
   static async addFollowingTokens(tokens, account, wallet) {
+    new Validator('account', account).required();
+    new Validator('wallet', wallet).required();
+    new Validator('tokens', tokens).required();
     const accountWallet = this.getAccount(account, wallet);
     await accountWallet.addFollowingToken(...tokens);
-    saveWallet(wallet);
+    await saveWallet(wallet);
     return wallet;
   }
 
   static async removeFollowingToken(tokenId, account, wallet) {
+    new Validator('account', account).required();
+    new Validator('wallet', wallet).required();
+    new Validator('tokenId', tokenId).required().string();
     const accountWallet = this.getAccount(account, wallet);
     await accountWallet.removeFollowingToken(tokenId);
-    saveWallet(wallet);
+    await saveWallet(wallet);
     return wallet;
   }
 
@@ -517,34 +505,6 @@ export default class Account {
     return null;
   }
 
-  /**
-   * get all of tokens that have balance in the account, even it hasnt been added to following list
-   * return array of { id: TokenID, amount }
-   *
-   * @param {object} account
-   * @param {object} wallet
-   */
-  static async getListTokenHasBalance(account, wallet) {
-    if (!account) throw new Error('Account is required');
-
-    const accountWallet = wallet.getAccountByName(account.name);
-
-    if (accountWallet) {
-      const list = await accountWallet.getAllPrivacyTokenBalance();
-
-      return (
-        list?.map((tokenData) => ({
-          amount: tokenData?.Balance,
-          id: tokenData?.TokenID,
-        })) || []
-      );
-    } else {
-      throw new Error(
-        'Can not get list coin has balance of non-existed account',
-      );
-    }
-  }
-
   static async createAndSendTxWithNativeTokenContribution(
     wallet,
     account,
@@ -626,11 +586,6 @@ export default class Account {
     return error.stackTrace.includes(STACK_TRACE.REPLACEMENT);
   }
 
-  static hasSpendingCoins(account, wallet, amount, tokenId = null) {
-    const accountWallet = this.getAccount(account, wallet);
-    return _hasSpendingCoins(accountWallet, amount, tokenId);
-  }
-
   static getAccountName(account) {
     return getAccountNameByAccount(account);
   }
@@ -700,7 +655,13 @@ export default class Account {
   }
 
   static getAccount(defaultAccount, wallet) {
-    return getAccountWallet(defaultAccount, wallet);
+    try {
+      new Validator('defaultAccount', defaultAccount).required();
+      new Validator('wallet', wallet).required();
+      return getAccountWallet(defaultAccount, wallet);
+    } catch (error) {
+      throw error;
+    }
   }
 
   static async getStorageAccountByTokenId(defaultAccount, wallet, tokenID) {
@@ -784,6 +745,7 @@ export default class Account {
           account.clearAccountStorage(spendingCoinsKey),
           account.clearAccountStorage(storageCoins),
           account.clearAccountStorage(spentCoinsKey),
+          account.clearAccountStorage(account.getOTAKey()),
         ];
       });
       await Promise.all(task);

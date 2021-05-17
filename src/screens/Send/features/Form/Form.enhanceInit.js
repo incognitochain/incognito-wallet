@@ -7,9 +7,9 @@ import {
   actionFetchedMaxFeePToken,
 } from '@src/components/EstimateFee/EstimateFee.actions';
 import {
-  selectedPrivacySeleclor,
-  accountSeleclor,
-  sharedSeleclor,
+  selectedPrivacySelector,
+  accountSelector,
+  sharedSelector,
 } from '@src/redux/selectors';
 import { LoadingContainer } from '@src/components/core';
 import { usePrevious } from '@src/components/UseEffect/usePrevious';
@@ -22,16 +22,16 @@ import { formName } from './Form.enhance';
 export const enhanceInit = (WrappedComp) => (props) => {
   const dispatch = useDispatch();
   const [init, setInit] = React.useState(false);
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const accountBalance = useSelector(
-    accountSeleclor.defaultAccountBalanceSelector,
+    accountSelector.defaultAccountBalanceSelector,
   );
   const oldSelectedPrivacy = usePrevious(selectedPrivacy);
   const oldAccountBalance = usePrevious(accountBalance);
   const estimateFee = useSelector(estimateFeeSelector);
   const selector = formValueSelector(formName);
   const amount = useSelector((state) => selector(state, 'amount'));
-  const gettingBalance = useSelector(sharedSeleclor.isGettingBalance);
+  const gettingBalance = useSelector(sharedSelector.isGettingBalance);
   const isGettingBalance = gettingBalance.includes(selectedPrivacy?.tokenId);
   const initData = async () => {
     try {

@@ -8,9 +8,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { walletSelector } from '@src/redux/selectors/wallet';
 import { updateHistoryStatus } from '@src/services/wallet/WalletService';
 import {
-  accountSeleclor,
-  selectedPrivacySeleclor,
-  tokenSeleclor
+  accountSelector,
+  selectedPrivacySelector,
+  tokenSelector
 } from '@src/redux/selectors';
 import {
   actionFetchHistoryMainCrypto,
@@ -37,14 +37,14 @@ const enhance = (WrappedComp) => (props) => {
   const wallet          = useSelector(walletSelector);
   const navigation      = useNavigation();
   const dispatch        = useDispatch();
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
-  const token           = useSelector(selectedPrivacySeleclor.selectedPrivacyByFollowedSelector);
-  const signPublicKeyEncode = useSelector(accountSeleclor.signPublicKeyEncodeSelector);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
+  const token           = useSelector(selectedPrivacySelector.selectedPrivacyByFollowedSelector);
+  const signPublicKeyEncode = useSelector(accountSelector.signPublicKeyEncodeSelector);
   const {
     isFetching,
     isFetched,
     histories
-  } = useSelector(tokenSeleclor.historyTokenSelector);
+  } = useSelector(tokenSelector.historyTokenSelector);
 
   /*
   * Action

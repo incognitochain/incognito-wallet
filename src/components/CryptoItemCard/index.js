@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { selectedPrivacySeleclor, sharedSeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector, sharedSelector } from '@src/redux/selectors';
 import CryptoItem from './CryptoItem';
 
 class CryptoItemContainer extends Component {
@@ -60,8 +60,8 @@ CryptoItemContainer.propTypes = {
 };
 
 const mapState = (state, props) => ({
-  data: selectedPrivacySeleclor.getPrivacyDataByTokenID(state)(props?.tokenId),
-  isGettingBalanceList: sharedSeleclor.isGettingBalance(state)
+  data: selectedPrivacySelector.getPrivacyDataByTokenID(state)(props?.tokenId),
+  isGettingBalanceList: sharedSelector.isGettingBalance(state)
 });
 
 export default connect(mapState)(CryptoItemContainer);

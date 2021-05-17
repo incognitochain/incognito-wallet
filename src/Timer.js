@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Button } from '@components/core/index';
 import { useSelector } from 'react-redux';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 
 let interval = null;
 
 const Timer = () => {
   const [timer, setTimer] = React.useState({});
-  const account = useSelector(accountSeleclor.defaultAccount);
+  const account = useSelector(accountSelector.defaultAccount);
   const [displayAccount, setDisplayAccount] = useState(null);
   const [visible, setVisible] = useState(false);
 

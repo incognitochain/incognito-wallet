@@ -4,8 +4,8 @@ import _ from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import { View } from '@components/core';
 import {
-  selectedPrivacySeleclor,
-  tokenSeleclor,
+  selectedPrivacySelector,
+  tokenSelector,
   settingsSelector,
 } from '@src/redux/selectors';
 import VerifiedText from '@components/VerifiedText/index';
@@ -52,14 +52,14 @@ const enhance = WrappedComp => props => {
     internalTokens,
     getPrivacyDataByTokenID,
   } = useSelector(state => ({
-    pTokens: tokenSeleclor.pTokens(state),
-    internalTokens: tokenSeleclor.internalTokens(state),
-    getPrivacyDataByTokenID: selectedPrivacySeleclor.getPrivacyDataByTokenID(
+    pTokens: tokenSelector.pTokens(state),
+    internalTokens: tokenSelector.internalTokens(state),
+    getPrivacyDataByTokenID: selectedPrivacySelector.getPrivacyDataByTokenID(
       state,
     ),
     settings: settingsSelector.settings(state),
   }));
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const [onCentralizedPress, isCentralizedDisabled] = useFeatureConfig(appConstant.DISABLED.SHIELD_CENTRALIZED);
   const [onDecentralizedPress, isDecentralizedDisabled] = useFeatureConfig(appConstant.DISABLED.SHIELD_DECENTRALIZED);
   const dispatch = useDispatch();

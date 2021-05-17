@@ -1,4 +1,4 @@
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import { getMinMaxDepositAmount } from '@src/services/api/misc';
 import {
   genETHDepositAddress,
@@ -93,7 +93,7 @@ export const actionFetch = ({ tokenId }) => async (dispatch, getState) => {
     const state = getState();
     const account = defaultAccountSelector(state);
     const { isFetching } = shieldSelector(state);
-    const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
+    const selectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
     const signPublicKeyEncode = signPublicKeyEncodeSelector(state);
     if (!selectedPrivacy || isFetching) {
       return;

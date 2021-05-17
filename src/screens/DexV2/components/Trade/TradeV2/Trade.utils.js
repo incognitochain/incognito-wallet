@@ -20,7 +20,7 @@ import { PRV_ID } from '@screens/Dex/constants';
  * Slippage percent decision outputValue,
  * Slippage percent is bigger, outputValue is bigger
  */
-export const getSlippagePercent = (slippage) => ((100 - slippage) / 100);
+export const getSlippagePercent = (slippage) => (100 - slippage) / 100;
 
 /**
  * filter outputList match with inputToken base on pairs, pairTokens
@@ -40,52 +40,60 @@ export const filterOutputToken = (payload) => {
   let newOutputToken = null;
   let outputList = [];
   try {
-    const {
-      inputToken,
-      outputToken,
-      pairs,
-      pairTokens
-    } = payload;
+    const { inputToken, outputToken, pairs, pairTokens } = payload;
     newOutputToken = outputToken;
 
-    if (pairs.find(pair => pair.keys.includes(inputToken?.id))) {
+    if (pairs.find((pair) => pair.keys.includes(inputToken?.id))) {
       outputList = pairs
-        .map(pair => {
-          const {keys} = pair;
+        .map((pair) => {
+          const { keys } = pair;
 
-          if (inputToken?.id === COINS.PRV_ID ||!keys.includes(inputToken?.id)) {
-            const id = pair.keys.find(key => key !== COINS.PRV_ID);
-            return pairTokens.find(token => token.id === id);
+          if (
+            inputToken?.id === COINS.PRV_ID ||
+            !keys.includes(inputToken?.id)
+          ) {
+            const id = pair.keys.find((key) => key !== COINS.PRV_ID);
+            return pairTokens.find((token) => token.id === id);
           }
           return null;
         })
-        .filter(item => item && item.name && item.symbol);
-      const prvToken = pairTokens.find(token => token.id === COINS.PRV_ID);
+        .filter((item) => item && item.name && item.symbol);
+      const prvToken = pairTokens.find((token) => token.id === COINS.PRV_ID);
       if (inputToken?.id !== COINS.PRV_ID && !outputList.includes(prvToken)) {
         outputList.push(prvToken);
       }
     }
 
     if (inputToken.address) {
-      outputList = outputList.concat(pairTokens.filter(token => token?.address && token?.id !== inputToken?.id));
+      outputList = outputList.concat(
+        pairTokens.filter(
+          (token) => token?.address && token?.id !== inputToken?.id,
+        ),
+      );
     }
 
     outputList = _(outputList)
-      .orderBy([
-        'priority',
-        'hasIcon',
-        item => item.symbol && item.symbol.toLowerCase(),
-      ], ['asc', 'desc', 'desc', 'asc'])
-      .uniqBy(item => item.id)
+      .orderBy(
+        [
+          'priority',
+          'hasIcon',
+          (item) => item.symbol && item.symbol.toLowerCase(),
+        ],
+        ['asc', 'desc', 'desc', 'asc'],
+      )
+      .uniqBy((item) => item.id)
       .value();
 
-    if (outputToken && !outputList.find(item => item.id === outputToken?.id)) {
+    if (
+      outputToken &&
+      !outputList.find((item) => item.id === outputToken?.id)
+    ) {
       newOutputToken = null;
     }
     newOutputToken = newOutputToken || outputList[0];
     return {
       newOutputToken,
-      outputList
+      outputList,
     };
   } catch (error) {
     console.debug('TRADE FILTER OUTPUT LIST', error);
@@ -108,11 +116,7 @@ export const filterOutputToken = (payload) => {
  */
 export const getCouplePair = (payload) => {
   try {
-    const {
-      inputToken,
-      outputToken,
-      pairs,
-    } = payload;
+    const { inputToken, outputToken, pairs } = payload;
     if (inputToken && outputToken) {
       // InputToken or OutputToken is PRV
       if (inputToken?.id === COINS.PRV_ID || outputToken?.id === COINS.PRV_ID) {
@@ -148,13 +152,9 @@ export const getCouplePair = (payload) => {
 /** Network fee, fee minimum required to make 1 transaction */
 export const calculatorFee = (payload) => {
   try {
-    const {
-      inputToken,
-      outputToken,
-      pairs,
-    } = payload;
+    const { inputToken, outputToken, pairs } = payload;
 
-    const prvFee      = MAX_DEX_FEE;
+    const prvFee = MAX_DEX_FEE;
     const prvFeeToken = COINS.PRV;
 
     // Input or Output is PRV, network fee = 400 *1e9 PRV
@@ -163,21 +163,25 @@ export const calculatorFee = (payload) => {
     }
 
     // Check can pair with PRV
-    const prvPair = (pairs || []).find(item =>
-      item.keys.includes(inputToken?.id) &&
-      item.keys.includes(COINS.PRV_ID) &&
-      item[COINS.PRV_ID] > 10000 * 1e9
+    const prvPair = (pairs || []).find(
+      (item) =>
+        item.keys.includes(inputToken?.id) &&
+        item.keys.includes(COINS.PRV_ID) &&
+        item[COINS.PRV_ID] > 10000 * 1e9,
     );
 
     // Network fee is pToken, minus to inputText
     if (inputToken?.id !== COINS.PRV_ID && prvPair) {
-      const outputValue = Math.max(calculateOutputValue(prvPair, prvFeeToken, prvFee, inputToken), MAX_PDEX_TRADE_STEPS * 20);
+      const outputValue = Math.max(
+        calculateOutputValue(prvPair, prvFeeToken, prvFee, inputToken),
+        MAX_PDEX_TRADE_STEPS * 20,
+      );
       return {
-        fee:              outputValue,
-        feeToken:         inputToken,
-        originalFee:      outputValue,
+        fee: outputValue,
+        feeToken: inputToken,
+        originalFee: outputValue,
         originalFeeToken: inputToken,
-        canChooseFee:     true
+        canChooseFee: true,
       };
     }
     return cloneDeep(initFee);
@@ -195,7 +199,10 @@ export const calculatorFee = (payload) => {
 export const getText = (inputText, pDecimal) => {
   try {
     if (inputText.includes('e-')) {
-      inputText = formatUtils.toFixed(convertUtil.toNumber(inputText, true), pDecimal);
+      inputText = formatUtils.toFixed(
+        convertUtil.toNumber(inputText, true),
+        pDecimal,
+      );
     }
     if (inputText.toString() === 'NaN') {
       inputText = '';
@@ -215,14 +222,25 @@ export const getInputValue = (payload) => {
       fee,
       feeToken,
       priority,
-      priorityList
+      priorityList,
     } = payload;
     if (feeToken && inputText) {
       const number = convertUtil.toNumber(inputText, true);
       if (!isNaN(number) && number > 0) {
-        const originalAmount = convertUtil.toOriginalAmount(number, inputToken?.pDecimals, inputToken.pDecimals !== 0);
-        const sumFee = sumTradingFeeAndNetworkFee({fee, feeToken, priority, priorityList});
-        return feeToken?.id === inputToken?.id ? originalAmount - sumFee : originalAmount;
+        const originalAmount = convertUtil.toOriginalAmount(
+          number,
+          inputToken?.pDecimals,
+          inputToken.pDecimals !== 0,
+        );
+        const sumFee = sumTradingFeeAndNetworkFee({
+          fee,
+          feeToken,
+          priority,
+          priorityList,
+        });
+        return feeToken?.id === inputToken?.id
+          ? originalAmount - sumFee
+          : originalAmount;
       }
     }
     return 0;
@@ -244,16 +262,29 @@ export const getInputValue = (payload) => {
  */
 export const getInputTextAndInputValue = (payload) => {
   try {
-    const { inputToken, fee, feeToken, priority, priorityList, newText, } = payload;
-    const inputText   = feeToken
-      ? getText(newText, inputToken?.pDecimals)
-      : '';
-    const inputValue  = feeToken && inputText
-      ? getInputValue({ feeToken, inputText, inputToken, fee, priority, priorityList, })
-      : 0;
+    const {
+      inputToken,
+      fee,
+      feeToken,
+      priority,
+      priorityList,
+      newText,
+    } = payload;
+    const inputText = feeToken ? getText(newText, inputToken?.pDecimals) : '';
+    const inputValue =
+      feeToken && inputText
+        ? getInputValue({
+          feeToken,
+          inputText,
+          inputToken,
+          fee,
+          priority,
+          priorityList,
+        })
+        : 0;
     return {
       inputText,
-      inputValue
+      inputValue,
     };
   } catch (error) {
     console.debug('TRADE GET INPUT TEXT & VALUE WITH ERROR: ', error);
@@ -262,18 +293,20 @@ export const getInputTextAndInputValue = (payload) => {
 
 export const calculateOutputIncognitoNetWork = (payload) => {
   try {
-    const {
+    const { pair, inputToken, inputValue, outputToken, slippage } = payload;
+    const outputValue = calculateOutputValueCrossPool(
       pair,
       inputToken,
       inputValue,
       outputToken,
-      slippage
-    } = payload;
-    const outputValue = calculateOutputValueCrossPool(pair, inputToken, inputValue, outputToken);
+    );
 
     const minimumAmount = floor(outputValue * getSlippagePercent(slippage));
 
-    let outputText = formatUtils.amountFull(minimumAmount, outputToken?.pDecimals);
+    let outputText = formatUtils.amountFull(
+      minimumAmount,
+      outputToken?.pDecimals,
+    );
 
     if (outputValue === 0 || minimumAmount === 0 || isNaN(minimumAmount)) {
       outputText = 0;
@@ -308,9 +341,9 @@ export const calculateOutputIncognitoNetWork = (payload) => {
 export const calculateOutputERC20NetWork = async (payload) => {
   const { inputToken, outputToken, inputValue, slippage } = payload;
 
-  let minimumAmount   = 0;
-  let outputText      = '0';
-  let quote           = null;
+  let minimumAmount = 0;
+  let outputText = '0';
+  let quote = null;
   let newPriorityList = {};
 
   try {
@@ -325,7 +358,10 @@ export const calculateOutputERC20NetWork = async (payload) => {
     newPriorityList = priorityList;
     minimumAmount = floor(maxAmountOut * getSlippagePercent(slippage));
     if (minimumAmount !== 0 && !isNaN(minimumAmount)) {
-      outputText = formatUtils.amountFull(minimumAmount, outputToken?.pDecimals);
+      outputText = formatUtils.amountFull(
+        minimumAmount,
+        outputToken?.pDecimals,
+      );
     }
     return {
       minimumAmount,
@@ -333,13 +369,12 @@ export const calculateOutputERC20NetWork = async (payload) => {
       quote,
       newPriorityList,
     };
-
   } catch (error) {
     return {
       minimumAmount: 0,
       outputText: '0',
       quote: null,
-      newPriorityList
+      newPriorityList,
     };
   }
 };
@@ -347,7 +382,7 @@ export const calculateOutputERC20NetWork = async (payload) => {
 /** Check can trade in Incognito or ERC20 network */
 export const checkMethodGetNetworkTrading = (inputToken, outputToken) => ({
   validToken: inputToken && outputToken && inputToken?.id !== outputToken?.id,
-  isERC20NetWork: inputToken.address && outputToken.address
+  isERC20NetWork: inputToken.address && outputToken.address,
 });
 
 /**
@@ -368,12 +403,7 @@ export const checkMethodGetNetworkTrading = (inputToken, outputToken) => ({
  * @return {string} response.inputBalanceText
  * */
 export const getInputBalance = async (payload) => {
-  const {
-    account,
-    inputToken,
-    wallet,
-    inputFee,
-  } = payload;
+  const { account, inputToken, wallet, inputFee } = payload;
   const token = inputToken;
   const balance = await accountService.getBalance(account, wallet, token.id);
 
@@ -390,7 +420,9 @@ export const getInputBalance = async (payload) => {
   if (balance || balance > inputFee) {
     let humanAmount = convertUtil.toHumanAmount(balance, inputToken?.pDecimals);
     if (humanAmount < 1) {
-      newInputText = formatUtils.toFixed(humanAmount, inputToken?.pDecimals).toString();
+      newInputText = formatUtils
+        .toFixed(humanAmount, inputToken?.pDecimals)
+        .toString();
     } else {
       newInputText = '1';
     }
@@ -399,7 +431,7 @@ export const getInputBalance = async (payload) => {
     newInputText,
     prvBalance,
     inputBalance: balance,
-    inputBalanceText: formatUtils.amountFull(balance, token?.pDecimals)
+    inputBalanceText: formatUtils.amountFull(balance, token?.pDecimals),
   };
 };
 
@@ -412,14 +444,15 @@ export const getInputBalance = async (payload) => {
  */
 export const getOutputTextAndOutputValue = (payload) => {
   try {
-    const {
-      newText,
-      outputToken,
-    } = payload;
+    const { newText, outputToken } = payload;
 
-    const outputText    = getText(newText, outputToken?.pDecimals);
-    const outputNumber  = convertUtil.toNumber(outputText, true);
-    const outputValue   = convertUtil.toOriginalAmount(outputNumber, outputToken?.pDecimals, outputToken.pDecimals !== 0);
+    const outputText = getText(newText, outputToken?.pDecimals);
+    const outputNumber = convertUtil.toNumber(outputText, true);
+    const outputValue = convertUtil.toOriginalAmount(
+      outputNumber,
+      outputToken?.pDecimals,
+      outputToken.pDecimals !== 0,
+    );
     return {
       outputText,
       outputValue,
@@ -439,12 +472,7 @@ export const getOutputTextAndOutputValue = (payload) => {
  * trading fee always is PRV
  * */
 export const sumTradingFeeAndNetworkFee = (payload) => {
-  const {
-    fee,
-    feeToken,
-    priority,
-    priorityList
-  } = payload;
+  const { fee, feeToken, priority, priorityList } = payload;
   const tradingFee = getTradingFee(priority, priorityList);
   if (feeToken?.id !== PRV_ID) return fee;
   return tradingFee + fee;
@@ -477,20 +505,32 @@ export const calculateInputIncognitoNetWork = (payload) => {
       feeToken,
       fee,
       priority,
-      priorityList
+      priorityList,
     } = payload;
 
     // Calculator inputValue base on pool size
-    const inputValue = calculateInputValueCrossPool(pair, inputToken, outputValue, outputToken);
+    const inputValue = calculateInputValueCrossPool(
+      pair,
+      inputToken,
+      outputValue,
+      outputToken,
+    );
 
     let totalFee = 0;
     // fee token === input token, minus fee on input text
-    if (inputValue !== 0 && !isNaN(inputValue) && feeToken?.id === inputToken?.id) {
+    if (
+      inputValue !== 0 &&
+      !isNaN(inputValue) &&
+      feeToken?.id === inputToken?.id
+    ) {
       const paramsCalculatorFee = { fee, feeToken, priority, priorityList };
       totalFee = sumTradingFeeAndNetworkFee(paramsCalculatorFee);
     }
     // input text display in UI, did add fee
-    let inputText = formatUtils.amountFull(inputValue + totalFee, inputToken?.pDecimals);
+    let inputText = formatUtils.amountFull(
+      inputValue + totalFee,
+      inputToken?.pDecimals,
+    );
 
     if (inputValue === 0 || isNaN(inputValue)) {
       inputText = 0;
@@ -511,9 +551,9 @@ export const calculateInputIncognitoNetWork = (payload) => {
 export const calculatorInputERC20Network = async (payload) => {
   const { inputToken, outputToken, outputValue } = payload;
 
-  let inputValue      = 0;
-  let inputText       = '0';
-  let quote           = null;
+  let inputValue = 0;
+  let inputText = '0';
+  let quote = null;
   let newPriorityList = {};
 
   try {
@@ -529,12 +569,16 @@ export const calculatorInputERC20Network = async (payload) => {
     newPriorityList = priorityList;
 
     if (maxAmountIn !== 0 && !isNaN(maxAmountIn)) {
-      inputValue = ceil(formatUtils.convertDecimalsToPDecimals({
-        number: maxAmountIn,
-        decimals: inputToken.decimals,
-        pDecimals: inputToken.pDecimals,
-      })) || 0;
-      inputText = formatUtils.amountFull(inputValue, inputToken?.pDecimals) || '0';
+      inputValue =
+        ceil(
+          formatUtils.convertDecimalsToPDecimals({
+            number: maxAmountIn,
+            decimals: inputToken.decimals,
+            pDecimals: inputToken.pDecimals,
+          }),
+        ) || 0;
+      inputText =
+        formatUtils.amountFull(inputValue, inputToken?.pDecimals) || '0';
     }
 
     return {
@@ -549,7 +593,7 @@ export const calculatorInputERC20Network = async (payload) => {
       inputValue: 0,
       inputText: '0',
       quote: null,
-      newPriorityList
+      newPriorityList,
     };
   }
 };
@@ -578,16 +622,17 @@ export const calculatorOutputWithSlippage = (payload) => {
       newSlippageValue,
       lastSlippageValue,
       outputValue,
-      outputToken
+      outputToken,
     } = payload;
 
     const lastPercent = getSlippagePercent(lastSlippageValue);
-    const newPercent  = getSlippagePercent(newSlippageValue);
+    const newPercent = getSlippagePercent(newSlippageValue);
 
     const originalOutput = ceil(outputValue / lastPercent) || 0;
-    const currentOutput  = floor(originalOutput * newPercent) || 0;
+    const currentOutput = floor(originalOutput * newPercent) || 0;
 
-    const currentOutputText = formatUtils.amountFull(currentOutput, outputToken?.pDecimals) || '0';
+    const currentOutputText =
+      formatUtils.amountFull(currentOutput, outputToken?.pDecimals) || '0';
 
     return {
       outputValue: currentOutput,
@@ -607,10 +652,7 @@ export const getTradingFee = (priority, priorityList) => {
   return priorityList[priority]?.tradingFee;
 };
 
-
-export const validInput = (text) => (
-  !isEmpty(text) && text !== '0'
-);
+export const validInput = (text) => !isEmpty(text) && text !== '0';
 
 /**
  * Change Output, get original output with slippage
@@ -618,6 +660,5 @@ export const validInput = (text) => (
  * @param {number} outputValue
  * @param {number} slippage
  */
-export const calculatorOriginalOutputSlippage = (outputValue, slippage) => (
-  ceil(outputValue / getSlippagePercent(slippage))
-);
+export const calculatorOriginalOutputSlippage = (outputValue, slippage) =>
+  ceil(outputValue / getSlippagePercent(slippage));

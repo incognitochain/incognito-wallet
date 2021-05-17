@@ -32,21 +32,21 @@ import { COINS, CONSTANT_COMMONS } from '@src/constants';
 import { pTokens, internalTokens } from '@src/redux/selectors/token';
 import { ConfirmedTx } from '@src/services/wallet/WalletService';
 import { getpTokenHistory } from '@src/services/api/history';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import _ from 'lodash';
 import convert from '@utils/convert';
 import BigNumber from 'bignumber.js';
 
 const enhance = (WrappedComp) => (props) => {
   const { accounts, wallet } = props;
-  const account = useSelector(accountSeleclor.defaultAccountSelector);
+  const account = useSelector(accountSelector.defaultAccountSelector);
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   const pTokensList = useSelector(pTokens);
   const internalTokensList = useSelector(internalTokens);
   const signPublicKeyEncode = useSelector(
-    accountSeleclor.signPublicKeyEncodeSelector,
+    accountSelector.signPublicKeyEncodeSelector,
   );
 
   const getReceivedTransactionHistory = async () => {

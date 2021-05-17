@@ -8,7 +8,7 @@ import { withNavigation } from 'react-navigation';
 import { ExHandler } from '@src/services/exception';
 import ErrorBoundary from '@src/components/ErrorBoundary/ErrorBoundary';
 import _ from 'lodash';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import PushNotification from 'react-native-push-notification';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import { isIOS } from '@utils/platform';
@@ -162,7 +162,7 @@ const enhance = WrappedComponent =>
   };
 
 const mapState = state => ({
-  accountList: accountSeleclor.listAccount(state),
+  accountList: accountSelector.listAccount(state),
 });
 
 const mapDispatch = {

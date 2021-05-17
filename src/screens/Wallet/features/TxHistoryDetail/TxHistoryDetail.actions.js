@@ -12,7 +12,7 @@ import {
 } from '@screens/Wallet/features/TxHistoryDetail/TxHistoruDetail.builder';
 import Toast from '@components/core/Toast';
 import { ExHandler } from '@services/exception';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 
 export const actionRefreshing = () => ({
   type: ACTION_REFRESHING,
@@ -33,7 +33,7 @@ export const actionRefreshHistoryDetail = ({ txID, currencyType, decentralized, 
   const { isRefreshing } = state.txHistoryDetail;
   if (isRefreshing) return;
   try {
-    const signPublicKeyEncode = accountSeleclor.signPublicKeyEncodeSelector(state);
+    const signPublicKeyEncode = accountSelector.signPublicKeyEncodeSelector(state);
     await dispatch(actionRefreshing());
     data = await apiRefreshHistory({ txID, currencyType, signPublicKeyEncode, decentralized, isShieldAddressDecentralized });
   } catch (error) {

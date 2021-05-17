@@ -6,7 +6,7 @@ import {
   View,
 } from '@src/components/core';
 import { removeAccount, switchAccount } from '@src/redux/actions/account';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import ROUTE_NAMES from '@src/router/routeNames';
 import { ExHandler } from '@src/services/exception';
 import { COLORS } from '@src/styles';
@@ -170,8 +170,8 @@ AccountSection.propTypes = {
 };
 
 const mapState = (state) => ({
-  defaultAccount: accountSeleclor.defaultAccount(state),
-  listAccount: accountSeleclor.listAccount(state),
+  defaultAccount: accountSelector.defaultAccount(state),
+  listAccount: accountSelector.listAccount(state),
 });
 
 const mapDispatch = { removeAccount, switchAccount };

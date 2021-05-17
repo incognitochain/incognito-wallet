@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CONSTANT_COMMONS } from '@src/constants';
 import { ExHandler } from '@src/services/exception';
 import { useFocusEffect } from 'react-navigation-hooks';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import { getStatusData } from '@src/components/HistoryList/HistoryList.utils';
 import { clearCache } from '@src/services/cache';
 import { getBalance as getAccountBalance } from '@src/redux/actions/account';
@@ -20,7 +20,7 @@ import {
 import { useStreamLine } from './Streamline.useStreamline';
 
 const enhance = (WrappedComp) => (props) => {
-  const account = useSelector(accountSeleclor.defaultAccountSelector);
+  const account = useSelector(accountSelector.defaultAccountSelector);
   const wallet = useSelector(walletSelector);
   const dispatch = useDispatch();
   const [state, setState] = React.useState({

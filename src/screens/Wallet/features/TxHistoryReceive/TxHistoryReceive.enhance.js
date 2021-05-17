@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { withLayout_2 } from '@src/components/Layout';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import { getTxTransactionByHash } from '@src/services/wallet/RpcClientService';
 import { useFocusEffect, useNavigationParam } from 'react-navigation-hooks';
 import { useSelector } from 'react-redux';
@@ -11,7 +11,7 @@ import { endsWith } from 'lodash';
 import { getTypeOfHistoryReceive } from './TxHistoryReceive.utils';
 
 const enhance = (WrappedComp) => (props) => {
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const data = useNavigationParam('data');
   const { history: _history, ...rest } = data;
   const isHistoryReceived = _history.isHistoryReceived;

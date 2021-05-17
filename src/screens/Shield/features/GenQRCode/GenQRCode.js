@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { useSelector } from 'react-redux';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import { shieldDataSelector } from '@screens/Shield/Shield.selector';
 import QrCodeGenerate from '@src/components/QrCodeGenerate';
 import PropTypes from 'prop-types';
@@ -52,7 +52,7 @@ const ShieldError = React.memo(({ handleShield }) => {
 
 const Extra = () => {
   const { address, min, expiredAt, isShieldAddressDecentralized, estimateFee, tokenFee } = useSelector(shieldDataSelector);
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const navigation = useNavigation();
 
   const renderMinShieldAmount = () => {

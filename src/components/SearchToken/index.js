@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { fromPairs } from 'lodash';
 import { withNavigation } from 'react-navigation';
-import { accountSeleclor, tokenSeleclor, selectedPrivacySeleclor } from '@src/redux/selectors';
+import { accountSelector, tokenSelector, selectedPrivacySelector } from '@src/redux/selectors';
 import accountService from '@src/services/wallet/accountService';
 import tokenService from '@src/services/wallet/tokenService';
 import { getPTokenList } from '@src/redux/actions/token';
@@ -160,10 +160,10 @@ export class SearchTokenContainer extends PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  followedTokens: tokenSeleclor.followed(state),
-  getPrivacyDataByTokenID: selectedPrivacySeleclor.getPrivacyDataByTokenID(state),
+  followedTokens: tokenSelector.followed(state),
+  getPrivacyDataByTokenID: selectedPrivacySelector.getPrivacyDataByTokenID(state),
   pTokens: pTokens(state),
-  account: accountSeleclor.defaultAccount(state),
+  account: accountSelector.defaultAccount(state),
   wallet: state.wallet
 });
 

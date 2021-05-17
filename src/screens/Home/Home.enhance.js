@@ -8,7 +8,7 @@ import withWallet from '@screens/Wallet/features/Home/Wallet.enhance';
 import { useSelector, useDispatch } from 'react-redux';
 import { useFocusEffect } from 'react-navigation-hooks';
 import APIService from '@src/services/api/miner/APIService';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import { ExHandler } from '@src/services/exception';
 import { BackHandler } from 'react-native';
 import AppUpdater from '@components/AppUpdater';
@@ -27,7 +27,6 @@ import {
 } from '@screens/FrequentReceivers';
 import { loadAllMasterKeyAccounts } from '@src/redux/actions/masterKey';
 import { masterKeysSelector } from '@src/redux/selectors/masterKey';
-import { configRPC } from '@services/wallet/WalletService';
 import withPin from '@components/pin.enhance';
 import { homeSelector } from './Home.selector';
 import { actionFetch as actionFetchHomeConfigs } from './Home.actions';
@@ -43,7 +42,7 @@ const enhance = (WrappedComp) => (props) => {
   } = props;
   const { categories, headerTitle, isFetching } = useSelector(homeSelector);
   const pTokens = useSelector(pTokensSelector);
-  const defaultAccount = useSelector(accountSeleclor.defaultAccountSelector);
+  const defaultAccount = useSelector(accountSelector.defaultAccountSelector);
   const isFollowedDefaultPTokens = useSelector(isFollowDefaultPTokensSelector)(
     CONSTANT_KEYS.IS_FOLLOW_DEFAULT_PTOKENS,
   );
@@ -96,7 +95,6 @@ const enhance = (WrappedComp) => (props) => {
   useBackHandler({ handleGoBack });
 
   React.useEffect(() => {
-    configRPC();
     fetchData();
     retryLastTxsUnshieldDecentralized();
     retryLastTxsUnshieldCentralized();

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { tokenSeleclor, accountSeleclor } from '@src/redux/selectors';
+import { tokenSelector, accountSelector } from '@src/redux/selectors';
 import { COLORS } from '@src/styles';
 import { View, Container, Modal, TouchableOpacity, ScrollView } from '../core';
 import CryptoIcon from '../CryptoIcon';
@@ -84,8 +84,8 @@ TokenInfo.propTypes = {
 };
 
 const mapState = state => ({
-  tokens: tokenSeleclor.followed(state),
-  account: accountSeleclor.defaultAccount(state)
+  tokens: tokenSelector.followed(state),
+  account: accountSelector.defaultAccount(state)
 });
 
 export default connect(

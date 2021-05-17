@@ -5,7 +5,7 @@ import {
   internalTokensSelector,
   tokensFollowedSelector,
 } from '@src/redux/selectors/token';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import { uniqBy, isNaN, compact, fromPairs } from 'lodash';
 import convert from '@src/utils/convert';
 import { BIG_COINS } from '@src/screens/DexV2/constants';
@@ -31,7 +31,7 @@ export const availableTokensSelector = createSelector(
   pTokensSelector,
   internalTokensSelector,
   tokensFollowedSelector,
-  selectedPrivacySeleclor.getPrivacyDataByTokenID,
+  selectedPrivacySelector.getPrivacyDataByTokenID,
   (pTokens, internalTokens, followedTokens, getPrivacyDataByTokenID) => {
     const followedTokenIds = followedTokens.map((t) => t?.id) || [];
     const allTokenIds = Object.keys(
@@ -57,7 +57,7 @@ export const availableTokensSelector = createSelector(
 );
 
 export const pTokenSelector = createSelector(
-  selectedPrivacySeleclor.getPrivacyDataByTokenID,
+  selectedPrivacySelector.getPrivacyDataByTokenID,
   currencySelector,
   (getPrivacyDataByTokenID, isToggleUSD) => {
     const decimalDigit = getPrivacyDataByTokenID(
@@ -81,7 +81,7 @@ export const prefixCurrency = createSelector(
 
 export const totalShieldedTokensSelector = createSelector(
   availableTokensSelector,
-  selectedPrivacySeleclor.getPrivacyDataByTokenID,
+  selectedPrivacySelector.getPrivacyDataByTokenID,
   defaultAccountBalanceSelector,
   tokensFollowedSelector,
   pTokenSelector,

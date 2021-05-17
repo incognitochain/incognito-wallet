@@ -2,7 +2,7 @@ import { defaultAccountSelector } from '@src/redux/selectors/account';
 import { getStatusData, getTypeData } from '@components/HistoryList/HistoryList.utils';
 import appConstant from '@src/constants/app';
 import { combineHistory } from '@src/redux/utils/token';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import historyModel from '@models/history';
 import _ from 'lodash';
 import { COLORS } from '@src/styles';
@@ -34,7 +34,7 @@ export const combineHistoryDetail = (state, historyId) => {
 };
 
 export const combineHistoryApi = (state, historyFromApi) => {
-  const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
+  const selectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
   const parseHistoryApi = historyModel.parsePrivateTokenFromApi(historyFromApi);
   const histories = combineHistory({
     histories: [],

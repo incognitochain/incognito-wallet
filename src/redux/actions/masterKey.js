@@ -1,3 +1,4 @@
+import { Validator } from 'incognito-chain-web-js/build/wallet';
 import LocalDatabase from '@utils/LocalDatabase';
 import types from '@src/redux/types/masterKey';
 // eslint-disable-next-line import/no-cycle
@@ -12,18 +13,12 @@ import {
 // eslint-disable-next-line import/no-cycle
 import { reloadWallet } from '@src/redux/actions/wallet';
 import { getWalletAccounts } from '@services/api/masterKey';
-// eslint-disable-next-line import/no-cycle
-import {
-  reloadAccountFollowingToken,
-  reloadBalance,
-} from '@src/redux/actions/account';
 import { pTokensSelector } from '@src/redux/selectors/token';
 import {
   masterKeysSelector,
   masterlessKeyChainSelector,
   noMasterLessSelector,
 } from '@src/redux/selectors/masterKey';
-import { defaultAccountSelector } from '@src/redux/selectors/account';
 import _ from 'lodash';
 import { clearWalletCaches } from '@services/cache';
 import accountService from '@services/wallet/accountService';
@@ -166,12 +161,7 @@ export const loadAllMasterKeys = () => async (dispatch) => {
       continue;
     }
     const wallet = key.wallet;
-    console.log(
-      '\n\nKEY SET ACCOUNT [0] aaaaa',
-      wallet.MasterAccount.child[0].key.KeySet,
-    );
     let masterAccountInfo = await wallet.MasterAccount.getDeserializeInformation();
-    console.debug('masterAccountInfo', masterAccountInfo);
     const serverAccounts = await getWalletAccounts(
       masterAccountInfo.PublicKeyCheckEncode,
     );
@@ -215,9 +205,15 @@ const switchMasterKeySuccess = (data) => ({
 export const switchMasterKey = (masterKeyName, accountName) => async (
   dispatch,
 ) => {
-  clearWalletCaches();
-  await dispatch(switchMasterKeySuccess(masterKeyName));
-  await dispatch(reloadWallet(accountName));
+  try {
+    new Validator('masterKeyName', masterKeyName).required().string();
+    new Validator('accountName', accountName).required().string();
+    clearWalletCaches();
+    await dispatch(switchMasterKeySuccess(masterKeyName));
+    await dispatch(reloadWallet(accountName));
+  } catch (error) {
+    throw error;
+  }
 };
 
 const createMasterKeySuccess = (newMasterKey) => ({

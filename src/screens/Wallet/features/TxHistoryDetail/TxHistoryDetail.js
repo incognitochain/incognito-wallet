@@ -26,7 +26,7 @@ import {
   BtnResume,
 } from '@src/components/Button';
 import { useSelector } from 'react-redux';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import HTML from 'react-native-render-html';
 import { devSelector } from '@src/screens/Dev';
 import includes from 'lodash/includes';
@@ -170,7 +170,7 @@ export const Hook = (props) => {
 };
 
 const TxHistoryDetail = (props) => {
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const dev = useSelector(devSelector);
   const keySave = CONSTANT_KEYS.DEV_TEST_TOGGLE_HISTORY_DETAIL;
   const toggleTxHistoryDetail = global.isDebug() && dev[keySave];

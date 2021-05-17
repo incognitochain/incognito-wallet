@@ -1,9 +1,9 @@
 import { CONSTANT_APP } from '@src/constants';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 
 const reducer = (state, action) => {
   if (/ACCOUNT\//.test(action.type) || /WALLET\//.test(action.type)) {
-    const account = accountSeleclor.defaultAccount(state);
+    const account = accountSelector.defaultAccount(state);
     const isWalletLoaded = !!state?.wallet?.Name;
     const isAccountLoaded = account?.value !== null;
     const appState = state?.app;

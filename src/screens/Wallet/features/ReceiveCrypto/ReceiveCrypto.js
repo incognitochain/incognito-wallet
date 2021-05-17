@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import { COLORS, FONT } from '@src/styles';
 import Header from '@src/components/Header';
 import { useSelector } from 'react-redux';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import LoadingContainer from '@components/LoadingContainer/index';
 import QrCodeGenerate from '@src/components/QrCodeGenerate';
 import { CopiableTextDefault as CopiableText } from '@src/components/CopiableText';
@@ -32,7 +32,7 @@ export const homeStyle = StyleSheet.create({
 });
 
 const ReceiveCrypto = () => {
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const account = useSelector(defaultAccountSelector);
   const address = account.PaymentAddress;
   const navigation = useNavigation();

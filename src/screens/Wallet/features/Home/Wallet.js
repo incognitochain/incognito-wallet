@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, RefreshControl } from 'react-native';
 import Header from '@src/components/Header';
 import { ButtonBasic, BtnQRCode, BtnClose } from '@src/components/Button';
-import { tokenSeleclor } from '@src/redux/selectors';
+import { tokenSelector } from '@src/redux/selectors';
 import { useSelector, useDispatch } from 'react-redux';
 import Token from '@src/components/Token';
 import { useNavigation } from 'react-navigation-hooks';
@@ -56,9 +56,7 @@ const GroupButton = React.memo(() => {
       await dispatch(actionToggleGuide());
     }
   };
-
   const [onFeaturePress, isDisabled] = useFeatureConfig(appConstant.DISABLED.SHIELD, handleShield);
-
   return (
     <View
       style={[
@@ -123,7 +121,6 @@ const Balance = React.memo((props) => {
   let totalShielded = useSelector(totalShieldedTokensSelector);
   const isGettingTotalBalance =
     useSelector(isGettingTotalBalanceSelector).length > 0;
-
   if (isNaN(totalShielded)) {
     totalShielded = 0;
   }
@@ -166,7 +163,7 @@ Balance.propTypes = {
 
 const FollowToken = React.memo((props) => {
   const { hideBlance } = props;
-  const followed = useSelector(tokenSeleclor.tokensFollowedSelector);
+  const followed = useSelector(tokenSelector.tokensFollowedSelector);
   const { walletProps } = React.useContext(WalletContext);
   const {
     handleSelectToken,
@@ -174,7 +171,6 @@ const FollowToken = React.memo((props) => {
     isReloading,
     fetchData,
   } = walletProps;
-
   return (
     <View style={styledFollow.container}>
       <ScrollView

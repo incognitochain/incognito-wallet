@@ -1,7 +1,7 @@
 import React from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { ExHandler } from '@src/services/exception';
-import { accountSeleclor, selectedPrivacySeleclor } from '@src/redux/selectors';
+import { accountSelector, selectedPrivacySelector } from '@src/redux/selectors';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeHistory } from '@src/services/api/history';
 import { Toast } from '@src/components/core';
@@ -12,12 +12,12 @@ import {
 import { useHistoryList } from '@src/components/HistoryList';
 
 const enhance = (WrappedComp) => (props) => {
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const token = useSelector(
-    selectedPrivacySeleclor.selectedPrivacyByFollowedSelector,
+    selectedPrivacySelector.selectedPrivacyByFollowedSelector,
   );
   const signPublicKeyEncode = useSelector(
-    accountSeleclor.signPublicKeyEncodeSelector,
+    accountSelector.signPublicKeyEncodeSelector,
   );
 
   const dispatch = useDispatch();

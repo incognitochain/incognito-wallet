@@ -154,7 +154,7 @@ const HistoryList = ({
       typeof onLoadmoreHistory === 'function' && onLoadmoreHistory()
     }
     ListFooterComponent={
-      !oversize && !refreshing ? (
+      !oversize && !refreshing && !showEmpty ? (
         <View style={styleSheet.loadingContainer}>
           <LoadingContainer />
         </View>

@@ -6,9 +6,14 @@ import React from 'react';
 import KeepAwake from 'react-native-keep-awake';
 import PureModal from '@components/Modal/features/PureModal';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
+import { defaultAccountSelector } from '@src/redux/selectors/account';
+import { walletSelector } from '@src/redux/selectors/wallet';
 import styleSheet from './style';
 
 const LoadingTx = (props) => {
+  const account = props?.account || useSelector(defaultAccountSelector);
+  const wallet = props?.wallet || useSelector(walletSelector);
   const [state, setState] = React.useState({
     open: true,
     percent: 0,
@@ -19,19 +24,17 @@ const LoadingTx = (props) => {
   const [startTime, setStartTime] = React.useState(null);
   const { text, descFactories, currentTime, totalTimes } = props;
   const { open, percent, message } = state;
-
   let displayPercent = percent;
-
   if (totalTimes) {
     const maxPercentPerTime = 100 / totalTimes;
     const currentTimeStartPercent = currentTime * maxPercentPerTime;
-
     displayPercent = Math.floor(currentTimeStartPercent + percent / totalTimes);
   }
-
-  const progress = () => {
-    const percent = accountService.getProgressTx();
-    const message = accountService.getDebugMessage();
+  const progress = async () => {
+    const [percent, message] = await Promise.all([
+      accountService.getProgressTx(account, wallet),
+      accountService.getDebugMessage(account, wallet),
+    ]);
     percent && setState({ ...state, percent, message });
     if (percent === 100) {
       setTimeout(() => handleToggle(false), 1000);
@@ -94,6 +97,8 @@ LoadingTx.propTypes = {
   totalTimes: PropTypes.number,
   currentTime: PropTypes.number,
   descFactories: PropTypes.array,
+  account: PropTypes.any,
+  wallet: PropTypes.any,
 };
 
 export default React.memo(LoadingTx);

@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import { ButtonBasic } from '@src/components/Button';
 import { useSelector } from 'react-redux';
 import { feeDataSelector } from '@src/components/EstimateFee/EstimateFee.selector';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import LoadingTx from '@src/components/LoadingTx';
 import format from '@src/utils/format';
 import useFeatureConfig from '@src/shared/hooks/featureConfig';
@@ -36,7 +36,7 @@ const Form = createForm(formName, {
 });
 
 const RightLabel = React.memo(() => {
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const amount = format.amount(
     selectedPrivacy?.amount,
     selectedPrivacy?.pDecimals,
@@ -72,14 +72,14 @@ const SendForm = (props) => {
   const { titleBtnSubmit, isUnShield, editableInput } = useSelector(
     feeDataSelector,
   );
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const [onCentralizedPress, isCentralizedDisabled] = useFeatureConfig(
     appConstant.DISABLED.UNSHIELD_CENTRALIZED,
     handleSend,
   );
   const [onDecentralizedPress, isDecentralizedDisabled] = useFeatureConfig(
     appConstant.DISABLED.UNSHIELD_DECENTRALIZED,
-    handleSend
+    handleSend,
   );
   const placeholderAddress = `Incognito${
     selectedPrivacy?.isMainCrypto || selectedPrivacy?.isIncognitoToken
@@ -127,7 +127,6 @@ const SendForm = (props) => {
       />
     );
   };
-
   const isDisabled =
     isUnShield &&
     ((selectedPrivacy.isCentralized && isCentralizedDisabled) ||
@@ -137,7 +136,6 @@ const SendForm = (props) => {
       ? onCentralizedPress
       : onDecentralizedPress
     : handleSend;
-
   return (
     <View style={styled.container}>
       <KeyboardAwareScrollView>

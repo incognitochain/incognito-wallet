@@ -1,7 +1,7 @@
 import {
-  tokenSeleclor,
-  selectedPrivacySeleclor,
-  accountSeleclor,
+  tokenSelector,
+  selectedPrivacySelector,
+  accountSelector,
 } from '@src/redux/selectors';
 import { useSelector } from 'react-redux';
 import React from 'react';
@@ -12,12 +12,12 @@ import { switchAccountSelector } from '@src/redux/selectors/account';
 export const useHistoryList = (props) => {
   const { handleLoadHistory, handleLoadBalance } = props;
   const wallet = useSelector(walletSelector);
-  const account = useSelector(accountSeleclor.defaultAccountSelector);
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
-  const receiveHistory = useSelector(tokenSeleclor.receiveHistorySelector);
+  const account = useSelector(accountSelector.defaultAccountSelector);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
+  const receiveHistory = useSelector(tokenSelector.receiveHistorySelector);
   const switchAccount = useSelector(switchAccountSelector);
   const { notEnoughData, showEmpty, refreshing } = receiveHistory;
-  const { histories } = useSelector(tokenSeleclor.historyTokenSelector);
+  const { histories } = useSelector(tokenSelector.historyTokenSelector);
   React.useEffect(() => {
     if (notEnoughData) {
       handleLoadHistory(false);

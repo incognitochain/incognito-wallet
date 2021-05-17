@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import UserHeader from './UserHeader';
 
 const UserHeaderContainer = props => {
@@ -10,7 +10,7 @@ const UserHeaderContainer = props => {
 };
 
 const mapState = state => ({
-  defaultAccount: accountSeleclor.defaultAccount(state)
+  defaultAccount: accountSelector.defaultAccount(state)
 });
 
 UserHeaderContainer.propTypes = {

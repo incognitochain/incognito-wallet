@@ -8,7 +8,7 @@ import trim from 'lodash/trim';
 import { useDispatch, useSelector } from 'react-redux';
 import useAccount from '@src/components/Account/Account.useEffect';
 import { change } from 'redux-form';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import handleRandomName from '@src/utils/randomName';
 import { Keyboard } from 'react-native';
 import { actionFetchImportAccount } from '@src/redux/actions/account';
@@ -23,7 +23,7 @@ import { formImportAccount } from './ImportAccount';
 const enhance = (WrappedComponent) => (props) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const accountList = useSelector(accountSeleclor.listAccountSelector);
+  const accountList = useSelector(accountSelector.listAccountSelector);
   const onGoBack = useNavigationParam('onGoBack');
   const redirect = useNavigationParam('redirect');
   const [useRandomName, setUseRandomName] = React.useState({

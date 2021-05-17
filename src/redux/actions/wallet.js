@@ -1,5 +1,8 @@
 import { batch } from 'react-redux';
-import { loadListAccount } from '@src/services/wallet/WalletService';
+import {
+  loadListAccount,
+  loadListAccountWithBLSPubKey,
+} from '@src/services/wallet/WalletService';
 import accountService from '@src/services/wallet/accountService';
 import type from '@src/redux/types/wallet';
 // eslint-disable-next-line import/no-cycle
@@ -9,13 +12,16 @@ import {
   actionReloadFollowingToken,
   setAccount,
 } from '@src/redux/actions/account';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import { currentMasterKeySelector } from '@src/redux/selectors/masterKey';
 import { walletSelector } from '@src/redux/selectors/wallet';
 // eslint-disable-next-line import/no-cycle
 import { updateMasterKey } from '@src/redux/actions/masterKey';
 // eslint-disable-next-line import/no-cycle
 import { setListToken } from '@src/redux/actions/token';
+import Server from '@src/services/wallet/Server';
+import { Validator, PrivacyVersion } from 'incognito-chain-web-js/build/wallet';
+import Storage from '@src/services/storage';
 
 const getStoredDefaultAccountName = async (listAccount) => {
   const firstAccountName = listAccount && listAccount[0]?.name;
@@ -62,12 +68,17 @@ export const reloadAccountList = () => async (dispatch, getState) => {
 
 export const reloadWallet = (accountName) => async (dispatch, getState) => {
   try {
+    new Validator('accountName', accountName).string();
     const state = getState();
     const masterKey = currentMasterKeySelector(state);
-    const wallet = masterKey.wallet;
-
-    let defaultAccount = accountSeleclor.defaultAccount(state);
-
+    let wallet = masterKey.wallet;
+    const server = await Server.getDefault();
+    wallet.RpcClient = server.address;
+    wallet.RpcCoinService = server?.coinServices;
+    wallet.Storage = Storage;
+    wallet.PrivacyVersion = PrivacyVersion.ver2;
+    wallet.UseLegacyEncoding = true;
+    let defaultAccount = accountSelector.defaultAccount(state);
     if (wallet) {
       const accounts = await loadListAccount(wallet);
       if (!accountName) {
@@ -80,7 +91,6 @@ export const reloadWallet = (accountName) => async (dispatch, getState) => {
             defaultAccount = accounts[0];
           }
         }
-
         if (!defaultAccount) {
           const defaultAccountName = await getStoredDefaultAccountName(
             accounts,
@@ -89,7 +99,6 @@ export const reloadWallet = (accountName) => async (dispatch, getState) => {
             (a) => a?.name === defaultAccountName,
           );
         }
-
         batch(() => {
           dispatch(setWallet(wallet));
           dispatch(setListAccount(accounts));
@@ -103,22 +112,18 @@ export const reloadWallet = (accountName) => async (dispatch, getState) => {
           account,
           wallet,
         );
-
         followed.forEach((item) => {
           item.loading = true;
         });
-
         batch(() => {
           dispatch(setWallet(wallet));
           dispatch(setListAccount(accounts));
           dispatch(setDefaultAccount(account));
           dispatch(setAccount(account));
-          // dispatch(getBalanceStart(account?.name));
           dispatch(setListToken(followed));
         });
         dispatch(actionReloadFollowingToken(true));
       }
-
       return wallet;
     }
     return false;

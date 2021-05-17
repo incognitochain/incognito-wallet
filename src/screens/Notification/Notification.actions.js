@@ -1,6 +1,6 @@
 import { ExHandler } from '@src/services/exception';
 import routeNames from '@src/router/routeNames';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import { setSelectedPrivacy } from '@src/redux/actions/selectedPrivacy';
 import { actionAddFollowToken } from '@src/redux/actions/token';
 import { actionToggleModal } from '@src/components/Modal';
@@ -51,7 +51,7 @@ export const actionNavigate = (item, navigation) => async (
 
     const pin = rootState?.pin?.pin;
     const accountList = listAllMasterKeyAccounts(rootState);
-    const getPrivacyDataByTokenID = selectedPrivacySeleclor.getPrivacyDataByTokenID(
+    const getPrivacyDataByTokenID = selectedPrivacySelector.getPrivacyDataByTokenID(
       rootState,
     );
     await dispatch(actionToggleModal());

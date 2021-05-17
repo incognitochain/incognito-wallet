@@ -2,10 +2,10 @@ import React from 'react';
 import { View } from 'react-native';
 import Header from '@src/components/Header';
 import {
-  selectedPrivacySeleclor,
-  sharedSeleclor,
-  tokenSeleclor,
-  accountSeleclor,
+  selectedPrivacySelector,
+  sharedSelector,
+  tokenSelector,
+  accountSelector,
 } from '@src/redux/selectors';
 import { useSelector } from 'react-redux';
 import { ButtonBasic, BtnInfo } from '@src/components/Button';
@@ -58,13 +58,13 @@ const GroupButton = React.memo(() => {
 });
 
 const Balance = React.memo(() => {
-  const selected  = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selected  = useSelector(selectedPrivacySelector.selectedPrivacy);
   const {
     isToggleUSD
   } = useSelector(pTokenSelector);
 
   const isGettingBalance = useSelector(
-    sharedSeleclor.isGettingBalance,
+    sharedSelector.isGettingBalance,
   ).includes(selected?.tokenId);
   const tokenData = {
     ...selected,
@@ -99,7 +99,7 @@ const Balance = React.memo(() => {
 });
 
 const History = React.memo(() => {
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   return (
     <View style={historyStyled.container}>
       {selectedPrivacy?.isMainCrypto ? <MainCryptoHistory /> : <HistoryToken />}
@@ -109,16 +109,16 @@ const History = React.memo(() => {
 
 const Detail = (props) => {
   const navigation = useNavigation();
-  const selected = useSelector(selectedPrivacySeleclor.selectedPrivacy);
-  const { isFetching } = useSelector(tokenSeleclor.historyTokenSelector);
+  const selected = useSelector(selectedPrivacySelector.selectedPrivacy);
+  const { isFetching } = useSelector(tokenSelector.historyTokenSelector);
   const token = useSelector(
-    selectedPrivacySeleclor.selectedPrivacyByFollowedSelector,
+    selectedPrivacySelector.selectedPrivacyByFollowedSelector,
   );
   const isGettingTokenBalance = useSelector(isGettingTokenBalanceSelector);
   const isGettingMainCryptoBalance = useSelector(
     isGettingMainCryptoBalanceSelector,
   );
-  const defaultAccount = useSelector(accountSeleclor.defaultAccountSelector);
+  const defaultAccount = useSelector(accountSelector.defaultAccountSelector);
   const refreshing =
     !!isFetching || selected?.isMainCrypto
       ? isGettingMainCryptoBalance.length > 0 || !defaultAccount

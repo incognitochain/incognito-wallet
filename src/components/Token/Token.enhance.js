@@ -1,6 +1,6 @@
 import React from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
-import { selectedPrivacySeleclor, sharedSeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector, sharedSelector } from '@src/redux/selectors';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -8,10 +8,10 @@ export const TokenContext = React.createContext();
 
 const enhance = (WrappedComp) => (props) => {
   const { tokenId } = props;
-  const token = useSelector(selectedPrivacySeleclor.getPrivacyDataByTokenID)(
+  const token = useSelector(selectedPrivacySelector.getPrivacyDataByTokenID)(
     tokenId,
   );
-  const gettingBalance = useSelector(sharedSeleclor.isGettingBalance);
+  const gettingBalance = useSelector(sharedSelector.isGettingBalance);
   const isGettingBalance = gettingBalance.includes(tokenId);
   const tokenProps = {
     ...props,

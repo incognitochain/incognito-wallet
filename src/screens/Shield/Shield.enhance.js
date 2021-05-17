@@ -7,14 +7,14 @@ import { useSelector } from 'react-redux';
 import { useNavigation } from 'react-navigation-hooks';
 import routeNames from '@src/router/routeNames';
 import PropTypes from 'prop-types';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import { withTokenVerified } from '@src/components/Token';
 
 const enhance = (WrappedComp) => (props) => {
   const navigation = useNavigation();
   const { allTokens, isTokenSelectable } = props;
   const getPrivacyDataByTokenID = useSelector(
-    selectedPrivacySeleclor.getPrivacyDataByTokenID,
+    selectedPrivacySelector.getPrivacyDataByTokenID,
   );
   const availableTokens = allTokens
     .map((token) => getPrivacyDataByTokenID(token?.tokenId))

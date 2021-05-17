@@ -21,7 +21,7 @@ import {
   actionRemoveStorageDataCentralized,
 } from '@src/screens/UnShield';
 import { withdraw, updatePTokenFee } from '@src/services/api/withdraw';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 
 export const WalletContext = React.createContext({});
 
@@ -30,7 +30,7 @@ const enhance = (WrappedComp) => (props) => {
   const isGettingBalance = useSelector(isGettingBalanceSelector);
   const unshieldStorage = useSelector(unShieldStorageDataSelector);
   const signPublicKeyEncode = useSelector(
-    accountSeleclor.signPublicKeyEncodeSelector,
+    accountSelector.signPublicKeyEncodeSelector,
   );
   const dispatch = useDispatch();
   const [state, setState] = React.useState({

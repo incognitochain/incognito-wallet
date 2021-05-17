@@ -4,7 +4,7 @@ import { COLORS, FONT, UTILS } from '@src/styles';
 import { ButtonBasic } from '@src/components/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionToggleModal } from '@src/components/Modal';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 
 const styled = StyleSheet.create({
   container: {
@@ -42,7 +42,7 @@ const styled = StyleSheet.create({
 
 const Airdrop = () => {
   const dispatch = useDispatch();
-  const defaultAccount = useSelector(accountSeleclor.defaultAccountSelector);
+  const defaultAccount = useSelector(accountSelector.defaultAccountSelector);
   return (
     <View style={styled.container}>
       <View style={styled.wrapper}>

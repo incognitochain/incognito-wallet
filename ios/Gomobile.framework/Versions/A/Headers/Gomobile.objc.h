@@ -31,11 +31,11 @@
 
 - (nonnull instancetype)initWithRef:(_Nonnull id)ref;
 - (nonnull instancetype)init;
-// skipped field CoinCache.PublicKeys with unsupported type: []incognito-chain.b58CompatBytes
+// skipped field CoinCache.PublicKeys with unsupported type: []incognito-chain.encodedBytes
 
-// skipped field CoinCache.Commitments with unsupported type: []incognito-chain.b58CompatBytes
+// skipped field CoinCache.Commitments with unsupported type: []incognito-chain.encodedBytes
 
-// skipped field CoinCache.AssetTags with unsupported type: []incognito-chain.b58CompatBytes
+// skipped field CoinCache.AssetTags with unsupported type: []incognito-chain.encodedBytes
 
 // skipped field CoinCache.Indexes with unsupported type: []uint64
 
@@ -49,31 +49,31 @@
 - (nonnull instancetype)init;
 // skipped field CoinInter.Version with unsupported type: incognito-chain.printedUintStr
 
-// skipped field CoinInter.Info with unsupported type: incognito-chain.b58CompatBytes
+// skipped field CoinInter.Info with unsupported type: incognito-chain.encodedBytes
 
-// skipped field CoinInter.Index with unsupported type: incognito-chain.b58CompatBytes
+// skipped field CoinInter.Index with unsupported type: incognito-chain.encodedBytes
 
-// skipped field CoinInter.PublicKey with unsupported type: incognito-chain.b58CompatBytes
+// skipped field CoinInter.PublicKey with unsupported type: incognito-chain.encodedBytes
 
-// skipped field CoinInter.Commitment with unsupported type: incognito-chain.b58CompatBytes
+// skipped field CoinInter.Commitment with unsupported type: incognito-chain.encodedBytes
 
-// skipped field CoinInter.KeyImage with unsupported type: incognito-chain.b58CompatBytes
+// skipped field CoinInter.KeyImage with unsupported type: incognito-chain.encodedBytes
 
-// skipped field CoinInter.SharedRandom with unsupported type: incognito-chain.b58CompatBytes
+// skipped field CoinInter.SharedRandom with unsupported type: incognito-chain.encodedBytes
 
-// skipped field CoinInter.SharedConcealRandom with unsupported type: incognito-chain.b58CompatBytes
+// skipped field CoinInter.SharedConcealRandom with unsupported type: incognito-chain.encodedBytes
 
-// skipped field CoinInter.TxRandom with unsupported type: incognito-chain.b58CompatBytes
+// skipped field CoinInter.TxRandom with unsupported type: incognito-chain.encodedBytes
 
-// skipped field CoinInter.Mask with unsupported type: incognito-chain.b58CompatBytes
+// skipped field CoinInter.Mask with unsupported type: incognito-chain.encodedBytes
 
 // skipped field CoinInter.Value with unsupported type: incognito-chain.printedUintStr
 
-// skipped field CoinInter.Amount with unsupported type: incognito-chain.b58CompatBytes
+// skipped field CoinInter.Amount with unsupported type: incognito-chain.encodedBytes
 
-// skipped field CoinInter.SNDerivator with unsupported type: incognito-chain.b58CompatBytes
+// skipped field CoinInter.SNDerivator with unsupported type: incognito-chain.encodedBytes
 
-// skipped field CoinInter.AssetTag with unsupported type: incognito-chain.b58CompatBytes
+// skipped field CoinInter.AssetTag with unsupported type: incognito-chain.encodedBytes
 
 // skipped method CoinInter.ToCoin with unsupported parameter or return types
 
@@ -342,10 +342,7 @@ FOUNDATION_EXPORT NSString* _Nonnull GomobileDecryptCoin(NSString* _Nullable par
 // skipped function EstimateProofSize with unsupported parameter or return types
 
 
-// skipped function EstimateTxSize with unsupported parameter or return types
-
-
-FOUNDATION_EXPORT BOOL GomobileEstimateTxSizeInKB(NSString* _Nullable paramStr, int64_t* _Nullable ret0_, NSError* _Nullable* _Nullable error);
+FOUNDATION_EXPORT BOOL GomobileEstimateTxSize(NSString* _Nullable paramStr, int64_t* _Nullable ret0_, NSError* _Nullable* _Nullable error);
 
 FOUNDATION_EXPORT NSString* _Nonnull GomobileGenerateBLSKeyPairFromSeed(NSString* _Nullable args, NSError* _Nullable* _Nullable error);
 

@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { View, Text } from '@components/core';
 import VerifiedText from '@components/VerifiedText/index';
 import { useSelector } from 'react-redux';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import styles from './style';
 
 const TokenItem = ({ name, id, symbol, verified }) => {
-  const token = useSelector(state => selectedPrivacySeleclor.getPrivacyDataByTokenID(state)(id));
+  const token = useSelector(state => selectedPrivacySelector.getPrivacyDataByTokenID(state)(id));
   return (
     <View style={styles.tokenItem}>
       <View style={{ marginTop: 8 }}>

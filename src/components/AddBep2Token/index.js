@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { debounce } from 'lodash';
 import { Toast } from '@src/components/core';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import { setWallet } from '@src/redux/actions/wallet';
 import { getPTokenList } from '@src/redux/actions/token';
 import accountService from '@src/services/wallet/accountService';
@@ -96,7 +96,7 @@ export class AddBep2TokenContainer extends Component {
 }
 
 const mapState = state => ({
-  account: accountSeleclor.defaultAccount(state),
+  account: accountSelector.defaultAccount(state),
   wallet: state.wallet,
 });
 

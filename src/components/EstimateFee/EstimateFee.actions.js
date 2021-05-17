@@ -1,6 +1,6 @@
 /* eslint-disable no-unsafe-finally */
 /* eslint-disable import/no-cycle */
-import { selectedPrivacySeleclor, accountSeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector, accountSelector } from '@src/redux/selectors';
 import convert from '@src/utils/convert';
 import { change, focus } from 'redux-form';
 import format from '@src/utils/format';
@@ -45,8 +45,8 @@ export const actionInitEstimateFee = (config = {}) => async (
   getState,
 ) => {
   const state = getState();
-  const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
-  const account = accountSeleclor.defaultAccountSelector(state);
+  const selectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
+  const account = accountSelector.defaultAccountSelector(state);
   const wallet = state?.wallet;
 
   if (!wallet || !account || !selectedPrivacy) {
@@ -130,7 +130,7 @@ export const actionFetchFee = ({ amount, address, screen, memo }) => async (
   getState,
 ) => {
   const state = getState();
-  const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
+  const selectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
   let feeEst = MAX_FEE_PER_TX;
   let feePTokenEst = null;
   let minFeePTokenEst = null;
@@ -195,7 +195,7 @@ export const actionHandleMinFeeEst = ({ minFeePTokenEst }) => async (
   getState,
 ) => {
   const state = getState();
-  const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
+  const selectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
   const estimateFee = estimateFeeSelector(state);
   const { rate } = estimateFee;
   const { userFees, isUnShield } = feeDataSelector(state);
@@ -305,7 +305,7 @@ export const actionHandleFeePTokenEst = ({ feePTokenEst }) => async (
     totalFeePTokenText,
     userFeePToken;
   const state = getState();
-  const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
+  const selectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
   const {
     rate,
     userFees,
@@ -390,7 +390,7 @@ export const actionChangeFee = (payload) => ({
 
 export const actionFetchFeeByMax = () => async (dispatch, getState) => {
   const state = getState();
-  const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
+  const selectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
   const {
     isUseTokenFee,
     isFetched,
@@ -456,7 +456,7 @@ export const actionValAddr = (address = '') => async (dispatch, getState) => {
   let isAddressValidated = true;
   let isValidETHAddress = true;
   const state = getState();
-  const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
+  const selectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
   const { isUnShield } = feeDataSelector(state);
   if (!isUnShield) {
     return;
@@ -511,8 +511,8 @@ export const actionFetchUserFees = (payload) => async (dispatch, getState) => {
   let userFeesData;
   const state = getState();
   const { address: paymentAddress, memo, amount: requestedAmount } = payload;
-  const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
-  const signPublicKeyEncode = accountSeleclor.signPublicKeyEncodeSelector(state);
+  const selectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
+  const signPublicKeyEncode = accountSelector.signPublicKeyEncodeSelector(state);
   const {
     tokenId,
     contractId,

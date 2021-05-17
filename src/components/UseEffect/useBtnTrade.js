@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSelector } from 'react-redux';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import { CONSTANT_COMMONS } from '@src/constants';
 import { ButtonBasic } from '@src/components/Button';
 import routeNames from '@src/router/routeNames';
@@ -30,7 +30,7 @@ const styled = StyleSheet.create({
 
 export const useBtnTrade = () => {
   const navigation = useNavigation();
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const [ onPress, isDisabled ] = useFeatureConfig(appConstant.DISABLED.TRADE);
 
   const hasTradeBtn =

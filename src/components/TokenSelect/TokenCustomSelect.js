@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import { View } from '@components/core';
 import OptionMenu from '@components/OptionMenu';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import { Icon } from 'react-native-elements';
 import CryptoIcon from '@components/CryptoIcon';
 import VerifiedText from '@components/VerifiedText/index';
@@ -40,7 +40,7 @@ const generateMenu = (tokens, onSelect) => {
 
 const TokenCustomSelect = ({ onSelect, size, style, iconStyle, customListPToken, toggleStyle }) => {
   const [menu, setMenu] = React.useState([]);
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
 
   const isTokenSelectable = (tokenId) => {
     if (!tokenId) {

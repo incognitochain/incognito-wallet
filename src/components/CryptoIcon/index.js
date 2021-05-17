@@ -3,7 +3,7 @@ import { Image, View } from '@src/components/core';
 import defaultTokenIcon from '@src/assets/images/icons/default_token_icon.png';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux';
 import styleSheet from './style';
@@ -143,7 +143,7 @@ CryptoIcon.propTypes = {
 
 
 const mapState = (state, props) => ({
-  token: props?.tokenId && selectedPrivacySeleclor.getPrivacyDataByTokenID(state)(props?.tokenId)
+  token: props?.tokenId && selectedPrivacySelector.getPrivacyDataByTokenID(state)(props?.tokenId)
 });
 
 export default connect(mapState)(CryptoIcon);

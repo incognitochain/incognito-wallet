@@ -49,9 +49,7 @@ class MasterKeyModel {
 
   async initWallet() {
     const storageName = this.getStorageName();
-
     const wallet = await initWallet(storageName);
-
     return wallet;
   }
 

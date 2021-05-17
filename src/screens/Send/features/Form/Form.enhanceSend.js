@@ -1,6 +1,7 @@
 /* eslint-disable no-unreachable */
 /* eslint-disable import/no-cycle */
 import React from 'react';
+import { ACCOUNT_CONSTANT } from 'incognito-chain-web-js/build/wallet';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { useSelector, useDispatch } from 'react-redux';
 import convert from '@src/utils/convert';
@@ -17,11 +18,11 @@ import accountService from '@services/wallet/accountService';
 import tokenService from '@services/wallet/tokenService';
 import { useNavigation } from 'react-navigation-hooks';
 import routeNames from '@src/router/routeNames';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import { formName } from './Form.enhance';
 
 export const enhanceSend = (WrappedComp) => (props) => {
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const feeData = useSelector(feeDataSelector);
@@ -30,26 +31,27 @@ export const enhanceSend = (WrappedComp) => (props) => {
 
   const handleSendMainCrypto = async (payload) => {
     const { toAddress, message, originalFee, originalAmount } = payload;
-    const paymentInfos = [
-      {
-        paymentAddressStr: toAddress,
-        amount: originalAmount,
-      },
-    ];
     try {
-      const res = await accountService.createAndSendNativeToken(
-        paymentInfos,
-        originalFee,
-        true,
-        account,
+      const res = await accountService.createAndSendNativeToken({
         wallet,
-        message,
-      );
-      if (res.txId) {
-        return res;
-      } else {
-        throw new Error('Sent tx, but doesnt have txID, please check it');
-      }
+        account,
+        fee: originalFee,
+        info: message,
+        prvPayments: [
+          {
+            PaymentAddress: toAddress,
+            Amount: originalAmount,
+            Message: '',
+          },
+        ],
+        txType: ACCOUNT_CONSTANT.TX_TYPE.SEND,
+      });
+      return res;
+      // if (res.txId) {
+      //   return res;
+      // } else {
+      //   throw new Error('Sent tx, but doesnt have txID, please check it');
+      // }
     } catch (e) {
       throw e;
     }

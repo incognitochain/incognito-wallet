@@ -1,7 +1,7 @@
 import { CONSTANT_COMMONS } from '@src/constants';
 import tokenService from '@src/services/wallet/tokenService';
 import { getpTokenHistory } from '@src/services/api/history';
-import { accountSeleclor, selectedPrivacySeleclor } from '@src/redux/selectors';
+import { accountSelector, selectedPrivacySelector } from '@src/redux/selectors';
 import { loadHistoryByAccount } from '@src/services/wallet/WalletService';
 import { getFeeFromTxHistory } from '@src/screens/Wallet/features/TxHistoryDetail/TxHistoryDetail.utils';
 import { endsWith, isEmpty, uniqBy } from 'lodash';
@@ -213,8 +213,8 @@ export const loadTokenHistory = () => async (dispatch, getState) => {
   try {
     const state = getState();
     const wallet = state?.wallet;
-    const account = accountSeleclor.defaultAccount(state);
-    const token = selectedPrivacySeleclor.selectedPrivacyByFollowedSelector(
+    const account = accountSelector.defaultAccount(state);
+    const token = selectedPrivacySelector.selectedPrivacyByFollowedSelector(
       state,
     );
     if (!wallet) {
@@ -241,7 +241,7 @@ export const loadTokenHistoryWithToken = (token) => async (
   try {
     const state = getState();
     const wallet = state?.wallet;
-    const account = accountSeleclor.defaultAccount(state);
+    const account = accountSelector.defaultAccount(state);
 
     if (!wallet) {
       throw new Error('Wallet is not exist to load history');
@@ -263,8 +263,8 @@ export const loadTokenHistoryWithToken = (token) => async (
 export const getHistoryFromApi = () => async (dispatch, getState) => {
   try {
     const state = getState();
-    const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
-    const signPublicKeyEncode = accountSeleclor.signPublicKeyEncodeSelector(
+    const selectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
+    const signPublicKeyEncode = accountSelector.signPublicKeyEncodeSelector(
       state,
     );
     const { isDeposable, isWithdrawable, paymentAddress } = selectedPrivacy;
@@ -285,7 +285,7 @@ export const loadAccountHistory = () => async (dispatch, getState) => {
   try {
     const state = getState();
     const wallet = state?.wallet;
-    const accountName = accountSeleclor.defaultAccountNameSelector(state);
+    const accountName = accountSelector.defaultAccountNameSelector(state);
     if (!wallet) {
       throw new Error('Wallet is not exist to load history');
     }

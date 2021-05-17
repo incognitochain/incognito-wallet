@@ -4,7 +4,7 @@ import { withLayout_2 } from '@src/components/Layout';
 import Header from '@src/components/Header';
 import { FONT, COLORS } from '@src/styles';
 import { useSelector } from 'react-redux';
-import { selectedPrivacySeleclor } from '@src/redux/selectors';
+import { selectedPrivacySelector } from '@src/redux/selectors';
 import LinkingService from '@src/services/linking';
 
 const styled = StyleSheet.create({
@@ -28,7 +28,7 @@ const styled = StyleSheet.create({
 });
 
 const CoinInfoVerify = () => {
-  const { isVerified } = useSelector(selectedPrivacySeleclor.selectedPrivacy);
+  const { isVerified } = useSelector(selectedPrivacySelector.selectedPrivacy);
   return (
     <View style={styled.container}>
       <Header

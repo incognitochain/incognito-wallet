@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withNavigation } from 'react-navigation';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import AddInternalToken from './AddInternalToken';
 
 const AddInternalTokenContainer = ({
@@ -21,7 +21,7 @@ const AddInternalTokenContainer = ({
 };
 
 const mapState = state => ({
-  defaultAccount: accountSeleclor.defaultAccount(state),
+  defaultAccount: accountSelector.defaultAccount(state),
   wallet: state.wallet
 });
 

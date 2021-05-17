@@ -1,15 +1,18 @@
 import React from 'react';
+import { ACCOUNT_CONSTANT } from 'incognito-chain-web-js/build/wallet';
 import { ExHandler } from '@services/exception';
 import accountService from '@services/wallet/accountService';
 import { submitProvideRawTx, checkPreviousProvision } from '@services/api/pool';
 import { useSelector } from 'react-redux';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import ReCaptchaV3 from '@haskkor/react-native-recaptchav3';
 import appConstant from '@src/constants/app';
 import { isEmpty } from 'lodash';
 
-const withConfirm = WrappedComp => (props) => {
-  const signPublicKeyEncode = useSelector(accountSeleclor.signPublicKeyEncodeSelector);
+const withConfirm = (WrappedComp) => (props) => {
+  const signPublicKeyEncode = useSelector(
+    accountSelector.signPublicKeyEncodeSelector,
+  );
   const [error, setError] = React.useState('');
   const [providing, setProviding] = React.useState(false);
   const [provideTx, setProvideTx] = React.useState(null);

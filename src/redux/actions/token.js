@@ -1,9 +1,9 @@
 /* eslint-disable import/no-cycle */
 import type from '@src/redux/types/token';
 import {
-  accountSeleclor,
-  selectedPrivacySeleclor,
-  tokenSeleclor,
+  accountSelector,
+  selectedPrivacySelector,
+  tokenSelector,
 } from '@src/redux/selectors';
 import { getTokenList } from '@src/services/api/token';
 import tokenService from '@src/services/wallet/tokenService';
@@ -114,7 +114,7 @@ export const getBalance = (token) => async (dispatch, getState) => {
     const state = getState();
     const wallet = state?.wallet;
     const isDev = devSelector(state);
-    const account = accountSeleclor.defaultAccount(getState());
+    const account = accountSelector.defaultAccount(getState());
     if (!wallet) {
       throw new Error('Wallet is not exist');
     }
@@ -203,7 +203,7 @@ export const actionAddFollowToken = (tokenId) => async (dispatch, getState) => {
     return;
   }
   try {
-    const account = accountSeleclor.defaultAccount(state);
+    const account = accountSelector.defaultAccount(state);
     const { pTokens, internalTokens } = state.token;
     const foundPToken = pTokens?.find((pToken) => pToken.tokenId === tokenId);
     const foundInternalToken =
@@ -233,7 +233,7 @@ export const actionRemoveFollowToken = (tokenId) => async (
     return;
   }
   try {
-    const account = accountSeleclor.defaultAccount(state);
+    const account = accountSelector.defaultAccount(state);
     wallet = await accountService.removeFollowingToken(
       tokenId,
       account,
@@ -272,11 +272,11 @@ export const actionFetchHistoryToken = (refreshing = false) => async (
 ) => {
   try {
     const state = getState();
-    const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
-    const token = selectedPrivacySeleclor.selectedPrivacyByFollowedSelector(
+    const selectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
+    const token = selectedPrivacySelector.selectedPrivacyByFollowedSelector(
       state,
     );
-    const { isFetching } = tokenSeleclor.historyTokenSelector(state);
+    const { isFetching } = tokenSelector.historyTokenSelector(state);
     if (isFetching || !token?.id || !selectedPrivacy?.tokenId) {
       return;
     }
@@ -319,8 +319,8 @@ export const actionFetchHistoryMainCrypto = (refreshing = false) => async (
 ) => {
   try {
     const state = getState();
-    const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
-    const { isFetching } = tokenSeleclor.historyTokenSelector(state);
+    const selectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
+    const { isFetching } = tokenSelector.historyTokenSelector(state);
     if (
       isFetching ||
       !selectedPrivacy?.tokenId ||
@@ -380,7 +380,7 @@ export const actionFetchReceiveHistory = (refreshing = false) => async (
 ) => {
   const state = getState();
   const wallet = state?.wallet;
-  const selectedPrivacy = selectedPrivacySeleclor.selectedPrivacy(state);
+  const selectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
   let data = [];
   const receiveHistory = receiveHistorySelector(state);
   const { isFetching, oversize, page, limit, data: oldData } = receiveHistory;
@@ -394,7 +394,7 @@ export const actionFetchReceiveHistory = (refreshing = false) => async (
     const nextPage = curPage + 1;
     const curLimit =
       refreshing && page > 0 ? MAX_LIMIT_RECEIVE_HISTORY_ITEM : limit;
-    const account = accountSeleclor?.defaultAccountSelector(state);
+    const account = accountSelector?.defaultAccountSelector(state);
     // const key = `${selectedPrivacy?.tokenId}-${account?.readonlyKey}-${account?.paymentAddress}-${curLimit}-${curSkip}-RECEIVE-HISTORY`;
     const histories = await getReceiveHistoryByRPC({
       PaymentAddress: account?.paymentAddress,
@@ -440,7 +440,7 @@ export const actionFetchReceiveHistory = (refreshing = false) => async (
         (history) => history?.type === CONSTANT_COMMONS.HISTORY.TYPE.RECEIVE,
       )
       .filter((history) => !!history?.amount);
-    const oversize = histories?.length < curLimit;
+    const oversize = histories?.length !== 0 && histories?.length < curLimit;
     const notEnoughData = data?.length < oldData?.length + 5;
     let payload = {
       nextPage,

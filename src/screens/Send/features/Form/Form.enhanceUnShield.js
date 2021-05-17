@@ -8,7 +8,7 @@ import { Toast } from '@src/components/core';
 import convert from '@src/utils/convert';
 import { useSelector, useDispatch } from 'react-redux';
 import { feeDataSelector } from '@src/components/EstimateFee/EstimateFee.selector';
-import { accountSeleclor, selectedPrivacySeleclor } from '@src/redux/selectors';
+import { accountSelector, selectedPrivacySelector } from '@src/redux/selectors';
 import { floor, toString } from 'lodash';
 import format from '@src/utils/format';
 import { useNavigation } from 'react-navigation-hooks';
@@ -44,8 +44,10 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
     isUnShield,
   } = useSelector(feeDataSelector);
   const dev = useSelector(devSelector);
-  const selectedPrivacy = useSelector(selectedPrivacySeleclor.selectedPrivacy);
-  const signPublicKeyEncode = useSelector(accountSeleclor.signPublicKeyEncodeSelector);
+  const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
+  const signPublicKeyEncode = useSelector(
+    accountSelector.signPublicKeyEncodeSelector,
+  );
   const {
     tokenId,
     contractId,
@@ -180,7 +182,7 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
         });
         await Utils.delay(15);
       }
-      await withdraw({..._tx, signPublicKeyEncode});
+      await withdraw({ ..._tx, signPublicKeyEncode });
       await dispatch(
         actionRemoveStorageDataDecentralized({
           keySave,
@@ -201,23 +203,6 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
       const tokenFee = isUsedPRVFee ? 0 : originalFee;
       let spendingPRV;
       let spendingCoin;
-      if (prvFee) {
-        spendingPRV = await accountService.hasSpendingCoins(
-          account,
-          wallet,
-          prvFee,
-        );
-      }
-      spendingCoin = await accountService.hasSpendingCoins(
-        account,
-        wallet,
-        originalAmount + tokenFee,
-        tokenId,
-      );
-      if (spendingCoin || spendingPRV) {
-        return Toast.showError(MESSAGES.PENDING_TRANSACTIONS);
-      }
-
       let txUpdatePTokenFee;
 
       const txHandler = async (txId) => {
@@ -240,7 +225,6 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
       const tx = await handleSendToken({ ...payload, tempAddress }, txHandler);
 
       if (tx) {
-
         if (toggleCentralized) {
           await setState({
             ...state,
@@ -248,7 +232,7 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
           });
           await Utils.delay(15);
         }
-        await updatePTokenFee({ ...txUpdatePTokenFee, signPublicKeyEncode  });
+        await updatePTokenFee({ ...txUpdatePTokenFee, signPublicKeyEncode });
         await dispatch(
           actionRemoveStorageDataCentralized({
             keySave,

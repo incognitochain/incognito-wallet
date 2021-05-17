@@ -17,7 +17,7 @@ import {
   actionToggleTradeDebug,
 } from '@src/screens/Dev';
 import { CONSTANT_KEYS } from '@src/constants';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import { clearFakeFullDisk, makeFakeFullDisk } from '@screens/Setting/features/DevSection/DevSection.utils';
 
 const DevSection = () => {
@@ -25,7 +25,7 @@ const DevSection = () => {
   const navigation = useNavigation();
   const dev = useSelector(devSelector);
   const dispatch = useDispatch();
-  const account = useSelector(accountSeleclor.defaultAccountSelector);
+  const account = useSelector(accountSelector.defaultAccountSelector);
 
   const toggleHomeConfig = async () => {
     await AsyncStorage.setItem(

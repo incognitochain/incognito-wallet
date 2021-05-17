@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from 'react-navigation-hooks';
 import { CONSTANT_COMMONS, CONSTANT_KEYS } from '@src/constants';
 import routeNames from '@src/router/routeNames';
-import { accountSeleclor } from '@src/redux/selectors';
+import { accountSelector } from '@src/redux/selectors';
 import format from '@src/utils/format';
 import { MAX_FEE_PER_TX } from '@src/components/EstimateFee/EstimateFee.utils';
 import React from 'react';
@@ -24,7 +24,7 @@ export const useStreamLine = () => {
   const wallet = useSelector(walletSelector);
   const account = useSelector(defaultAccountSelector);
   const accountBalance = useSelector(
-    accountSeleclor.defaultAccountBalanceSelector,
+    accountSelector.defaultAccountBalanceSelector,
   );
   const dev = useSelector(devSelector);
   const isAutoUTXOs = dev[CONSTANT_KEYS.DEV_TEST_TOGGLE_UTXOS];
