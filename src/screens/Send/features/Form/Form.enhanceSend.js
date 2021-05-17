@@ -41,17 +41,12 @@ export const enhanceSend = (WrappedComp) => (props) => {
           {
             PaymentAddress: toAddress,
             Amount: originalAmount,
-            Message: '',
+            Message: message,
           },
         ],
         txType: ACCOUNT_CONSTANT.TX_TYPE.SEND,
       });
       return res;
-      // if (res.txId) {
-      //   return res;
-      // } else {
-      //   throw new Error('Sent tx, but doesnt have txID, please check it');
-      // }
     } catch (e) {
       throw e;
     }
@@ -59,48 +54,23 @@ export const enhanceSend = (WrappedComp) => (props) => {
 
   const handleSendToken = async (payload) => {
     try {
-      const {
-        toAddress,
-        message,
-        isUseTokenFee,
-        originalFee,
-        originalAmount,
-      } = payload;
-      const type = CONSTANT_COMMONS.TOKEN_TX_TYPE.SEND;
-      const tokenObject = {
-        Privacy: true,
-        TokenID: selectedPrivacy?.tokenId,
-        TokenName: selectedPrivacy?.name,
-        TokenSymbol: selectedPrivacy?.symbol,
-        TokenTxType: type,
-        TokenAmount: originalAmount,
-        TokenReceivers: [
+      const { toAddress, message, originalFee, originalAmount } = payload;
+      const res = await accountService.createAndSendPrivacyToken({
+        wallet,
+        account,
+        fee: originalFee,
+        info: message,
+        tokenPayments: [
           {
             PaymentAddress: toAddress,
             Amount: originalAmount,
+            Message: message,
           },
         ],
-      };
-      if (!isUseTokenFee) {
-        const prvBalance = await accountService.getBalance(account, wallet);
-        if (prvBalance < originalFee) {
-          throw new Error(MESSAGES.NOT_ENOUGH_NETWORK_FEE);
-        }
-      }
-      const res = await tokenService.createSendPToken(
-        tokenObject,
-        isUseTokenFee ? 0 : originalFee,
-        account,
-        wallet,
-        null,
-        isUseTokenFee ? originalFee : 0,
-        message,
-      );
-      if (res.txId) {
-        return res;
-      } else {
-        throw new Error('Sent tx, but doesnt have txID, please check it');
-      }
+        txType: ACCOUNT_CONSTANT.TX_TYPE.SEND,
+        tokenID: selectedPrivacy?.tokenId,
+      });
+      return res;
     } catch (e) {
       throw e;
     }
@@ -132,6 +102,7 @@ export const enhanceSend = (WrappedComp) => (props) => {
       if (selectedPrivacy?.isMainCrypto) {
         res = await handleSendMainCrypto(payload);
       }
+      console.log('res', res);
       if (res) {
         const params = {
           ...res,

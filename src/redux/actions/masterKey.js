@@ -207,7 +207,7 @@ export const switchMasterKey = (masterKeyName, accountName) => async (
 ) => {
   try {
     new Validator('masterKeyName', masterKeyName).required().string();
-    new Validator('accountName', accountName).required().string();
+    new Validator('accountName', accountName).string();
     clearWalletCaches();
     await dispatch(switchMasterKeySuccess(masterKeyName));
     await dispatch(reloadWallet(accountName));

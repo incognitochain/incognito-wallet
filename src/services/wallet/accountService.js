@@ -133,7 +133,7 @@ export default class Account {
     new Validator('tokenPayments', tokenPayments).required().paymentInfoList();
     new Validator('fee', fee).required().amount();
     new Validator('info', info).string();
-    new Validator('tokenID', tokenID).string();
+    new Validator('tokenID', tokenID).string().required();
     new Validator('metadata', metadata).object();
     new Validator('isEncryptMessage', isEncryptMessage).boolean();
     new Validator('isEncryptMessageToken', isEncryptMessageToken).boolean();

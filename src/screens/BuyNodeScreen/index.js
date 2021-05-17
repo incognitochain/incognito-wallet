@@ -10,7 +10,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from '@components/core';
 import theme from '@src/styles/theme';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -20,7 +20,10 @@ import routeNames from '@src/router/routeNames';
 import Header from '@src/components/Header';
 import { withLayout_2 } from '@components/Layout';
 import { Row } from '@src/components';
-import { getNodePrice, getPTokenSupportForBuyingDevice } from '@services/api/node';
+import {
+  getNodePrice,
+  getPTokenSupportForBuyingDevice,
+} from '@services/api/node';
 import { ExHandler } from '@services/exception';
 import BasicInfo from '@screens/BuyNodeScreen/BasicInfo';
 import Quantity from '@screens/BuyNodeScreen/Quantity';
@@ -31,7 +34,6 @@ import formatUtil from '@utils/format';
 import accountService from '@services/wallet/accountService';
 import { COINS } from '@src/constants';
 import { MAX_FEE_PER_TX } from '@components/EstimateFee/EstimateFee.utils';
-import { apiGetEstimateFeeFromChain } from '@components/EstimateFee/EstimateFee.services';
 import { compose } from 'recompose';
 import withDefaultAccount from '@components/Hoc/withDefaultAccount';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -66,9 +68,11 @@ const BuyNodeScreen = (props) => {
     shippingFee = 0;
   }
 
-  useFocusEffect(useCallback(() => {
-    loadData();
-  }, [currentTokenId]));
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [currentTokenId]),
+  );
 
   useEffect(() => {
     if (account && supportToken) {
@@ -77,14 +81,18 @@ const BuyNodeScreen = (props) => {
   }, [account, supportToken]);
 
   useEffect(() => {
-    const supportToken = pTokenSupport?.find(item => item.tokenId === currentTokenId);
+    const supportToken = pTokenSupport?.find(
+      (item) => item.tokenId === currentTokenId,
+    );
     if (pTokenSupport.length > 0 && supportToken) {
       setSupportToken(supportToken);
     }
   }, [pTokenSupport, currentTokenId, pTokenSupportsPartner]);
 
   useEffect(() => {
-    const coinPartner = pTokenSupportsPartner.find(item => item.ID === supportToken.id);
+    const coinPartner = pTokenSupportsPartner.find(
+      (item) => item.ID === supportToken.id,
+    );
     if (coinPartner) {
       const newUsdPrice = coinPartner.Price;
 
@@ -104,12 +112,25 @@ const BuyNodeScreen = (props) => {
     setPrvBalance(null);
     setCoinBalance(null);
 
-    const prvBalance = await accountService.getBalance(account, wallet, COINS.PRV_ID);
+    const prvBalance = await accountService.getBalance(
+      account,
+      wallet,
+      COINS.PRV_ID,
+    );
     let coinBalance = prvBalance;
 
     if (supportToken?.tokenId !== COINS.PRV_ID) {
-      coinBalance = await accountService.getBalance(account, wallet, currentTokenId);
-      console.debug('GET BALANCE', coinBalance, currentTokenId, account.PaymentAddress);
+      coinBalance = await accountService.getBalance(
+        account,
+        wallet,
+        currentTokenId,
+      );
+      console.debug(
+        'GET BALANCE',
+        coinBalance,
+        currentTokenId,
+        account.PaymentAddress,
+      );
     }
 
     setPrvBalance(prvBalance);
@@ -142,16 +163,15 @@ const BuyNodeScreen = (props) => {
       coin: COINS.PRV,
     };
 
-    if (supportToken && supportToken.tokenId !== COINS.PRV_ID && currentTokenId !== COINS.PRV_ID) {
+    if (
+      supportToken &&
+      supportToken.tokenId !== COINS.PRV_ID &&
+      currentTokenId !== COINS.PRV_ID
+    ) {
       try {
-        const feePTokenEst = await apiGetEstimateFeeFromChain({
-          Prv: MAX_FEE_PER_TX,
-          TokenID: currentTokenId,
-        });
-
         fee = {
           id: currentTokenId,
-          value: feePTokenEst,
+          value: null,
           coin: supportToken,
         };
       } catch {
@@ -164,9 +184,11 @@ const BuyNodeScreen = (props) => {
   // Get token system config
   const getSystemConfig = async () => {
     APIService.getSystemConfig()
-      .then(data => {
+      .then((data) => {
         if (data?.BuyNodePTokensPartner) {
-          let resPTokenSupportsPartner = JSON.parse(data?.BuyNodePTokensPartner);
+          let resPTokenSupportsPartner = JSON.parse(
+            data?.BuyNodePTokensPartner,
+          );
           setPTokenSupportsPartner(resPTokenSupportsPartner);
           getPTokenList(resPTokenSupportsPartner);
         }
@@ -176,7 +198,9 @@ const BuyNodeScreen = (props) => {
         }
       })
       .catch((err) => {
-        console.log('Could not get system config for buying device' + err.message);
+        console.log(
+          'Could not get system config for buying device' + err.message,
+        );
       });
   };
 
@@ -193,7 +217,7 @@ const BuyNodeScreen = (props) => {
   // Get all pToken for internal app, only accept with these coins
   const getPTokenList = async () => {
     return getPTokenSupportForBuyingDevice()
-      .then(data => setPTokenSupport(data))
+      .then((data) => setPTokenSupport(data))
       .catch(() => {
         console.log('Could not get support token for buying device');
       });
@@ -209,19 +233,19 @@ const BuyNodeScreen = (props) => {
       data.region || '',
       data.address || '',
       currentTokenId,
-    )
-      .then(result => {
-        if (result) {
-          data.shippingFee = result.ShippingFee || 0;
-          setContactData(data);
+    ).then((result) => {
+      if (result) {
+        data.shippingFee = result.ShippingFee || 0;
+        setContactData(data);
 
-          LocalDatabase.setShipAddress(data);
-        }
-      });
+        LocalDatabase.setShipAddress(data);
+      }
+    });
   };
 
   const updateAddress = async (data) => {
-    await setContactData({ ...contactData,
+    await setContactData({
+      ...contactData,
       email: data?.email,
       phone: data?.phone,
       postalCode: data?.postalCode,
@@ -231,7 +255,8 @@ const BuyNodeScreen = (props) => {
       countryCode: data?.countryCode,
       city: data?.city,
       address: data?.address,
-      region: data?.region});
+      region: data?.region,
+    });
     await getShippingFee(data);
   };
 
@@ -239,7 +264,10 @@ const BuyNodeScreen = (props) => {
     const data = getTotal();
     return (
       <View>
-        <MainItem title="Shipping" value={shippingFee === 0 ? 'FREE' : `$${shippingFee}`} />
+        <MainItem
+          title="Shipping"
+          value={shippingFee === 0 ? 'FREE' : `$${shippingFee}`}
+        />
         <SubItem description={`Ships ${shippingHour}`} />
         {shippingFee > 0 && (
           <SubItem
@@ -250,16 +278,27 @@ const BuyNodeScreen = (props) => {
 
         <MainItem title="Total" value={`$${data?.totalUSD}`} />
 
-        <MainItem title={`Pay with ${supportToken.symbol}`} value={`${data?.totalCoin} ${supportToken.symbol}`} />
+        <MainItem
+          title={`Pay with ${supportToken.symbol}`}
+          value={`${data?.totalCoin} ${supportToken.symbol}`}
+        />
 
-        <Text style={[theme.text.regularSizeMediumFontGrey, { alignSelf: 'flex-end', marginTop: 15 }]}>
-          {`1 ${supportToken.symbol} = $${formatUtil.amountFull(_.floor(supportToken.priceUsd, supportToken.pDecimals), 0)}`}
+        <Text
+          style={[
+            theme.text.regularSizeMediumFontGrey,
+            { alignSelf: 'flex-end', marginTop: 15 },
+          ]}
+        >
+          {`1 ${supportToken.symbol} = $${formatUtil.amountFull(
+            _.floor(supportToken.priceUsd, supportToken.pDecimals),
+            0,
+          )}`}
         </Text>
       </View>
     );
   };
 
-  const handleSelectToken = token => {
+  const handleSelectToken = (token) => {
     setCurrentTokenId(token.tokenId);
   };
 
@@ -278,25 +317,32 @@ const BuyNodeScreen = (props) => {
       currentTokenId,
       Number(currentQuantity),
       contactData.firstName,
-      contactData.lastName)
-      .then(data => {
+      contactData.lastName,
+    )
+      .then((data) => {
         const usdPrice = data.TotalPrice * currentQuantity;
         const displayAmount = data.TotalAmount;
-        const originalAmount = convertUtil.toOriginalAmount(displayAmount, supportToken.pDecimals);
-        const exchangeRate = formatUtil.amountFull(_.floor(usdPrice / displayAmount, 9), 0);
+        const originalAmount = convertUtil.toOriginalAmount(
+          displayAmount,
+          supportToken.pDecimals,
+        );
+        const exchangeRate = formatUtil.amountFull(
+          _.floor(usdPrice / displayAmount, 9),
+          0,
+        );
         setLoading(false);
         NavigationService.navigate(routeNames.PaymentBuyNodeScreen, {
-          'paymentAddress': data?.Address,
-          'amount': originalAmount,
-          'coin': supportToken,
-          'orderId': data?.OrderID,
-          'prvBalance': prvBalance,
-          'coinBalance': coinBalance,
+          paymentAddress: data?.Address,
+          amount: originalAmount,
+          coin: supportToken,
+          orderId: data?.OrderID,
+          prvBalance: prvBalance,
+          coinBalance: coinBalance,
           exchangeRate,
-          'fee': fee,
+          fee: fee,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         setLoading(false);
         throw new Error('Can not checkout your order ' + error.message);
       });
@@ -304,12 +350,14 @@ const BuyNodeScreen = (props) => {
 
   // Disable button process for better behavior
   const shouldDisableButtonProcess = () => {
-    return (!contactData.email ||
+    return (
+      !contactData.email ||
       !contactData.firstName ||
       !contactData.lastName ||
       !contactData.address ||
       !contactData.country ||
-      !contactData.postalCode);
+      !contactData.postalCode
+    );
   };
 
   const renderButtonProcess = () => {
@@ -320,7 +368,7 @@ const BuyNodeScreen = (props) => {
           // Payment for device
           onPaymentProcess();
         }}
-        style={[theme.BUTTON.NODE_BUTTON, { marginBottom: 20, marginTop: 30, }]}
+        style={[theme.BUTTON.NODE_BUTTON, { marginBottom: 20, marginTop: 30 }]}
         disabled={shouldDisableButtonProcess()}
       />
     );
@@ -328,13 +376,17 @@ const BuyNodeScreen = (props) => {
 
   const getTotal = () => {
     let totalUSD = (usdPrice + shippingFee) * currentQuantity;
-    let totalCoin = totalUSD / _.floor(supportToken.priceUsd, supportToken.pDecimals);
+    let totalCoin =
+      totalUSD / _.floor(supportToken.priceUsd, supportToken.pDecimals);
 
     let totalCoinBalance = _.ceil(totalCoin, supportToken.pDecimals);
     totalCoin = formatUtil.amountFull(totalCoinBalance, 0);
     totalUSD = formatUtil.amountFull(totalUSD, 0);
 
-    totalCoinBalance = convertUtil.toOriginalAmount(totalCoinBalance, supportToken.pDecimals);
+    totalCoinBalance = convertUtil.toOriginalAmount(
+      totalCoinBalance,
+      supportToken.pDecimals,
+    );
 
     return {
       totalUSD,
@@ -364,21 +416,40 @@ const BuyNodeScreen = (props) => {
         showsVerticalScrollIndicator={false}
         paddingBottom
       >
-        <KeyboardAwareScrollView style={{ backgroundColor: 'white' }} showsVerticalScrollIndicator={false} enableOnAndroid>
+        <KeyboardAwareScrollView
+          style={{ backgroundColor: 'white' }}
+          showsVerticalScrollIndicator={false}
+          enableOnAndroid
+        >
           <BasicInfo usdPrice={usdPrice} contactData={contactData} />
-          <Quantity onChangeQuantity={setCurrentQuantity} quantity={currentQuantity} />
-          <Currency coinSymbol={supportToken.symbol} coins={pTokenSupport} onSelectCoin={handleSelectToken} />
+          <Quantity
+            onChangeQuantity={setCurrentQuantity}
+            quantity={currentQuantity}
+          />
+          <Currency
+            coinSymbol={supportToken.symbol}
+            coins={pTokenSupport}
+            onSelectCoin={handleSelectToken}
+          />
           <Address onUpdateAddress={updateAddress} contactData={contactData} />
           {contactData?.email && (
-          <>
-            {renderTotal()}
-            {renderButtonProcess()}
-            {loading && <ActivityIndicator style={theme.FLEX.absoluteIndicator} />}
-          </>
+            <>
+              {renderTotal()}
+              {renderButtonProcess()}
+              {loading && (
+                <ActivityIndicator style={theme.FLEX.absoluteIndicator} />
+              )}
+            </>
           )}
-          <TouchableOpacity onPress={() => NavigationService.navigate(routeNames.NodeReturnPolicy)}>
+          <TouchableOpacity
+            onPress={() =>
+              NavigationService.navigate(routeNames.NodeReturnPolicy)
+            }
+          >
             <Row spaceBetween center style={{ marginTop: 30 }}>
-              <Text style={theme.text.greyTextBoldMediumSize}>Returns & warranty policy</Text>
+              <Text style={theme.text.greyTextBoldMediumSize}>
+                Returns & warranty policy
+              </Text>
               <AntDesign name="right" size={18} color={COLORS.newGrey} />
             </Row>
           </TouchableOpacity>

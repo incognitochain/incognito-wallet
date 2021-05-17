@@ -32,10 +32,7 @@ import {
   ACTION_REMOVE_FEE_TYPE,
   ACTION_FETCH_FAIL_USER_FEES,
 } from './EstimateFee.constant';
-import {
-  apiGetEstimateFeeFromChain,
-  apiCheckValidAddress,
-} from './EstimateFee.services';
+import { apiCheckValidAddress } from './EstimateFee.services';
 import { estimateFeeSelector, feeDataSelector } from './EstimateFee.selector';
 import { formName } from './EstimateFee.input';
 import { MAX_FEE_PER_TX, getMaxAmount, getTotalFee } from './EstimateFee.utils';
@@ -156,19 +153,6 @@ export const actionFetchFee = ({ amount, address, screen, memo }) => async (
       const isAddressValidated = await dispatch(actionValAddr(address));
       if (isAddressValidated) {
         await dispatch(actionFetchUserFees({ address, amount, memo }));
-      }
-    }
-    if (selectedPrivacy?.isToken) {
-      try {
-        const payload = {
-          Prv: feeEst,
-          TokenID: selectedPrivacy?.tokenId,
-        };
-        let feePTokenEstData = await apiGetEstimateFeeFromChain(payload);
-        feePTokenEst = feePTokenEstData;
-        minFeePTokenEst = feePTokenEstData;
-      } catch (error) {
-        console.debug(error);
       }
     }
   } catch (error) {
@@ -391,14 +375,10 @@ export const actionChangeFee = (payload) => ({
 export const actionFetchFeeByMax = () => async (dispatch, getState) => {
   const state = getState();
   const selectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
-  const {
-    isUseTokenFee,
-    isFetched,
-    totalFee,
-    isFetching,
-    tokenId,
-  } = feeDataSelector(state);
-  const { amount, isMainCrypto, pDecimals, isToken } = selectedPrivacy;
+  const { isUseTokenFee, isFetched, totalFee, isFetching } = feeDataSelector(
+    state,
+  );
+  const { amount, isMainCrypto, pDecimals } = selectedPrivacy;
   const feeEst = MAX_FEE_PER_TX;
   let _amount = Math.max(isMainCrypto ? amount - feeEst : amount, 0);
   let maxAmount = floor(_amount, pDecimals);
@@ -419,18 +399,6 @@ export const actionFetchFeeByMax = () => async (dispatch, getState) => {
       maxAmountText = _maxAmountText;
     } else {
       await dispatch(actionFetchingFee());
-      if (isToken) {
-        const feePTokenEst = await apiGetEstimateFeeFromChain({
-          Prv: feeEst,
-          TokenID: tokenId,
-        });
-        if (feePTokenEst) {
-          await new Promise.all([
-            dispatch(actionHandleFeePTokenEst({ feePTokenEst })),
-            dispatch(actionHandleMinFeeEst({ minFeePTokenEst: feePTokenEst })),
-          ]);
-        }
-      }
     }
   } catch (error) {
     console.log(error);
@@ -443,8 +411,8 @@ export const actionFetchFeeByMax = () => async (dispatch, getState) => {
       );
     }
     // eslint-disable-next-line no-unsafe-finally
-    return maxAmountText;
   }
+  return maxAmountText;
 };
 
 export const actionFetchedValidAddr = (payload) => ({
@@ -512,7 +480,9 @@ export const actionFetchUserFees = (payload) => async (dispatch, getState) => {
   const state = getState();
   const { address: paymentAddress, memo, amount: requestedAmount } = payload;
   const selectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
-  const signPublicKeyEncode = accountSelector.signPublicKeyEncodeSelector(state);
+  const signPublicKeyEncode = accountSelector.signPublicKeyEncodeSelector(
+    state,
+  );
   const {
     tokenId,
     contractId,
@@ -545,7 +515,7 @@ export const actionFetchUserFees = (payload) => async (dispatch, getState) => {
         isErc20Token: isErc20Token,
         externalSymbol: externalSymbol,
         isUsedPRVFee,
-        signPublicKeyEncode
+        signPublicKeyEncode,
       };
       userFeesData = await estimateUserFees(data);
     } else {
@@ -557,7 +527,7 @@ export const actionFetchUserFees = (payload) => async (dispatch, getState) => {
         tokenId: tokenId,
         currencyType: currencyType,
         memo,
-        signPublicKeyEncode
+        signPublicKeyEncode,
       };
       const _userFeesData = await genCentralizedWithdrawAddress(payload);
       userFeesData = {
@@ -574,7 +544,9 @@ export const actionFetchUserFees = (payload) => async (dispatch, getState) => {
     }
     if (!userFeesData.FeeAddress || _error) {
       await dispatch(actionFetchFailUserFees());
-      throw new Error('Enter a smaller amount to generate a more accurate fee estimation');
+      throw new Error(
+        'Enter a smaller amount to generate a more accurate fee estimation',
+      );
     }
     await dispatch(actionFetchedUserFees(userFeesData));
   }
