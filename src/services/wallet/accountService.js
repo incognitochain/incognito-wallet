@@ -197,65 +197,6 @@ export default class Account {
     return result;
   }
 
-  static async createAndSendStopAutoStakingTx(
-    wallet,
-    account,
-    feeNativeToken,
-    candidatePaymentAddress,
-    candidateMiningSeedKey,
-  ) {
-    let result;
-    const accountWallet = this.getAccount(account, wallet);
-    result = await accountWallet.createAndSendStopAutoStakingTx(
-      feeNativeToken,
-      candidatePaymentAddress,
-      candidateMiningSeedKey,
-    );
-    await saveWallet(wallet);
-    await Wallet.resetProgressTx();
-    return result;
-  }
-
-  static async staking(
-    param,
-    feeNativeToken,
-    candidatePaymentAddress,
-    account,
-    wallet,
-    rewardReceiverPaymentAddress,
-    autoReStaking = false,
-  ) {
-    if (!param || typeof param?.type !== 'number')
-      throw new Error('Invalid staking param');
-    if (!candidatePaymentAddress)
-      throw new Error('Missing candidatePaymentAddress');
-    if (!account) throw new Error('Missing account');
-    if (!wallet) throw new Error('Missing wallet');
-    // param: payment address string, amount in Number (miliconstant)
-    await Wallet.resetProgressTx();
-    const accountWallet = this.getAccount(account, wallet);
-    const candidateMiningSeedKey = account.ValidatorKey;
-    // create and send constant
-    let result;
-    try {
-      result = await accountWallet.createAndSendStakingTx(
-        param,
-        feeNativeToken,
-        candidatePaymentAddress,
-        candidateMiningSeedKey,
-        rewardReceiverPaymentAddress,
-        autoReStaking,
-      );
-
-      // save wallet
-      await saveWallet(wallet);
-    } catch (e) {
-      throw e;
-    }
-    await Wallet.resetProgressTx();
-    return result;
-  }
-
   static async createAccount(accountName, wallet, initShardID) {
     const server = await Server.getDefault();
     if (server.id === 'testnode') {
@@ -407,17 +348,6 @@ export default class Account {
       isGetAll,
       tokenID,
     );
-  }
-
-  /**
-   *
-   * @param {string} tokenID
-   * @param {object} account
-   * @param {object} wallet
-   */
-  static async createAndSendWithdrawRewardTx(tokenID, account, wallet) {
-    const accountWallet = this.getAccount(account, wallet);
-    return accountWallet.createAndSendWithdrawRewardTx(tokenID);
   }
 
   /**
@@ -752,5 +682,64 @@ export default class Account {
     } catch (error) {
       throw error;
     }
+  }
+
+  static async getStakingAmount(defaultAccount, wallet, type) {
+    try {
+      new Validator('defaultAccount', defaultAccount).required();
+      new Validator('wallet', wallet).required();
+      new Validator('type', type).required().number();
+      const account = this.getAccount(defaultAccount, wallet);
+      return account.rpc.getStakingAmount(type);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async createAndSendStakingTx({ defaultAccount, wallet, fee }) {
+    try {
+      new Validator('defaultAccount', defaultAccount).required();
+      new Validator('wallet', wallet).required();
+      new Validator('fee', fee).required().amount();
+      const account = this.getAccount(defaultAccount, wallet);
+      return account.createAndSendStakingTx({ transfer: { fee } });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async createAndSendStopAutoStakingTx({ defaultAccount, wallet, fee }) {
+    try {
+      new Validator('defaultAccount', defaultAccount).required();
+      new Validator('wallet', wallet).required();
+      new Validator('fee', fee).required().amount();
+      const account = this.getAccount(defaultAccount, wallet);
+      return account.createAndSendStopAutoStakingTx({ transfer: { fee } });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   *
+   * @param {string} tokenID
+   * @param {object} account
+   * @param {object} wallet
+   * @param {number} fee
+   */
+  static async createAndSendWithdrawRewardTx({
+    defaultAccount,
+    wallet,
+    fee,
+    tokenID = PRVIDSTR,
+  } = {}) {
+    new Validator('defaultAccount', defaultAccount).required();
+    new Validator('wallet', wallet).required();
+    new Validator('fee', fee).required().amount();
+    new Validator('tokenID', tokenID).required().string();
+    const account = this.getAccount(defaultAccount, wallet);
+    return account.createAndSendStopAutoStakingTx({
+      transfer: { fee, tokenID },
+    });
   }
 }

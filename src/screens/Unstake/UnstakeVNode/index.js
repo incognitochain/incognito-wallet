@@ -21,7 +21,9 @@ class UnstakeVNode extends PureComponent {
   }
 
   async componentDidMount() {
-    this.getBalance().catch(error => new ExHandler(error).showErrorToast(true));
+    this.getBalance().catch((error) =>
+      new ExHandler(error).showErrorToast(true),
+    );
   }
 
   async getBalance() {
@@ -33,27 +35,23 @@ class UnstakeVNode extends PureComponent {
 
   handleUnstake = async () => {
     const { isUnstaking, fee } = this.state;
-
     if (isUnstaking) {
       return;
     }
-
     try {
       this.setState({ isUnstaking: true });
       const { onFinish, device } = this.props;
       const account = device.Account;
-      const validatorKey = account.ValidatorKey;
       const name = device.AccountName;
-      const rs = await accountService.createAndSendStopAutoStakingTx(
-        account.Wallet,
-        account,
+      const rs = await accountService.createAndSendStopAutoStakingTx({
+        defaultAccount: account,
+        wallet: account.Wallet,
         fee,
-        account.PaymentAddress,
-        validatorKey,
-      );
+      });
+      console.log('res', rs);
       const listDevice = (await LocalDatabase.getListDevices()) || [];
       await LocalDatabase.saveListDevices(listDevice);
-      const deviceIndex = listDevice.findIndex(item =>
+      const deviceIndex = listDevice.findIndex((item) =>
         _.isEqual(Device.getInstance(item).AccountName, name),
       );
       listDevice[deviceIndex].minerInfo.unstakeTx = rs.txId;

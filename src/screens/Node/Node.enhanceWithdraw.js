@@ -10,27 +10,26 @@ import { onClickView } from '@utils/ViewUtil';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   actionUpdateWithdrawing as updateWithdrawing,
-  updateWithdrawTxs
+  updateWithdrawTxs,
 } from '@screens/Node/Node.actions';
-import {
-  getValidNodes,
-  checkValidNode
-} from '@screens/Node/Node.utils';
+import { getValidNodes, checkValidNode } from '@screens/Node/Node.utils';
 import { listAllMasterKeyAccounts } from '@src/redux/selectors/masterKey';
+import { MAX_FEE_PER_TX } from '@src/components/EstimateFee/EstimateFee.utils';
 
-const enhanceWithdraw = WrappedComp => props => {
+const enhanceWithdraw = (WrappedComp) => (props) => {
   const dispatch = useDispatch();
   const listAccount = useSelector(listAllMasterKeyAccounts);
   const { listDevice, noRewards, withdrawTxs, withdrawing } = props;
 
-
   const withdrawable = useMemo(() => {
-    const validNodes  = getValidNodes(listDevice);
-    const vNodes      = validNodes.filter(device => device.IsVNode);
-    const pNodes      = validNodes.filter(device => device.IsPNode);
-    const vNodeWithdrawable = vNodes.length && vNodes.length !== withdrawTxs?.length;
-    const pNodeWithdrawable = pNodes.length && pNodes.some(item => item.IsFundedStakeWithdrawable);
-    return (!noRewards && vNodeWithdrawable || pNodeWithdrawable);
+    const validNodes = getValidNodes(listDevice);
+    const vNodes = validNodes.filter((device) => device.IsVNode);
+    const pNodes = validNodes.filter((device) => device.IsPNode);
+    const vNodeWithdrawable =
+      vNodes.length && vNodes.length !== withdrawTxs?.length;
+    const pNodeWithdrawable =
+      pNodes.length && pNodes.some((item) => item.IsFundedStakeWithdrawable);
+    return (!noRewards && vNodeWithdrawable) || pNodeWithdrawable;
   }, [withdrawTxs, listDevice, noRewards]);
 
   const showToastMessage = (message = '') => {
@@ -41,8 +40,15 @@ const enhanceWithdraw = WrappedComp => props => {
   const sendWithdrawTx = async (paymentAddress, tokenIds) => {
     const _withdrawTxs = {};
     for (const tokenId of tokenIds) {
-      const account = listAccount.find(item => item.PaymentAddress === paymentAddress);
-      const res = await accountService.createAndSendWithdrawRewardTx(tokenId, account, account.Wallet);
+      const account = listAccount.find(
+        (item) => item.PaymentAddress === paymentAddress,
+      );
+      const res = await accountService.createAndSendWithdrawRewardTx({
+        tokenId,
+        defaultAccount: account,
+        wallet: account.Wallet,
+        fee: MAX_FEE_PER_TX,
+      });
       _withdrawTxs[paymentAddress] = res?.txId;
     }
     dispatch(updateWithdrawTxs(Object.assign(withdrawTxs, _withdrawTxs)));
@@ -51,11 +57,11 @@ const enhanceWithdraw = WrappedComp => props => {
 
   const handleWithdraw = async (device, showToast = true) => {
     try {
-      const account     = device.Account;
-      const allRewards  = device?.AllRewards;
+      const account = device.Account;
+      const allRewards = device?.AllRewards;
       // Case withdraw VNode | PNode unstaked
-      if ((device.IsVNode) || (device.IsFundedUnstaked)) {
-        const { PaymentAddress } = (account || {});
+      if (device.IsVNode || device.IsFundedUnstaked) {
+        const { PaymentAddress } = account || {};
         // get tokens can withdraw with PaymentAddress
         const tokenIds = allRewards.reduce((tokens, currentReward) => {
           let tokenIds = tokens;
@@ -83,9 +89,11 @@ const enhanceWithdraw = WrappedComp => props => {
           ProductID: device.ProductId,
           QRCode: device.qrCodeDeviceId,
           ValidatorKey: device.ValidatorKey,
-          PaymentAddress: device.PaymentAddressFromServer
+          PaymentAddress: device.PaymentAddressFromServer,
         });
-        device.IsFundedStakeWithdrawable = await NodeService.isWithdrawable(device);
+        device.IsFundedStakeWithdrawable = await NodeService.isWithdrawable(
+          device,
+        );
         const message = MESSAGES.PNODE_WITHDRAWAL;
 
         if (showToast) {
@@ -107,7 +115,9 @@ const enhanceWithdraw = WrappedComp => props => {
         if (checkValidNode(device)) {
           await handleWithdraw(device, false);
         }
-      } catch {/*Ignore the error*/}
+      } catch {
+        /*Ignore the error*/
+      }
     }
     showToastMessage(MESSAGES.ALL_NODE_WITHDRAWAL);
   };
