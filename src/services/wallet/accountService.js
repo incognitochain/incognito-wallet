@@ -696,6 +696,12 @@ export default class Account {
     }
   }
 
+  /**
+   * createAndSendStakingTx
+   * @param {object} defaultAccount
+   * @param {object} wallet
+   * @param {number} fee
+   */
   static async createAndSendStakingTx({ defaultAccount, wallet, fee }) {
     try {
       new Validator('defaultAccount', defaultAccount).required();
@@ -708,6 +714,12 @@ export default class Account {
     }
   }
 
+  /**
+   * createAndSendStopAutoStakingTx
+   * @param {object} defaultAccount
+   * @param {object} wallet
+   * @param {number} fee
+   */
   static async createAndSendStopAutoStakingTx({ defaultAccount, wallet, fee }) {
     try {
       new Validator('defaultAccount', defaultAccount).required();
@@ -721,9 +733,9 @@ export default class Account {
   }
 
   /**
-   *
+   * createAndSendWithdrawRewardTx
    * @param {string} tokenID
-   * @param {object} account
+   * @param {object} defaultAccount
    * @param {object} wallet
    * @param {number} fee
    */
