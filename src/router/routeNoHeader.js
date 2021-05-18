@@ -83,6 +83,7 @@ import ExportCSV from '@screens/ExportCSV';
 import TermOfUseShield from '@screens/Shield/features/TermOfUseShield';
 import MonitorDetail from '@screens/Node/MonitorDetail';
 import ShieldDecentralizeDescription from '@screens/Shield/features/ShieldDecentralizeDescription';
+import Convert from '@screens/Home/features/Convert';
 
 const masterKeyRoutes = [
   {
@@ -428,7 +429,11 @@ const routes = [
   {
     screen: ShieldDecentralizeDescription,
     name: routeNames.ShieldDecentralizeDescription,
-  }
+  },
+  {
+    screen: Convert,
+    name: routeNames.Convert,
+  },
 ];
 
 export const getRoutesNoHeader = () =>

@@ -28,6 +28,7 @@ import {
 import { loadAllMasterKeyAccounts } from '@src/redux/actions/masterKey';
 import { masterKeysSelector } from '@src/redux/selectors/masterKey';
 import withPin from '@components/pin.enhance';
+import withDetectConvert from '@screens/Home/features/Convert/Convert.enhanceDetect';
 import { homeSelector } from './Home.selector';
 import { actionFetch as actionFetchHomeConfigs } from './Home.actions';
 import Airdrop from './features/Airdrop';
@@ -148,5 +149,6 @@ export default compose(
   withNews,
   withSyncIncognitoAddress,
   withSyncDetectNetwork,
+  withDetectConvert,
   enhance,
 );

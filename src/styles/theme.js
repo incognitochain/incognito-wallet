@@ -374,6 +374,13 @@ const BUTTON = {
   NODE_BUTTON: {
     backgroundColor: COLORS.blue6,
   },
+
+  GRAY_TYPE_DISABLE: {
+    backgroundColor: COLORS.colorGreyMedium,
+    borderRadius: 25,
+    width: '100%',
+    height: SIZES.button.height,
+  },
 };
 
 export default {

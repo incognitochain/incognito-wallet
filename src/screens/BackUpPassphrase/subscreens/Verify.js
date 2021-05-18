@@ -159,7 +159,7 @@ const VerifyPassphrase = () => {
       <Button
         label={creating ? 'Creating...' : 'Create master key'}
         onPress={handleNext}
-        disabled={creating || wordsIndex.length !== displayWords.length}
+        // disabled={creating || wordsIndex.length !== displayWords.length}
       />
     </MainLayout>
   );

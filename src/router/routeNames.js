@@ -136,4 +136,6 @@ export default {
   MonitorDetail: 'MonitorDetail',
 
   ShieldDecentralizeDescription: 'ShieldDecentralizeDescription',
+  // Convert transaction v1 -> v2
+  Convert: 'Convert',
 };

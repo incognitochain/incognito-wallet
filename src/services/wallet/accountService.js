@@ -751,7 +751,22 @@ export default class Account {
     new Validator('tokenID', tokenID).required().string();
     const account = this.getAccount(defaultAccount, wallet);
     return account.createAndSendStopAutoStakingTx({
-      transfer: { fee, tokenID },
+      transfer: {fee, tokenID},
     });
+  }
+
+  static async getUnspentCoinsV1(account, wallet, forceGetCoins) {
+    let unspentCoins = [];
+    let accountInstance = null;
+    try {
+      accountInstance = await this.getAccount(account, wallet);
+      unspentCoins = await accountInstance.getAllUnspentCoinsV1({ forceGetCoins });
+    } catch (error) {
+      console.log('Get unspent coins v1 error: ', error);
+    }
+    return {
+      unspentCoins,
+      accountInstance,
+    };
   }
 }
