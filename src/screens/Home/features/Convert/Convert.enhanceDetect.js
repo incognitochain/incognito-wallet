@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { debounce } from 'lodash';
-import accountService from '@services/wallet/accountService';
 import { useSelector } from 'react-redux';
 import { accountSelector } from '@src/redux/selectors';
 import { BottomBar } from '@components/core';
 import { useFocusEffect, useNavigation } from 'react-navigation-hooks';
 import routeNames from '@routers/routeNames';
+import accountService from '@services/wallet/accountService';
+import { PRV_ID } from '@screens/Dex/constants';
 
 const enhance = WrappedComp => (props) => {
   const navigation = useNavigation();
@@ -15,8 +16,14 @@ const enhance = WrappedComp => (props) => {
   const [showBottom, setShowBottom] = useState(false);
 
   const detectUTXOSV1 = debounce(async () => {
+    setShowBottom(false);
     const { unspentCoins } = await accountService.getUnspentCoinsV1(account, wallet, true);
-    const hasUnspentCoins = unspentCoins.some(coin => coin.balance > 0);
+    const hasUnspentCoins = unspentCoins.some(coin => {
+      if (coin.tokenId === PRV_ID) {
+        return coin.balance > 100;
+      }
+      return coin.balance > 0;
+    });
     setShowBottom(hasUnspentCoins);
   }, 500);
 

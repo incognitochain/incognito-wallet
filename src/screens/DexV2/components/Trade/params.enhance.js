@@ -15,9 +15,10 @@ const withParams = WrappedComp => (props) => {
 
   const { pair, inputBalance, inputText, onLoadPairs } = props;
 
-  React.useEffect(async () => {
-    if (fromWalletDetail) 
-      await onLoadPairs();
+  React.useEffect( () => {
+    if (fromWalletDetail && typeof onLoadPairs ==='function') {
+      onLoadPairs();
+    }
   }, []);
 
 

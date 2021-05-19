@@ -129,16 +129,12 @@ const enhance = WrappedComp => props => {
     /** request airdrop */
     await handleRequestAirdrop();
 
-    if (!isEmpty(prvUnspent)) {
+    if (!isEmpty(prvUnspent) && prvUnspent.balance > 100) {
       await handleConvertPRV({
         accountWallet,
         unspentCoins: prvUnspent
       });
     }
-
-    accountWallet.setPrivacyVersion(2);
-    const prvV2 = await accountWallet.getSpendingCoins(PRV_ID);
-    accountWallet.setPrivacyVersion(1);
 
     await handleConvertPToken({
       accountWallet,

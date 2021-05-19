@@ -40,7 +40,10 @@ const ConvertStep = (props) => {
   const handleScrollStep = () => {
     if(!currentStep || !steps || !flatListRef.current) return;
     const index = steps.findIndex(step => step.key === currentStep);
-    flatListRef.current.scrollToIndex({animated: true, index: index});
+    console.log('currentStep: ', steps, currentStep);
+    if (index !== -1) {
+      flatListRef.current.scrollToIndex({animated: true, index: index});
+    }
   };
 
   React.useEffect(() => {
