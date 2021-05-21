@@ -415,7 +415,7 @@ export default class Account {
         console.log(TAG, 'getFullDataOfAccount begin');
         const listAccounts = (await loadListAccountWithBLSPubKey(wallet)) || [];
         console.log(TAG, 'getFullDataOfAccount listAccount ', listAccounts);
-        let account: JSON = listAccounts.find((item) =>
+        let account = listAccounts.find((item) =>
           _.isEqual(item.AccountName, accountName),
         );
 
@@ -768,5 +768,24 @@ export default class Account {
       unspentCoins,
       accountInstance,
     };
+  }
+
+  static async getPDexHistory({
+    account,
+    wallet,
+    offset,
+    limit
+  }) {
+    let histories = [];
+    try {
+      const accountWallet = await this.getAccount(account, wallet);
+      histories = await accountWallet.getPDexHistory({
+        offset: offset || 0,
+        limit: limit || 10000,
+      });
+    } catch (error) {
+      console.debug('GET PDEX HISTORIES ERROR: ', error);
+    }
+    return histories.map(history => new PDexHistoryPureModel({ history, accountName: account.name }));
   }
 }

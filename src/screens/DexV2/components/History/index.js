@@ -1,28 +1,29 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { compose } from 'recompose';
 import { View, Text, TouchableOpacity } from '@components/core';
 import { withLayout_2 } from '@components/Layout';
 import Header from '@components/Header/index';
-import { VirtualizedList } from 'react-native';
+import { FlatList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import ROUTE_NAMES from '@routers/routeNames';
 import withPairs from '@screens/DexV2/components/pdexPair.enhance';
 import withAccount from '@screens/DexV2/components/account.enhance';
 import LoadingContainer from '@components/LoadingContainer/LoadingContainer';
-import { LIMIT } from '@screens/DexV2/constants';
 import { ArrowRightGreyIcon } from '@components/Icons';
+import styleSheet from '@components/HistoryList/style';
 import styles from './style';
 import withHistories from '../histories.enhance';
 
 const History = ({
   histories,
-  isLoadingHistories,
+  refreshing,
+  isLoadMore,
   onReloadHistories,
   onLoadMoreHistories,
 }) => {
+  const detectRef = React.useRef(null);
   const navigation = useNavigation();
   const viewDetail = (item) => {
     navigation.navigate(ROUTE_NAMES.TradeHistoryDetail, { history: item });
@@ -31,7 +32,12 @@ const History = ({
   // eslint-disable-next-line react/prop-types
   const renderHistoryItem = ({ item }) => (
     <TouchableOpacity key={item.id} style={styles.historyItem} onPress={() => viewDetail(item)}>
-      <Text style={styles.buttonTitle}>{item.type}   <Text style={styles.content}>#{item.id}</Text></Text>
+      <View style={styles.rowCenter}>
+        <Text style={styles.buttonTitle}>{item.type}</Text>
+        <Text numberOfLines={1} ellipsizeMode="middle" style={[styles.content, styles.txHash]}>
+          #{item.id}
+        </Text>
+      </View>
       <View style={styles.row}>
         <Text style={[styles.content, styles.ellipsis]} numberOfLines={1}>{item.description}</Text>
         <View style={[styles.row, styles.center]}>
@@ -48,18 +54,31 @@ const History = ({
       <Text style={[styles.buttonTitle, styles.historyTitle]}>Order history</Text>
       <View style={styles.wrapper}>
         {histories.length ? (
-          <VirtualizedList
+          <FlatList
             data={histories}
             renderItem={renderHistoryItem}
-            getItem={(data, index) => data[index]}
-            getItemCount={data => data.length}
-            refreshing={isLoadingHistories}
-            onRefresh={onReloadHistories}
-            keyExtractor={(item) => item.id}
-            onEndReached={(histories || []).length >= LIMIT ? onLoadMoreHistories : _.noop}
-            onEndReachedThreshold={0.1}
+            keyExtractor={(item, index) => `${index}`}
+            onScroll={() => detectRef.current = true}
+            refreshing={refreshing}
             showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
+            onRefresh={() => {
+              if (typeof onReloadHistories === 'function') {
+                onReloadHistories();
+              }
+            }}
+            onEndReachedThreshold={0.7}
+            onEndReached={() => {
+              if(typeof onLoadMoreHistories === 'function' && detectRef.current) {
+                onLoadMoreHistories();
+              }
+            }}
+            ListFooterComponent={
+              isLoadMore ? (
+                <View style={styleSheet.loadingContainer}>
+                  <LoadingContainer />
+                </View>
+              ) : null
+            }
           />
         ) : <LoadingContainer /> }
       </View>
@@ -69,12 +88,14 @@ const History = ({
 
 History.propTypes = {
   histories: PropTypes.array,
-  isLoadingHistories: PropTypes.bool,
+  refreshing: PropTypes.bool,
+  isLoadMore: PropTypes.bool,
 };
 
 History.defaultProps = {
   histories: null,
-  isLoadingHistories: false,
+  refreshing: false,
+  isLoadMore: false
 };
 
 export default compose(

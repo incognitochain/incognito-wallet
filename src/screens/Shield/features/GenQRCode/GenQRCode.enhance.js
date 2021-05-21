@@ -21,7 +21,6 @@ const enhance = (WrappedComp) => (props) => {
     loading,
   } = props;
 
-  // console.log('SANG TEST: ', loading, isFetched, isFetching);
   const [showTerm, setShowTerm] = useState(true);
   const navigation = useNavigation();
 

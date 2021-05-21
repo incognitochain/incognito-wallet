@@ -76,4 +76,4 @@ export const MESSAGES = {
 };
 
 export const MIN_PERCENT = 0.99;
-export const LIMIT = 10;
+export const LIMIT = 100;

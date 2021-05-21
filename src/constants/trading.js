@@ -11,10 +11,9 @@ const ERC20_NETWORK = {
 };
 
 export const HISTORY_STATUS = {
-  PENDING:      'Pending',
-  UNSUCCESSFUL: 'Unsuccessful',
-  SUCCESSFUL:   'Successful',
-  DEPOSIT_FAILD: 'Deposit failed'
+  REFUND: 'refund',
+  REJECTED: 'rejected',
+  ACCEPTED: 'accepted'
 };
 
 let kyberTradeAddress = '';

@@ -16,6 +16,8 @@ import {
   ACTION_UPDATE_PRIORITY,
   ACTION_RETRY_TRADE_INFO,
   ACTION_UPDATE_BALANCE,
+  ACTION_UPDATE_PDEX_HISTORIES,
+  ACTION_CLEAR_PDEX_HISTORIES,
 } from '@screens/DexV2/components/Trade/TradeV2/Trade.constant';
 import { PRV } from '@services/wallet/tokenService';
 import {
@@ -88,6 +90,10 @@ const initStateClear = {
   pair:         [], // Couple Pair,
   outputList:   [], // Change when inputToken change,
   loadingBox:   null,
+
+  pdexHistories: [],
+  historiesPage: -1,
+  reachedHistories: false,
 };
 
 const initialState = {
@@ -216,6 +222,24 @@ const tradeReducer = (state = initialState, action) => {
     return {
       ...state,
       ...payload,
+    };
+  }
+  case ACTION_UPDATE_PDEX_HISTORIES: {
+    const { payload } = action;
+    const { histories, historiesPage, reachedHistories } = payload;
+    return {
+      ...state,
+      pdexHistories: histories,
+      historiesPage: historiesPage,
+      reachedHistories
+    };
+  }
+  case ACTION_CLEAR_PDEX_HISTORIES: {
+    return {
+      ...state,
+      pdexHistories: [],
+      historiesPage: -1,
+      reachedHistories: false,
     };
   }
   default:

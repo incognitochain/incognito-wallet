@@ -43,7 +43,7 @@ export const filterOutputToken = (payload) => {
     const { inputToken, outputToken, pairs, pairTokens } = payload;
     newOutputToken = outputToken;
 
-    if (pairs.find((pair) => pair.keys.includes(inputToken?.id))) {
+    if (pairs.some((pair) => pair.keys.includes(inputToken?.id))) {
       outputList = pairs
         .map((pair) => {
           const { keys } = pair;
@@ -71,7 +71,6 @@ export const filterOutputToken = (payload) => {
         ),
       );
     }
-
     outputList = _(outputList)
       .orderBy(
         [

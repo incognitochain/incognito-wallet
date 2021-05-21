@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
-import _ from 'lodash';
-import { getHistories } from '@services/api/pdefi';
+import { isEmpty } from 'lodash';
 import { ExHandler } from '@services/exception';
 import { MESSAGES } from '@src/constants';
-import { LIMIT } from '@screens/DexV2/constants';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  actionClearPDexHistory,
+  actionGetPDexHistory as getPDexHistory
+} from '@screens/DexV2/components/Trade/TradeV2/Trade.actions';
+import { pdexHistoriesSelector } from '@screens/DexV2/components/Trade/TradeV2/Trade.selector';
 
 const withHistory = WrappedComp => (props) => {
+  const { account, wallet } = props;
+  const dispatch = useDispatch();
+  const histories = useSelector(pdexHistoriesSelector)();
   const [loading, setLoading] = useState(false);
-  const [histories, setHistories] = useState([]);
-
-  const { accounts } = props;
 
   const loadHistories = async () => {
-    if (!_.isEmpty(accounts)) {
+    if (!isEmpty(account)) {
       try {
-        setHistories([]);
         setLoading(true);
-        const newData = await getHistories(accounts, [], 0, LIMIT);
-        setHistories(newData);
+        dispatch(actionClearPDexHistory());
+        await dispatch(getPDexHistory());
       } catch (error) {
         new ExHandler(error, MESSAGES.CAN_NOT_GET_PDEX_TRADE_HISTORIES).showErrorToast();
       } finally {
@@ -28,9 +31,12 @@ const withHistory = WrappedComp => (props) => {
 
   React.useEffect(() => {
     if (!loading) {
-      loadHistories();
+      loadHistories().then();
     }
-  }, [accounts]);
+    return () => {
+      dispatch(actionClearPDexHistory());
+    };
+  }, [account, wallet]);
 
   return (
     <WrappedComp

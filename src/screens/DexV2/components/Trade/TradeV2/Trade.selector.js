@@ -3,9 +3,11 @@ import format from '@utils/format';
 import { PRV_ID } from '@screens/Dex/constants';
 import memoize from 'memoize-one';
 import { COINS } from '@src/constants';
+// eslint-disable-next-line import/no-cycle
 import { getTradingFee } from '@screens/DexV2/components/Trade/TradeV2/Trade.utils';
 import { getPrivacyDataByTokenID } from '@src/redux/selectors/selectedPrivacy';
 import BigNumber from 'bignumber.js';
+import { PDexTradeHistoryModel } from '@models/pDefi';
 
 export const tradeSelector = createSelector(
   (state) => state.trade,
@@ -48,7 +50,9 @@ export const tradeSelector = createSelector(
       inputBalanceText: trade?.inputBalanceText,
       prvBalance:       trade?.prvBalance,
       lastInputToken:   trade?.lastInputToken,
-      lastAccount:      trade?.lastAccount
+      lastAccount:      trade?.lastAccount,
+      pdexHistories:    trade?.pdexHistories,
+      reachedHistories: trade?.reachedHistories
     };
   }
 );
@@ -108,4 +112,24 @@ export const maxPriceSelector = createSelector(
       }
       return maxPrice;
     })
+);
+
+export const pdexHistoriesSelector = createSelector(
+  tradeSelector,
+  getPrivacyDataByTokenID,
+  ({ pdexHistories }, getFn) =>
+    memoize(() => (
+      pdexHistories.map(history => {
+        const { buyTokenId, sellTokenId } = history;
+        const sellToken = getFn(sellTokenId);
+        const buyToken = getFn(buyTokenId);
+        return new PDexTradeHistoryModel({
+          history: {
+            ...history,
+            sellToken,
+            buyToken
+          }
+        });
+      })
+    ))
 );

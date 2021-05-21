@@ -45,4 +45,12 @@ export default StyleSheet.create({
   ellipsis: {
     width: '65%',
   },
+  rowCenter: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  txHash: {
+    maxWidth: 200,
+    marginLeft: 10
+  }
 });

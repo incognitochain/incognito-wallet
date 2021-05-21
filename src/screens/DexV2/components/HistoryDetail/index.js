@@ -5,7 +5,7 @@ import { View, Text, ScrollView, FlexView } from '@components/core';
 import { withLayout_2 } from '@components/Layout';
 import Header from '@components/Header/index';
 import ExtraInfo from '@screens/DexV2/components/ExtraInfo';
-import { CONSTANT_COMMONS, MESSAGES } from '@src/constants';
+import { MESSAGES } from '@src/constants';
 import { HISTORY_STATUS } from '@src/constants/trading';
 import { useSelector } from 'react-redux';
 import { maxPriceSelector } from '@screens/DexV2/components/Trade/TradeV2/Trade.selector';
