@@ -13,8 +13,6 @@ import {
 } from 'incognito-chain-web-js/build/wallet';
 import _ from 'lodash';
 import { STACK_TRACE } from '@services/exception/customError/code/webjsCode';
-import { chooseBestCoinToSpent } from 'incognito-chain-web-js/lib/tx/utils';
-import bn from 'bn.js';
 import Server from '@services/wallet/Server';
 import { PRV, PRV_ID } from '@src/constants/common';
 import {
@@ -22,11 +20,11 @@ import {
   getAccountWallet,
 } from '@src/services/wallet/Wallet.shared';
 import { PRVIDSTR } from 'incognito-chain-web-js/lib/wallet/constants';
-import { CustomError, ErrorCode, ExHandler } from '../exception';
+import { PDexHistoryPureModel } from '@models/pDefi';
+import { CustomError, ErrorCode } from '../exception';
 import {
   loadListAccountWithBLSPubKey,
   saveWallet,
-  SuccessTx,
 } from './WalletService';
 
 const TAG = 'Account';
@@ -84,6 +82,7 @@ export default class Account {
     metadata,
     isEncryptMessage = true,
     txType,
+    txHandler
   } = {}) {
     try {
       new Validator('wallet', wallet).required();
@@ -103,7 +102,7 @@ export default class Account {
           prvPayments,
           fee,
         },
-        extra: { metadata, isEncryptMessage, txType },
+        extra: { metadata, isEncryptMessage, txType, txHandler },
       });
       console.log('result', result);
       // save wallet
@@ -126,6 +125,7 @@ export default class Account {
     isEncryptMessage = true,
     isEncryptMessageToken = true,
     txType,
+    txHandler
   } = {}) {
     new Validator('wallet', wallet).required();
     new Validator('account', account).required();
@@ -138,6 +138,7 @@ export default class Account {
     new Validator('isEncryptMessage', isEncryptMessage).boolean();
     new Validator('isEncryptMessageToken', isEncryptMessageToken).boolean();
     new Validator('txType', txType).required().number();
+
     let result;
     const accountWallet = this.getAccount(account, wallet);
     await accountWallet.resetProgressTx();
@@ -150,7 +151,7 @@ export default class Account {
         fee,
         tokenID,
       },
-      extra: { metadata, isEncryptMessage, isEncryptMessageToken, txType },
+      extra: { metadata, isEncryptMessage, isEncryptMessageToken, txType, txHandler },
     });
     console.log('result', result);
     await saveWallet(wallet);

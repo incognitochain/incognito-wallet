@@ -12,7 +12,7 @@ export const MAIN_WEBSITE = 'https://we.incognito.org';
 
 const API_BASE_URL = isMainnet
   ? 'https://api-service.incognito.org'
-  : 'https://staging-api-service.incognito.org';
+  : 'https://privacyv2-api-service.incognito.org';
 const API_BASE_URL2 = isMainnet
   ? 'https://device-network.incognito.org/'
   : 'https://device-network-staging.incognito.org/';

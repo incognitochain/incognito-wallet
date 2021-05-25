@@ -78,6 +78,7 @@ export const reloadWallet = (accountName) => async (dispatch, getState) => {
     wallet.Storage = Storage;
     wallet.PrivacyVersion = PrivacyVersion.ver2;
     wallet.UseLegacyEncoding = true;
+    wallet.PubsubService = server?.pubsubServices;
     let defaultAccount = accountSelector.defaultAccount(state);
     if (wallet) {
       const accounts = await loadListAccount(wallet);

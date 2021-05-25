@@ -8,6 +8,7 @@ import { accountSelector } from '@src/redux/selectors';
 import ReCaptchaV3 from '@haskkor/react-native-recaptchav3';
 import appConstant from '@src/constants/app';
 import { isEmpty } from 'lodash';
+import { PRV_ID } from '@screens/Dex/constants';
 
 const withConfirm = (WrappedComp) => (props) => {
   const signPublicKeyEncode = useSelector(
@@ -57,34 +58,53 @@ const withConfirm = (WrappedComp) => (props) => {
     }
   };
 
-  const submitProvideRawData = (params) => {
+  const submitProvideRawData = async (params) => {
     if (!params || captchaRef.current) {
-      const { TxID: txId, RawData: rawData } = params;
+      const { txId, rawTx: rawData } = params;
       setProvideTx({ txId, rawData });
       setTimeout(() => {
         captchaRef.current?.refreshToken();
       }, 1000);
     }
+    return true;
   };
 
   const handleSendTransaction = async () => {
     try {
       if (provideTx) return;
       let provideValue = isPrv ? originProvide : value;
-      await accountService.createAndSendToken(
-        account,
-        wallet,
-        coin.masterAddress,
-        provideValue,
-        coin.id,
-        fee,
-        0,
-        0,
-        '',
-        null,
-        null,
-        submitProvideRawData
-      );
+      if (coin.id === PRV_ID) {
+        await accountService.createAndSendNativeToken({
+          wallet,
+          account,
+          fee,
+          prvPayments: [
+            {
+              PaymentAddress: coin.masterAddress,
+              Amount: provideValue,
+              Message: '',
+            },
+          ],
+          txType: ACCOUNT_CONSTANT.TX_TYPE.PROVIDE,
+          txHandler: submitProvideRawData
+        });
+      } else {
+        await accountService.createAndSendPrivacyToken({
+          wallet,
+          account,
+          fee,
+          tokenPayments: [
+            {
+              PaymentAddress: coin.masterAddress,
+              Amount: provideValue,
+              Message: '',
+            },
+          ],
+          txType: ACCOUNT_CONSTANT.TX_TYPE.PROVIDE,
+          tokenID: coin.id,
+          txHandler: submitProvideRawData
+        });
+      }
     } catch (e) {
       setProvideTx(null);
       setProviding(false);
@@ -107,6 +127,7 @@ const withConfirm = (WrappedComp) => (props) => {
       }
       handleSendTransaction().then();
     } catch (error) {
+      console.log('SANG TEST: ', error);
       handleSendTransaction().then();
     }
   };

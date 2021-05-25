@@ -43,6 +43,7 @@ const withHistory = WrappedComp => (props) => {
       {...{
         ...props,
         histories,
+        loadHistories,
       }}
     />
   );

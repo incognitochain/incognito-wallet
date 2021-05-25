@@ -116,9 +116,15 @@ const updateDefaultAccount = (account) => {
 export const setDefaultAccount = (account) => async (dispatch) => {
   try {
     dispatch(updateDefaultAccount(account));
-    // const signPublicKeyEncode = await global.__gobridge__.getSignPublicKey(account?.PrivateKey);
-    const signPublicKeyEncode = '';
-    dispatch(setSignPublicKeyEncode(signPublicKeyEncode));
+    global.__gobridge__.getSignPublicKey(JSON.stringify({
+      data: {
+        privateKey: account?.PrivateKey
+      }
+    }), (error, signPublicKeyEncode) => {
+      if (signPublicKeyEncode) {
+        dispatch(setSignPublicKeyEncode(signPublicKeyEncode));
+      }
+    });
   } catch (e) {
     console.debug('SET DEFAULT ACCOUNT WITH ERROR: ', e);
   }

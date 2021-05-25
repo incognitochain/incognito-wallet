@@ -71,6 +71,7 @@ const Trade = (props) => {
     onChangeSegment,
     onRetryTradeInfo,
     disableButton,
+    loadHistories,
   } = props;
 
   const navigation = useNavigation();
@@ -91,7 +92,10 @@ const Trade = (props) => {
       quote,
 
       // Reload new rate after trading successfully
-      onTradeSuccess: onLoadPairs
+      onTradeSuccess: () => {
+        if (typeof onLoadPairs === 'function') onLoadPairs();
+        if (typeof loadHistories === 'function') loadHistories();
+      }
     });
   };
 
@@ -239,6 +243,7 @@ Trade.propTypes = {
   onChangeSegment: PropTypes.func.isRequired,
   onRetryTradeInfo: PropTypes.func.isRequired,
   disableButton: PropTypes.object,
+  loadHistories: PropTypes.func.isRequired,
 };
 
 Trade.defaultProps = {
