@@ -31,7 +31,7 @@ import {
   calculatorInputERC20Network,
   getInputBalance, calculatorOriginalOutputSlippage, getSlippagePercent,
 } from '@screens/DexV2/components/Trade/TradeV2/Trade.utils';
-import { debounce, uniqBy } from 'lodash';
+import { debounce, orderBy, uniqBy } from 'lodash';
 import { actionLogEvent } from '@screens/Performance';
 import { PRIORITY_PDEX, TRADE_LOADING_VALUE } from '@screens/DexV2/components/Trade/TradeV2/Trade.appConstant';
 import {accountServices} from '@services/wallet';
@@ -725,24 +725,51 @@ export const actionGetPDexHistory = ({ limit } = {}) => async (dispatch, getStat
     const page = historiesPage + 1;
     const offset = page * limitPage;
 
-    let newHistories = await accountServices.getPDexHistory({
-      account,
-      wallet,
-      limit: limitPage,
-      offset,
-    });
+    const tasks = [
+      await accountServices.getPDexHistories({
+        account,
+        wallet,
+        limit: limitPage,
+        offset,
+      }),
+      await accountServices.getPDexStorageHistories({
+        account,
+        wallet,
+      })
+    ];
+    let [newHistories, storageHistories] = await Promise.all(tasks);
     const oldIds = oldHistories.map(item => item.requestTx);
     newHistories = newHistories.filter(item => !oldIds.includes(item.requestTx));
-    const mergeHistory = uniqBy(
+    let apiHistories = uniqBy(
       oldHistories.concat(newHistories.filter(item => !oldIds.includes(item.requestTx))),
       item => item.requestTx
     );
+
+    const pendingStorage = [];
+    storageHistories.forEach(history => {
+      const notHave = apiHistories.some(item => item?.requestTx === history?.requestTx);
+      if (!notHave) {
+        pendingStorage.push(history);
+      }
+    });
+
+    const mergeHistory = orderBy(
+      apiHistories.concat(pendingStorage),
+      [
+        'requesttime',
+      ],
+      ['desc'],
+    );
+
+    console.log('mergeHistory: ', mergeHistory);
+
     dispatch(actionUpdatePDexHistory({
       histories: mergeHistory,
       historiesPage: page,
       reachedHistories: newHistories.length < limitPage
     }));
-  } catch (e) {
+  } catch (error) {
+    console.log('GET PDEX HISTORIES ERROR: ', error);
     // error
   }
 };

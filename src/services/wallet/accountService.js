@@ -770,7 +770,7 @@ export default class Account {
     };
   }
 
-  static async getPDexHistory({
+  static async getPDexHistories({
     account,
     wallet,
     offset,
@@ -779,7 +779,7 @@ export default class Account {
     let histories = [];
     try {
       const accountWallet = await this.getAccount(account, wallet);
-      histories = await accountWallet.getPDexHistory({
+      histories = await accountWallet.getPDexHistories({
         offset: offset || 0,
         limit: limit || 10000,
       });
@@ -787,5 +787,19 @@ export default class Account {
       console.debug('GET PDEX HISTORIES ERROR: ', error);
     }
     return histories.map(history => new PDexHistoryPureModel({ history, accountName: account.name }));
+  }
+
+  static async getPDexStorageHistories({
+    account,
+    wallet,
+  }) {
+    let histories = [];
+    try {
+      const accountWallet = await this.getAccount(account, wallet);
+      histories = (await accountWallet.getTxPdexStorageHistories()) || [];
+    } catch (error) {
+      console.debug('GET PDEX STORAGE HISTORIES ERROR: ', error);
+    }
+    return histories;
   }
 }

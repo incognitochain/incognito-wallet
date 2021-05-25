@@ -59,6 +59,7 @@ export async function loadWallet(passphrase, name = 'Wallet') {
   wallet.Storage = storage;
   wallet.PrivacyVersion = PrivacyVersion.ver2;
   wallet.UseLegacyEncoding = true;
+  wallet.PubsubService = server?.pubsubServices;
   await wallet.loadWallet(passphrase, name);
   await saveWallet(wallet);
   return wallet?.Name ? wallet : false;

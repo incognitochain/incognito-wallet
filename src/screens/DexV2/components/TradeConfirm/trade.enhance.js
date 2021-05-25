@@ -209,8 +209,7 @@ const withTrade = (WrappedComp) => (props) => {
         minAcceptableAmount: minimumAmount,
       });
       let result = await accountService.createAndSendTradeRequestTx(reqTrade);
-      console.log('result', result);
-      if (result.response.txId) {
+      if (result?.txId) {
         onTradeSuccess(true);
       }
     } catch (error) {

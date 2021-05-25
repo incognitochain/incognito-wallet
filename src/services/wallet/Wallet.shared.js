@@ -21,6 +21,7 @@ export const getAccountWallet = (account, wallet) => {
     accountWallet.setStorageServices(wallet.Storage);
     accountWallet.setRPCCoinServices(wallet.RpcCoinService);
     accountWallet.setPrivacyVersion(wallet.PrivacyVersion);
+    accountWallet.setRPCTxServices(wallet.PubsubService);
     // accountWallet.setUseLegacyEncoding(wallet.UseLegacyEncoding);
     return accountWallet;
   } catch (error) {

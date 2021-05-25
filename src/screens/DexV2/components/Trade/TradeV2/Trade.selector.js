@@ -90,6 +90,7 @@ export const maxPriceSelector = createSelector(
   getPrivacyDataByTokenID,
   (getFn) =>
     memoize((inputId, outputId, inputValue, outputValue) => {
+      if (!inputValue || !outputValue) return null;
       const inputToken  = getFn(inputId);
       const outputToken = getFn(outputId);
 

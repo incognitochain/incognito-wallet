@@ -11,9 +11,9 @@ const ERC20_NETWORK = {
 };
 
 export const HISTORY_STATUS = {
-  REFUND: 'refund',
-  REJECTED: 'rejected',
-  ACCEPTED: 'accepted'
+  REFUND: ['refund', 'xPoolTradeRefundFee', 'xPoolTradeRefundSellingToken'],
+  REJECTED: ['rejected', 'withPRVFeeRejected'],
+  ACCEPTED: ['accepted', 'xPoolTradeAccepted']
 };
 
 let kyberTradeAddress = '';

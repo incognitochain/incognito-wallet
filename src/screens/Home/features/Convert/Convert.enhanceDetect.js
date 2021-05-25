@@ -16,7 +16,6 @@ const enhance = WrappedComp => (props) => {
   const [showBottom, setShowBottom] = useState(false);
 
   const detectUTXOSV1 = debounce(async () => {
-    setShowBottom(false);
     const { unspentCoins } = await accountService.getUnspentCoinsV1(account, wallet, true);
     const hasUnspentCoins = unspentCoins.some(coin => {
       if (coin.tokenId === PRV_ID) {

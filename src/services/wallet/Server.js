@@ -59,6 +59,7 @@ const DEV_TEST_SERVER = {
   password: '',
   name: 'Dev test server',
   coinServices: 'http://51.161.119.66:9009',
+  pubsubServices: 'http://51.161.119.66:8001'
 };
 
 const DEFAULT_LIST_SERVER = [
@@ -120,6 +121,7 @@ export default class Server {
             return {
               ...s,
               coinServices: server?.coinServices,
+              pubsubServices: server?.pubsubServices
             };
           }
         }

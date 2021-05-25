@@ -1,7 +1,8 @@
-import formatUtil from '@utils/format';
+import formatUtil, { LONG_DATE_TIME_FORMAT } from '@utils/format';
 import { HISTORY_STATUS } from '@src/constants/trading';
 import { isEmpty } from 'lodash';
 import { PRV } from '@src/constants/common';
+import moment from 'moment';
 
 // const TYPES = ['Incognito', 'Incognito', 'Kyber', '0x', 'Uniswap'];
 
@@ -81,23 +82,22 @@ export class PDexTradeHistoryModel {
         PRV.pDecimals,
       );
     }
+    this.networkFeeTokenSymbol = PRV.symbol;
 
     this.account = history.accountName;
     this.type = 'Trade';
     this.exchange = 'Incognito';
     // this.exchange = TYPES[history.Type] || 'Incognito';
     this.description = `${this.sellAmount} ${this.sellTokenSymbol} to ${this.buyAmount} ${this.buyTokenSymbol}`;
+    this.createdAt = formatUtil.formatUnixDateTime(history?.requesttime, LONG_DATE_TIME_FORMAT);
 
     // status
-    switch (history.status) {
-    case HISTORY_STATUS.REFUND:
-    case HISTORY_STATUS.REJECTED:
+    const status = history.status;
+    if (HISTORY_STATUS.REFUND.includes(status) || HISTORY_STATUS.REJECTED.includes(status)) {
       this.status = TRANSFER_STATUS.FAILED;
-      break;
-    case HISTORY_STATUS.ACCEPTED:
+    } else if (HISTORY_STATUS.ACCEPTED.includes(status)) {
       this.status = TRANSFER_STATUS.SUCCESSFUL;
-      break;
-    default:
+    } else {
       this.status = TRANSFER_STATUS.PENDING;
     }
   }
@@ -118,6 +118,7 @@ export class PDexHistoryPureModel {
       this.buyAmount = history?.receive[this.buyTokenId];
     }
     this.networkFee = history?.fee;
+    this.requesttime = history?.requesttime;
     this.accountName = accountName;
   }
 }
