@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ErrorBoundary from '@src/components/ErrorBoundary';
+import ErrorBoundary from '@components/ErrorBoundary';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   checkWriteStoragePermission,
@@ -18,20 +18,20 @@ import {
   getPoolConfig,
   checkPNodeReward,
 } from '@services/api/pool';
-import { getReceiveHistoryByRPCWithOutError } from '@src/services/wallet/RpcClientService';
-import { Toast } from '@src/components/core';
+import { getReceiveHistoryByRPCWithOutError } from '@services/wallet/RpcClientService';
+import { Toast } from '@components/core';
 import withDefaultAccount from '@components/Hoc/withDefaultAccount';
 import Share from 'react-native-share';
 import { compose } from 'recompose';
 import moment from 'moment';
-import formatUtil from '@src/utils/format';
+import formatUtil from '@utils/format';
 import { getTokenList } from '@services/api/token';
 import tokenService from '@services/wallet/tokenService';
-import accountService from '@src/services/wallet/accountService';
+import accountService from '@services/wallet/accountService';
 import { COINS, CONSTANT_COMMONS } from '@src/constants';
 import { pTokens, internalTokens } from '@src/redux/selectors/token';
-import { ConfirmedTx } from '@src/services/wallet/WalletService';
-import { getpTokenHistory } from '@src/services/api/history';
+import { ConfirmedTx } from '@services/wallet/WalletService';
+import { getpTokenHistory } from '@services/api/history';
 import { accountSeleclor } from '@src/redux/selectors';
 import _ from 'lodash';
 import convert from '@utils/convert';
