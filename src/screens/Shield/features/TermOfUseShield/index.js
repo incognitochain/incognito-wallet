@@ -4,17 +4,17 @@ import Header from '@src/components/Header';
 import { COLORS, FONT } from '@src/styles';
 import PropTypes from 'prop-types';
 import { RoundCornerButton } from '@components/core';
-import { MESSAGES } from '@src/constants';
 import ic_radio from '@src/assets/images/icons/ic_radio.png';
 import ic_radio_check from '@src/assets/images/icons/ic_radio_check.png';
 import withBridgeConnect from '@src/screens/Wallet/features/BridgeConnect/WalletConnect.enhance';
 import { ExHandler } from '@services/exception';
 import { compose } from 'recompose';
+import {isAndroid} from '@utils/platform';
 
 const TermOfUseShield = (props) => {
   const { onNextPress, handleConnect, onSelected, selectedTerm, handleShield } = props;
   const [isPressed, setIsPressed] = React.useState(false);
-
+  const android = isAndroid();
   const terms = [
     'I will shield from other platform (e.g. exchange, etc)',
     'I will shield from my own wallet (e.g. Metamask, Trust Wallet, etc)'
@@ -81,9 +81,12 @@ const TermOfUseShield = (props) => {
         <RoundCornerButton
           style={styled.button}
           title="Next"
-          disabled={isPressed}
+          disabled={isPressed || selectedTerm === undefined}
           onPress={handlePressNext}
         />
+        {selectedTerm === (terms.length - 1) && android && (
+          <Text style={styled.warningText}>Make sure ethereum wallet was installed on your device.</Text>
+        )}
       </ScrollView>
     </View>
   );
@@ -94,6 +97,7 @@ TermOfUseShield.propTypes = {
   handleConnect: PropTypes.func.isRequired,
   onSelected: PropTypes.func.isRequired,
   selectedTerm: PropTypes.array.isRequired,
+  handleShield: PropTypes.func.isRequired,
 };
 
 export default compose(
@@ -137,5 +141,13 @@ const styled = StyleSheet.create({
   button: {
     marginTop: 30,
     backgroundColor: COLORS.black,
+  },
+  warningText: {
+    ...FONT.STYLE.regular,
+    textAlign: 'center',
+    marginTop: 40,
+    fontSize: FONT.SIZE.regular,
+    lineHeight: FONT.SIZE.medium + 4,
+    color: COLORS.orange,
   },
 });
