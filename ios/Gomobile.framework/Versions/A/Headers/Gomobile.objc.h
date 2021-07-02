@@ -351,6 +351,8 @@ FOUNDATION_EXPORT BOOL GomobileEstimateTxSize(NSString* _Nullable paramStr, int6
 
 FOUNDATION_EXPORT NSString* _Nonnull GomobileGenerateBLSKeyPairFromSeed(NSString* _Nullable args, NSError* _Nullable* _Nullable error);
 
+FOUNDATION_EXPORT NSString* _Nonnull GomobileGenerateBTCMultisigAddress(NSString* _Nullable args, NSError* _Nullable* _Nullable error);
+
 FOUNDATION_EXPORT NSString* _Nonnull GomobileGenerateKeyFromSeed(NSString* _Nullable args, NSError* _Nullable* _Nullable error);
 
 // skipped function GetCoinInter with unsupported parameter or return types

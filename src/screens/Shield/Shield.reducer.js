@@ -19,6 +19,7 @@ const initialState = {
     decentralized: undefined,
     tokenFee: 0,
     estimateFee: 0,
+    isPortal: false,
   },
   storage: {
     guide: false,

@@ -6,6 +6,7 @@ import {
   genCentralizedDepositAddress,
   genBSCDepositAddress,
 } from '@src/services/api/deposit';
+import { portalService } from '@src/services/wallet/portalService'; 
 import { CONSTANT_COMMONS } from '@src/constants';
 import { signPublicKeyEncodeSelector } from '@src/redux/selectors/account';
 import formatUtil from '@utils/format';
@@ -147,6 +148,52 @@ export const actionFetch = ({ tokenId, selectedPrivacy, account }) => async (
         decentralized,
         tokenFee,
         estimateFee,
+        isPortal: false,
+      }),
+    );
+  } catch (error) {
+    await dispatch(actionFetchFail());
+    throw error;
+  }
+};
+
+export const actionGetPortalMinShieldAmt = async ({ accountWallet, tokenID }) => {
+  try {
+    let resp =  await accountWallet.handleGetPortalMinShieldAmount({ tokenID });
+    return resp;
+  } catch (e) {
+    throw new Error('Can not get portal min amount to deposit');
+  }
+};
+
+export const actionPortalFetch = ({ tokenID, selectedPrivacy, account, accountWallet }) => async (
+  dispatch,
+  getState,
+) => {
+  try {
+    const state = getState();
+    const { isFetching } = shieldSelector(state);
+    if (!selectedPrivacy || isFetching) {
+      return;
+    }
+    dispatch(actionFetching());
+    const [ minShieldAmt, shieldAddress ] = await Promise.all([
+      actionGetPortalMinShieldAmt({ accountWallet, tokenID }),
+      portalService.generateBTCShieldingAddress(account.paymentAddress),
+    ]);
+
+    //todo: add portal shielding address
+    
+    await dispatch(
+      actionFetched({
+        min: formatUtil.amountFull(minShieldAmt, selectedPrivacy.pDecimals),
+        max: null,
+        address: shieldAddress,
+        expiredAt: '',
+        decentralized: null,
+        tokenFee: 0,
+        estimateFee: 0,
+        isPortal: true,
       }),
     );
   } catch (error) {

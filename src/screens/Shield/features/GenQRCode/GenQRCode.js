@@ -58,6 +58,7 @@ const Extra = () => {
     decentralized,
     estimateFee,
     tokenFee,
+    isPortal,
   } = useSelector(shieldDataSelector);
   const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const navigation = useNavigation();
@@ -182,12 +183,45 @@ const Extra = () => {
     </>
   );
 
+  const renderShieldPortalAddress = () => (
+    <>
+      <NormalText style={styled.title}>
+        {`Send only ${selectedPrivacy?.externalSymbol || selectedPrivacy?.symbol} \nto this shielding address`}
+      </NormalText>
+      <View style={styled.qrCode}>
+        <QrCodeGenerate value={address} size={175} />
+      </View>
+      <View style={styled.hook}>
+        {renderMinShieldAmount()}
+      </View>
+      <CopiableText data={address} />
+      <NormalText
+        text={
+          'If sending from an exchange, please take\nwithdrawal times into account.'
+        }
+        style={{ marginTop: 30 }}
+      />
+      <NormalText
+        text={
+          'It may be more reliable to use a normal\nwallet as an intermediary.'
+        }
+        style={{ marginTop: 10 }}
+      />
+    </>
+  );
+
   return (
     <ScrollView style={styled.scrollview}>
       <View style={styled.extra}>
-        {decentralized === 2 || decentralized === 3
-          ? renderShieldUserAddress()
-          : renderShieldIncAddress()}
+        {
+          isPortal
+            ? renderShieldPortalAddress()
+            : (
+              decentralized === 2 || decentralized === 3
+                ? renderShieldUserAddress()
+                : renderShieldIncAddress()
+            )
+        }
       </View>
     </ScrollView>
   );

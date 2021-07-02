@@ -199,4 +199,16 @@ public class GomobileModule extends ReactContextBaseJavaModule {
             successCallback.invoke(e.getMessage(), null);
         }
     }
+
+    @ReactMethod
+    public void generateBTCMultisigAddress(String data, Callback successCallback) {
+        try {
+            Log.d(TAG, "generateBTCMultisigAddress: begin");
+            successCallback.invoke(null, Gomobile.generateBTCMultisigAddress(data));
+        } catch (Exception e) {
+            Log.d(TAG, "generateBTCMultisigAddress: error");
+            successCallback.invoke(e.getMessage(), null);
+        }
+    }
+
 }

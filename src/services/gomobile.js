@@ -31,6 +31,7 @@ const asyncMethods = [
   'hybridEncryptionASM',
   'hybridDecryptionASM',
   'estimateTxSize',
+  'generateBTCMultisigAddress',
 ];
 try {
   console.log('INIT GOMOBILE');
