@@ -166,6 +166,21 @@ export const actionGetPortalMinShieldAmt = async ({ accountWallet, tokenID }) =>
   }
 };
 
+export const actionAddPortalShieldAddress = async ({ accountWallet, incAddress, shieldingAddress }) => {
+  try {
+    let isExisted = await accountWallet.handleCheckPortalShieldingAddresssExisted({ incAddress, shieldingAddress });
+    if ( isExisted ){
+      return;
+    }
+    let isAdded = await accountWallet.handleAddPortalShieldingAddresss({ incAddress, shieldingAddress });
+    if ( !isAdded ){
+      throw new Error('Can not add portal shielding address api');
+    }
+  } catch (e) {
+    throw new Error('Can not add portal shielding address');
+  }
+};
+
 export const actionPortalFetch = ({ tokenID, selectedPrivacy, account, accountWallet }) => async (
   dispatch,
   getState,
@@ -177,18 +192,19 @@ export const actionPortalFetch = ({ tokenID, selectedPrivacy, account, accountWa
       return;
     }
     dispatch(actionFetching());
-    const [ minShieldAmt, shieldAddress ] = await Promise.all([
+    const [ minShieldAmt, shieldingAddress ] = await Promise.all([
       actionGetPortalMinShieldAmt({ accountWallet, tokenID }),
       portalService.generateBTCShieldingAddress(account.paymentAddress),
     ]);
 
     //todo: add portal shielding address
-    
+    await actionAddPortalShieldAddress({ accountWallet, incAddress: account.paymentAddress, shieldingAddress });
+
     await dispatch(
       actionFetched({
         min: formatUtil.amountFull(minShieldAmt, selectedPrivacy.pDecimals),
         max: null,
-        address: shieldAddress,
+        address: shieldingAddress,
         expiredAt: '',
         decentralized: null,
         tokenFee: 0,

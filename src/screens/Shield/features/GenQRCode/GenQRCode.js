@@ -186,7 +186,7 @@ const Extra = () => {
   const renderShieldPortalAddress = () => (
     <>
       <NormalText style={styled.title}>
-        {`Send only ${selectedPrivacy?.externalSymbol || selectedPrivacy?.symbol} \nto this shielding address`}
+        {`Send only ${selectedPrivacy?.externalSymbol || selectedPrivacy?.symbol} \nto this shielding address.`}
       </NormalText>
       <View style={styled.qrCode}>
         <QrCodeGenerate value={address} size={175} />
