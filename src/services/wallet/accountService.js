@@ -947,6 +947,47 @@ export default class Account {
     });
   }
 
+  static async createPortalUnshieldRequest({
+    wallet,
+    account,
+    fee,
+    tokenId,
+    unshieldAmount,
+    prvPayments,
+    info,
+    remoteAddress,
+    txHashHandler,
+    burningType,
+    version = PrivacyVersion.ver2,
+  } = {}) {
+    new Validator('account', account).required();
+    new Validator('wallet', wallet).required();
+    new Validator('fee', fee).required().amount();
+    new Validator('tokenId', tokenId).required().string();
+    new Validator('unshieldAmount', unshieldAmount).required().amount();
+    new Validator('prvPayments', prvPayments).required().array();
+    new Validator('remoteAddress', remoteAddress).required().string();
+    new Validator('info', info).string();
+    new Validator('burningType', burningType).required().number();
+
+    const accountWallet = getAccountWallet(account, wallet);
+    return accountWallet.createAndSendUnshieldPortalV4RequestTx({
+      transfer: {
+        fee,
+        tokenID: tokenId,
+        prvPayments,
+        info,
+      },
+      extra: {
+        remoteAddress,
+        unshieldAmount,
+        txHashHandler,
+        burningType,
+        version,
+      },
+    });
+  }
+
   static async getSignPublicKeyEncode({ account, wallet }) {
     try {
       new Validator('getSignPublicKeyEncode-account', account).required();

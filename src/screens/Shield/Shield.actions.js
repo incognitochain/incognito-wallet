@@ -6,8 +6,8 @@ import {
   genCentralizedDepositAddress,
   genBSCDepositAddress,
 } from '@src/services/api/deposit';
-import { portalService } from '@src/services/wallet/portalService'; 
 import { CONSTANT_COMMONS } from '@src/constants';
+import config from '@src/constants/config';
 import { signPublicKeyEncodeSelector } from '@src/redux/selectors/account';
 import formatUtil from '@utils/format';
 import {
@@ -157,12 +157,12 @@ export const actionFetch = ({ tokenId, selectedPrivacy, account }) => async (
   }
 };
 
-export const actionGetPortalMinShieldAmt = async ({ accountWallet, tokenID }) => {
+export const actionGetPortalMinShieldAmtAndShieldAddress = async ({ accountWallet, tokenID, incAddress}) => {
   try {
-    let resp =  await accountWallet.handleGetPortalMinShieldAmount({ tokenID });
-    return resp;
+    const chainName = config.isMainnet ? 'mainnet' : 'testnet';
+    return accountWallet.handleGetMinShieldAmtAndGenerateShieldAddress({ tokenID, incAddress, chainName });
   } catch (e) {
-    throw new Error('Can not get portal min amount to deposit');
+    throw new Error('Can not get portal min amount to deposit and generate shield address');
   }
 };
 
@@ -192,12 +192,8 @@ export const actionPortalFetch = ({ tokenID, selectedPrivacy, account, accountWa
       return;
     }
     dispatch(actionFetching());
-    const [ minShieldAmt, shieldingAddress ] = await Promise.all([
-      actionGetPortalMinShieldAmt({ accountWallet, tokenID }),
-      portalService.generateBTCShieldingAddress(account.paymentAddress),
-    ]);
+    const { minShieldAmt, shieldingAddress } = await actionGetPortalMinShieldAmtAndShieldAddress({ accountWallet, tokenID, incAddress: account.paymentAddress });
 
-    //todo: add portal shielding address
     await actionAddPortalShieldAddress({ accountWallet, incAddress: account.paymentAddress, shieldingAddress });
 
     await dispatch(

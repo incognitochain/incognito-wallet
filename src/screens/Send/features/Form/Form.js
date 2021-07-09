@@ -11,11 +11,13 @@ import {
 import { SEND } from '@src/constants/elements';
 import { generateTestId } from '@src/utils/misc';
 import EstimateFee from '@components/EstimateFee/EstimateFee.input';
+import { EstimateFeePortal } from '@components/EstimateFeePortal';
 import PropTypes from 'prop-types';
 import { ButtonBasic } from '@src/components/Button';
 import { useSelector } from 'react-redux';
 import { feeDataSelector } from '@src/components/EstimateFee/EstimateFee.selector';
 import { selectedPrivacySelector } from '@src/redux/selectors';
+import { getDefaultAccountWalletSelector } from '@src/redux/selectors/shared';
 import LoadingTx from '@src/components/LoadingTx';
 import format from '@src/utils/format';
 import useFeatureConfig from '@src/shared/hooks/featureConfig';
@@ -68,6 +70,9 @@ const SendForm = (props) => {
     isExternalAddress,
     textLoadingTx,
     validateMemo,
+    handleUnshieldPortal,
+    validatePortalAmount,
+    portalData,
   } = props;
   const { titleBtnSubmit, isUnShield, editableInput } = useSelector(
     feeDataSelector,
@@ -86,6 +91,20 @@ const SendForm = (props) => {
       ? ' '
       : ` or ${selectedPrivacy?.rootNetworkName} `
   }address`;
+  const accountWallet = useSelector(getDefaultAccountWalletSelector);
+  const { isPortalToken, avgUnshieldFee, incNetworkFee } = portalData;
+  const isUnshieldPortal = isUnShield && isPortalToken;
+  const amountValidator = isUnshieldPortal ? validatePortalAmount : validateAmount;
+  const isDisabled =
+    isUnShield &&
+    ((selectedPrivacy.isCentralized && isCentralizedDisabled) ||
+      (selectedPrivacy.isDecentralized && isDecentralizedDisabled));
+  const handlePressSend = isUnShield
+    ? selectedPrivacy.isCentralized
+      ? onCentralizedPress
+      : onDecentralizedPress
+    : handleSend;
+  const submitHandler = isUnshieldPortal ? handleUnshieldPortal : handlePressSend;
 
   const renderMemo = () => {
     if (isUnShield) {
@@ -127,15 +146,7 @@ const SendForm = (props) => {
       />
     );
   };
-  const isDisabled =
-    isUnShield &&
-    ((selectedPrivacy.isCentralized && isCentralizedDisabled) ||
-      (selectedPrivacy.isDecentralized && isDecentralizedDisabled));
-  const handlePressSend = isUnShield
-    ? selectedPrivacy.isCentralized
-      ? onCentralizedPress
-      : onDecentralizedPress
-    : handleSend;
+  
   return (
     <View style={styled.container}>
       <KeyboardAwareScrollView>
@@ -157,7 +168,7 @@ const SendForm = (props) => {
                   },
                   editable: editableInput,
                 }}
-                validate={validateAmount}
+                validate={amountValidator}
                 {...generateTestId(SEND.AMOUNT_INPUT)}
               />
               <Field
@@ -176,17 +187,31 @@ const SendForm = (props) => {
                 }}
                 {...generateTestId(SEND.ADDRESS_INPUT)}
               />
-              <EstimateFee
-                {...{
-                  amount,
-                  address: toAddress,
-                  isFormValid,
-                  memo,
-                  isIncognitoAddress,
-                  isExternalAddress,
-                }}
-              />
-              {renderMemo()}
+              {
+                isUnshieldPortal
+                  ? (
+                    <EstimateFeePortal
+                      unshieldAmount={amount}
+                      selectedPrivacy={selectedPrivacy}
+                      networkFee={incNetworkFee}
+                      accountWallet={accountWallet}
+                      avgUnshieldFee={avgUnshieldFee}
+                    />
+                  )
+                  : (
+                    <EstimateFee
+                      {...{
+                        amount,
+                        address: toAddress,
+                        isFormValid,
+                        memo,
+                        isIncognitoAddress,
+                        isExternalAddress,
+                      }}
+                    />
+                  )
+              }
+              {!isUnshieldPortal && renderMemo()}
               <ButtonBasic
                 title={titleBtnSubmit}
                 btnStyle={[
@@ -194,7 +219,9 @@ const SendForm = (props) => {
                   isUnShield ? styled.submitBtnUnShield : null,
                 ]}
                 disabled={disabledForm || isDisabled}
-                onPress={handleSubmit(handlePressSend)}
+                onPress={handleSubmit(
+                  submitHandler
+                )}
                 {...generateTestId(SEND.SUBMIT_BUTTON)}
               />
             </>
@@ -229,6 +256,9 @@ SendForm.propTypes = {
   isExternalAddress: PropTypes.bool.isRequired,
   textLoadingTx: PropTypes.string.isRequired,
   validateMemo: PropTypes.any.isRequired,
+  validatePortalAmount: PropTypes.any.isRequired,
+  handleUnshieldPortal: PropTypes.func.isRequired,
+  portalData: PropTypes.any.isRequired,
 };
 
 export default withSendForm(SendForm);

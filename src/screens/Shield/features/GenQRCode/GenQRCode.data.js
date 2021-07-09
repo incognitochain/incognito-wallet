@@ -13,7 +13,6 @@ import { setSelectedPrivacy } from '@src/redux/actions/selectedPrivacy';
 import { actionAddFollowToken } from '@src/redux/actions/token';
 import { defaultAccountSelector } from '@src/redux/selectors/account';
 import { getDefaultAccountWalletSelector } from '@src/redux/selectors/shared';
-import { PortalService } from '@src/services/wallet/portalService';
 
 const enhance = (WrappedComp) => (props) => {
   const [loading, setLoading] = React.useState(true);
@@ -25,8 +24,9 @@ const enhance = (WrappedComp) => (props) => {
   const { tokenId } = tokenShield;
   const { decentralized } = useSelector(shieldDataSelector);
   const { isFetching, isFetched } = useSelector(shieldSelector);
-  const handleShield = () => {
-    if( PortalService.isPortalToken(tokenId) ){
+  const handleShield = async () => {
+    const isPortalToken  = await accountWallet.handleCheckIsPortalToken({ tokenID: tokenId});
+    if( isPortalToken ){
       dispatch(
         fetchPortalDataShield({ tokenID: tokenId, selectedPrivacy: tokenShield, account, accountWallet }),
       );
