@@ -8,8 +8,6 @@ import { ExHandler } from '@src/services/exception';
 import { Toast } from '@src/components/core';
 import convert from '@src/utils/convert';
 import { useSelector, useDispatch } from 'react-redux';
-
-import { feeDataSelector } from '@src/components/EstimateFee/EstimateFee.selector';
 import { selectedPrivacySelector } from '@src/redux/selectors';
 import { floor } from 'lodash';
 import format from '@src/utils/format';

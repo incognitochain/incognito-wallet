@@ -10,6 +10,12 @@ import { selectedPrivacySelector } from '@src/redux/selectors';
 import { getDefaultAccountWalletSelector } from '@src/redux/selectors/shared';
 import { styledForm as styled } from './Form.styled';
 
+const INIT_STATUS = {
+  INITIALIZING: 0,
+  SUCCESS: 1,
+  FAILED: 2,
+};
+
 // prepare data for portal: isPortalToken, minUnshieldAmount, maxUnshieldAmount, avgUnshieldPortal
 export const enhancePortalData = (WrappedComp) => (props) => {
   const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
@@ -26,7 +32,7 @@ export const enhancePortalData = (WrappedComp) => (props) => {
     incNetworkFee: MAX_FEE_PER_TX,    // nano
   });
   
-  const [initSuccess, setInitSuccess] = React.useState(false);
+  const [initStatus, setInitStatus] = React.useState(INIT_STATUS.INITIALIZING);
 
   React.useEffect(() => {
     if (isUnShield) {
@@ -37,6 +43,7 @@ export const enhancePortalData = (WrappedComp) => (props) => {
   const getPortalData = async () => {
     try {
       console.log('getPortalData *******************');
+      setInitStatus(INIT_STATUS.INITIALIZING);
       const isPortalToken = await accountWallet.handleCheckIsPortalToken({ tokenID: selectedPrivacy.tokenId });
       if ( isPortalToken ){
         // get average unshield fee
@@ -63,11 +70,11 @@ export const enhancePortalData = (WrappedComp) => (props) => {
         };
         console.log('getPortalData newState: ', newState);
         setState(newState);
-        setInitSuccess(true);
+        setInitStatus(INIT_STATUS.SUCCESS);
       } 
     } catch(e) {
       console.log(e);
-      setInitSuccess(false);
+      setInitStatus(INIT_STATUS.FAILED);
     }
   };
 
@@ -91,10 +98,9 @@ export const enhancePortalData = (WrappedComp) => (props) => {
     );
   });
 
-
-  if (!initSuccess) {
+  if (initStatus == INIT_STATUS.FAILED) {
     return <DetectUnshieldPortalError onRetry={getPortalData} />;
-  }
+  } 
 
   return (
     <WrappedComp
