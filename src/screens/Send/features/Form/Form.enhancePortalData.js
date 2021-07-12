@@ -42,7 +42,6 @@ export const enhancePortalData = (WrappedComp) => (props) => {
 
   const getPortalData = async () => {
     try {
-      console.log('getPortalData *******************');
       setInitStatus(INIT_STATUS.INITIALIZING);
       const isPortalToken = await accountWallet.handleCheckIsPortalToken({ tokenID: selectedPrivacy.tokenId });
       if ( isPortalToken ){
