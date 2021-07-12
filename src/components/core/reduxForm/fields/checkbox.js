@@ -4,7 +4,7 @@ import createField from './createField';
 
 const renderCustomField = ({ input, ...props }) => {
   const { value } = input;
-  const { onPress, title } = props;
+  const { onPress, title, containerStyle } = props;
   let _value = false;
 
   try {
@@ -18,6 +18,10 @@ const renderCustomField = ({ input, ...props }) => {
       {...props}
       title={title}
       checked={_value}
+      containerStyle={{
+        ...containerStyle,
+        padding: 0
+      }}
       onPress={() => typeof onPress === 'function' && onPress(_value)}
     />
   );

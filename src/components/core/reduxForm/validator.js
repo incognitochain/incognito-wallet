@@ -30,6 +30,14 @@ const required = ({ message } = {}) => (value) => {
   return messageHanlder(message, value) ?? 'Required';
 };
 
+const equal = (expectValue, { message } = {}) => (value) => {
+  if (value !== expectValue) {
+    return messageHanlder(message, value) ?? 'Not as expect';
+  }
+
+  return undefined;
+};
+
 const maxLength = (max, { message } = {}) => (value) =>
   value && value.length > max
     ? messageHanlder(message, value, max) ?? `Must be ${max} characters or less`
@@ -417,6 +425,7 @@ const invalidAddress = (message = '') => () =>
   message ? message : 'Invalid address';
 
 export default {
+  equal,
   required,
   maxLength,
   minLength,

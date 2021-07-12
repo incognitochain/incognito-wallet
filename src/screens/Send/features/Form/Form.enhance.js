@@ -17,7 +17,7 @@ import { enhanceSend } from './Form.enhanceSend';
 import { enhanceUnshield } from './Form.enhanceUnShield';
 import { enhanceMemoValidation } from './Form.enhanceMemoValidator';
 import { enhancePortalUnshield } from './Form.enhancePortalUnShield';
-import { enhancePortalAmountValidation } from './Form.enhancePortalAmountValidator';
+import { enhancePortalValidation } from './Form.enhancePortalValidator';
 import { enhancePortalData } from './Form.enhancePortalData';
 import { removeAllSpace, standardizedAddress } from './Form.utils';
 
@@ -67,6 +67,7 @@ export const enhance = (WrappedComp) => (props) => {
     if (field === 'toAddress') {
       _value = await handleStandardizedAddress(value);
     }
+
     dispatch(change(formName, field, String(_value)));
     dispatch(focus(formName, field));
   };
@@ -167,6 +168,6 @@ export default compose(
   enhanceUnshield,
   enhancePortalData,
   enhancePortalUnshield,
-  enhancePortalAmountValidation,
+  enhancePortalValidation,
   enhance,
 );

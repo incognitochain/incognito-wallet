@@ -5,7 +5,7 @@ import { validator } from '@src/components/core/reduxForm';
 import { selectedPrivacySelector } from '@src/redux/selectors';
 import { detectToken } from '@src/utils/misc';
 
-export const enhancePortalAmountValidation = (WrappedComp) => (props) => {
+export const enhancePortalValidation = (WrappedComp) => (props) => {
   const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const { portalData } = props;
   const { 
@@ -66,6 +66,8 @@ export const enhancePortalAmountValidation = (WrappedComp) => (props) => {
 
   const validatePortalAmount = getAmountValidator();
 
+  const validateUnshieldPortalCondition = validator.equal('true', { message: 'Required' });
+
   return (
     <WrappedComp
       {...{
@@ -73,6 +75,7 @@ export const enhancePortalAmountValidation = (WrappedComp) => (props) => {
         validatePortalAmount,
         minAmountValidator,
         maxAmountValidator,
+        validateUnshieldPortalCondition,
       }}
     />
   );

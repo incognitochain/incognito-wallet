@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text } from 'react-native';
-import { KeyboardAwareScrollView } from '@src/components/core';
+import { KeyboardAwareScrollView, Modal } from '@src/components/core';
 import { Field } from 'redux-form';
 import {
   createForm,
   InputQRField,
   InputField,
   InputMaxValueField,
+  CheckboxField,
 } from '@components/core/reduxForm';
 import { SEND } from '@src/constants/elements';
 import { generateTestId } from '@src/utils/misc';
@@ -24,6 +25,7 @@ import useFeatureConfig from '@src/shared/hooks/featureConfig';
 import appConstant from '@src/constants/app';
 import { styledForm as styled } from './Form.styled';
 import withSendForm, { formName } from './Form.enhance';
+import { UnshieldPortalCondition } from '../UnshieldPortalCondition';
 
 const initialFormValues = {
   amount: '',
@@ -52,6 +54,7 @@ const RightLabel = React.memo(() => {
 });
 
 const SendForm = (props) => {
+  const [isShowUnshieldPortalCondition, setShowUnshieldPortalCondition] = useState(false);
   const {
     onChangeField,
     onPressMax,
@@ -72,6 +75,7 @@ const SendForm = (props) => {
     validateMemo,
     handleUnshieldPortal,
     validatePortalAmount,
+    validateUnshieldPortalCondition,
     portalData,
   } = props;
   const { titleBtnSubmit, isUnShield, editableInput } = useSelector(
@@ -212,6 +216,40 @@ const SendForm = (props) => {
                   )
               }
               {!isUnshieldPortal && renderMemo()}
+              {isUnshieldPortal &&
+                (
+                  <React.Fragment>
+                    <Field
+                      component={CheckboxField}
+                      name="unshieldCondition"
+                      title="I agree to the unshielding conditions."
+                      componentProps={{
+                        containerStyle: styled.unshieldPortalCheckbox,
+                        textStyle: styled.unshieldPortalCheckboxText
+                      }}
+                      validate={validateUnshieldPortalCondition}
+                      onPress={(currentStatus) => {
+                        if (currentStatus === false) {
+                          setShowUnshieldPortalCondition(true);
+                        } else {
+                          onChangeField(false, 'unshieldCondition');
+                        }
+                      }}
+                    />
+                    <Modal visible={isShowUnshieldPortalCondition}>
+                      <UnshieldPortalCondition 
+                        onConfirm={() => {
+                          onChangeField(true, 'unshieldCondition');
+                          setShowUnshieldPortalCondition(false);
+                        }} 
+                        onGoBack={() => {
+                          setShowUnshieldPortalCondition(false);
+                        }} 
+                      />
+                    </Modal>
+                  </React.Fragment>
+                )
+              }
               <ButtonBasic
                 title={titleBtnSubmit}
                 btnStyle={[
@@ -229,6 +267,7 @@ const SendForm = (props) => {
         </Form>
       </KeyboardAwareScrollView>
       {isSending && <LoadingTx text={textLoadingTx} />}
+      
     </View>
   );
 };
@@ -257,6 +296,7 @@ SendForm.propTypes = {
   textLoadingTx: PropTypes.string.isRequired,
   validateMemo: PropTypes.any.isRequired,
   validatePortalAmount: PropTypes.any.isRequired,
+  validateUnshieldPortalCondition: PropTypes.any.isRequired,
   handleUnshieldPortal: PropTypes.func.isRequired,
   portalData: PropTypes.any.isRequired,
 };
