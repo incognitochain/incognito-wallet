@@ -37,7 +37,9 @@ const INCOGNITO_TOKEN_ICON_URL = isMainnet
 const BUILD_VERSION = pkg.version;
 const EXPLORER_CONSTANT_CHAIN_URL = isMainnet
   ? 'https://incscan.io'
-  : 'https://testnet1.incognito.org'; // Change explorer
+  : global.severDefault
+    ? global.severDefault.explorer
+    : 'https://testnet.incognito.org'; // Change explorer
 const MASTER_NODE_ADDRESS = isMainnet ? MAINNET_FULLNODE : TESTNET_FULLNODE;
 const NODE_URL = 'https://node.incognito.org/node.html';
 const USDT_TOKEN_ID = isMainnet

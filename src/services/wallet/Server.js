@@ -31,7 +31,8 @@ const MAIN_NET_SERVER = {
   apiServices: '',
   shardNumber: DEFAULT_SHARD_NUMBER,
   IncContractAddress: '0x43D037A562099A4C2c95b1E2120cc43054450629',
-  IncBSCContractAddress: '0x43D037A562099A4C2c95b1E2120cc43054450629'
+  IncBSCContractAddress: '0x43D037A562099A4C2c95b1E2120cc43054450629',
+  explorer: 'https://incscan.io'
 };
 const TEST_NET_SERVER = {
   id: 'testnet',
@@ -46,7 +47,8 @@ const TEST_NET_SERVER = {
   apiServices: 'https://staging-api-service.incognito.org',
   shardNumber: DEFAULT_SHARD_NUMBER,
   IncContractAddress: '0x2f6F03F1b43Eab22f7952bd617A24AB46E970dF7',
-  IncBSCContractAddress: '0x2f6F03F1b43Eab22f7952bd617A24AB46E970dF7'
+  IncBSCContractAddress: '0x2f6F03F1b43Eab22f7952bd617A24AB46E970dF7',
+  explorer: 'https://testnet.incognito.org'
 };
 const LOCAL_SERVER = {
   id: 'local',
@@ -69,7 +71,8 @@ const TEST_NET_1_SERVER = {
   apiServices: 'https://privacyv2-api-service.incognito.org',
   shardNumber: DEFAULT_SHARD_NUMBER,
   IncContractAddress: '0xE0D5e7217c6C4bc475404b26d763fAD3F14D2b86',
-  IncBSCContractAddress: '0x1ce57B254DC2DBB41e1aeA296Dc7dBD6fb549241'
+  IncBSCContractAddress: '0x1ce57B254DC2DBB41e1aeA296Dc7dBD6fb549241',
+  explorer: 'https://testnet1.incognito.org'
 };
 const DEV_TEST_SERVER = {
   id: 'devtest',
@@ -84,7 +87,8 @@ const DEV_TEST_SERVER = {
   apiServices: 'https://privacyv2-api-service.incognito.org',
   shardNumber: 2,
   IncContractAddress: '0xE0D5e7217c6C4bc475404b26d763fAD3F14D2b86',
-  IncBSCContractAddress: '0x1ce57B254DC2DBB41e1aeA296Dc7dBD6fb549241'
+  IncBSCContractAddress: '0x1ce57B254DC2DBB41e1aeA296Dc7dBD6fb549241',
+  explorer: 'https://testnet1.incognito.org'
 };
 
 const DEFAULT_LIST_SERVER = [
