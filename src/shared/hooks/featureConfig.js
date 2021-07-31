@@ -27,7 +27,7 @@ function useFeatureConfig(featureName, onPress) {
   const [feature, setFeature] = useState({});
   const handlePress = useCallback(
     (...params) => {
-      if (feature && feature?.disabled) {
+      if (feature && feature?.disabled && global.homeConfig !== 'staging') {
         const duration = getDurationShowMessage(feature.message);
         return Toast.showInfo(feature.message, {
           duration,
@@ -42,6 +42,7 @@ function useFeatureConfig(featureName, onPress) {
   );
 
   const isDisabled = useMemo(() => {
+    if (global.homeConfig === 'staging') return false;
     if (feature && feature?.disabled) {
       return feature?.disabled;
     }
