@@ -116,7 +116,7 @@ export const actionFetchTx = () => async (dispatch, getState) => {
       break;
     }
     case ACCOUNT_CONSTANT.TX_TYPE.SHIELDPORTAL: {
-      const txp = await accountWallet.updateStatusShieldPortalTx(tx);
+      const txp = await accountWallet.updateStatusShieldPortalTx(tx, tokenID);
       if (!txp) {
         return tx;
       }

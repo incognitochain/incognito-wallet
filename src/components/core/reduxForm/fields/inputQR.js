@@ -7,7 +7,6 @@ import { AddressBookIcon } from '@src/components/Icons';
 import { generateTestId } from '@utils/misc';
 import { SEND } from '@src/constants/elements';
 import { BtnScanQrCode } from '@src/components/Button';
-import { standardizedAddress } from '@src/screens/Send/features/Form/Form.utils';
 import createField from './createField';
 
 const styled = StyleSheet.create({
@@ -28,19 +27,6 @@ const styled = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
-const getAddress = (text) => {
-  if (text && typeof text === 'string') {
-    let indexSpec = text.indexOf(':');
-    if (indexSpec != -1) {
-      return text.substring(indexSpec + 1, text.length);
-    } else {
-      return text;
-    }
-  } else {
-    return '';
-  }
-};
 
 const renderCustomField = ({
   input,
@@ -78,11 +64,7 @@ const renderCustomField = ({
             style={styled.btn}
             onPress={() => {
               openQrScanner((data) => {
-                let res = getAddress(data);
-                if (shouldStandardized) {
-                  res = standardizedAddress(res);
-                }
-                input.onChange(res);
+                input.onChange(data);
               });
             }}
           />

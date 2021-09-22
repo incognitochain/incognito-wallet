@@ -13,6 +13,7 @@ const initialState = {
   isFetching: false,
   isFetched: false,
   isFetchFailed: false,
+  isPortalCompatible: true,
   data: {
     min: null,
     max: null,
@@ -52,6 +53,7 @@ const shieldReducer = (state = initialState, action) => {
       isFetched: false,
       isFetching: false,
       isFetchFailed: true,
+      isPortalCompatible: action.isPortalCompatible,
     };
   }
   case ACTION_TOGGLE_GUIDE: {
@@ -64,7 +66,10 @@ const shieldReducer = (state = initialState, action) => {
     };
   }
   case ACTION_RESET: {
-    return { ...initialState };
+    return {
+      ...initialState,
+      storage: state.storage,
+    };
   }
   default:
     return state;

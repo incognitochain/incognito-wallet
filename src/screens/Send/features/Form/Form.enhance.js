@@ -47,18 +47,18 @@ export const enhance = (WrappedComp) => (props) => {
   const memo = useSelector((state) => selector(state, 'memo'));
   const [isKeyboardVisible] = useKeyboard();
   const handleStandardizedAddress = async (value) => {
-    let _value = value;
-    try {
-      const copiedValue = await Clipboard.getString();
-      if (copiedValue !== '') {
-        const isPasted = value.includes(copiedValue);
-        if (isPasted) {
-          _value = standardizedAddress(value);
-        }
-      }
-    } catch (e) {
-      console.debug('error', e);
-    }
+    let _value = value || '';
+    // try {
+    //   const copiedValue = await Clipboard.getString();
+    //   if (copiedValue !== '') {
+    //     const isPasted = value.includes(copiedValue);
+    //     if (isPasted) {
+    //       _value = standardizedAddress(value);
+    //     }
+    //   }
+    // } catch (e) {
+    //   console.debug('error', e);
+    // }
     return removeAllSpace(_value);
   };
   const onChangeField = async (value, field) => {

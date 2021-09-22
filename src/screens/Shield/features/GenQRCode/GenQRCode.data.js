@@ -22,7 +22,7 @@ const enhance = (WrappedComp) => (props) => {
   const tokenSymbol = tokenShield?.externalSymbol || tokenShield?.symbol;
   const { tokenId } = tokenShield;
   const { decentralized } = useSelector(shieldDataSelector);
-  const { isFetching, isFetched, isFetchFailed, data } = useSelector(shieldSelector);
+  const { isFetching, isFetched, isFetchFailed, isPortalCompatible, data } = useSelector(shieldSelector);
   const handleShield = async () => {
     const isPortalToken  = await accountWallet.handleCheckIsPortalToken({ tokenID: tokenId});
     if( isPortalToken ){
@@ -69,6 +69,7 @@ const enhance = (WrappedComp) => (props) => {
             decentralized,
             tokenShield,
             handleShield,
+            isPortalCompatible,
           }}
         />
       </ErrorBoundary>

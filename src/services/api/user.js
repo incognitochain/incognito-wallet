@@ -1,6 +1,7 @@
 import { ANALYTICS } from '@src/constants';
 import userModel from '@src/models/user';
 import axios from 'axios';
+import sha256 from 'crypto-js/sha256';
 import http from '../http';
 
 
@@ -27,11 +28,13 @@ export const updateMetrics = info => async (dispatch, getState) => {
   }
   let timenow = Math.round((new Date()).getTime() / 1000);
   try {
+    const hashedUserId = sha256(info?.userId.toString()).toString();
+    const hashedPaymentAddress = sha256(info?.paymentAddress).toString();
     axios.post(ANALYTICS.ANALYTIC_ENDPOINT, {
       created_at: timenow,
-      user_id: info?.userId.toString(),
+      user_id: hashedUserId,
       type_id: info?.type,
-      payment_address: info?.paymentAddress,
+      payment_address: hashedPaymentAddress,
     });
   } catch(e) {
     console.log('Ignore: ', e);

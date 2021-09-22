@@ -33,8 +33,9 @@ export const actionFetched = (payload) => ({
   payload,
 });
 
-export const actionFetchFail = () => ({
+export const actionFetchFail = (isPortalCompatible = true) => ({
   type: ACTION_FETCH_FAIL,
+  isPortalCompatible: isPortalCompatible,
 });
 
 export const actionGetMinMaxShield = async ({ tokenId }) => {
@@ -165,16 +166,10 @@ export const actionFetch = ({ tokenId, selectedPrivacy, account }) => async (
 
 export const actionGeneratePortalShieldAddress = async ({ accountWallet, tokenID, incAddress }) => {
   try {
-    let shieldingAddress = await accountWallet.getStoragePortalShieldAddress();
-    if (shieldingAddress) {
-      return shieldingAddress;
-    }
     const chainName = config.isMainnet ? 'mainnet' : 'testnet';
-    shieldingAddress = await accountWallet.handleGenerateShieldingAddress({ tokenID, incAddress, chainName });
-    await accountWallet.setStoragePortalShieldAddress({ shieldAddress: shieldingAddress });
-    return shieldingAddress;
+    return accountWallet.handleGenerateShieldingAddress({ tokenID, incAddress, chainName });
   } catch (e) {
-    throw new Error('Can not generate portal shield address');
+    throw new Error(`Can not generate portal shield address ${e}`);
   }
 };
 
@@ -234,7 +229,11 @@ export const actionPortalFetch = ({ tokenID, selectedPrivacy, account, accountWa
     );
     dispatch(requestUpdateMetrics(ANALYTICS.ANALYTIC_DATA_TYPE.SHIELD));
   } catch (error) {
-    await dispatch(actionFetchFail());
+    let isCompatible = true;
+    if (error.message?.includes('Shielding address is not compatible'))  {
+      isCompatible = false;
+    }
+    await dispatch(actionFetchFail(isCompatible));
     throw error;
   }
 };

@@ -30,7 +30,7 @@ const NormalText = React.memo((props) => {
   );
 });
 
-const ShieldError = React.memo(({ handleShield }) => {
+const ShieldError = React.memo(({ handleShield, isPortalCompatible }) => {
   return (
     <View style={styled.errorContainer}>
       <ClockWiseIcon />
@@ -43,9 +43,20 @@ const ShieldError = React.memo(({ handleShield }) => {
         onPress={handleShield}
         title="Try again"
       />
-      <Text style={styled.errorText}>
-        {'If that doesn’t work,\ncheck the bulletin board for scheduled maintenance.\n\nIf there is none,\nplease come back in an hour.'}
-      </Text>
+      { 
+        isPortalCompatible ? 
+          (
+            <Text style={styled.errorText}>
+              {'If that doesn’t work,\ncheck the bulletin board for scheduled maintenance.\n\nIf there is none,\nplease come back in an hour.'}
+            </Text>
+          )
+          :
+          (
+            <Text style={styled.errorText}>
+              {'If that doesn’t work,\nplease make sure your app version is the latest.'}
+            </Text>
+          )
+      }
     </View>
   );
 });
@@ -247,7 +258,7 @@ const Content = () => {
 };
 
 const GenQRCode = (props) => {
-  const { handleShield, isFetching, isFetchFailed, data: shieldData } = props;
+  const { handleShield, isFetching, isFetchFailed, isPortalCompatible, data: shieldData } = props;
   const { address } = shieldData || {};
   const [toggle, setToggle] = React.useState(true);
   React.useEffect(() => {
@@ -261,11 +272,11 @@ const GenQRCode = (props) => {
     }
   }, [toggle]);
   const renderComponent = () => {
+    if (isFetchFailed) {
+      return <ShieldError handleShield={handleShield} isPortalCompatible={isPortalCompatible} />;
+    }
     if (isFetching || !address) {
       return <LoadingContainer />;
-    }
-    if (isFetchFailed) {
-      return <ShieldError handleShield={handleShield} />;
     }
     return <Extra {...props} />;
   };
@@ -304,6 +315,7 @@ GenQRCode.propTypes = {
   handleShield: PropTypes.func.isRequired,
   isFetching: PropTypes.bool.isRequired,
   isFetchFailed: PropTypes.bool.isRequired,
+  isPortalCompatible: PropTypes.bool.isRequired,
 };
 
 export default withGenQRCode(GenQRCode);

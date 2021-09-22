@@ -15,11 +15,18 @@ export const {
   STATUS_CODE_UNSHIELD_PORTAL,
 } = ACCOUNT_CONSTANT;
 
-const PORTAL_STATUS_DETAIL = {
-  [STATUS_CODE_UNSHIELD_PORTAL.PENDING]: 'The unshielding request is waiting to process.',
-  [STATUS_CODE_UNSHIELD_PORTAL.PROCESSING]: 'Your token is being sent out to your address.',
-  [STATUS_CODE_UNSHIELD_PORTAL.COMPLETE]: '',
+const PORTAL_UNSHIELD_STATUS_DETAIL = {
+  [STATUS_CODE_UNSHIELD_PORTAL.PENDING]: 'The unshielding request is waiting for processing.',
+  [STATUS_CODE_UNSHIELD_PORTAL.PROCESSING]: 'The unshielding request is processing.',
+  [STATUS_CODE_UNSHIELD_PORTAL.COMPLETE]: 'The public token has been sent to your external address.',
   [STATUS_CODE_UNSHIELD_PORTAL.REFUND]: 'The unshielding request was refunded to your account. Please try again.'
+};
+
+const PORTAL_SHIELD_STATUS_DETAIL = {
+  [STATUS_CODE_SHIELD_PORTAL.PENDING]: 'The shielding transaction is waiting for confirmation.',
+  [STATUS_CODE_SHIELD_PORTAL.PROCESSING]: 'The shielding transaction has ', // + 2/6 block confirmations.
+  [STATUS_CODE_SHIELD_PORTAL.FAILED]: 'The shielding request is rejected because the shielding amount is smaller than the minimum amount.',
+  [STATUS_CODE_SHIELD_PORTAL.SUCCESS]: '',
 };
 
 export const TX_STATUS_COLOR = {
@@ -111,6 +118,8 @@ export const getPortalStatusColor = (history) => {
       // shield
       if (status === STATUS_CODE_SHIELD_PORTAL.SUCCESS) {
         statusColor = COLORS.green;
+      } else if (status === STATUS_CODE_SHIELD_PORTAL.FAILED) {
+        statusColor = COLORS.red;
       } else {
         statusColor = COLORS.colorGreyBold;
       }
@@ -139,14 +148,23 @@ export const getPortalStatusColor = (history) => {
 export const getPortalStatusDetail = (history) => {
   let statusDetail = '';
   try {
-    new Validator('getPortalStatusColor-history', history).required().object();
+    new Validator('getPortalStatusDetail-history', history).required().object();
     const { txType, status } = history;
     switch (txType) {
     case TX_TYPE.SHIELDPORTAL: {
+      statusDetail = PORTAL_SHIELD_STATUS_DETAIL[status];
+      if (status === STATUS_CODE_SHIELD_PORTAL.PROCESSING) {
+        const { confirmations } = history;
+        if ( confirmations === undefined ) {
+          statusDetail = '';
+        } else {
+          statusDetail = statusDetail + confirmations.toString() + '/6 block confirmations.';
+        }
+      }
       break;
     }
     case TX_TYPE.UNSHIELDPORTAL: {
-      statusDetail = PORTAL_STATUS_DETAIL[status];
+      statusDetail = PORTAL_UNSHIELD_STATUS_DETAIL[status];
       break;
     }
     default:
