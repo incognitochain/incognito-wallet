@@ -24,7 +24,18 @@ class PToken {
     this.pairPrv = pairPrv;
     this.change = pairPrv ? data?.PercentChangePrv1h : data?.PercentChange1h;
     this.pricePrv = data?.PricePrv || 0;
+    
+    if (data && data.ListChildToken instanceof Array) {
+      this.listChildToken = data.ListChildToken.map((item) => {
+        let newItem = new PToken(item);
+        newItem.parentID = item.ParentID;
+        return newItem;
+      });
+    } else {
+      this.listChildToken = [];
+    }
   }
+
   /**
    * Convert to data structure of token which stored in wallet object
    */

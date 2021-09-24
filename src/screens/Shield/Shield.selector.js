@@ -14,3 +14,8 @@ export const shieldStorageSelector = createSelector(
   shieldSelector,
   shield => shield?.storage,
 );
+
+export const shieldDataBscSelector = createSelector(
+  shieldSelector,
+  shield => shield?.databsc,
+);

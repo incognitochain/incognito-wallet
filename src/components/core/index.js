@@ -25,6 +25,8 @@ export { default as Toast } from './Toast';
 export { default as TouchableOpacity } from './TouchableOpacity';
 export { default as TouchableScale } from './TouchableScale';
 export { default as Select } from './Select';
+export { default as SelectPicker } from './SelectPicker';
+export { default as SelectOption } from './SelectOption';
 export { default as WebView } from './WebView';
 export { default as BaseTextInput } from './BaseTextInput';
 export { default as InputWithMax } from './InputWithMax';

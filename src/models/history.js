@@ -1,6 +1,6 @@
 import { CONSTANT_COMMONS } from '@src/constants';
 
-export const DECENTRALIZED_RECEIVE_TYPES = [ 27, 240, 252, 96, 242 ];
+export const DECENTRALIZED_RECEIVE_TYPES = [ 27, 240, 252, 96, 242, 274, 275 ];
 
 class History {
   static parsePrivateTokenFromApi(data = {}) {

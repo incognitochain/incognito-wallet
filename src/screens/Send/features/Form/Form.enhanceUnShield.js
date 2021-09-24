@@ -1,6 +1,6 @@
 /* eslint-disable no-unreachable */
 /* eslint-disable import/no-cycle */
-import React from 'react';
+import React, { useState } from 'react';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { MESSAGES, CONSTANT_KEYS, CONSTANT_COMMONS } from '@src/constants';
 import { ExHandler } from '@src/services/exception';
@@ -9,11 +9,12 @@ import convert from '@src/utils/convert';
 import { useSelector, useDispatch } from 'react-redux';
 import { feeDataSelector } from '@src/components/EstimateFee/EstimateFee.selector';
 import { accountSelector, selectedPrivacySelector } from '@src/redux/selectors';
+import SelectedPrivacy from '@src/models/selectedPrivacy';
 import { floor, toString } from 'lodash';
 import format from '@src/utils/format';
 import { useNavigation } from 'react-navigation-hooks';
 import routeNames from '@src/router/routeNames';
-import { reset } from 'redux-form';
+import { reset, formValueSelector } from 'redux-form';
 import { withdraw, updatePTokenFee } from '@src/services/api/withdraw';
 import { defaultAccountSelector } from '@src/redux/selectors/account';
 import { walletSelector } from '@src/redux/selectors/wallet';
@@ -30,7 +31,10 @@ import {
   ACCOUNT_CONSTANT,
   BurningPBSCRequestMeta,
   BurningRequestMeta,
+  BurningPRVERC20RequestMeta,
+  BurningPRVBEP20RequestMeta,
   PrivacyVersion,
+  PRVIDSTR,
 } from 'incognito-chain-web-js/build/wallet';
 import { formName } from './Form.enhance';
 
@@ -49,7 +53,25 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
     isUnShield,
   } = useSelector(feeDataSelector);
   const dev = useSelector(devSelector);
+  const { isUnshieldPegPRV } = props;
+  const selector = formValueSelector(formName);
+  const currencyTypeName = useSelector((state) => selector(state, 'currencyType'));
   const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
+  const [childSelectedPrivacy, setChildSelectedPrivacy] = useState();
+
+  React.useEffect(() => {
+    if (isUnshieldPegPRV) {
+      const childToken = selectedPrivacy.listChildToken.find(item => item.currencyType === currencyTypeName);
+      const childSelectedPrivacy = new SelectedPrivacy(
+        account,
+        null,
+        childToken,
+        selectedPrivacy.tokenId,
+      );
+      setChildSelectedPrivacy(childSelectedPrivacy);
+    }
+  }, [isUnshieldPegPRV, currencyTypeName]);
+
   const signPublicKeyEncode = useSelector(
     accountSelector.signPublicKeyEncodeSelector,
   );
@@ -65,7 +87,7 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
     pDecimals,
     isDecentralized,
     name,
-  } = selectedPrivacy;
+  } = childSelectedPrivacy ? childSelectedPrivacy : selectedPrivacy;
   const keySave = isDecentralized
     ? CONSTANT_KEYS.UNSHIELD_DATA_DECENTRALIZED
     : CONSTANT_KEYS.UNSHIELD_DATA_CENTRALIZED;
@@ -122,6 +144,38 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
     }
   };
 
+  const handleBurningPegPRV = async (payload = {}, txHashHandler) => {
+    try {
+      const { originalAmount, feeForBurn, paymentAddress, isBSC } = payload;
+      const { FeeAddress: masterAddress } = userFeesData;
+      const res = await accountService.createBurningPegPRVRequest({
+        wallet,
+        account,
+        fee: feeForBurn,
+        tokenId,
+        burnAmount: originalAmount,
+        prvPayments: [
+          {
+            paymentAddress: masterAddress,
+            amount: userFee,
+          },
+        ],
+        info,
+        remoteAddress: paymentAddress,
+        txHashHandler,
+        burningType: isBSC ? BurningPRVBEP20RequestMeta : BurningPRVERC20RequestMeta,
+        version: PrivacyVersion.ver2,
+      });
+      if (res.txId) {
+        return { ...res, burningTxId: res?.txId };
+      } else {
+        throw new Error('Burned token, but doesnt have txID, please check it');
+      }
+    } catch (e) {
+      throw e;
+    }
+  };
+
   const handleDecentralizedWithdraw = async (payload) => {
     try {
       const { amount, originalAmount, paymentAddress } = payload;
@@ -158,7 +212,12 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
           }),
         );
       };
-      const tx = await handleBurningToken(payload, txHashHandler);
+      let tx;
+      if (isUnshieldPegPRV) {
+        tx = await handleBurningPegPRV(payload, txHashHandler);
+      } else {
+        tx = await handleBurningToken(payload, txHashHandler);
+      }
       if (toggleDecentralized) {
         await setState({
           ...state,

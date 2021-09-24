@@ -16,6 +16,7 @@ const enhance = (WrappedComp) => (props) => {
     isExternalAddress,
     isIncognitoAddress,
     isPortalToken,
+    childSelectedPrivacy,
   } = props;
   const dispatch = useDispatch();
   const [isKeyboardVisible] = useKeyboard();
@@ -25,6 +26,7 @@ const enhance = (WrappedComp) => (props) => {
     memo,
     isExternalAddress,
     isIncognitoAddress,
+    childSelectedPrivacy,
   ) => {
     try {
       if (!amount || !address) {
@@ -46,6 +48,7 @@ const enhance = (WrappedComp) => (props) => {
           address,
           screen,
           memo,
+          childSelectedPrivacy,
         }),
       );
     } catch (error) {
@@ -60,8 +63,9 @@ const enhance = (WrappedComp) => (props) => {
       memo,
       isExternalAddress,
       isIncognitoAddress,
+      childSelectedPrivacy
     );
-  }, [address, amount, memo, isExternalAddress, isIncognitoAddress]);
+  }, [address, amount, memo, isExternalAddress, isIncognitoAddress, childSelectedPrivacy]);
   React.useEffect(() => {
     if (!isKeyboardVisible && _handleChangeForm && _handleChangeForm.current) {
       _handleChangeForm.current(
@@ -70,6 +74,7 @@ const enhance = (WrappedComp) => (props) => {
         memo,
         isExternalAddress,
         isIncognitoAddress,
+        childSelectedPrivacy
       );
     }
   }, [isKeyboardVisible]);
@@ -90,6 +95,7 @@ enhance.propTypes = {
   memo: PropTypes.string,
   isExternalAddress: PropTypes.bool.isRequired,
   isIncognitoAddress: PropTypes.bool.isRequired,
+  childSelectedPrivacy: PropTypes.object,
 };
 
 export default enhance;

@@ -13,6 +13,7 @@ import { compose } from 'recompose';
 import { CONSTANT_COMMONS } from '@src/constants';
 import withAccount from '@screens/DexV2/components/account.enhance';
 import ShieldDecentralized from '@screens/Shield/features/ShieldDecentralized';
+import { PRV_ID } from '@src/screens/Dex/constants';
 
 const enhance = (WrappedComp) => (props) => {
   const {
@@ -80,7 +81,7 @@ const enhance = (WrappedComp) => (props) => {
   }
 
   /** render term off user */
-  if (isDecentralized && showTerm) {
+  if (isDecentralized && showTerm && selectedPrivacy?.tokenId !== PRV_ID) {
     return renderTermOfUse();
   }
 

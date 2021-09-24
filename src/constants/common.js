@@ -114,6 +114,7 @@ const NETWORK_NAME = {
   ETHEREUM: 'Ethereum',
   TOMO: 'TomoChain',
   BSC: 'Binance Smart Chain',
+  PRV: 'Privacy',
 };
 
 export const PRV = {
@@ -132,6 +133,7 @@ const FACTORIES_EVM_NETWORK = [
   NETWORK_NAME.ETHEREUM,
   NETWORK_NAME.TOMO,
   NETWORK_NAME.BSC,
+  NETWORK_NAME.PRV,
 ];
 
 const PRIVATE_TOKEN_CURRENCY_TYPE = {

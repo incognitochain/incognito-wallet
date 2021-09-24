@@ -28,7 +28,7 @@ export const enhance = (WrappedComp) => (props) => {
   const isFormEstimateFeeValid = useSelector((state) =>
     isValid(formEstimateFee)(state),
   );
-  const { handleSendAnonymously, handleUnShieldCrypto, handleUnshieldPortal } = props;
+  const { handleSendAnonymously, handleUnShieldCrypto } = props;
   const navigation = useNavigation();
   const {
     fee,
@@ -45,6 +45,7 @@ export const enhance = (WrappedComp) => (props) => {
   const amount = useSelector((state) => selector(state, 'amount'));
   const toAddress = useSelector((state) => selector(state, 'toAddress'));
   const memo = useSelector((state) => selector(state, 'memo'));
+  const currencyType = useSelector((state) => selector(state, 'currencyType'));
   const [isKeyboardVisible] = useKeyboard();
   const handleStandardizedAddress = async (value) => {
     let _value = value;
@@ -160,6 +161,7 @@ export const enhance = (WrappedComp) => (props) => {
         handleSend,
         isSending,
         memo,
+        currencyType,
       }}
     />
   );

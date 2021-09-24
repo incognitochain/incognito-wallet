@@ -150,6 +150,7 @@ class SelectedPrivacy {
     this.isUSDT = this.tokenId === BIG_COINS.USDT;
     this.isPRV = this.tokenId === BIG_COINS.PRV;
     this.symbol = this.externalSymbol || this.symbol || '';
+    this.listChildToken = pTokenData?.listChildToken;
   }
 }
 

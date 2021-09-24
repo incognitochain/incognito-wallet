@@ -7,6 +7,7 @@ import {
   ACTION_FETCH_FAIL,
   ACTION_TOGGLE_GUIDE,
   ACTION_RESET,
+  ACTION_BSC_FEE_FETCHING,
 } from './Shield.constant';
 
 const initialState = {
@@ -24,6 +25,10 @@ const initialState = {
     estimateFee: 0,
     isPortal: false,
   },
+  databsc: {
+    tokenFee: 0,
+    estimateFee: 0,
+  },
   storage: {
     guide: false,
   },
@@ -36,6 +41,12 @@ const shieldReducer = (state = initialState, action) => {
       ...state,
       isFetching: true,
       isFetchFailed: false,
+    };
+  }
+  case ACTION_BSC_FEE_FETCHING: {
+    return {
+      ...state,
+      databsc: { ...action.bscPayload },
     };
   }
   case ACTION_FETCHED: {

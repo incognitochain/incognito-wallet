@@ -1003,6 +1003,47 @@ export default class Account {
     });
   }
 
+  static async createBurningPegPRVRequest({
+    wallet,
+    account,
+    fee,
+    tokenId,
+    burnAmount,
+    prvPayments,
+    info,
+    remoteAddress,
+    txHashHandler,
+    burningType,
+    version = PrivacyVersion.ver2,
+  } = {}) {
+    new Validator('account', account).required();
+    new Validator('wallet', wallet).required();
+    new Validator('fee', fee).required().amount();
+    new Validator('tokenId', tokenId).required().string();
+    new Validator('burnAmount', burnAmount).required().amount();
+    new Validator('prvPayments', prvPayments).required().array();
+    new Validator('remoteAddress', remoteAddress).required().string();
+    new Validator('info', info).string();
+    new Validator('burningType', burningType).required().number();
+
+    const accountWallet = getAccountWallet(account, wallet);
+    return accountWallet.createAndSendBurningPegPRVRequestTx({
+      transfer: {
+        fee,
+        tokenID: tokenId,
+        prvPayments,
+        info,
+      },
+      extra: {
+        remoteAddress,
+        burnAmount,
+        txHashHandler,
+        burningType,
+        version,
+      },
+    });
+  }
+
   static async createPortalUnshieldRequest({
     wallet,
     account,
