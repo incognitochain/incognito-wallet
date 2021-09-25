@@ -17,7 +17,7 @@ import { CopyIcon, OpenUrlIcon } from '@src/components/Icons';
 import { Header } from '@src/components';
 import { withLayout_2 } from '@src/components/Layout';
 import { QrCodeAddressDefault } from '@src/components/QrCodeAddress';
-import { BtnChevron, BtnCopy } from '@src/components/Button';
+import { BtnChevron, BtnCopy, BtnResume } from '@src/components/Button';
 import HTML from 'react-native-render-html';
 import LinkingService from '@src/services/linking';
 import { ExHandler } from '@src/services/exception';
