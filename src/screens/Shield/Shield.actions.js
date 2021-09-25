@@ -57,7 +57,6 @@ export const actionGetAddressToShield = async ({
   selectedPrivacy,
   account,
   signPublicKeyEncode,
-  isETH,
 }) => {
   try {
     let generateResult = {};
@@ -74,7 +73,7 @@ export const actionGetAddressToShield = async ({
         currencyType: selectedPrivacy?.currencyType,
         signPublicKeyEncode,
       });
-    } else if (selectedPrivacy?.isErc20Token || (selectedPrivacy?.tokenId === PRV_ID && isETH)) {
+    } else if (selectedPrivacy?.isErc20Token || selectedPrivacy?.tokenId === PRV_ID) {
       let currencyType_ = selectedPrivacy?.currencyType;
       let tokenContractID_ = selectedPrivacy?.contractId;
       if (selectedPrivacy?.tokenId === PRV_ID) {
@@ -97,8 +96,7 @@ export const actionGetAddressToShield = async ({
     } else if (
       selectedPrivacy?.isBep20Token ||
       selectedPrivacy?.currencyType ===
-        CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.BSC_BNB ||
-      selectedPrivacy?.tokenId === PRV_ID
+        CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.BSC_BNB
     ) {
       generateResult = await genBSCDepositAddress({
         paymentAddress: account.PaymentAddress,
@@ -157,7 +155,7 @@ export const actionGetPRVBep20FeeToShield = (account, signPublicKeyEncode, selec
   );
 };
 
-export const actionFetch = ({ tokenId, selectedPrivacy, account, isETH = true }) => async (
+export const actionFetch = ({ tokenId, selectedPrivacy, account }) => async (
   dispatch,
   getState,
 ) => {
@@ -175,7 +173,6 @@ export const actionFetch = ({ tokenId, selectedPrivacy, account, isETH = true })
         selectedPrivacy,
         account,
         signPublicKeyEncode,
-        isETH,
       }),
     ]);
 

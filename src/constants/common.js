@@ -157,6 +157,8 @@ const PRIVATE_TOKEN_CURRENCY_TYPE = {
   DOT: 17,
 };
 
+const RESPONSE_PRV_TYPES = [271, 273];
+
 export default {
   // old varibles, maybe remove later
   STAKING_TYPES: {
@@ -289,4 +291,5 @@ export default {
     PRIVATE_TOKEN_CURRENCY_TYPE.BSC_BNB,
     PRIVATE_TOKEN_CURRENCY_TYPE.BSC_BEP20,
   ],
+  RESPONSE_PRV_TYPES,
 };

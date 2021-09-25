@@ -9,6 +9,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import format from '@src/utils/format';
 import { CONSTANT_CONFIGS, CONSTANT_COMMONS } from '@src/constants';
 import routeNames from '@src/router/routeNames';
+import { PRV_ID } from '@src/screens/DexV2/constants';
 
 const enhance = (WrappedComp) => (props) => {
   const [state, setState] = React.useState({
@@ -97,6 +98,33 @@ const enhance = (WrappedComp) => (props) => {
       link: info?.ownerWebsite,
     },
   ];
+
+  if (tokenId === PRV_ID) {
+    const tokenChildETH = selectedPrivacy?.listChildToken.find(
+      (x) =>
+        x.currencyType === CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.ERC20,
+    );
+    const tokenChildBSC = selectedPrivacy?.listChildToken.find(
+      (x) =>
+        x.currencyType ===
+        CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.BSC_BEP20,
+    );
+    if (tokenChildETH && tokenChildETH?.contractId) {
+      infosFactories.push({
+        label: 'ETH ID',
+        value: tokenChildETH?.contractId,
+        link: `${CONSTANT_CONFIGS.ETHERSCAN_URL}/token/${tokenChildETH?.contractId}`,
+      });
+    }
+
+    if (tokenChildBSC && tokenChildBSC?.contractId) {
+      infosFactories.push({
+        label: 'BSC ID',
+        value: tokenChildBSC?.contractId,
+        link: `${CONSTANT_CONFIGS.BSCSCAN_URL}/token/${tokenChildBSC?.contractId}`,
+      });
+    }
+  }
 
   const handleGetIncognitoTokenInfo = async () => {
     if (!tokenId) return;
