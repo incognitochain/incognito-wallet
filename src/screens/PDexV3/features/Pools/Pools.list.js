@@ -1,134 +1,75 @@
+import {FlatList} from '@src/components/core';
 import React from 'react';
+import {StyleSheet, View} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 import {
-  ActivityIndicator,
-  FlatList,
-  KeyboardAwareScrollView,
-  Text,
-} from '@src/components/core';
-import { BaseTextInputCustom } from '@src/components/core/BaseTextInput';
-import { FONT, COLORS } from '@src/styles';
-import { StyleSheet, View } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { Row } from '@src/components';
+  actionSetSearchText,
+  isFetchingSelector,
+  searchPoolSelector,
+} from '@screens/PDexV3/features/Pools';
 import Pool from '@screens/PDexV3/features/Pool';
 import PropTypes from 'prop-types';
-import { isFetchingSelector, listPoolsSelector } from './Pools.selector';
-import { actionFetchPools } from './Pools.actions';
-import { handleFilterPoolByKeySeach } from './Pools.utils';
+import {BaseTextInputCustom} from '@components/core/BaseTextInput';
+import {actionRefresh} from '@screens/PDexV3/features/Home';
+import { styled as generalStyled } from './Pools.styled';
 
 const styled = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 14
   },
-  headerText: {
-    fontSize: FONT.SIZE.small,
-    color: COLORS.colorGrey3,
-    fontFamily: FONT.NAME.medium,
-  },
+  input: {
+    height: 40,
+    marginBottom: 24
+  }
 });
 
-const HEADER_FACTORIES = [
-  {
-    text: '#Name / Vol',
-    style: {
-      flex: 0.7,
-      marginRight: 15,
-      justifyContent: 'flex-start',
-      alignItems: 'flex-start',
-    },
-  },
-  {
-    text: '#APY',
-    style: {
-      flex: 0.2,
-      justifyContent: 'flex-end',
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-      marginRight: 5,
-      textAlign: 'right',
-    },
-  },
-  {
-    text: ' ',
-    style: {
-      flex: 0.1,
-    },
-  },
-];
-
-export const PoolsListHeader = React.memo(() => {
-  return (
-    <Row style={{ marginVertical: 24 }}>
-      {HEADER_FACTORIES.map((item) => (
-        <Text key={item.text} style={{ ...styled.headerText, ...item.style }}>
-          {item.text}
-        </Text>
-      ))}
-    </Row>
-  );
-});
-
-export const PoolsList = React.memo(({ onPressPool, pools }) => {
+export const PoolsList = React.memo(({ onPressPool, poolIds }) => {
   const isFetching = useSelector(isFetchingSelector);
+  const dispatch = useDispatch();
   return (
-    <KeyboardAwareScrollView>
-      {isFetching && <ActivityIndicator />}
-      <FlatList
-        data={pools}
-        renderItem={({ item }) => (
-          <Pool
-            poolId={item.poolId}
-            onPressPool={() => onPressPool(item.poolId)}
-          />
-        )}
-        keyExtractor={({ poolId }) => poolId}
-        showsVerticalScrollIndicator={false}
-      />
-    </KeyboardAwareScrollView>
+    <FlatList
+      refreshing={isFetching}
+      onRefresh={() => {
+        dispatch(actionRefresh());
+      }}
+      data={poolIds}
+      renderItem={({ item }) => (
+        <Pool poolId={item} onPressPool={() => onPressPool(item)} />
+      )}
+      keyExtractor={(poolId) => poolId}
+      showsVerticalScrollIndicator={false}
+      style={generalStyled.listPools}
+    />
   );
 });
 
-const PoolsListContainer = (props) => {
-  const { onPressPool } = props;
+const PoolsListContainer = ({ onPressPool }) => {
   const dispatch = useDispatch();
-  const [text, setText] = React.useState(text);
-  const [pools, setPools] = React.useState([]);
-  const listPools = useSelector(listPoolsSelector);
-  const onChange = (text) => {
-    setText(text);
-    if (!text) {
-      return setPools(listPools);
-    }
-    const tokens = handleFilterPoolByKeySeach({
-      data: listPools,
-      keySearch: text,
-    });
-    setPools(tokens);
-  };
-  React.useEffect(() => {
-    setPools(listPools);
-    setText('');
-  }, [listPools]);
-  React.useEffect(() => {
-    dispatch(actionFetchPools());
-  }, []);
+  const poolIds = useSelector(searchPoolSelector);
   return (
     <View style={styled.container}>
       <BaseTextInputCustom
+        style={styled.input}
         inputProps={{
-          onChangeText: onChange,
+          onChangeText: (text) => {
+            dispatch(actionSetSearchText({ searchText: text }));
+          },
           placeholder: 'Search coins',
-          style: styled.input,
           autFocus: true,
         }}
       />
-      <PoolsListHeader />
-      <PoolsList onPressPool={onPressPool} pools={pools} />
+      <PoolsList onPressPool={onPressPool} poolIds={poolIds} />
     </View>
   );
 };
 
 PoolsList.propTypes = {
+  onPressPool: PropTypes.func.isRequired,
+  poolIds: PropTypes.array.isRequired,
+};
+
+PoolsListContainer.propTypes = {
   onPressPool: PropTypes.func.isRequired,
 };
 

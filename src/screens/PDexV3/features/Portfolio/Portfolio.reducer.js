@@ -13,7 +13,6 @@ const initialState = {
   data: [],
   shareDetails: [],
   modal: {
-    visible: false,
     poolId: undefined
   }
 };
@@ -52,7 +51,6 @@ export default (state = initialState, action) => {
     return {
       ...state,
       modal: {
-        visible: true,
         poolId
       }
     };
@@ -61,7 +59,6 @@ export default (state = initialState, action) => {
     return {
       ...state,
       modal: {
-        visible: false,
         poolId: undefined
       }
     };

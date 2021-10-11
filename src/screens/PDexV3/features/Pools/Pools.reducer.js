@@ -4,9 +4,8 @@ import {
   ACTION_FETCH_FAIL,
   ACTION_FETCHED_TRADING_VOLUME_24H,
   ACTION_FETCHED_LIST_POOLS,
-  ACTION_FETCHED_LIST_POOLS_DETAIL,
   ACTION_FETCHED_LIST_POOLS_FOLLOWING,
-  ACTION_FREE_LIST_POOL,
+  ACTION_FREE_LIST_POOL, ACTION_SET_SEARCH_TEXT,
 } from './Pools.constant';
 
 const initialState = {
@@ -15,8 +14,8 @@ const initialState = {
   tradingVolume24h: 0,
   pairID: undefined,
   listPools: [],
-  listPoolsFollowing: [],
-  followIds: []
+  followIds: [],
+  searchText: ''
 };
 
 export default (state = initialState, action) => {
@@ -60,17 +59,18 @@ export default (state = initialState, action) => {
       listPools: []
     };
   }
-  case ACTION_FETCHED_LIST_POOLS_DETAIL: {
-    return {
-      ...state,
-      listPoolsDetail: action.payload,
-    };
-  }
   case ACTION_FETCHED_LIST_POOLS_FOLLOWING: {
     const { followIds } = action.payload;
     return {
       ...state,
       followIds: followIds || [],
+    };
+  }
+  case ACTION_SET_SEARCH_TEXT: {
+    const { searchText } = action.payload;
+    return {
+      ...state,
+      searchText,
     };
   }
   default:

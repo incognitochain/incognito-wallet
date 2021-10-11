@@ -1,8 +1,8 @@
 import React, {memo} from 'react';
-import {RefreshControl, ScrollView, View} from 'react-native';
+import {RefreshControl, ScrollView, Text, View} from 'react-native';
 import PropTypes from 'prop-types';
 import {styled as mainStyle} from '@screens/PDexV3/PDexV3.styled';
-import {Header, RowSpaceText, SuccessModal} from '@src/components';
+import {Header, Row, RowSpaceText, SuccessModal} from '@src/components';
 import {
   LIQUIDITY_MESSAGES,
   formConfigsContribute,
@@ -19,6 +19,8 @@ import {ButtonTrade} from '@components/Button';
 import {NFTTokenBottomBar} from '@screens/PDexV3/features/NFTToken';
 import {compose} from 'recompose';
 import withTransaction from '@screens/PDexV3/features/Liquidity/Liquidity.enhanceTransaction';
+import {MaxIcon} from '@components/Icons';
+import LPHistoryIcon from '@screens/PDexV3/features/Liquidity/Liquidity.iconHistory';
 
 const initialFormValues = {
   inputToken: '',
@@ -31,13 +33,12 @@ const Form = createForm(formConfigsContribute.formName, {
   enableReinitialize: true,
 });
 
-const InputsGroup = () => {
+const InputsGroup = React.memo(() => {
   const dispatch = useDispatch();
   const { inputToken, outputToken } = useSelector(contributeSelector.mappingDataSelector);
   const onChangeInput = (newText) => dispatch(liquidityActions.actionChangeInputContribute(newText));
   const onChangeOutput = (newText) => dispatch(liquidityActions.actionChangeOutputContribute(newText));
-  const onMaxInput = (newText) => dispatch(liquidityActions.actionChangeInputContribute(newText));
-  const onMaxOutput = (newText) => dispatch(liquidityActions.actionChangeOutputContribute(newText));
+  const onMaxInput = () => dispatch(liquidityActions.actionChangeInputContribute(inputAmount.maxOriginalAmountText));
   const amountSelector = useSelector(contributeSelector.inputAmountSelector);
   const inputAmount = amountSelector(formConfigsContribute.formName, formConfigsContribute.inputToken);
   const outputAmount = amountSelector(formConfigsContribute.formName, formConfigsContribute.outputToken);
@@ -48,39 +49,57 @@ const InputsGroup = () => {
     return outputAmount.error;
   }, [outputAmount.error]);
   return (
-    <View style={styled.wrapInput}>
-      <Field
-        component={TradeInputAmount}
-        name={formConfigsContribute.inputToken}
-        hasInfinityIcon={inputAmount.maxOriginalAmount}
-        symbol={inputToken && inputToken?.symbol}
-        validate={[
-          _validateInput,
-          ...validator.combinedAmount,
-        ]}
-        onChange={onChangeInput}
-        editableInput={!inputAmount.loadingBalance}
-        loadingBalance={inputAmount.loadingBalance}
-        onPressInfinityIcon={() => onMaxInput(inputAmount.maxOriginalAmountText)}
-      />
-      <AddBreakLine />
-      <Field
-        component={TradeInputAmount}
-        name={formConfigsContribute.outputToken}
-        hasInfinityIcon={outputAmount.maxOriginalAmount}
-        symbol={outputToken && outputToken?.symbol}
-        validate={[
-          _validateOutput,
-          ...validator.combinedAmount,
-        ]}
-        onChange={onChangeOutput}
-        editableInput={!outputAmount.loadingBalance}
-        loadingBalance={outputAmount.loadingBalance}
-        onPressInfinityIcon={() => onMaxOutput(outputAmount.maxOriginalAmountText)}
-      />
-    </View>
+    <>
+      <Row centerVertical spaceBetween style={[styled.padding, styled.headerBox]}>
+        {(!!inputToken && !!outputToken) && (<Text style={styled.mediumText}>{`${inputToken.symbol} / ${outputToken.symbol}`}</Text>)}
+        <LPHistoryIcon />
+      </Row>
+      <View style={styled.inputBox}>
+        <Field
+          component={TradeInputAmount}
+          name={formConfigsContribute.inputToken}
+          symbol={inputToken && inputToken?.symbol}
+          srcIcon={inputToken && inputToken?.iconUrl}
+          validate={[
+            _validateInput,
+            ...validator.combinedAmount,
+          ]}
+          visibleHeader
+          label="Amount"
+          onChange={onChangeInput}
+          editableInput={!inputAmount.loadingBalance}
+          loadingBalance={inputAmount.loadingBalance}
+          rightHeader={((!!inputAmount && !!inputAmount.balanceStr)) && (
+            <Row centerVertical>
+              <Text style={styled.balanceStr}>{`Balance: ${inputAmount?.balanceStr}`}</Text>
+              <MaxIcon onPress={onMaxInput} />
+            </Row>
+          )}
+        />
+        <AddBreakLine />
+        <Field
+          component={TradeInputAmount}
+          name={formConfigsContribute.outputToken}
+          hasInfinityIcon={outputAmount.maxOriginalAmount}
+          symbol={outputToken && outputToken?.symbol}
+          srcIcon={outputToken && outputToken?.iconUrl}
+          validate={[
+            _validateOutput,
+            ...validator.combinedAmount,
+          ]}
+          visibleHeader
+          label="Amount"
+          onChange={onChangeOutput}
+          editableInput={!outputAmount.loadingBalance}
+          loadingBalance={outputAmount.loadingBalance}
+          rightHeader={(!!outputAmount && !!outputAmount?.balanceStr) && (
+            <Text style={styled.balanceStr}>{`Balance: ${outputAmount?.balanceStr}`}</Text>
+          )}
+        />
+      </View>
+    </>
   );
-};
+});
 
 export const Extra = React.memo(() => {
   const data = useSelector(contributeSelector.mappingDataSelector);
@@ -148,8 +167,8 @@ const Contribute = ({
   }, []);
   return (
     <>
-      <View style={mainStyle.container}>
-        <Header title={LIQUIDITY_MESSAGES.addLiquidity} />
+      <View style={styled.container}>
+        <Header style={styled.padding} title={LIQUIDITY_MESSAGES.addLiquidity} />
         <ScrollView
           refreshControl={(<RefreshControl refreshing={isFetching} onRefresh={onInitContribute} />)}
           showsVerticalScrollIndicator={false}
@@ -158,8 +177,10 @@ const Contribute = ({
             {() => (
               <>
                 <InputsGroup />
-                <ContributeButton onSubmit={onSubmit} />
-                <Extra />
+                <View style={styled.padding}>
+                  <ContributeButton onSubmit={onSubmit} />
+                  <Extra />
+                </View>
               </>
             )}
           </Form>

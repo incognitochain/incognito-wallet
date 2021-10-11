@@ -4,49 +4,42 @@ import {
   View,
   ScrollView,
   Text,
-  SafeAreaView
 } from 'react-native';
-import {COLORS} from '@src/styles';
+import {COLORS, FONT} from '@src/styles';
 import {batch, useDispatch, useSelector} from 'react-redux';
-import {getDataShareByPoolIdSelector, modalDataSelector} from '@screens/PDexV3/features/Portfolio/Portfolio.selector';
-import {actionFreeModal} from '@screens/PDexV3/features/Portfolio/Portfolio.actions';
-import Modal from 'react-native-modal';
+import {getDataShareByPoolIdSelector} from '@screens/PDexV3/features/Portfolio/Portfolio.selector';
 import {Hook} from '@screens/Wallet/features/TxHistoryDetail/TxHistoryDetail';
-import TextStyle, {FontStyle} from '@src/styles/TextStyle';
-import {ButtonTrade, ButtonTrade1} from '@components/Button';
 import {liquidityActions} from '@screens/PDexV3/features/Liquidity';
 import {useNavigation} from 'react-navigation-hooks';
 import routeNames from '@routers/routeNames';
 import {Row} from '@src/components';
-import {portfolioItemStyled as styled} from '@screens/PDexV3/features/Portfolio/Portfolio.styled';
+import {actionToggleModal} from '@components/Modal';
+import {BTNBorder, BTNPrimary} from '@components/core/Button';
+import PropTypes from 'prop-types';
 
 const styles = StyleSheet.create({
-  view: {
-    justifyContent: 'flex-end',
-    margin: 0,
+  wrapper: {
+    flex: 1
   },
   content: {
-    backgroundColor: COLORS.white,
-    height: '60%',
-    width: '100%',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingHorizontal: 20,
+    flex: 1
   },
   title: {
-    lineHeight: 60,
-    ...TextStyle.bigText,
-    ...FontStyle.bold,
+    ...FONT.STYLE.medium,
+    fontSize: FONT.SIZE.medium,
+    lineHeight: FONT.SIZE.medium + 9,
     color: '#101111',
   },
   btnText: {
-    color: COLORS.lightGrey31,
-    fontSize: 14
+    ...FONT.STYLE.medium,
+    color: COLORS.lightGrey34,
+    fontSize: FONT.SIZE.small,
   },
   btnSmall: {
     height: 28,
     width: 89,
     marginLeft: 5,
+    backgroundColor: COLORS.lightGrey19
   },
   row: {
     alignItems: 'center',
@@ -54,12 +47,11 @@ const styles = StyleSheet.create({
   }
 });
 
-const PortfolioModal = () => {
+const PortfolioModal = ({ poolId, onWithdrawFeeLP }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const { visible, poolId } = useSelector(modalDataSelector);
   const data = useSelector(getDataShareByPoolIdSelector)(poolId);
-  const onClose = () => dispatch(actionFreeModal());
+  const onClose = () => dispatch(actionToggleModal());
   const onWithdrawPress = () => {
     batch(() => {
       onClose();
@@ -75,22 +67,23 @@ const PortfolioModal = () => {
       navigation.navigate(routeNames.ContributePool);
     });
   };
+  const onClaimReward = () => {
+    onClose();
+    setTimeout(() => {
+      onWithdrawFeeLP(poolId);
+    }, 500);
+  };
   if (!data) return null;
   const { hookFactoriesDetail, token1, token2 } = data || {};
-
   return (
-    <Modal
-      isVisible={visible}
-      onBackdropPress={onClose}
-      style={styles.view}
-    >
+    <View style={styles.wrapper}>
       <View style={styles.content}>
-        <Row style={styles.row}>
+        <Row style={styles.row} centerVertical>
           <Text style={styles.title}>{`${token1.symbol} / ${token2.symbol}`}</Text>
-          <ButtonTrade1
+          <BTNPrimary
             title="Withdraw"
-            titleStyle={styles.btnText}
-            btnStyle={styles.btnSmall}
+            textStyle={styles.btnText}
+            wrapperStyle={styles.btnSmall}
             onPress={onWithdrawPress}
           />
         </Row>
@@ -99,15 +92,29 @@ const PortfolioModal = () => {
             <Hook key={hook?.label} {...hook} />
           ))}
         </ScrollView>
-        <SafeAreaView>
-          <ButtonTrade
+        <Row spaceBetween>
+          <BTNBorder
+            title="Claim"
+            onPress={onClaimReward}
+            wrapperStyle={{flex: 1, marginRight: 4}}
+            textStyle={{color: COLORS.colorBlue}}
+            background={COLORS.colorBlue}
+          />
+          <BTNPrimary
             title="Invest more"
             onPress={onInvestPress}
+            wrapperStyle={{flex: 1, marginLeft: 4}}
+            background={COLORS.colorBlue}
           />
-        </SafeAreaView>
+        </Row>
       </View>
-    </Modal>
+    </View>
   );
+};
+
+PortfolioModal.propTypes = {
+  poolId: PropTypes.string.isRequired,
+  onWithdrawFeeLP: PropTypes.func.isRequired
 };
 
 export default memo(PortfolioModal);

@@ -1,19 +1,18 @@
 import { Row } from '@src/components';
-import { TokenVerifiedIcon } from '@src/components/Icons';
+import {StarStrokeIcon, TokenVerifiedIcon, StarFillIcon} from '@src/components/Icons';
 import React from 'react';
 import { View, Text } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   actionToggleFollowingPool,
   getDataByPoolIdSelector,
 } from '@screens/PDexV3/features/Pools';
 import PropTypes from 'prop-types';
 import { TouchableOpacity } from '@src/components/core';
-import { BtnStar } from '@src/components/Button';
 import { styled } from './Pool.styled';
 
-export const PoolItem = React.memo((props) => {
-  const { poolId, onPressPool, checkFollow, style } = props;
+export const PoolItem = React.memo(({ poolId, onPressPool, style }) => {
+  const dispatch = useDispatch();
   const data = useSelector(getDataByPoolIdSelector)(poolId);
   if (!data) {
     return null;
@@ -21,75 +20,48 @@ export const PoolItem = React.memo((props) => {
   const {
     isVerify,
     apy,
-    volumeToAmountStr,
+    volumeToAmount,
     isFollowed,
     poolTitle,
-    ampStr,
-    apyStr,
-    priceChangeToAmountStr,
   } = data || {};
-
-  const dispatch = useDispatch();
-  const handleToggleFollowingPool = () =>
-    dispatch(actionToggleFollowingPool(poolId));
   return (
     <TouchableOpacity
       onPress={() => typeof onPressPool === 'function' && onPressPool(poolId)}
       style={[styled.container, style]}
     >
-      <Row>
-        <View style={styled.block1}>
+      <Row spaceBetween>
+        <View style={styled.wrapperFirstSection}>
           <Row style={styled.rowName}>
-            <Text style={styled.name}>{poolTitle}</Text>
+            <Text style={styled.name}>
+              {poolTitle}
+            </Text>
             {!!isVerify && <TokenVerifiedIcon />}
           </Row>
-          <Text style={styled.subText}>{`Vol: ${volumeToAmountStr}`}</Text>
-          <Text style={styled.subText}>{`AMP: ${ampStr}`}</Text>
+          <Text style={styled.subText}>{`Vol: ${volumeToAmount}$`}</Text>
         </View>
-        <View style={styled.block2}>
-          <Text style={styled.subText}> {apyStr}</Text>
-          <Text style={styled.subText}> {priceChangeToAmountStr}</Text>
+        <View style={styled.wrapperSecondSection}>
+          <Text style={styled.apy}>{`${apy}%`}</Text>
         </View>
-        <View style={styled.block3}>
-          <BtnStar onPress={handleToggleFollowingPool} isBlue={isFollowed} />
-        </View>
+        <TouchableOpacity
+          style={styled.wrapperThirdSection}
+          onPress={() => dispatch(actionToggleFollowingPool(poolId))}
+        >
+          {isFollowed ? (<StarFillIcon />) : (<StarStrokeIcon />)}
+        </TouchableOpacity>
       </Row>
     </TouchableOpacity>
   );
 });
 
-const Pool = (props) => {
-  const { poolId, swipable, onPressPool, checkFollow } = props;
-  const dispatch = useDispatch();
-  if (!poolId) {
-    return null;
-  }
-  return <PoolItem poolId={poolId} onPressPool={onPressPool} />;
-};
-
-Pool.defaultProps = {
-  onPressPool: null,
-  checkFollow: true,
-};
-
-Pool.propTypes = {
-  poolId: PropTypes.string.isRequired,
-  swipable: PropTypes.bool.isRequired,
-  onPressPool: PropTypes.func,
-  checkFollow: PropTypes.bool,
-};
-
 PoolItem.defaultProps = {
   onPressPool: null,
-  checkFollow: true,
   style: null,
 };
 
 PoolItem.propTypes = {
   poolId: PropTypes.string.isRequired,
   onPressPool: PropTypes.func,
-  checkFollow: PropTypes.bool,
   style: PropTypes.object,
 };
 
-export default React.memo(Pool);
+export default React.memo(PoolItem);

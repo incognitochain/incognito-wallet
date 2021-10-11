@@ -8,6 +8,7 @@ import routeNames from '@routers/routeNames';
 import styled from '@screens/PDexV3/features/LiquidityHistories/LiquidityHistories.styled';
 import isEmpty from 'lodash/isEmpty';
 import {ActivityIndicator} from '@components/core';
+import {EmptyBookIcon} from '@components/Icons';
 
 const Item = React.memo(({ history, isLast }) => {
   const navigation = useNavigation();
@@ -39,6 +40,9 @@ const Contribute = () => {
           keyExtractor={(item) => item.key}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
+          ListEmptyComponent={
+            <EmptyBookIcon message="Your history is empty" />
+          }
         />
       </View>
     );

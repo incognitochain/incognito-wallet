@@ -94,7 +94,7 @@ export const coinStyles = StyleSheet.create({
     lineHeight: FONT.SIZE.regular + 8,
   },
   wrapInput: {
-    backgroundColor: '#F7F7F7',
+    backgroundColor: COLORS.colorGrey4,
     height: 50,
     paddingHorizontal: 8,
     borderRadius: 4

@@ -2,7 +2,9 @@ import { StyleSheet } from 'react-native';
 import { COLORS, FONT } from '@src/styles';
 
 export const styled = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+  },
   list: {
     paddingBottom: 50,
   },
@@ -10,7 +12,9 @@ export const styled = StyleSheet.create({
 
 export const portfolioItemStyled = StyleSheet.create({
   container: {
-    marginBottom: 20,
+    paddingVertical: 16,
+    borderBottomColor: COLORS.colorGrey4,
+    borderBottomWidth: 1
   },
   hookContainer: {
     justifyContent: 'space-between',
@@ -31,13 +35,13 @@ export const portfolioItemStyled = StyleSheet.create({
   },
   extraContainer: {
     justifyContent: 'space-between',
-    marginBottom: 18,
+    marginBottom: 8,
     alignItems: 'center',
   },
   extraLabel: {
-    fontFamily: FONT.NAME.bold,
-    fontSize: FONT.SIZE.superMedium + 1,
-    lineHeight: FONT.SIZE.superMedium + 4,
+    fontFamily: FONT.NAME.medium,
+    fontSize: FONT.SIZE.medium,
+    lineHeight: FONT.SIZE.medium + 9,
     color: COLORS.black,
   },
   btnSmall: {

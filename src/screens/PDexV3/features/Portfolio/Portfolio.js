@@ -1,23 +1,24 @@
 import { FlatList } from '@src/components/core/FlatList';
 import React from 'react';
 import { View } from 'react-native';
-import { useSelector } from 'react-redux';
-import HomeTabHeader from '@screens/PDexV3/features/Home/Home.tabHeader';
-import {LoadingContainer} from '@components/core';
-import Empty from '@components/Empty';
+import {useDispatch, useSelector} from 'react-redux';
 import PortfolioModal from '@screens/PDexV3/features/Portfolio/Portfolio.detail';
 import withTransaction from '@screens/PDexV3/features/Liquidity/Liquidity.enhanceTransaction';
 import {ACCOUNT_CONSTANT} from 'incognito-chain-web-js/build/wallet';
+import {RefreshControl} from '@components/core';
+import {actionFetch} from '@screens/PDexV3/features/Portfolio/Portfolio.actions';
+import {EmptyBookIcon} from '@components/Icons';
 import {
   getDataShareByPoolIdSelector,
   isFetchingSelector,
   listShareIDsSelector,
-  totalShareSelector
 } from './Portfolio.selector';
 import { styled } from './Portfolio.styled';
 import PortfolioItem from './Portfolio.item';
 
 const PortfolioList = withTransaction(React.memo(({ onCreateWithdrawFeeLP }) => {
+  const isFetching = useSelector(isFetchingSelector);
+  const dispatch = useDispatch();
   const data = useSelector(listShareIDsSelector);
   const getDataShare = useSelector(getDataShareByPoolIdSelector);
   const onWithdrawFeeLP = (poolId) => {
@@ -37,23 +38,32 @@ const PortfolioList = withTransaction(React.memo(({ onCreateWithdrawFeeLP }) => 
   return (
     <FlatList
       data={data}
-      renderItem={({ item }) => <PortfolioItem shareId={item} onWithdrawFeeLP={onWithdrawFeeLP} />}
+      refreshControl={
+        <RefreshControl refreshing={isFetching} onRefresh={() => dispatch(actionFetch())} />
+      }
+      renderItem={({ item, index }) => (
+        <PortfolioItem
+          shareId={item}
+          onWithdrawFeeLP={onWithdrawFeeLP}
+          isLast={index === data.length - 1}
+        />
+      )}
       keyExtractor={(item) => item?.shareId}
       showsVerticalScrollIndicator={false}
-      ListEmptyComponent={<Empty />}
+      contentContainerStyle={{ flexGrow: 1 }}
+      ListEmptyComponent={
+        <EmptyBookIcon message="Your portfolio is empty" />
+      }
       style={styled.list}
     />
   );
 }));
 
 const Portfolio = () => {
-  const totalShare = useSelector(totalShareSelector);
-  const isFetching = useSelector(isFetchingSelector);
   return (
     <>
       <View style={styled.container}>
-        <HomeTabHeader title="Your return" desc={`$${totalShare}`} />
-        {isFetching ? (<LoadingContainer />) : (<PortfolioList />)}
+        <PortfolioList />
       </View>
       <PortfolioModal />
     </>

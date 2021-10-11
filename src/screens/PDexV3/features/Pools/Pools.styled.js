@@ -49,10 +49,10 @@ export const poolsListHeaderFollowingStyled = StyleSheet.create({
     textAlign: 'right',
   },
   wrapperFirstSection: {
-    flex: 0.5,
+    flex: 0.7,
   },
   wrapperSecondSection: {
-    flex: 0.2,
+    flex: 0.3,
   },
   wrapperThirdSection: {
     flex: 0.3,

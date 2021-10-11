@@ -40,7 +40,7 @@ export const BTNBorder = React.memo(({
       style={[
         styled.wrapper,
         styled.border,
-        background && { backgroundColor: background },
+        background && { borderColor: background },
         { opacity: disabled ? 0.5 : 1 },
         wrapperStyle
       ]}

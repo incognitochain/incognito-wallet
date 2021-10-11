@@ -61,14 +61,8 @@ export const shareDataSelector = createSelector(
     if (!shareData) return {};
     const { nftId } = shareData;
     const tokens = uniqBy([inputToken, outputToken, feeToken], (token) => token.tokenId);
-    const hookFactories = tokens.map((token) => ({
-      label: `${token.symbol} Balance`,
-      value: `${format.amountFull(token.amount, token.pDecimals)}`,
-      loading: isGettingBalance.includes(token?.tokenId)
-    }));
     return {
       ...shareData,
-      hookFactories,
       nftId,
     };
   }

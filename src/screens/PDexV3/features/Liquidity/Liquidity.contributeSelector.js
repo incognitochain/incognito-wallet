@@ -75,13 +75,8 @@ export const mappingDataSelector = createSelector(
       || isGettingBalance.includes(outputToken?.tokenId)
       || isGettingBalance.includes(feeToken?.tokenId);
     const tokens = uniqBy([inputToken, outputToken, feeToken], (token) => token.tokenId);
-    const hookBalances = tokens.map((token) => ({
-      label: `${token.symbol} Balance`,
-      value: `${format.amount(token.amount, token.pDecimals)}`,
-      loading: isGettingBalance.includes(token?.tokenId)
-    }));
+
     const hookFactories = [
-      ...hookBalances,
       {
         label: 'Fee',
         value: `${format.amount(feeAmount, feeToken.pDecimals)} ${feeToken.symbol}`,

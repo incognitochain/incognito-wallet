@@ -33,6 +33,7 @@ const ModalBottomSheet = ({
   headerView,
   contentView,
   customContent,
+  style,
 }) => {
   const [isKeyboardVisible] = useKeyboard();
   return (
@@ -40,6 +41,7 @@ const ModalBottomSheet = ({
       style={{
         ...styles.container,
         ...(isKeyboardVisible ? { height: '80%' } : {}),
+        ...style,
       }}
     >
       <SafeAreaView style={styles.safeScreen}>
@@ -62,6 +64,7 @@ ModalBottomSheet.defaultProps = {
   customContent: undefined,
   headerView: undefined,
   contentView: undefined,
+  style: {},
 };
 
 ModalBottomSheet.propTypes = {
@@ -69,6 +72,7 @@ ModalBottomSheet.propTypes = {
   customContent: PropTypes.any,
   headerView: PropTypes.any,
   contentView: PropTypes.any,
+  style: PropTypes.any,
 };
 
 export default memo(ModalBottomSheet);

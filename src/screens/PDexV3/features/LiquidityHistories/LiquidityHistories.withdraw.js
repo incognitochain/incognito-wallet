@@ -6,9 +6,9 @@ import styled from '@screens/PDexV3/features/LiquidityHistories/LiquidityHistori
 import {useSelector} from 'react-redux';
 import {liquidityHistorySelector} from '@screens/PDexV3/features/LiquidityHistories/index';
 import PropTypes from 'prop-types';
-import Empty from '@components/Empty';
 import isEmpty from 'lodash/isEmpty';
 import {ActivityIndicator} from '@components/core';
+import {EmptyBookIcon} from '@components/Icons';
 
 const Item = React.memo(({ history, isLast }) => {
   const navigation = useNavigation();
@@ -35,14 +35,17 @@ const RemoveLP = () => {
   const renderContent = () => {
     if (isEmpty(histories) && isFetching) return <View style={{ marginTop: 25 }}><ActivityIndicator /></View>;
     return (
-      <View style={{ paddingTop: 20 }}>
+      <View style={{ paddingTop: 20, flex: 1 }}>
         <FlatList
           data={histories}
           renderItem={renderItem}
           keyExtractor={(item) => item.key}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
-          ListEmptyComponent={<Empty />}
+          contentContainerStyle={{ flexGrow: 1 }}
+          ListEmptyComponent={
+            <EmptyBookIcon message="Your history is empty" />
+          }
         />
       </View>
     );

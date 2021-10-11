@@ -61,6 +61,7 @@ export const getInputAmount = (
       tokenId: token.tokenId,
       symbol: token.symbol,
       pDecimals: token.pDecimals,
+      iconUrl: token.iconUrl,
 
       originalInputAmount,
       inputAmountStr,
@@ -70,7 +71,7 @@ export const getInputAmount = (
 
       loadingBalance: isGettingBalance.includes(token.tokenId),
       balance: token.amount,
-      balanceStr: format.amountFull(token.amount, token.pDecimals, false),
+      balanceStr: format.amountFull(token.amount, token.pDecimals, false).toString(),
       error,
     };
   } catch (error) {

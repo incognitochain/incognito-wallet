@@ -1,8 +1,8 @@
 import React, {memo} from 'react';
-import {RefreshControl, ScrollView, View} from 'react-native';
+import {RefreshControl, ScrollView, Text, View} from 'react-native';
 import PropTypes from 'prop-types';
 import {styled as mainStyle} from '@screens/PDexV3/PDexV3.styled';
-import {Header, RowSpaceText, SuccessModal} from '@src/components';
+import {Header, Row, RowSpaceText, SuccessModal} from '@src/components';
 import {
   LIQUIDITY_MESSAGES,
   formConfigsCreatePool,
@@ -15,12 +15,15 @@ import {change, Field} from 'redux-form';
 import withLiquidity from '@screens/PDexV3/features/Liquidity/Liquidity.enhance';
 import {createPoolSelector, liquidityActions} from '@screens/PDexV3/features/Liquidity';
 import styled from '@screens/PDexV3/features/Liquidity/Liquidity.styled';
-import {useNavigation} from 'react-navigation-hooks';
-import routeNames from '@routers/routeNames';
 import {ButtonTrade} from '@components/Button';
 import {compose} from 'recompose';
 import withTransaction from '@screens/PDexV3/features/Liquidity/Liquidity.enhanceTransaction';
 import {NFTTokenBottomBar} from '@screens/PDexV3/features/NFTToken';
+import LPHistoryIcon from '@screens/PDexV3/features/Liquidity/Liquidity.iconHistory';
+import {actionToggleModal} from '@components/Modal';
+import ModalBottomSheet from '@components/Modal/features/ModalBottomSheet';
+import {SelectTokenModal} from '@screens/PDexV3/features/SelectToken';
+import {MaxIcon} from '@components/Icons';
 
 const initialFormValues = {
   inputToken: '',
@@ -34,7 +37,6 @@ const Form = createForm(formConfigsCreatePool.formName, {
 });
 
 const InputsGroup = () => {
-  const navigation = useNavigation();
   const dispatch = useDispatch();
   const inputAmount = useSelector(createPoolSelector.inputAmountSelector);
   const inputTokens = useSelector(createPoolSelector.inputTokensListSelector);
@@ -69,6 +71,25 @@ const InputsGroup = () => {
     output: outputToken.loadingBalance || (isTyping && focusField === formConfigsCreatePool.outputToken),
   }), [focusField, isTyping, inputToken.loadingBalance, outputToken.loadingBalance]);
 
+  const onSelectSymbol = (callback, tokens) =>
+    dispatch(
+      actionToggleModal({
+        visible: true,
+        shouldCloseModalWhenTapOverlay: true,
+        data: (
+          <ModalBottomSheet
+            style={{ height: '80%' }}
+            customContent={(
+              <SelectTokenModal
+                data={tokens}
+                onPress={(token) => callback(token.tokenId)}
+              />
+            )}
+          />
+        ),
+      }),
+    );
+
   React.useEffect(() => {
     onGetRate();
   }, [
@@ -79,69 +100,88 @@ const InputsGroup = () => {
   ]);
 
   return (
-    <View style={styled.wrapInput}>
-      <Field
-        component={TradeInputAmount}
-        name={formConfigsCreatePool.inputToken}
-        hasInfinityIcon
-        canSelectSymbol
-        symbol={inputToken && inputToken?.symbol}
-        validate={[
-          _validateInput,
-          ...validator.combinedAmount,
-        ]}
-        onFocus={(e) => onFocusToken(e, formConfigsCreatePool.inputToken)}
-        onChange={onChangeText}
-        editableInput={!inputToken.loadingBalance}
-        loadingBalance={loading.input}
-        onPressSymbol={() => {
-          if (loading.input) return;
-          navigation.navigate(routeNames.SelectTokenTrade, {
-            data: inputTokens,
-            onSelectToken: ((token) => {
+    <>
+      <Row centerVertical spaceBetween style={[styled.padding, styled.headerBox]}>
+        {
+          (!!inputToken.symbol && !!outputToken.symbol)
+          && (<Text style={styled.mediumText}>{`${inputToken.symbol} / ${outputToken.symbol}`}</Text>)
+        }
+        <LPHistoryIcon />
+      </Row>
+      <View style={styled.inputBox}>
+        <Field
+          component={TradeInputAmount}
+          name={formConfigsCreatePool.inputToken}
+          canSelectSymbol
+          visibleHeader
+          label="Amount"
+          symbol={inputToken && inputToken?.symbol}
+          validate={[
+            _validateInput,
+            ...validator.combinedAmount,
+          ]}
+          srcIcon={inputToken && inputToken?.iconUrl}
+          onFocus={(e) => onFocusToken(e, formConfigsCreatePool.inputToken)}
+          onChange={onChangeText}
+          editableInput={!inputToken.loadingBalance}
+          loadingBalance={loading.input}
+          onPressSymbol={() => {
+            if (loading.input) return;
+            onSelectSymbol(((tokenId) => {
               batch(() => {
-                dispatch(liquidityActions.actionUpdateCreatePoolInputToken(token.tokenId));
-                navigation.navigate(routeNames.CreatePool);
+                dispatch(liquidityActions.actionUpdateCreatePoolInputToken(tokenId));
+                dispatch(actionToggleModal());
               });
-            }),
-          });
-        }}
-        onPressInfinityIcon={() => {
-          dispatch(change(formConfigsCreatePool.formName, formConfigsCreatePool.inputToken, inputToken.maxOriginalAmountText));
-        }}
-      />
-      <AddBreakLine />
-      <Field
-        component={TradeInputAmount}
-        name={formConfigsCreatePool.outputToken}
-        hasInfinityIcon
-        canSelectSymbol
-        symbol={outputToken && outputToken?.symbol}
-        validate={[
-          _validateOutput,
-          ...validator.combinedAmount,
-        ]}
-        onChange={onChangeText}
-        editableInput={!outputToken.loadingBalance}
-        loadingBalance={loading.output}
-        onPressSymbol={() => {
-          if (loading.output) return;
-          navigation.navigate(routeNames.SelectTokenTrade, {
-            data: outputTokens,
-            onSelectToken: ((token) => {
+            }), inputTokens);
+          }}
+          rightHeader={(!!outputToken && !!outputToken?.balanceStr) && (
+            <Row centerVertical>
+              <Text style={styled.balanceStr}>{`Balance: ${inputToken?.balanceStr}`}</Text>
+              <MaxIcon onPress={() => {
+                dispatch(change(formConfigsCreatePool.formName, formConfigsCreatePool.inputToken, inputToken.maxOriginalAmountText));
+              }}
+              />
+            </Row>
+          )}
+        />
+        <AddBreakLine />
+        <Field
+          component={TradeInputAmount}
+          name={formConfigsCreatePool.outputToken}
+          canSelectSymbol
+          visibleHeader
+          label="Amount"
+          symbol={outputToken && outputToken?.symbol}
+          validate={[
+            _validateOutput,
+            ...validator.combinedAmount,
+          ]}
+          srcIcon={outputToken && outputToken?.iconUrl}
+          onChange={onChangeText}
+          editableInput={!outputToken.loadingBalance}
+          loadingBalance={loading.output}
+          onPressSymbol={() => {
+            if (loading.output) return;
+            onSelectSymbol(((tokenId) => {
               batch(() => {
-                dispatch(liquidityActions.actionUpdateCreatePoolOutputToken(token.tokenId));
-                navigation.navigate(routeNames.CreatePool);
+                dispatch(liquidityActions.actionUpdateCreatePoolOutputToken(tokenId));
+                dispatch(actionToggleModal());
               });
-            }),
-          });
-        }}
-        onPressInfinityIcon={() => {
-          dispatch(change(formConfigsCreatePool.formName, formConfigsCreatePool.outputToken, outputToken.maxOriginalAmountText));
-        }}
-        onFocus={(e) => onFocusToken(e, formConfigsCreatePool.outputToken)}
-      />
-    </View>
+            }), outputTokens);
+          }}
+          onFocus={(e) => onFocusToken(e, formConfigsCreatePool.outputToken)}
+          rightHeader={(!!outputToken && !!outputToken?.balanceStr) && (
+            <Row centerVertical>
+              <Text style={styled.balanceStr}>{`Balance: ${outputToken?.balanceStr}`}</Text>
+              <MaxIcon onPress={() => (
+                dispatch(change(formConfigsCreatePool.formName, formConfigsCreatePool.outputToken, outputToken.maxOriginalAmountText))
+              )}
+              />
+            </Row>
+          )}
+        />
+      </View>
+    </>
   );
 };
 
@@ -206,8 +246,10 @@ const CreatePool = ({
   const renderContent = () => (
     <>
       <InputsGroup />
-      <ButtonCreatePool onSubmit={onSubmit} />
-      <Extra />
+      <View style={styled.padding}>
+        <ButtonCreatePool onSubmit={onSubmit} />
+        <Extra />
+      </View>
     </>
   );
   React.useEffect(() => {
@@ -216,8 +258,8 @@ const CreatePool = ({
   }, []);
   return (
     <>
-      <View style={mainStyle.container}>
-        <Header title={LIQUIDITY_MESSAGES.createPool} />
+      <View style={styled.container}>
+        <Header style={styled.padding} title={LIQUIDITY_MESSAGES.createPool} />
         <ScrollView
           refreshControl={(<RefreshControl refreshing={isFetching} onRefresh={onInitCreatePool} />)}
           showsVerticalScrollIndicator={false}

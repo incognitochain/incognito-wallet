@@ -1,6 +1,7 @@
 import { COLORS } from '@src/styles';
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
 import ButtonBasic from './ButtonBasic';
 
 const styled = StyleSheet.create({
@@ -15,11 +16,21 @@ const styled = StyleSheet.create({
 const ButtonTrade1 = React.memo(({ btnStyle, titleStyle, ...rest }) => {
   return (
     <ButtonBasic
-      btnStyle={[btnStyle, styled.btnStyle]}
+      btnStyle={[styled.btnStyle, btnStyle]}
       titleStyle={[styled.titleStyle, titleStyle]}
       {...rest}
     />
   );
 });
+
+ButtonTrade1.defaultProps = {
+  btnStyle: undefined,
+  titleStyle: undefined
+};
+
+ButtonTrade1.propTypes = {
+  btnStyle: PropTypes.any,
+  titleStyle: PropTypes.any,
+};
 
 export default ButtonTrade1;

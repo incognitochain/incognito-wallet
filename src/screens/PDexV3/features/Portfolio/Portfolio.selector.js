@@ -67,26 +67,12 @@ export const listShareSelector = createSelector(
       const rewardStr = getReward(token1, token2, token1Reward, token2Reward);
       const hookFactories = [
         {
-          label: 'APY',
-          value: `${apy}%`,
-        },
-        {
           label: 'Principal',
           value: principalStr,
         },
         {
-          label: 'Share',
-          value: shareStr,
-        },
-        {
           label: 'Reward',
           value: rewardStr,
-          isClaimReward: true,
-          withdrawing,
-          withdrawable,
-          shareId,
-          nftId,
-          poolId,
         },
       ];
 
@@ -129,6 +115,10 @@ export const listShareSelector = createSelector(
         token1PoolValue,
         token2PoolValue,
         hookFactoriesDetail,
+        withdrawing,
+        withdrawable,
+        nftId,
+        poolId,
       };
     });
   },

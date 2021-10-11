@@ -1,7 +1,6 @@
 import React, {memo} from 'react';
 import {RefreshControl, ScrollView, View} from 'react-native';
 import PropTypes from 'prop-types';
-import {styled as mainStyle} from '@screens/PDexV3/PDexV3.styled';
 import {Header} from '@src/components';
 import {Tabs} from '@components/core';
 import {liquidityHistorySelector, TABS} from '@screens/PDexV3/features/LiquidityHistories';
@@ -14,13 +13,15 @@ import ContributeHistories from './LiquidityHistories.contribute';
 const Home = ({ onRefresh }) => {
   const isFetching = useSelector(liquidityHistorySelector.isFetching);
   return (
-    <View style={mainStyle.container}>
-      <Header title="Histories" />
+    <>
+      <View style={{ marginHorizontal: 25, marginTop: 10 }}>
+        <Header title="Histories" />
+      </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={(<RefreshControl refreshing={isFetching} onRefresh={onRefresh} />)}
       >
-        <Tabs rootTabID={TABS.ROOT_TAB_HOME_LIQUIDITY_HISTORIES}>
+        <Tabs rootTabID={TABS.ROOT_TAB_HOME_LIQUIDITY_HISTORIES} styledTabs={{ marginHorizontal: 25, marginTop: 15 }}>
           <View
             tabID={TABS.TAB_CONTRIBUTE_HISTORIES_ID}
             label="Add"
@@ -44,7 +45,7 @@ const Home = ({ onRefresh }) => {
           </View>
         </Tabs>
       </ScrollView>
-    </View>
+    </>
   );
 };
 

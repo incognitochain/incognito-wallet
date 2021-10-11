@@ -1,9 +1,9 @@
 import {StyleSheet} from 'react-native';
-import {COLORS, FONT, UTILS} from '@src/styles';
+import {COLORS, FONT} from '@src/styles';
 
 export const styled = StyleSheet.create({
   container: {
-    marginHorizontal: 25,
+    paddingHorizontal: 25,
     flex: 1,
     marginTop: 10,
   },
@@ -11,14 +11,15 @@ export const styled = StyleSheet.create({
     flex: 1,
   },
   button: {
-    marginVertical: 50,
+    marginTop: 24,
+    marginBottom: 40,
     height: 50,
   },
   scrollView: {
-    marginBottom: UTILS.heightScale(70),
+    marginBottom: 70,
   },
   mainInfo: {
-    marginVertical: UTILS.heightScale(20),
+    marginVertical: 20,
   },
   bigText: {
     ...FONT.STYLE.bold,

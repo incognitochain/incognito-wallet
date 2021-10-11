@@ -1,9 +1,7 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import TradeInputAmount from '@src/components/core/TradeInputAmount';
+import PropTypes from 'prop-types';
 import createField from './createField';
-
-const styled = StyleSheet.create({});
 
 const renderCustomField = (props) => {
   const { input, onChangeTextCustom, ...rest } = props;
@@ -30,6 +28,9 @@ const RFTradeInputAmount = createField({
 
 renderCustomField.defaultProps = {};
 
-renderCustomField.propTypes = {};
+renderCustomField.propTypes = {
+  input: PropTypes.element.isRequired,
+  onChangeTextCustom: PropTypes.func.isRequired
+};
 
 export default React.memo(RFTradeInputAmount);

@@ -3,44 +3,49 @@ import { StyleSheet } from 'react-native';
 
 export const styled = StyleSheet.create({
   container: {
-    marginBottom: 25,
+    marginBottom: 24,
   },
   rowName: {
     alignItems: 'center',
   },
   name: {
-    marginRight: 5,
+    ...FONT.STYLE.medium,
     fontSize: FONT.SIZE.medium,
+    marginRight: 5,
+    lineHeight: FONT.SIZE.superMedium + 9,
     color: COLORS.black,
-    fontFamily: FONT.NAME.medium,
   },
   nameFollowed: {
     color: COLORS.black,
   },
   subText: {
+    ...FONT.STYLE.medium,
     fontSize: FONT.SIZE.small,
-    lineHeight: FONT.SIZE.small + 2,
-    color: COLORS.colorGrey3,
-    fontFamily: FONT.NAME.medium,
-    marginBottom: 10,
+    lineHeight: FONT.SIZE.small + 7,
+    color: COLORS.lightGrey33,
+    marginTop: 2,
   },
-  block1: {
+  wrapperFirstSection: {
     flex: 0.7,
-    marginRight: 15,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
   },
-  block2: {
-    flex: 0.2,
-    justifyContent: 'flex-end',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginRight: 5,
+  wrapperSecondSection: {
+    flex: 0.3,
   },
-  block3: {
-    flex: 0.1,
-    justifyContent: 'flex-end',
+  wrapperThirdSection: {
+    width: 27,
+    height: FONT.SIZE.superMedium + 9,
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    justifyContent: 'flex-end',
+    alignItems: 'center'
+  },
+  apy: {
+    ...FONT.STYLE.medium,
+    fontSize: FONT.SIZE.medium,
+    lineHeight: FONT.SIZE.superMedium + 9,
+    color: COLORS.black,
+    textAlign: 'right',
+  },
+  rightText: {
+    textAlign: 'right',
   },
 });

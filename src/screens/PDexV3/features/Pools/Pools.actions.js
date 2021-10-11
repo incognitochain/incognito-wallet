@@ -8,9 +8,9 @@ import {
   ACTION_FETCH_FAIL,
   ACTION_FETCHED_TRADING_VOLUME_24H,
   ACTION_FETCHED_LIST_POOLS,
-  ACTION_FETCHED_LIST_POOLS_DETAIL,
   ACTION_FETCHED_LIST_POOLS_FOLLOWING,
   ACTION_FREE_LIST_POOL,
+  ACTION_SET_SEARCH_TEXT,
 } from './Pools.constant';
 import { followPoolIdsSelector } from './Pools.selector';
 
@@ -24,9 +24,9 @@ export const actionFetchedListPools = (payload) => ({
   payload,
 });
 
-export const actionFetchedListPoolsDetail = (payload) => ({
-  type: ACTION_FETCHED_LIST_POOLS_DETAIL,
-  payload,
+export const actionSetSearchText = ({ searchText }) => ({
+  type: ACTION_SET_SEARCH_TEXT,
+  payload: { searchText },
 });
 
 export const actionFetchedListPoolsFollowing = (payload) => ({
@@ -64,14 +64,16 @@ export const actionFreeListPools = () => ({
   type: ACTION_FREE_LIST_POOL,
 });
 
-export const actionFetchListPools = () => async (dispatch, getState) => {
+export const actionFetchListPools = () => async (
+  dispatch,
+  getState,
+) => {
   try {
     const state = getState();
     await dispatch(actionSetFetching({ isFetching: true }));
     const account = defaultAccountWalletSelector(state);
     const pDexV3Inst = await getPDexV3Instance({ account });
     const pools = (await pDexV3Inst.getListPools('all')) || [];
-    console.log('pools', pools.length);
     await dispatch(actionFetchedListPools([...pools]));
     // await pDexV3Inst.addListFollowingPool({ poolsIDs });
   } catch (error) {
@@ -90,8 +92,6 @@ export const actionFetchListFollowingPools = () => async (
     const account = defaultAccountWalletSelector(state);
     const pDexV3Inst = await getPDexV3Instance({ account });
     const followIds = (await pDexV3Inst.getListFollowingPools()) || [];
-    console.log('followIds', followIds.length);
-    // const followPools = (await pDexV3Inst.getListPoolsDetail(followPoolIds)) || [];
     await dispatch(actionFetchedListPoolsFollowing({ followIds }));
   } catch (error) {
     new ExHandler(error).showErrorToast();
@@ -100,10 +100,11 @@ export const actionFetchListFollowingPools = () => async (
 
 export const actionFetchPools = () => async (dispatch) => {
   try {
-    dispatch(actionSetFetching({ isFetching: true }));
+    await dispatch(actionSetFetching({ isFetching: true }));
     await Promise.all([
-      dispatch(actionFetchListPools()),
+      // dispatch(actionFetchTradingVolume24h()),
       dispatch(actionFetchListFollowingPools()),
+      dispatch(actionFetchListPools()),
     ]);
     dispatch(actionFetched());
   } catch (error) {
@@ -121,11 +122,11 @@ export const actionToggleFollowingPool = (poolId) => async (
     const account = defaultAccountWalletSelector(state);
     const pDexV3Inst = await getPDexV3Instance({ account });
     const followPoolIds = followPoolIdsSelector(state);
-    const isFollowed =
-      followPoolIds.findIndex((_poolId) => _poolId === poolId) > -1;
+    const isFollowed = followPoolIds.findIndex((_poolId) => _poolId === poolId) > -1;
     if (isFollowed) {
       await pDexV3Inst.removeFollowingPool({ poolId });
-    } else if (!isFollowed) {
+    }
+    if (!isFollowed) {
       await pDexV3Inst.addFollowingPool({ poolId });
     }
     await dispatch(actionFetchListFollowingPools());

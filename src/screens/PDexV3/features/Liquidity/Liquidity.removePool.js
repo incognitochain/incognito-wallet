@@ -1,8 +1,8 @@
 import React, {memo} from 'react';
-import {RefreshControl, ScrollView, View} from 'react-native';
+import {RefreshControl, ScrollView, Text, View} from 'react-native';
 import PropTypes from 'prop-types';
 import {styled as mainStyle} from '@screens/PDexV3/PDexV3.styled';
-import {Header, RowSpaceText, SuccessModal} from '@src/components';
+import {Header, Row, SuccessModal} from '@src/components';
 import {
   formConfigsRemovePool,
   LIQUIDITY_MESSAGES,
@@ -20,6 +20,8 @@ import SelectPercentAmount from '@components/SelectPercentAmount';
 import {COLORS} from '@src/styles';
 import {compose} from 'recompose';
 import withTransaction from '@screens/PDexV3/features/Liquidity/Liquidity.enhanceTransaction';
+import LPHistoryIcon from '@screens/PDexV3/features/Liquidity/Liquidity.iconHistory';
+import {MaxIcon} from '@components/Icons';
 
 const initialFormValues = {
   inputToken: '',
@@ -38,6 +40,7 @@ const InputsGroup = () => {
   const inputAmount = useSelector(removePoolSelector.inputAmountSelector);
   const inputToken = inputAmount(formConfigsRemovePool.formName, formConfigsRemovePool.inputToken);
   const outputToken = inputAmount(formConfigsRemovePool.formName, formConfigsRemovePool.outputToken);
+  const { maxInputShareStr, maxOutputShareStr } = useSelector(removePoolSelector.maxShareAmountSelector) || {};
   const onChangeInput = (text) => dispatch(liquidityActions.actionChangeInputRemovePool(text));
   const onChangeOutput = (text) => dispatch(liquidityActions.actionChangeOutputRemovePool(text));
   const onMaxPress = () => dispatch(liquidityActions.actionMaxRemovePool());
@@ -55,56 +58,63 @@ const InputsGroup = () => {
     return outputToken.error;
   }, [outputToken.error]);
   return (
-    <View style={styled.wrapInput}>
-      <Field
-        component={TradeInputAmount}
-        name={formConfigsRemovePool.inputToken}
-        validate={[
-          _validateInput,
-          ...validator.combinedAmount,
-        ]}
-        hasInfinityIcon
-        editableInput={!inputToken.loadingBalance}
-        symbol={inputToken && inputToken?.symbol}
-        onChange={onChangeInput}
-        onPressInfinityIcon={onMaxPress}
-      />
-      <AddBreakLine />
-      <Field
-        component={TradeInputAmount}
-        name={formConfigsRemovePool.outputToken}
-        validate={[
-          _validateOutput,
-          ...validator.combinedAmount,
-        ]}
-        symbol={outputToken && outputToken?.symbol}
-        editableInput={!outputToken.loadingBalance}
-        onChange={onChangeOutput}
-        onPressInfinityIcon={onMaxPress}
-      />
+    <>
+      <Row centerVertical spaceBetween style={[styled.padding, styled.headerBox]}>
+        {(!!inputToken && !!outputToken) && (<Text style={styled.mediumText}>{`${inputToken.symbol} / ${outputToken.symbol}`}</Text>)}
+        <LPHistoryIcon />
+      </Row>
+      <View style={styled.inputBox}>
+        <Field
+          component={TradeInputAmount}
+          name={formConfigsRemovePool.inputToken}
+          validate={[
+            _validateInput,
+            ...validator.combinedAmount,
+          ]}
+          visibleHeader
+          editableInput={!inputToken.loadingBalance}
+          symbol={inputToken && inputToken?.symbol}
+          onChange={onChangeInput}
+          onPressInfinityIcon={onMaxPress}
+          label="Amount"
+          rightHeader={(
+            <Row centerVertical>
+              <Text style={styled.balanceStr}>{`Est: ${maxInputShareStr}`}</Text>
+              <MaxIcon onPress={onMaxPress} />
+            </Row>
+          )}
+        />
+        <AddBreakLine />
+        <Field
+          component={TradeInputAmount}
+          name={formConfigsRemovePool.outputToken}
+          validate={[
+            _validateOutput,
+            ...validator.combinedAmount,
+          ]}
+          label="Amount"
+          symbol={outputToken && outputToken?.symbol}
+          editableInput={!outputToken.loadingBalance}
+          onChange={onChangeOutput}
+          onPressInfinityIcon={onMaxPress}
+          visibleHeader
+          rightHeader={(
+            <Row centerVertical>
+              <Text style={styled.balanceStr}>{`Est: ${maxOutputShareStr}`}</Text>
+            </Row>
+          )}
+        />
+      </View>
       <SelectPercentAmount
         size={4}
-        containerStyled={styled.selectPercentAmountContainer}
+        containerStyled={[styled.selectPercentAmountContainer, styled.padding, { marginTop: 24 }]}
         percentBtnColor={COLORS.colorBlue}
         selected={percent}
         onPressPercent={onChangePercent}
       />
-    </View>
-  );
-};
-
-export const Extra = React.memo(() => {
-  const data = useSelector(removePoolSelector.shareDataSelector);
-  const renderHooks = () => {
-    if (!data) return;
-    return (data?.hookFactories || []).map(item => <RowSpaceText {...item} key={item?.label} />);
-  };
-  return(
-    <>
-      {renderHooks()}
     </>
   );
-});
+};
 
 const RemoveLPButton = React.memo(({ onSubmit }) => {
   const { disabled } = useSelector(removePoolSelector.disableRemovePool);
@@ -156,16 +166,17 @@ const RemovePool = ({
   const renderContent = () => (
     <>
       <InputsGroup />
-      <RemoveLPButton onSubmit={onSubmit} />
-      <Extra />
+      <View style={styled.padding}>
+        <RemoveLPButton onSubmit={onSubmit} />
+      </View>
     </>
   );
 
   React.useEffect(() => { onInitRemovePool(); }, []);
   return (
     <>
-      <View style={mainStyle.container}>
-        <Header title={LIQUIDITY_MESSAGES.removePool} />
+      <View style={styled.container}>
+        <Header style={styled.padding} title={LIQUIDITY_MESSAGES.removePool} />
         <ScrollView
           refreshControl={(<RefreshControl refreshing={isFetching} onRefresh={onInitRemovePool} />)}
           showsVerticalScrollIndicator={false}
