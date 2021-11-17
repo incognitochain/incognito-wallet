@@ -136,24 +136,21 @@ class AppUpdater extends PureComponent {
   };
 
   async checkNewVersion() {
-    const { logEvent } = this.props;
     if (ignored) {
       return;
     }
-
-    const metadata = await codePush.getUpdateMetadata();
-    logEvent(JSON.stringify(metadata));
-
+    const { logEvent } = this.props;
+    logEvent('TEST::: 3');
     try {
       await codePush.sync(
         {
           updateDialog: {
             optionalInstallButtonLabel: 'Update',
           },
-          checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
+          checkFrequency: codePush.CheckFrequency.ON_APP_START,
           installMode: codePush.InstallMode.ON_NEXT_SUSPEND,
           mandatoryInstallMode: codePush.InstallMode.IMMEDIATE,
-          minimumBackgroundDuration: 1,
+          minimumBackgroundDuration: 2 * 60,
           rollbackRetryOptions: {
             delayInHours: 0.5,
             maxRetryAttempts: 5
@@ -208,16 +205,16 @@ class AppUpdater extends PureComponent {
     const disabled = !(updating || downloading || !!news) && !news;
     return (
       <View>
-        <Dialog visible={updating || downloading} dialogStyle={styles.dialog}>
-          <DialogContent>
-            <View style={styles.hook}>
-              <Text style={styles.title}>Update new version</Text>
-              {!downloading
-                ? this.renderDownloadModal()
-                : this.renderInstallModal()}
-            </View>
-          </DialogContent>
-        </Dialog>
+        {/*<Dialog visible={updating || downloading} dialogStyle={styles.dialog}>*/}
+        {/*  <DialogContent>*/}
+        {/*    <View style={styles.hook}>*/}
+        {/*      <Text style={styles.title}>Update new version</Text>*/}
+        {/*      {!downloading*/}
+        {/*        ? this.renderDownloadModal()*/}
+        {/*        : this.renderInstallModal()}*/}
+        {/*    </View>*/}
+        {/*  </DialogContent>*/}
+        {/*</Dialog>*/}
         <Dialog
           visible={!!news}
           onTouchOutside={this.closeNewsDialog}

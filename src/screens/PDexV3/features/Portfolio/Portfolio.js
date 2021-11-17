@@ -31,8 +31,8 @@ const PortfolioList = withTransaction(React.memo(({ onCreateWithdrawFeeLP }) => 
       withdrawTokenIDs: uniq([tokenId1, tokenId2].concat(Object.keys(rewards))),
       poolPairID: poolId,
       nftID: nftId,
-      amount1: 0,
-      amount2: 0
+      amount1: String(0),
+      amount2: String(0)
     };
     onCreateWithdrawFeeLP(params);
   };

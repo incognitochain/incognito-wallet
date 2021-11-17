@@ -10,7 +10,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { Header, Row } from '@src/components';
 import { COLORS, FONT } from '@src/styles';
-import { ArrowRightGreyIcon } from '@src/components/Icons';
 import { useFocusEffect, useNavigation } from 'react-navigation-hooks';
 import routeNames from '@src/router/routeNames';
 import { actionFetchHistory, actionFetchedOrderDetail } from './Swap.actions';
@@ -42,6 +41,7 @@ const styled = StyleSheet.create({
     lineHeight: FONT.SIZE.small + 5,
     color: COLORS.black,
     marginRight: 15,
+    flex: 1,
   },
   statusStr: {
     fontFamily: FONT.NAME.regular,

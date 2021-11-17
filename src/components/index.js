@@ -8,3 +8,4 @@ export { default as Balance } from './Balance';
 export { default as GroupInput } from './GroupInput';
 export { default as RowSpaceText } from './RowSpaceText';
 export { default as ImageCached } from './ImageCached';
+export { default as BottomView } from './BottomView';

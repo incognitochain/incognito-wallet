@@ -11,6 +11,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		174F880B273A80A400833F43 /* Gomobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 174F880A273A80A400833F43 /* Gomobile.framework */; };
 		1F298112246D5724000EE1C6 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB61A68108700A75B9A /* Info.plist */; };
 		1F3B2CDE247FC9FB00F8A129 /* Helvetica-Neue-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1F1BF8E22472DFF700A2DA95 /* Helvetica-Neue-Bold.otf */; };
 		1F3B2CDF247FC9FB00F8A129 /* Helvetica-Neue-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1F1BF8E52472DFF800A2DA95 /* Helvetica-Neue-Medium.otf */; };
@@ -27,7 +28,6 @@
 		1F3B2CEA247FC9FB00F8A129 /* SF-Pro-Display-RegularItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1F2980D5246D55E2000EE1C6 /* SF-Pro-Display-RegularItalic.otf */; };
 		2000529E2577658100E21F97 /* libRNSSHClient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2000529B2577655A00E21F97 /* libRNSSHClient.a */; };
 		20B559AF22C393B10079FC06 /* Gomobile.m in Sources */ = {isa = PBXBuildFile; fileRef = 20B559AE22C393B10079FC06 /* Gomobile.m */; };
-		20FAA3C4272AAFCF0080FF7D /* Gomobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20FAA3C3272AAFCE0080FF7D /* Gomobile.framework */; };
 		3B50FECFE455494A8373E5A6 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ECBE1563D1B5449E86A7658F /* libRNVectorIcons.a */; };
 		3EF0EC91E7FE4B16A434459C /* libRNZmqService.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DE70DDA39F794DA9B6544C35 /* libRNZmqService.a */; };
 		712C447B244313E700A3CBA6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 712C447A244313E700A3CBA6 /* GoogleService-Info.plist */; };
@@ -98,6 +98,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Incognito/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Incognito/main.m; sourceTree = "<group>"; };
 		1643DEA7D3614014BF5C5D53 /* HelveticaNeueBd.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = HelveticaNeueBd.ttf; path = ../src/assets/fonts/HelveticaNeueBd.ttf; sourceTree = "<group>"; };
+		174F880A273A80A400833F43 /* Gomobile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Gomobile.framework; sourceTree = "<group>"; };
 		18CD11818ED84863990BAFCD /* HelveticaNeueLt.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = HelveticaNeueLt.ttf; path = ../src/assets/fonts/HelveticaNeueLt.ttf; sourceTree = "<group>"; };
 		18DA0D45522B402982193615 /* libRNRandomBytes.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNRandomBytes.a; sourceTree = "<group>"; };
 		1B3157C3CACB198B98717F17 /* Pods-Incognito.next.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Incognito.next.xcconfig"; path = "Target Support Files/Pods-Incognito/Pods-Incognito.next.xcconfig"; sourceTree = "<group>"; };
@@ -121,7 +122,6 @@
 		20160FCB034340829E942C14 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		20B559AD22C393920079FC06 /* Gomobile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gomobile.h; sourceTree = "<group>"; };
 		20B559AE22C393B10079FC06 /* Gomobile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Gomobile.m; sourceTree = "<group>"; };
-		20FAA3C3272AAFCE0080FF7D /* Gomobile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Gomobile.framework; sourceTree = "<group>"; };
 		258780DD51904E869891CA34 /* HelveticaNeueLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = HelveticaNeueLight.ttf; path = ../src/assets/fonts/HelveticaNeueLight.ttf; sourceTree = "<group>"; };
 		27AAED89E8AD4248BBC41F79 /* libRNFirebase.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFirebase.a; sourceTree = "<group>"; };
 		284975DB01B328413EF03AE1 /* Pods-Incognito.next2.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Incognito.next2.xcconfig"; path = "Target Support Files/Pods-Incognito/Pods-Incognito.next2.xcconfig"; sourceTree = "<group>"; };
@@ -222,7 +222,7 @@
 				FE5C9FA82355D46900AC6E90 /* libreact-native-netinfo.a in Frameworks */,
 				FEEBD6E32355CBB3006EFECD /* libreact-native-camera.a in Frameworks */,
 				FEEBD6DB2355CA94006EFECD /* libRNPermissions.a in Frameworks */,
-				20FAA3C4272AAFCF0080FF7D /* Gomobile.framework in Frameworks */,
+				174F880B273A80A400833F43 /* Gomobile.framework in Frameworks */,
 				FEEBD6D72355CA35006EFECD /* libreact-native-randombytes.a in Frameworks */,
 				FE86096522D747230050666A /* libFirebaseCore.a in Frameworks */,
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
@@ -358,7 +358,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				20FAA3C3272AAFCE0080FF7D /* Gomobile.framework */,
+				174F880A273A80A400833F43 /* Gomobile.framework */,
 				1F29808A246D5526000EE1C6 /* fonts */,
 				FD6F21E024750AA0000CC07D /* BridgeLottie.swift */,
 				FE52DCEE22DC685E003203EF /* AutonomousZMQ.framework */,

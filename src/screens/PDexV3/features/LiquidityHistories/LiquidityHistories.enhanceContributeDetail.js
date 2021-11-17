@@ -37,7 +37,7 @@ const withContributeDetail = WrappedComp => props => {
         extra: {
           poolPairID,
           pairHash,
-          contributedAmount: 1,
+          contributedAmount: String(1),
           nftID,
           amplifier,
         },
@@ -59,7 +59,7 @@ const withContributeDetail = WrappedComp => props => {
         extra: {
           poolPairID,
           pairHash,
-          contributedAmount: amount,
+          contributedAmount: String(amount),
           nftID,
           amplifier,
         },

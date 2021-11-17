@@ -57,7 +57,7 @@ export const actionToggleCurrency = () => ({
   type: ACTION_TOGGLE_CURRENCY,
 });
 
-export const actionUpdateShowWalletBlance = () => ({
+export const actionUpdateShowWalletBalance = () => ({
   type: ACTION_UPDATE_SHOW_WALLET_BALANCE,
 });
 

@@ -1,3 +1,5 @@
+import MarketIcon from '@components/Icons/icon.martket';
+
 export { default as SearchIcon } from './icon.search';
 export { default as ClearIcon } from './icon.clear';
 export { default as DeleteIcon } from './icon.delete';
@@ -86,3 +88,7 @@ export { default as HamburgerIcon } from './icon.hamburger';
 export { default as CommunityIcon } from './icon.community';
 export { default as SuccessIcon } from './icon.success';
 export { default as SettingIcon } from './icon.setting';
+export { default as MarketIcon } from './icon.martket';
+export { default as MoreIcon } from './icon.more';
+export { default as WalletIcon } from './icon.wallet';
+export { default as EyeIcon } from './icon.eye';

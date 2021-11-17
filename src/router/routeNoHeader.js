@@ -138,6 +138,7 @@ import {
 } from '@screens/PDexV3/features/Liquidity';
 import PairList from '@screens/PDexV3/features/PairList';
 import MainTabBar from '@screens/MainTabBar';
+import More from '@screens/MainTabBar/features/More';
 
 const masterKeyRoutes = [
   {
@@ -328,6 +329,10 @@ const homeRoutes = [
   {
     screen: MainTabBar,
     name: routeNames.MainTabBar,
+  },
+  {
+    screen: More,
+    name: routeNames.More,
   },
 ];
 

@@ -17,14 +17,14 @@ import { styled } from './Token.styled';
 
 export const NormalText = (props) => {
   const prefix = useSelector(prefixCurrency);
-  const { style, stylePSymbol, containerStyle, text, hasPSymbol } = props;
+  const { style, stylePSymbol, containerStyle, text, hasPSymbol, showBalance, symbol } = props;
   return (
     <View style={[styled.normalText, containerStyle]}>
-      {hasPSymbol && (
+      {hasPSymbol && showBalance && (
         <Text style={[styled.pSymbol, stylePSymbol]}>{prefix}</Text>
       )}
       <Text numberOfLines={1} style={[styled.text, style]} ellipsizeMode="tail">
-        {trim(text)}
+        {showBalance ? trim(text) : `••• ${symbol}`}
       </Text>
     </View>
   );
@@ -36,6 +36,8 @@ NormalText.propTypes = {
   containerStyle: PropTypes.any,
   text: PropTypes.string,
   hasPSymbol: PropTypes.bool,
+  showBalance: PropTypes.bool,
+  symbol: PropTypes.string,
 };
 
 NormalText.defaultProps = {
@@ -44,6 +46,8 @@ NormalText.defaultProps = {
   containerStyle: null,
   text: '',
   hasPSymbol: false,
+  showBalance: true,
+  symbol: ''
 };
 
 export const Name = (props) => {
@@ -78,7 +82,7 @@ export const AmountBasePRV = (props) => {
     pricePrv,
     customPSymbolStyle,
     customStyle,
-    hideBlance,
+    hideBalance,
   } = props;
   const decimalDigits = useSelector(decimalDigitsSelector);
 
@@ -93,8 +97,8 @@ export const AmountBasePRV = (props) => {
 
   return (
     <NormalText
-      hasPSymbol={hideBlance ? false : true}
-      text={hideBlance ? '•••' : `${currentAmount}`}
+      hasPSymbol={hideBalance ? false : true}
+      text={hideBalance ? '•••' : `${currentAmount}`}
       style={[styled.rightText, customStyle]}
       stylePSymbol={[customPSymbolStyle]}
     />
@@ -106,7 +110,7 @@ AmountBasePRV.defaultProps = {
   pricePrv: 0,
   customStyle: null,
   customPSymbolStyle: null,
-  hideBlance: false,
+  hideBalance: false,
 };
 
 AmountBasePRV.propTypes = {
@@ -115,7 +119,7 @@ AmountBasePRV.propTypes = {
   customStyle: PropTypes.any,
   customPSymbolStyle: PropTypes.any,
   pDecimals: PropTypes.number.isRequired,
-  hideBlance: PropTypes.bool,
+  hideBalance: PropTypes.bool,
 };
 
 export const AmountBaseUSDT = React.memo((props) => {
@@ -125,7 +129,7 @@ export const AmountBaseUSDT = React.memo((props) => {
     priceUsd,
     customPSymbolStyle,
     customStyle,
-    hideBlance,
+    hideBalance,
   } = props;
   const decimalDigits = useSelector(decimalDigitsSelector);
 
@@ -140,8 +144,8 @@ export const AmountBaseUSDT = React.memo((props) => {
 
   return (
     <NormalText
-      hasPSymbol={hideBlance ? false : true}
-      text={hideBlance ? '•••' : `${currentAmount}`}
+      hasPSymbol={hideBalance ? false : true}
+      text={hideBalance ? '•••' : `${currentAmount}`}
       style={[styled.rightText, customStyle]}
       stylePSymbol={[customPSymbolStyle]}
     />
@@ -218,8 +222,8 @@ export const Amount = (props) => {
     stylePSymbol,
     containerStyle,
     size,
-    hideBlance,
-    fromBlance,
+    hideBalance,
+    fromBalance,
   } = props;
   const decimalDigits = useSelector(decimalDigitsSelector);
   const shouldShowGettingBalance = isGettingBalance || showGettingBalance;
@@ -235,18 +239,18 @@ export const Amount = (props) => {
     decimalDigits,
     false,
   );
-  const style = hideBlance && fromBlance ? { fontSize: 56 } : {};
+  const style = hideBalance && fromBalance ? { fontSize: 56 } : {};
   return (
     <NormalText
       style={[styled.bottomText, styled.boldText, customStyle, style]}
       text={
-        hideBlance
-          ? fromBlance
+        hideBalance
+          ? fromBalance
             ? '•••••••'
             : `••• ${showSymbol ? symbol : ''}`
           : `${amountWithDecimalDigits} ${showSymbol ? symbol : ''}`
       }
-      hasPSymbol={hideBlance ? false : hasPSymbol}
+      hasPSymbol={hideBalance ? false : hasPSymbol}
       stylePSymbol={stylePSymbol}
       containerStyle={containerStyle}
     />
@@ -265,8 +269,8 @@ Amount.propTypes = {
   hasPSymbol: PropTypes.bool,
   stylePSymbol: PropTypes.any,
   containerStyle: PropTypes.any,
-  hideBlance: PropTypes.bool,
-  fromBlance: PropTypes.bool,
+  hideBalance: PropTypes.bool,
+  fromBalance: PropTypes.bool,
 };
 
 Amount.defaultProps = {
@@ -281,8 +285,8 @@ Amount.defaultProps = {
   hasPSymbol: false,
   stylePSymbol: null,
   containerStyle: null,
-  hideBlance: false,
-  fromBlance: false,
+  hideBalance: false,
+  fromBalance: false,
 };
 
 export const Symbol = (props) => {

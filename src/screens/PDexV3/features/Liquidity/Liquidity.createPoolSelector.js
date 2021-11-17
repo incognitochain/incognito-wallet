@@ -62,6 +62,14 @@ export const hookFactoriesSelector = createSelector(
         label: 'Exchange rate',
         value: exchangeRateStr,
       },
+      {
+        label: `${input.symbol} Balance`,
+        value: input.maxAmountDisplay,
+      },
+      {
+        label: `${output.symbol} Balance`,
+        value: output.maxAmountDisplay,
+      },
     ];
   }
 );
@@ -109,7 +117,7 @@ export const ampValueSelector = createSelector(
       token1Value: input.originalInputAmount,
       token2Value: output.originalInputAmount,
     });
-    rawRate = convert.toNumber(format.amountFull(rawRate, 0, false), true);
+    rawRate = convert.toNumber(rawRate, true);
     let estOutputStr = undefined;
     const estRate = new BigNumber(rawRate).minus(rate).abs();
     const compareValue = Math.pow(10, -(outputToken.pDecimals || 9));

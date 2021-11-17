@@ -6,7 +6,7 @@ import {isFetchingSelector, totalShareSelector} from '@screens/PDexV3/features/P
 const ReturnLP = () => {
   const totalShare = useSelector(totalShareSelector);
   const loading = useSelector(isFetchingSelector);
-  return <HomeTabHeader title="Your returns" desc={`${totalShare} $`} loading={loading} />;
+  return <HomeTabHeader title="Your returns" desc={`$${totalShare}`} loading={loading} />;
 };
 
 export default memo(ReturnLP);

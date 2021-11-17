@@ -8,30 +8,49 @@ import {
 } from '@components/core/reduxForm';
 import SelectedPrivacy from '@src/models/selectedPrivacy';
 import { change, Field, focus } from 'redux-form';
-import { useDispatch, useSelector } from 'react-redux';
+import { batch, useDispatch, useSelector } from 'react-redux';
 import format from '@src/utils/format';
 import BigNumber from 'bignumber.js';
-import { Text } from '@src/components/core';
 import convert from '@src/utils/convert';
+import {
+  TAB_BUY_LIMIT_ID,
+  TAB_SELL_LIMIT_ID,
+} from '@screens/PDexV3/features/Trade/Trade.constant';
+import { useNavigation } from 'react-navigation-hooks';
+import routeNames from '@src/router/routeNames';
+import { findPoolByPairSelector } from '@screens/PDexV3/features/Pools';
 import SelectPercentAmount from '@src/components/SelectPercentAmount';
-import { maxAmountValidatorForSellInput } from './OrderLimit.utils';
+import { Divider } from '@src/components/core';
+import {
+  maxAmountValidatorForBuyInput,
+  maxAmountValidatorForSellInput,
+} from './OrderLimit.utils';
 import {
   inputAmountSelector,
   orderLimitDataSelector,
   rateDataSelector,
+  sellInputAmountSelector,
+  selectableTokens1Selector,
+  selectableTokens2Selector,
+  poolSelectedDataSelector,
 } from './OrderLimit.selector';
-import { actionSetPercent } from './OrderLimit.actions';
-import { TAB_BUY_ID, TAB_SELL_ID, formConfigs } from './OrderLimit.constant';
+import { formConfigs } from './OrderLimit.constant';
+import {
+  actionInit,
+  actionSetPoolSelected,
+  actionResetOrdersHistory,
+  actionSetPercent,
+} from './OrderLimit.actions';
 
 const styled = StyleSheet.create({
   container: {
+    marginTop: 24,
     marginBottom: 24,
   },
-  inputContainer: {
-    marginBottom: 16,
-  },
+  inputContainer: {},
   selectPercentAmountContainer: {
-    marginBottom: 24,
+    marginTop: 40,
+    marginBottom: 0,
   },
   balanceWrapper: {
     justifyContent: 'space-between',
@@ -46,57 +65,58 @@ const styled = StyleSheet.create({
     fontSize: FONT.SIZE.superSmall,
     color: COLORS.black,
   },
+  dividerStyled: {
+    marginVertical: 16,
+  },
 });
 
 const RateInput = React.memo(() => {
+  const navigation = useNavigation();
+  const poolSelected = useSelector(poolSelectedDataSelector);
   const dispatch = useDispatch();
   const orderlimitData = useSelector(orderLimitDataSelector);
-  const inputAmount = useSelector(inputAmountSelector);
   const rateData = useSelector(rateDataSelector);
-  const sellinputAmount = inputAmount(formConfigs.selltoken);
-  const buyinputAmount = inputAmount(formConfigs.buytoken);
   const rateToken: SelectedPrivacy = rateData?.rateToken;
   const { activedTab } = orderlimitData;
-  const changeBuyAmountByRate = (rate) => {
-    switch (activedTab) {
-    case TAB_BUY_ID: {
-      const sellAmount = format.toFixed(
-        new BigNumber(buyinputAmount.amount)
-          .multipliedBy(new BigNumber(rate || 0))
-          .toNumber(),
-          buyinputAmount?.pDecimals,
-      );
-      dispatch(
-        change(formConfigs.formName, formConfigs.selltoken, sellAmount),
-      );
-      dispatch(focus(formConfigs.formName, formConfigs.selltoken));
-      break;
-    }
-    case TAB_SELL_ID: {
-      const buyAmount = format.toFixed(
-        new BigNumber(sellinputAmount.amount)
-          .multipliedBy(new BigNumber(rate || 0))
-          .toNumber(),
-          sellinputAmount?.pDecimals,
-      );
-      dispatch(change(formConfigs.formName, formConfigs.buytoken, buyAmount));
-      dispatch(focus(formConfigs.formName, formConfigs.buytoken));
-      break;
-    }
-    default:
-      break;
-    }
-    dispatch(actionSetPercent(0));
+  const selectableTokens = useSelector(selectableTokens2Selector);
+  const findPoolByPair = useSelector(findPoolByPairSelector);
+  const onPressSymbol = () => {
+    navigation.navigate(routeNames.SelectTokenModal, {
+      data: selectableTokens,
+      onPress: (token2: SelectedPrivacy) => {
+        const token1: SelectedPrivacy = poolSelected?.token1 || {};
+        const pool = findPoolByPair({
+          token1Id: token1?.tokenId,
+          token2Id: token2?.tokenId,
+        });
+        if (pool?.poolId) {
+          batch(() => {
+            dispatch(actionResetOrdersHistory());
+            dispatch(actionSetPoolSelected(pool?.poolId));
+            dispatch(actionInit(true));
+          });
+        }
+      },
+    });
   };
-  const onEndEditing = () => changeBuyAmountByRate(rateData?.customRate);
   const onChange = async (rate) => {
     try {
       dispatch(change(formConfigs.formName, formConfigs.rate, rate));
       if (typeof validator.number()(rate) !== 'undefined') {
-        dispatch(change(formConfigs.formName, formConfigs.buytoken, ''));
+        switch (activedTab) {
+        case TAB_BUY_LIMIT_ID: {
+          dispatch(change(formConfigs.formName, formConfigs.buytoken, ''));
+          break;
+        }
+        case TAB_SELL_LIMIT_ID: {
+          dispatch(change(formConfigs.formName, formConfigs.selltoken, ''));
+          break;
+        }
+        default:
+          break;
+        }
         return;
       }
-      changeBuyAmountByRate(rate);
     } catch (error) {
       console.log('onChange-error', error);
     }
@@ -110,7 +130,6 @@ const RateInput = React.memo(() => {
         placeholder="0"
         ellipsizeMode="tail"
         numberOfLines={1}
-        onEndEditing={onEndEditing}
         onChange={onChange}
         validate={[
           ...(rateToken?.isIncognitoToken
@@ -118,80 +137,84 @@ const RateInput = React.memo(() => {
             : validator.combinedAmount),
         ]}
         editableInput={!!orderlimitData?.editableInput}
-        srcIcon={rateToken?.iconUrl}
         symbol={rateToken?.symbol}
+        label="Limit price"
+        visibleHeader
+        canSelectSymbol
+        onPressSymbol={onPressSymbol}
       />
     </View>
   );
 });
 
 const SellInput = React.memo(() => {
+  const navigation = useNavigation();
   const orderLimitData = useSelector(orderLimitDataSelector);
+  const rateData = useSelector(rateDataSelector);
+  const { rateToken } = rateData;
   const dispatch = useDispatch();
   const inputAmount = useSelector(inputAmountSelector);
   const sellInputAmount = inputAmount(formConfigs.selltoken);
-  const buyInputAmount = inputAmount(formConfigs.buytoken);
   const sellToken: SelectedPrivacy = sellInputAmount?.tokenData;
-  const { activedTab } = orderLimitData;
-  const changeBuyAmount = (sellamount) => {
-    let amount = convert.toNumber(sellamount, true) || 0;
-    let originalAmount = convert.toOriginalAmount(
-      amount,
-      sellInputAmount?.pDecimals,
-    );
-    amount = convert.toHumanAmount(originalAmount, sellInputAmount?.pDecimals);
-    let buyAmount = '';
+  const selectableTokens = useSelector(selectableTokens1Selector);
+  const findPoolByPair = useSelector(findPoolByPairSelector);
+  const onPressSymbol = () => {
+    const { activedTab } = orderLimitData;
     switch (activedTab) {
-    case TAB_BUY_ID: {
-      buyAmount = format.toFixed(
-        new BigNumber(amount).dividedBy(new BigNumber(customRate)).toNumber(),
-          buyInputAmount?.pDecimals,
-      );
+    case TAB_BUY_LIMIT_ID: {
       break;
     }
-    case TAB_SELL_ID: {
-      buyAmount = format.toFixed(
-        new BigNumber(amount)
-          .multipliedBy(new BigNumber(customRate))
-          .toNumber(),
-          buyInputAmount?.pDecimals,
-      );
+    case TAB_SELL_LIMIT_ID: {
+      navigation.navigate(routeNames.SelectTokenModal, {
+        data: selectableTokens,
+        onPress: (sellToken: SelectedPrivacy) => {
+          const pool = findPoolByPair({
+            token1Id: sellToken?.tokenId,
+            token2Id: rateToken?.tokenId,
+          });
+          if (pool?.poolId) {
+            batch(() => {
+              dispatch(actionResetOrdersHistory());
+              dispatch(actionSetPoolSelected(pool?.poolId));
+              dispatch(actionInit(true));
+            });
+          }
+        },
+      });
       break;
     }
-
     default:
       break;
     }
-
-    dispatch(actionSetPercent(0));
-    dispatch(change(formConfigs.formName, formConfigs.buytoken, buyAmount));
-    dispatch(focus(formConfigs.formName, formConfigs.buytoken));
-  };
-  const onEndEditing = () => {
-    changeBuyAmount(sellInputAmount.amount);
-  };
-  const { customRate } = useSelector(rateDataSelector);
-  const onChange = (sellamount) => {
-    try {
-      dispatch(change(formConfigs.formName, formConfigs.selltoken, sellamount));
-      if (typeof validator.number()(sellamount) !== 'undefined') {
-        dispatch(change(formConfigs.formName, formConfigs.buytoken, ''));
-        return;
-      }
-      changeBuyAmount(sellamount);
-    } catch (error) {
-      console.log('SellInput-onChange-error', error);
-    }
   };
   const onPressInfinityIcon = async () => {
-    dispatch(
-      change(
-        formConfigs.formName,
-        formConfigs.selltoken,
-        sellInputAmount?.availableAmountText,
-      ),
-    );
-    changeBuyAmount(sellInputAmount?.availableAmountText);
+    batch(() => {
+      dispatch(
+        change(
+          formConfigs.formName,
+          formConfigs.selltoken,
+          sellInputAmount?.availableAmountText,
+        ),
+      );
+      dispatch(focus(formConfigs.formName, formConfigs.selltoken));
+      dispatch(actionSetPercent(0));
+    });
+  };
+  const onChange = (sellAmount) => {
+    try {
+      batch(() => {
+        dispatch(
+          change(formConfigs.formName, formConfigs.selltoken, sellAmount),
+        );
+        dispatch(actionSetPercent(0));
+        if (typeof validator.number()(sellAmount) !== 'undefined') {
+          dispatch(change(formConfigs.formName, formConfigs.selltoken, ''));
+          return;
+        }
+      });
+    } catch (error) {
+      console.log('BuyInput-onChange-error', error);
+    }
   };
   let _maxAmountValidatorForSellInput = React.useCallback(
     () => maxAmountValidatorForSellInput(sellInputAmount),
@@ -210,10 +233,8 @@ const SellInput = React.memo(() => {
       <Field
         component={TradeInputAmount}
         name={formConfigs.selltoken} //
-        hasInfinityIcon
         symbol={sellInputAmount?.symbol}
         srcIcon={sellInputAmount?.iconUrl}
-        onEndEditing={onEndEditing}
         onPressInfinityIcon={onPressInfinityIcon}
         validate={[
           ...(sellToken?.isIncognitoToken
@@ -223,6 +244,10 @@ const SellInput = React.memo(() => {
         ]}
         loadingBalance={!!sellInputAmount?.loadingBalance}
         editableInput={!!orderLimitData?.editableInput}
+        visibleHeader
+        label="Amount"
+        canSelectSymbol
+        onPressSymbol={onPressSymbol}
         onChange={onChange}
       />
     </View>
@@ -230,61 +255,111 @@ const SellInput = React.memo(() => {
 });
 
 const BuyInput = React.memo(() => {
+  const navigation = useNavigation();
   const dispatch = useDispatch();
   const inputAmount = useSelector(inputAmountSelector);
-  const sellInputAmount = inputAmount(formConfigs.selltoken);
   const buyInputAmount = inputAmount(formConfigs.buytoken);
+  const sellInputAmount = useSelector(sellInputAmountSelector);
   const buyToken: SelectedPrivacy = buyInputAmount?.tokenData;
+  const sellToken: SelectedPrivacy = sellInputAmount?.tokenData;
   const orderLimitData = useSelector(orderLimitDataSelector);
-  const { customRate } = useSelector(rateDataSelector);
-  const { activedTab } = orderLimitData;
-  const changeSellAmount = (buyamount) => {
-    let amount = convert.toNumber(buyamount, true) || 0;
-    let originalAmount = convert.toOriginalAmount(
-      amount,
-      buyInputAmount?.pDecimals,
-    );
-    amount = convert.toHumanAmount(originalAmount, buyInputAmount?.pDecimals);
-    let sellAmount = '';
+  const rateData = useSelector(rateDataSelector);
+  const { customRate, rateToken } = rateData;
+  const selectableTokens = useSelector(selectableTokens1Selector);
+  const findPoolByPair = useSelector(findPoolByPairSelector);
+  const onPressSymbol = () => {
+    const { activedTab } = orderLimitData;
     switch (activedTab) {
-    case TAB_BUY_ID: {
-      sellAmount = format.toFixed(
-        new BigNumber(amount)
-          .multipliedBy(new BigNumber(customRate))
-          .toNumber(),
-          sellInputAmount?.pDecimals,
-      );
+    case TAB_BUY_LIMIT_ID: {
+      navigation.navigate(routeNames.SelectTokenModal, {
+        data: selectableTokens,
+        onPress: (buyToken: SelectedPrivacy) => {
+          const pool = findPoolByPair({
+            token1Id: buyToken?.tokenId,
+            token2Id: rateToken?.tokenId,
+          });
+          if (pool?.poolId) {
+            batch(() => {
+              dispatch(actionResetOrdersHistory());
+              dispatch(actionSetPoolSelected(pool?.poolId));
+              dispatch(actionInit(true));
+            });
+          }
+        },
+      });
       break;
     }
-    case TAB_SELL_ID: {
-      sellAmount = format.toFixed(
-        new BigNumber(amount).dividedBy(new BigNumber(customRate)).toNumber(),
-          sellInputAmount?.pDecimals,
-      );
+    case TAB_SELL_LIMIT_ID: {
       break;
     }
     default:
       break;
     }
-    dispatch(actionSetPercent(0));
-    dispatch(change(formConfigs.formName, formConfigs.selltoken, sellAmount));
-    dispatch(focus(formConfigs.formName, formConfigs.selltoken));
   };
-  const onEndEditing = () => {
-    changeSellAmount(buyInputAmount.amount);
-  };
-  const onChange = (buyamount) => {
+  const onChange = (buyAmount) => {
     try {
-      dispatch(change(formConfigs.formName, formConfigs.buytoken, buyamount));
-      if (typeof validator.number()(buyamount) !== 'undefined') {
-        dispatch(change(formConfigs.formName, formConfigs.selltoken, ''));
-        return;
-      }
-      changeSellAmount(buyamount);
+      batch(() => {
+        dispatch(change(formConfigs.formName, formConfigs.buytoken, buyAmount));
+        dispatch(actionSetPercent(0));
+        if (typeof validator.number()(buyAmount) !== 'undefined') {
+          dispatch(change(formConfigs.formName, formConfigs.buytoken, ''));
+          return;
+        }
+      });
     } catch (error) {
       console.log('BuyInput-onChange-error', error);
     }
   };
+  const onPressInfinityIcon = async () => {
+    const {
+      availableAmountNumber: availableSellAmountNumber,
+    } = sellInputAmount;
+    let buyAmountNumber = new BigNumber(availableSellAmountNumber)
+      .dividedBy(customRate)
+      .toNumber();
+    const originalBuyAmount = convert.toOriginalAmount(
+      buyAmountNumber,
+      buyToken?.pDecimals,
+    );
+    buyAmountNumber = convert.toHumanAmount(
+      originalBuyAmount,
+      buyToken?.pDecimals,
+    );
+    const availableBuyAmountText = format.toFixed(
+      buyAmountNumber,
+      buyToken?.pDecimals,
+    );
+    batch(() => {
+      dispatch(actionSetPercent(0));
+      dispatch(
+        change(
+          formConfigs.formName,
+          formConfigs.buytoken,
+          availableBuyAmountText,
+        ),
+      );
+      dispatch(focus(formConfigs.formName, formConfigs.buytoken));
+    });
+  };
+  let _maxAmountValidatorForBuyInput = React.useCallback(
+    () =>
+      maxAmountValidatorForBuyInput({
+        buyToken,
+        sellInputAmount,
+        customRate,
+        sellToken,
+        buyOriginalAmount: buyInputAmount?.originalAmount,
+      }),
+    [
+      buyToken?.symbol,
+      buyToken?.pDecimals,
+      customRate,
+      sellToken?.symbol,
+      buyInputAmount?.originalAmount,
+      sellInputAmount?.availableAmountNumber,
+      sellInputAmount?.availableOriginalAmount,
+    ],
+  );
   if (!buyInputAmount) {
     return null;
   }
@@ -294,16 +369,20 @@ const BuyInput = React.memo(() => {
         component={TradeInputAmount}
         name={formConfigs.buytoken} //
         symbol={buyInputAmount?.symbol}
-        onEndEditing={onEndEditing}
         validate={[
           ...(buyToken?.isIncognitoToken
             ? validator.combinedNanoAmount
             : validator.combinedAmount),
+          _maxAmountValidatorForBuyInput,
         ]}
         loadingBalance={!!buyInputAmount?.loadingBalance}
         editableInput={!!orderLimitData?.editableInput}
+        visibleHeader
+        label="Amount"
+        onPressInfinityIcon={onPressInfinityIcon}
+        canSelectSymbol
+        onPressSymbol={onPressSymbol}
         onChange={onChange}
-        srcIcon={buyInputAmount?.iconUrl}
       />
     </View>
   );
@@ -314,6 +393,8 @@ const SelectPercentAmountInput = React.memo(() => {
   const inputAmount = useSelector(inputAmountSelector);
   const sellInputAmount = inputAmount(formConfigs.selltoken);
   const buyInputAmount = inputAmount(formConfigs.buytoken);
+  const buyToken: SelectedPrivacy = buyInputAmount?.tokenData;
+  const sellToken: SelectedPrivacy = sellInputAmount?.tokenData;
   const { customRate } = useSelector(rateDataSelector);
   const { mainColor, percent: selected, activedTab } = useSelector(
     orderLimitDataSelector,
@@ -328,41 +409,61 @@ const SelectPercentAmountInput = React.memo(() => {
       dispatch(actionSetPercent(percent));
     }
     _percent = _percent / 100;
-    let amount =
-      convert.toNumber(sellInputAmount?.availableAmountText, true) || 0;
-    if (!amount) {
-      return;
-    }
-    let originalAmount = convert.toOriginalAmount(
-      new BigNumber(amount).multipliedBy(_percent).toNumber(),
-      sellInputAmount?.pDecimals,
-    );
-    amount = convert.toHumanAmount(originalAmount, sellInputAmount?.pDecimals);
-    const amounText = format.toFixed(amount, sellInputAmount?.pDecimals);
-    let buyAmount = '';
     switch (activedTab) {
-    case TAB_BUY_ID: {
-      buyAmount = format.toFixed(
-        new BigNumber(amount).dividedBy(new BigNumber(customRate)).toNumber(),
-          buyInputAmount?.pDecimals,
+    case TAB_BUY_LIMIT_ID: {
+      const {
+        availableAmountNumber: availableSellAmountNumber,
+      } = sellInputAmount;
+      let buyAmountNumber = new BigNumber(availableSellAmountNumber)
+        .dividedBy(customRate)
+        .multipliedBy(_percent)
+        .toNumber();
+      let originalBuyAmount = convert.toOriginalAmount(
+        buyAmountNumber,
+          buyToken?.pDecimals,
       );
+      buyAmountNumber = convert.toHumanAmount(
+        originalBuyAmount,
+          buyToken?.pDecimals,
+      );
+      const availableBuyAmountText = format.toFixed(
+        buyAmountNumber,
+          buyToken?.pDecimals,
+      );
+      dispatch(
+        change(
+          formConfigs.formName,
+          formConfigs.buytoken,
+          availableBuyAmountText,
+        ),
+      );
+      dispatch(focus(formConfigs.formName, formConfigs.buytoken));
       break;
     }
-    case TAB_SELL_ID: {
-      buyAmount = format.toFixed(
-        new BigNumber(amount)
-          .multipliedBy(new BigNumber(customRate))
-          .toNumber(),
-          buyInputAmount?.pDecimals,
+    case TAB_SELL_LIMIT_ID: {
+      const {
+        availableAmountNumber: availableSellAmountNumber,
+      } = sellInputAmount;
+      let sellAmountNumber = new BigNumber(availableSellAmountNumber)
+        .multipliedBy(_percent)
+        .toNumber();
+      const availableSellAmountText = format.toFixed(
+        sellAmountNumber,
+          sellToken?.pDecimals,
       );
+      dispatch(
+        change(
+          formConfigs.formName,
+          formConfigs.selltoken,
+          availableSellAmountText,
+        ),
+      );
+      dispatch(focus(formConfigs.formName, formConfigs.selltoken));
       break;
     }
     default:
       break;
     }
-    dispatch(change(formConfigs.formName, formConfigs.buytoken, buyAmount));
-    dispatch(change(formConfigs.formName, formConfigs.selltoken, amounText));
-    dispatch(focus(formConfigs.formName, formConfigs.selltoken));
   };
   return (
     <SelectPercentAmount
@@ -375,35 +476,28 @@ const SelectPercentAmountInput = React.memo(() => {
   );
 });
 
-const Balance = React.memo(() => {
-  const { balanceStr } = useSelector(orderLimitDataSelector);
-  return (
-    <Row style={styled.balanceWrapper}>
-      <Text style={styled.balanceLabel}>Balance</Text>
-      <Text style={styled.balanceValue}>{balanceStr}</Text>
-    </Row>
-  );
-});
-
 const InputsGroup = React.memo(() => {
   const { activedTab } = useSelector(orderLimitDataSelector);
+  const poolSelected = useSelector(poolSelectedDataSelector);
   const renderMain = () => {
     switch (activedTab) {
-    case TAB_SELL_ID: {
+    case TAB_SELL_LIMIT_ID: {
       return (
         <>
+          <RateInput />
+          <Divider dividerStyled={styled.dividerStyled} />
           <SellInput />
           <SelectPercentAmountInput />
-          <BuyInput />
         </>
       );
     }
-    case TAB_BUY_ID: {
+    case TAB_BUY_LIMIT_ID: {
       return (
         <>
+          <RateInput />
+          <Divider dividerStyled={styled.dividerStyled} />
           <BuyInput />
           <SelectPercentAmountInput />
-          <SellInput />
         </>
       );
     }
@@ -411,13 +505,10 @@ const InputsGroup = React.memo(() => {
       return null;
     }
   };
-  return (
-    <View style={styled.container}>
-      <RateInput />
-      {renderMain()}
-      <Balance />
-    </View>
-  );
+  if (!poolSelected) {
+    return null;
+  }
+  return <View style={styled.container}>{renderMain()}</View>;
 });
 
 export default InputsGroup;

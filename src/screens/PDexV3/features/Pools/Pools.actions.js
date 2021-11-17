@@ -3,6 +3,8 @@ import { ExHandler } from '@src/services/exception';
 import { getPDexV3Instance } from '@screens/PDexV3';
 import uniq from 'lodash/uniq';
 import BigNumber from 'bignumber.js';
+import orderBy from 'lodash/orderBy';
+import { batch } from 'react-redux';
 import {
   ACTION_FETCHING,
   ACTION_FETCHED,
@@ -40,9 +42,8 @@ export const actionFetchedListPoolsFollowing = (payload) => ({
   payload,
 });
 
-export const actionSetFetching = ({ isFetching }) => ({
+export const actionFetching = () => ({
   type: ACTION_FETCHING,
-  payload: { isFetching },
 });
 
 export const actionFetched = () => ({
@@ -61,9 +62,8 @@ export const actionFetchListPools = () => async (dispatch, getState) => {
   try {
     const state = getState();
     const followIds = followPoolIdsSelector(state);
-    await dispatch(actionSetFetching({ isFetching: true }));
-    const account = defaultAccountWalletSelector(state);
-    const pDexV3Inst = await getPDexV3Instance({ account });
+    await dispatch(actionFetching());
+    const pDexV3Inst = await getPDexV3Instance();
     const pools = (await pDexV3Inst.getListPools('all')) || [];
     const volume = pools.reduce(
       (prev, curr) => new BigNumber(Math.ceil(curr.volume)).plus(prev),
@@ -80,12 +80,14 @@ export const actionFetchListPools = () => async (dispatch, getState) => {
         .map((poolId) => pools.find((pool) => pool?.poolId === poolId))
         .filter((pool) => !!pool)
         .filter((pool) => !!pool.isVerify) || [];
-    await dispatch(actionFetchedListPools(payload));
-    await dispatch(actionFetchedTradingVolume24h(originalVolume));
+    batch(() => {
+      dispatch(actionFetchedListPools(orderBy(payload, 'volume', 'desc')));
+      dispatch(actionFetchedTradingVolume24h(originalVolume));
+      dispatch(actionFetched());
+    });
   } catch (error) {
+    dispatch(actionFetchFail());
     throw error;
-  } finally {
-    await dispatch(actionSetFetching({ isFetching: false }));
   }
 };
 
@@ -106,14 +108,11 @@ export const actionFetchListFollowingPools = () => async (
 
 export const actionFetchPools = () => async (dispatch) => {
   try {
-    dispatch(actionSetFetching({ isFetching: true }));
     await dispatch(actionFetchListFollowingPools());
     await dispatch(actionFetchListPools());
-    dispatch(actionFetched());
   } catch (error) {
     console.log('FETCH POOLS ERROR', error);
     new ExHandler(error).showErrorToast();
-    dispatch(actionFetchFail());
   }
 };
 

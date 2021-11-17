@@ -7,14 +7,13 @@ import {
 import { change, Field } from 'redux-form';
 import SelectedPrivacy from '@src/models/selectedPrivacy';
 import { useDispatch, useSelector } from 'react-redux';
-import { SwapButton, Text } from '@src/components/core';
-import { Row } from '@src/components';
-import { ButtonTrade } from '@src/components/Button';
+import { SwapButton } from '@src/components/core';
 import { COLORS, FONT } from '@src/styles';
 import { actionToggleModal } from '@src/components/Modal';
 import { Hook } from '@screens/PDexV3/features/Extra';
 import { useNavigation } from 'react-navigation-hooks';
 import routeNames from '@src/router/routeNames';
+import ToggleArrow from '@src/components/ToggleArrow';
 import { maxAmountValidatorForSellInput } from './Swap.utils';
 import { formConfigs } from './Swap.constant';
 import {
@@ -32,8 +31,11 @@ import {
   actionSwapToken,
 } from './Swap.actions';
 import { inputGroupStyled as styled } from './Swap.styled';
+import SwapProTab from './Swap.proTab';
+import SwapSimpleTab from './Swap.simpleTab';
 
 const SwapInputsGroup = React.memo(() => {
+  const [toggle, setToggle] = React.useState(false);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const swapInfo = useSelector(swapInfoSelector);
@@ -104,9 +106,8 @@ const SwapInputsGroup = React.memo(() => {
     <View style={styled.inputGroups}>
       <Field
         component={TradeInputAmount}
-        name={formConfigs.selltoken} //
-        hasIcon
-        srcIcon={selltoken.iconUrl}
+        name={formConfigs.selltoken}
+        hasInfinityIcon
         canSelectSymbol
         symbol={selltoken?.symbol}
         onChange={(value) => onChange(formConfigs.selltoken, value)}
@@ -122,33 +123,12 @@ const SwapInputsGroup = React.memo(() => {
         ]}
         loadingBalance={!!sellInputAmount?.loadingBalance}
         editableInput={!!swapInfo?.editableInput}
-        visibleHeader
-        label="From"
-        rightHeader={(
-          <Row style={styled.rightHeaderSell}>
-            <Text
-              style={styled.balanceStr}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              Balance: {swapInfo.balanceStr}
-            </Text>
-            <ButtonTrade
-              btnStyle={styled.btnStyle}
-              titleStyle={styled.titleStyle}
-              title="MAX"
-              onPress={onPressInfinityIcon}
-            />
-          </Row>
-        )}
       />
       <SwapButton onSwapButtons={onSwapButtons} />
       <Field
         component={TradeInputAmount}
-        name={formConfigs.buytoken} //
+        name={formConfigs.buytoken}
         canSelectSymbol
-        hasIcon
-        srcIcon={buytoken.iconUrl}
         symbol={buytoken?.symbol}
         onPressSymbol={onSelectBuyToken}
         onFocus={(e) => onFocusToken(e, formConfigs.buytoken)}
@@ -156,24 +136,16 @@ const SwapInputsGroup = React.memo(() => {
         validate={[...validator.combinedAmount]}
         loadingBalance={!!buyInputAmount?.loadingBalance}
         editableInput={!!swapInfo?.editableInput}
-        visibleHeader
-        label="To"
+        visibleHeader={false}
         onChange={(value) => onChange(formConfigs.buytoken, value)}
       />
-      <Hook
-        label="Rate"
-        value={swapInfo?.maxPriceStr}
-        hasQuestionIcon
-        styledHook={{ marginTop: 32, marginBottom: 0 }}
-        customStyledLabel={{
-          color: COLORS.black,
-          fontSize: FONT.SIZE.regular,
-        }}
-        customStyledValue={{
-          color: COLORS.colorGrey3,
-          fontSize: FONT.SIZE.small,
-        }}
+      <ToggleArrow
+        label="Advanced"
+        toggle={toggle}
+        handlePressToggle={() => setToggle(!toggle)}
+        style={styled.toggleArrow}
       />
+      {toggle && <SwapProTab />}
     </View>
   );
 });

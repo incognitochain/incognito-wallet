@@ -1,10 +1,9 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { COLORS, FONT } from '@src/styles';
-import { verticalScale } from 'react-native-size-matters';
 
 export default StyleSheet.create({
   container: {
-    paddingBottom: verticalScale(80),
+    backgroundColor: COLORS.white
   },
   center: {
     justifyContent: 'center',

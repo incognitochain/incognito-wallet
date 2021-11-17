@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   ButtonRefresh,
@@ -13,11 +13,8 @@ import { useNavigation } from 'react-navigation-hooks';
 import routeNames from '@src/router/routeNames';
 import { COLORS, FONT } from '@src/styles';
 import { ArrowGreyDown } from '@src/components/Icons';
-import { actionToggleModal } from '@src/components/Modal';
-import ModalBottomSheet from '@src/components/Modal/features/ModalBottomSheet';
-import { PoolsTab } from '@screens/PDexV3/features/Pools';
 import {
-  orderLimitDataSelector,
+  poolSelectedDataSelector,
   rateDataSelector,
 } from '@screens/PDexV3/features/OrderLimit';
 
@@ -52,7 +49,7 @@ const styled = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     minWidth: 30,
-    maxWidth: 50,
+    paddingHorizontal: 5,
   },
   priceChange24h: {
     fontSize: FONT.SIZE.superSmall,
@@ -73,12 +70,9 @@ export const GroupActions = ({
   canSelectPool = true,
 }) => {
   const navigation = useNavigation();
-  const {
-    poolId,
-    poolStr,
-    priceChange24hStr,
-    colorPriceChange24h,
-  } = useSelector(orderLimitDataSelector);
+  const { poolId, poolStr, perChange24hToStr, perChange24hColor } = useSelector(
+    poolSelectedDataSelector,
+  );
   const { rateStr } = useSelector(rateDataSelector);
   const onPressChart = () =>
     navigation.navigate(routeNames.Chart, {
@@ -105,20 +99,13 @@ export const GroupActions = ({
         </TouchableOpacity>
         {hasChart && (
           <Row style={styled.block2}>
-            <ButtonRefresh
-              style={{ marginRight: 10 }}
-              onPress={onPressRefresh}
-            />
             <ButtonChart style={{ marginRight: 10 }} onPress={onPressChart} />
-            <BtnOrderHistory
-              onPress={() => navigation.navigate(routeNames.TradeOrderHistory)}
-            />
           </Row>
         )}
       </Row>
       <Row style={styled.bottom}>
         <Text
-          style={{ ...styled.rate, color: colorPriceChange24h }}
+          style={{ ...styled.rate, color: perChange24hColor }}
           numberOfLines={1}
           ellipsizeMode="tail"
         >
@@ -127,7 +114,7 @@ export const GroupActions = ({
         <View
           style={{
             ...styled.priceChange24hWrapper,
-            backgroundColor: colorPriceChange24h,
+            backgroundColor: perChange24hColor,
           }}
         >
           <Text
@@ -137,7 +124,7 @@ export const GroupActions = ({
             numberOfLines={1}
             ellipsizeMode="tail"
           >
-            {priceChange24hStr}
+            {perChange24hToStr}
           </Text>
         </View>
       </Row>

@@ -8,7 +8,7 @@ import Row from '@src/components/Row';
 const styled = StyleSheet.create({
   container: {
     alignItems: 'center',
-    marginVertical: 22,
+    marginVertical: 16,
   },
 });
 

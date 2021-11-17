@@ -5,7 +5,7 @@ import { COLORS } from '@src/styles';
 const ChevronIcon = (props) => (
   <Icon
     name={`chevron-thin-${props?.toggle ? 'up' : 'down'}`}
-    size={props?.size || 20}
+    size={props?.size || 16}
     color={COLORS.colorGreyBold}
   />
 );

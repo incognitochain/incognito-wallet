@@ -21,7 +21,7 @@ export const handleFilterTokenByKeySearch = ({ tokens, keySearch }) => {
 export const formatPrice = (price, toNumber = false) => {
   const pDecimals = 9;
   const originalAmount = convert.toOriginalAmount(price, pDecimals, true) || 0;
-  const result = format.amount(originalAmount, pDecimals);
+  const result = format.amountVer2(originalAmount, pDecimals);
   return toNumber ? convert.toNumber(result, true) : result;
 };
 
@@ -37,7 +37,8 @@ export const formatAmount = (
   const priceFormat = formatPrice(price, true) || 0;
 
   // format amount with has decimalDigits
-  const formatAmount = format.amount(amount, pDecimals, true, decimalDigits);
+  // const formatAmount = format.amount(amount, pDecimals, true, decimalDigits);
+  const formatAmount = format.amountVer2(amount, pDecimals);
 
   const totalAmountNumber = convert.toNumber(formatAmount, true) * priceFormat;
 

@@ -11,9 +11,10 @@ const initialState = {
   signPublicKeyEncode: '',
   burnerAddress: '',
   isFetchingNFT: false,
+  toggleModalMintMoreNFT: false,
   nft: {
     nftToken: '',
-    initNFTToken: false,
+    initNFTToken: true,
     list: [],
   },
 };
@@ -174,6 +175,12 @@ const reducer = (state = initialState, action) => {
     return {
       ...state,
       isFetchingNFT: true,
+    };
+  }
+  case type.ACTION_TOGGLE_MODAL_MINT_MORE_NFT: {
+    return {
+      ...state,
+      toggleModalMintMoreNFT: action.payload,
     };
   }
   default:

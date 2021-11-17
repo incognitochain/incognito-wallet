@@ -9,5 +9,5 @@ import {
 export default React.memo(() => {
   const tradingVolume24h = useSelector(tradingVolume24hSelector);
   const loading = useSelector(isFetchingSelector);
-  return <HomeTabHeader title="24h Trading Volume" desc={`${tradingVolume24h} $`} loading={loading} />;
+  return <HomeTabHeader title="24h Trading Volume" desc={`$${tradingVolume24h}`} loading={loading} />;
 });

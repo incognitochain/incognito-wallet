@@ -108,9 +108,15 @@ export const Hook = React.memo((props) => {
 });
 
 const Extra = (props) => {
-  const { title, hooks, hasQuestionIcon, onPressQuestionIcon } = props;
+  const {
+    title,
+    hooks,
+    hasQuestionIcon,
+    onPressQuestionIcon,
+    containerStyle,
+  } = props;
   return (
-    <View style={styled.container}>
+    <View style={{ ...styled.container, ...containerStyle }}>
       {title && (
         <Row style={styled.titleContainer}>
           <Text style={styled.title}>{title}</Text>

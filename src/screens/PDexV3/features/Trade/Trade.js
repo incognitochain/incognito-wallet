@@ -1,35 +1,64 @@
-import { Header } from '@src/components';
+import { batch, useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Tabs } from '@src/components/core';
+import Row from '@src/components/Row';
 import React from 'react';
 import { View } from 'react-native';
 import TabSwap from '@screens/PDexV3/features/Swap';
-import OrderLimit from '@screens/PDexV3/features/OrderLimit';
-import TabMarket from '@screens/PDexV3/features/MarketList';
+import OrderLimit, {
+  actionInit,
+  visibleBtnChartSelector,
+} from '@screens/PDexV3/features/OrderLimit';
+import { ButtonChart } from '@src/components/Button';
+import { useNavigationParam, useNavigation } from 'react-navigation-hooks';
+import SelectAccountButton from '@src/components/SelectAccountButton';
+import routeNames from '@src/router/routeNames';
 import {
   ROOT_TAB_TRADE,
-  TAB_LIMIT_ID,
-  TAB_MARKET_ID,
   TAB_SWAP_ID,
+  TAB_BUY_LIMIT_ID,
+  TAB_SELL_LIMIT_ID,
 } from './Trade.constant';
 import { styled } from './Trade.styled';
 import withTrade from './Trade.enhance';
 
-const Trade = (props) => {
-  const { onRefresh, handlePressPool, hideBackButton } = props;
+const Trade = () => {
+  const tabIndex = useNavigationParam('tabIndex');
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const visibleBtnChart = useSelector(visibleBtnChartSelector);
   return (
     <View style={styled.container}>
-      <Header
-        title="pDex"
-        accountSelectable
-        hideBackButton={hideBackButton}
-        handleSelectedAccount={onRefresh}
-      />
-      <Tabs rootTabID={ROOT_TAB_TRADE} styledTabs={styled.styledTabs} useTab1>
-        <View tabID={TAB_MARKET_ID} label="Market" onChangeTab={() => null}>
-          <TabMarket onPressPool={handlePressPool} />
+      <Tabs
+        rootTabID={ROOT_TAB_TRADE}
+        styledTabs={styled.styledTabs}
+        useTab1
+        defaultTabIndex={tabIndex}
+        styledTabList={styled.styledTabList}
+        rightCustom={
+          <Row style={styled.rightHeader}>
+            {visibleBtnChart && (
+              <ButtonChart
+                onPress={() => navigation.navigate(routeNames.Chart)}
+                style={{ marginRight: 15 }}
+              />
+            )}
+            <SelectAccountButton />
+          </Row>
+        }
+      >
+        <View
+          tabID={TAB_BUY_LIMIT_ID}
+          label="Buy"
+          onChangeTab={() => dispatch(actionInit(false))}
+        >
+          <OrderLimit />
         </View>
-        <View tabID={TAB_LIMIT_ID} label="Limit" onChangeTab={() => null}>
+        <View
+          tabID={TAB_SELL_LIMIT_ID}
+          label="Sell"
+          onChangeTab={() => dispatch(actionInit(false))}
+        >
           <OrderLimit />
         </View>
         <View tabID={TAB_SWAP_ID} label="Swap" onChangeTab={() => null}>

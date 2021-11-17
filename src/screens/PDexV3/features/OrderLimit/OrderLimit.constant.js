@@ -2,10 +2,6 @@ export const ACTION_FETCHING = '[pDexV3][orderLimit] Fetching data';
 export const ACTION_FETCHED = '[pDexV3][orderLimit] Fetched data';
 export const ACTION_FETCH_FAIL = '[pDexV3][orderLimit] Fetch fail data';
 
-export const TAB_BUY_ID = '[order_limit] buy';
-export const TAB_SELL_ID = '[order_limit] sell';
-export const ROOT_TAB_ORDER_LIMIT = 'ROOT_TAB_ORDER_LIMIT';
-
 export const ACTION_SET_POOL_ID = '[pDexV3][orderLimit] Set pool selected';
 export const ACTION_SET_INITIING = '[pDexV3][orderLimit] Initing';
 export const ACTION_SET_FEE_TOKEN = '[pDexV3][orderLimit] Set fee token';
@@ -44,6 +40,10 @@ export const ACTION_FETCHING_ORDER_DETAIL =
 export const ACTION_FETCHED_ORDER_DETAIL =
   '[pDexV3][orderLimit] Fetched order detail';
 
+export const ACTION_RESET_ORDERS_HISTORY =
+  '[pDexV3][orderLimit] Reset orders history';
+
 export const ROOT_TAB_SUB_INFO = 'ROOT_TAB_SUB_INFO';
 export const TAB_OPEN_ORDER = '[order_limit_sub_info] open order';
 export const TAB_ORDER_BOOK = '[order_limit_sub_info] order book';
+export const TAB_HISTORY_ID = '[order_limit_sub_info] history order';

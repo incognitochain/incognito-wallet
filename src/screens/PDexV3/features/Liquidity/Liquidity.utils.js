@@ -41,6 +41,7 @@ export const getInputAmount = (
       originalNum: maxOriginalAmount,
       pDecimals: token.pDecimals
     });
+    let maxAmountDisplay = format.amountVer2(maxOriginalAmount, token.pDecimals);
     if ((token.tokenId === feeToken) && (maxOriginalAmount - feeAmount) > 0) {
       maxOriginalAmount = maxOriginalAmount - feeAmount;
       maxOriginalAmountText = convertAmount({
@@ -72,7 +73,7 @@ export const getInputAmount = (
       inputAmountSymbolStr: `${inputAmountStr} ${token.symbol}`,
       maxOriginalAmount,
       maxOriginalAmountText,
-
+      maxAmountDisplay,
       loadingBalance: isGettingBalance.includes(token.tokenId),
       balance: token.amount,
       balanceStr: format.amountFull(token.amount, token.pDecimals, false).toString(),

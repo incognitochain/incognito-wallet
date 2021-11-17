@@ -44,6 +44,7 @@ const Tab1 = (props) => {
     tabStyledDisabled,
     titleStyled,
     titleDisabledStyled,
+    tabStyledEnabled,
   } = props;
   const onClick = () => typeof onClickTab === 'function' && onClickTab(tabID);
   const disabled = tabID !== activeTab;
@@ -53,7 +54,7 @@ const Tab1 = (props) => {
       onPress={onClick}
       btnStyle={
         tabStyled
-          ? [tabStyled, disabled ? tabStyledDisabled : null]
+          ? [tabStyled, disabled ? tabStyledDisabled : tabStyledEnabled]
           : [
             styled.btnStyle,
             disabled ? styled.btnStyleDisabled : styled.btnStyleEnabled,
@@ -73,6 +74,7 @@ Tab1.defaultProps = {
   titleStyled: null,
   tabStyledDisabled: null,
   titleDisabledStyled: null,
+  tabStyledEnabled: null,
 };
 
 Tab1.propTypes = {
@@ -84,6 +86,7 @@ Tab1.propTypes = {
   tabStyledDisabled: PropTypes.any,
   titleStyled: PropTypes.any,
   titleDisabledStyled: PropTypes.any,
+  tabStyledEnabled: PropTypes.any
 };
 
 export default React.memo(Tab1);

@@ -21,6 +21,11 @@ export const swapSelector = createSelector(
   ({ swap }) => swap,
 );
 
+export const purePairsSelector = createSelector(
+  swapSelector,
+  ({ pairs }) => (pairs || [])
+);
+
 export const listPairsSelector = createSelector(
   swapSelector,
   getPrivacyDataByTokenIDSelector,
@@ -241,7 +246,7 @@ export const swapInfoSelector = createSelector(
       const networkfeeAmountStr = `${networkfeeAmount} ${PRV.symbol}`;
       const editableInput =
         !swapingToken && !initing && !selecting && !isFetching;
-      let btnSwapText = 'Confirm';
+      let btnSwapText = 'Swap';
       const calculating = swapingToken || initing || selecting || isFetching;
       const disabledBtnSwap =
         calculating ||
@@ -341,6 +346,7 @@ export const mappingOrderHistorySelector = createSelector(
       const buyStr = `${priceStr} ${buyToken.symbol}`;
       const timeStr = format.formatDateTime(
         fromStorage ? requestime : requestime * 1000,
+        'DD MMM HH:mm',
       );
       const rate = getPairRate({
         token1Value: amount,
@@ -367,10 +373,9 @@ export const mappingOrderHistorySelector = createSelector(
         rateStr,
         timeStr,
         rate,
-        networkfeeAmountStr: `${format.amountVer2(
-          networkFee,
-          PRV.pDecimals,
-        )} ${PRV.symbol}`,
+        networkfeeAmountStr: `${format.amountVer2(networkFee, PRV.pDecimals)} ${
+          PRV.symbol
+        }`,
         tradingFeeStr,
         statusStr: capitalize(status),
         swapStr,
@@ -407,4 +412,9 @@ export const orderDetailSelector = createSelector(
       order: mappingOrderHistory(order),
     };
   },
+);
+
+export const defaultPairSelector = createSelector(
+  swapSelector,
+  ({ selltoken, buytoken }) => ({ selltoken, buytoken }),
 );

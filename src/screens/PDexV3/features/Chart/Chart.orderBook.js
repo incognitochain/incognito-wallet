@@ -122,7 +122,7 @@ export const OrderBook = React.memo(() => {
   }, []);
   React.useEffect(() => {
     fetchData();
-  }, []);
+  }, [poolid]);
   if (!poolid) {
     return null;
   }

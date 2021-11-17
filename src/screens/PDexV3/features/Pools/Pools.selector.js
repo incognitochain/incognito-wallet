@@ -5,6 +5,7 @@ import { COLORS } from '@src/styles';
 import { getExchangeRate } from '@screens/PDexV3';
 import BigNumber from 'bignumber.js';
 import convert from '@src/utils/convert';
+import isEqual from 'lodash/isEqual';
 
 export const poolsSelector = createSelector(
   (state) => state.pDexV3,
@@ -94,6 +95,7 @@ export const listPoolsSelector = createSelector(
           true,
         );
         const priceStr = format.amountVer2(originalPrice, token2?.pDecimals);
+        const poolStr = `${token1?.symbol || ''} / ${token2?.symbol || ''}`;
         return {
           ...pool,
           token1,
@@ -124,6 +126,7 @@ export const listPoolsSelector = createSelector(
             [token2Id]: virtual2Value,
           },
           priceStr,
+          poolStr,
         };
       });
     } catch (error) {
@@ -157,4 +160,12 @@ export const defaultPoolSelector = createSelector(
 export const listPoolsVerifySelector = createSelector(
   listPoolsSelector,
   (pools) => pools.filter(({ isVerify }) => !!isVerify),
+);
+
+export const findPoolByPairSelector = createSelector(
+  listPoolsVerifySelector,
+  (pools) => ({ token1Id, token2Id }) =>
+    pools.find(({ token1, token2 }) =>
+      isEqual([token1?.tokenId, token2?.tokenId], [token1Id, token2Id]),
+    ) || pools.find(({ token1 }) => token1?.tokenId === token1Id),
 );

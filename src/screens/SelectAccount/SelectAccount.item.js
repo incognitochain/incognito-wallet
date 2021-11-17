@@ -70,11 +70,6 @@ const AccountItem = React.memo(
     MasterKeyName,
     handleSelectedAccount,
   }) => {
-    console.log(
-      'typeof handleSelectedAccount',
-      typeof handleSelectedAccount,
-      handleSelectedAccount,
-    );
     const dispatch = useDispatch();
     const navigation = useNavigation();
     const onSelect = useNavigationParam('onSelect');

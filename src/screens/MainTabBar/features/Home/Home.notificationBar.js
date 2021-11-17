@@ -14,6 +14,7 @@ const NotificationBar = ({ handleFetchNews }) => {
   const { data } = useSelector(newsSelector);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const handleNavNotification = () => navigation.navigate(routeNames.News);
   const latestNew = React.useMemo(() => {
     const news = (data || []).sort((a, b) => a?.Type - b?.Type).map((category) => category);
     if (news && news.length > 0 && news[0].ListNews && news[0].ListNews.length > 0) {
@@ -26,7 +27,7 @@ const NotificationBar = ({ handleFetchNews }) => {
     handleFetchNews();
   }, []);
   if (!latestNew) return;
-  
+
   return (
     <TouchableOpacity
       style={homeStyled.wrapNotify}
@@ -55,9 +56,9 @@ const NotificationBar = ({ handleFetchNews }) => {
           {latestNew.Title}
         </TextMarquee>
       </View>
-      <View style={{ width: 22, alignItems: 'flex-end' }}>
+      <TouchableOpacity style={{ width: 22, alignItems: 'flex-end' }} onPress={handleNavNotification}>
         <HamburgerIcon />
-      </View>
+      </TouchableOpacity>
     </TouchableOpacity>
 
   );

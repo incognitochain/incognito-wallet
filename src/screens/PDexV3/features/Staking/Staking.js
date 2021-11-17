@@ -26,14 +26,14 @@ const Reward = React.memo(() => {
   const { rewardUSDStr, rewardPRVStr } = useSelector(stakingSelector.stakingRewardSelector);
   const isFetching = useSelector(stakingSelector.isFetchingCoinsSelector);
   return (
-    <Row spaceBetween style={{ marginTop: 27 }}>
+    <Row center style={{ marginTop: 27 }}>
       <AmountGroup
         amountStr={rewardUSDStr}
         subAmountStr={rewardPRVStr}
         loading={isFetching}
       />
       <CalendarIcon
-        btnStyle={{ paddingLeft: 15 }}
+        btnStyle={{ paddingLeft: 15, position: 'absolute', right: 0, top: 0 }}
         onPress={() => navigation.navigate(routeNames.StakingHistories)}
       />
     </Row>

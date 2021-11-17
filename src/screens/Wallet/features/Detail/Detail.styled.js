@@ -31,13 +31,13 @@ export const groupBtnStyled = StyleSheet.create({
 
 export const balanceStyled = StyleSheet.create({
   container: {
-    marginBottom: 50,
+    marginBottom: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 42,
+    marginTop: 22,
   },
   amount: {
-    fontFamily: FONT.NAME.bold,
+    fontFamily: FONT.NAME.medium,
     fontSize: FONT.SIZE.superLarge,
     color: COLORS.black,
     maxWidth: '100%',

@@ -17,7 +17,7 @@ const initialState = {
   server: null,
   decimalDigits: true,
   isToggleUSD: true,
-  showWalletBlance: false,
+  showWalletBalance: false,
   toggleBackupAllKeys: true,
   usePRVToPayFee: false,
 };
@@ -63,7 +63,7 @@ const settingReducer = (state = initialState, action) => {
   case ACTION_UPDATE_SHOW_WALLET_BALANCE: {
     return {
       ...state,
-      showWalletBlance: !state?.showWalletBlance,
+      showWalletBalance: !state?.showWalletBalance,
     };
   }
   default:

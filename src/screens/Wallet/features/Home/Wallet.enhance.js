@@ -15,6 +15,7 @@ import {
 import { withdraw, updatePTokenFee } from '@src/services/api/withdraw';
 import { accountSelector } from '@src/redux/selectors';
 import { compose } from 'recompose';
+import { withLayout_2 } from '@components/Layout';
 
 export const WalletContext = React.createContext({});
 
@@ -114,5 +115,6 @@ const enhance = (WrappedComp) => (props) => {
 };
 
 export default compose(
+  withLayout_2,
   enhance,
 );

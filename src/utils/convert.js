@@ -2,6 +2,7 @@
 import _ from 'lodash';
 import { getDecimalSeparator } from '@src/resources/separator';
 import BigNumber from 'bignumber.js';
+import format from './format';
 
 const checkAmount = (amount) => {
   if (!Number.isFinite(amount))
@@ -143,6 +144,17 @@ export default {
       .multipliedBy(BigNumber(10).pow(token.decimals))
       .dividedToIntegerBy(1)
       .toFixed(0);
+  },
+  toHumanAmountVer2(humanAmount, decimals) {
+    let amount = 0;
+    try {
+      const originalAmount = this.toOriginalAmount(humanAmount, decimals);
+      amount = format.amountVer2(originalAmount, decimals);
+      amount = this.toNumber(amount, true);
+    } catch (error) {
+      console.log('amountFromHumanAmountV2-error', error);
+    }
+    return amount;
   },
 };
 

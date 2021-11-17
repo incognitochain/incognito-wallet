@@ -10,10 +10,10 @@ const styled = StyleSheet.create({
     height: '100%',
   },
   wrapper: {
-    width: 50,
-    height: 50,
+    width: 32,
+    height: 32,
     borderWidth: 1,
-    borderRadius: 50,
+    borderRadius: 32,
     borderColor: COLORS.colorGrey4,
     shadowOffset: {
       width: 0,

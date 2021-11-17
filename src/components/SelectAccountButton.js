@@ -1,42 +1,19 @@
 import React from 'react';
 import toLower from 'lodash/toLower';
 import PropTypes from 'prop-types';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { accountSelector } from '@src/redux/selectors';
-import { COLORS, FONT } from '@src/styles';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from 'react-navigation-hooks';
 import routeNames from '@src/router/routeNames';
-import { ButtonBasic } from '@src/components/Button';
 import { listAllMasterKeyAccounts } from '@src/redux/selectors/masterKey';
 import { switchMasterKey } from '@src/redux/actions/masterKey';
 import accountService from '@services/wallet/accountService';
-import { accountServices } from '@src/services/wallet';
+import { WalletIcon } from './Icons';
+import { TouchableOpacity } from './core';
 
 const styled = StyleSheet.create({
-  container: {
-    minWidth: 80,
-    maxWidth: 120,
-  },
-  btnStyle: {
-    backgroundColor: COLORS.lightGrey19,
-    height: 40,
-    paddingHorizontal: 15,
-    width: '100%',
-  },
-  name: {
-    fontFamily: FONT.NAME.medium,
-    fontSize: 15,
-    lineHeight: 19,
-    color: COLORS.black,
-    marginRight: 5,
-  },
-  hook: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  btnStyle: {},
 });
 
 const SelectAccountButton = ({
@@ -79,21 +56,13 @@ const SelectAccountButton = ({
     checkAccount();
   }, []);
   return (
-    <View style={styled.container}>
-      <ButtonBasic
-        disabled={disabled}
-        onPress={onNavSelectAccount}
-        customContent={
-          <View style={styled.hook}>
-            <Text numberOfLines={1} style={styled.name} ellipsizeMode="tail">
-              {account?.accountName || ''}
-            </Text>
-            <Ionicons name="ios-arrow-down" color={COLORS.black} size={13} />
-          </View>
-        }
-        btnStyle={styled.btnStyle}
-      />
-    </View>
+    <TouchableOpacity
+      disabled={disabled}
+      onPress={onNavSelectAccount}
+      style={styled.btnStyle}
+    >
+      <WalletIcon />
+    </TouchableOpacity>
   );
 };
 

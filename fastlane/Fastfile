@@ -11,8 +11,11 @@ platform :ios do
 
    lane :release do
      setup_circle_ci
-     match(type: 'appstore', readonly: true)
-     build_app(
+      setupCodeSigning(ENV["MATCH_PASSWORD"], ENV["MATCH_PASSWORD"],
+      './fastlane/AppStore_com.incognito.wallet.mobileprovision',
+      './fastlane/cert.p12')
+       #match(type: 'appstore', readonly: true ,api_key_path: "fastlane/develop.json"
+       build_app(
        workspace: './ios/Incognito.xcworkspace',
        scheme: 'Incognito',
        export_method: "app-store",
@@ -23,6 +26,7 @@ platform :ios do
            },
        export_xcargs: "-allowProvisioningUpdates"
      )
+     pilot( api_key_path: "fastlane/develop.json" )
      upload_to_app_store(
        submit_for_review: false,
        force: true
@@ -42,4 +46,22 @@ platform :android do
      release_status: 'draft',
    )
   end
+end
+
+def setupCodeSigning(keychainPassword, certificatePassword, profilePath, certificatePath)
+  create_keychain(
+    name: "CI",
+    password: keychainPassword,
+    default_keychain: true,
+    unlock: true,
+    timeout: 3600,
+    lock_when_sleeps: false
+  )
+  install_provisioning_profile(path: profilePath)
+  import_certificate(
+    certificate_path: certificatePath,
+    certificate_password: certificatePassword,
+    keychain_name: "CI",
+    keychain_password: keychainPassword
+  )
 end

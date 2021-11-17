@@ -27,7 +27,8 @@ const DISABLED = {
   EXPLORER:               'explorer',
   FAUCET:                 'faucet_prv',
   KEY_CHAIN:              'keychain',
-  SETTING:                'setting'
+  SETTING:                'setting',
+  HOME:                   'home'
 };
 
 const FEATURES_ROUTE_MAP = {

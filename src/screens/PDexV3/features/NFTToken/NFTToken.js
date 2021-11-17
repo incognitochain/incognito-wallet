@@ -1,9 +1,7 @@
-import { Header, Row } from '@src/components';
+import { Header } from '@src/components';
 import { useDispatch, useSelector } from 'react-redux';
-import { ButtonBasic } from '@src/components/Button';
 import { ScrollView, Text } from '@src/components/core';
 import { withLayout_2 } from '@src/components/Layout';
-import routeNames from '@src/router/routeNames';
 import React from 'react';
 import { View } from 'react-native';
 import CopiableText from '@src/components/CopiableText';
@@ -21,34 +19,25 @@ const NFTTokenItem = React.memo((props) => {
   }
   return (
     <CopiableText
-      text={nftToken}
+      text={JSON.stringify({ nftToken, amount })}
       copiedMessage="Copied"
       style={styled.nftTokenItemContainer}
     >
-      <Row style={styled.nftTokenItemWrapper}>
-        <Text ellipsizeMode="middle" numberOfLines={1} style={styled.nftToken}>
-          {nftToken}
-        </Text>
-        <Text style={styled.amount}>{amount}</Text>
-      </Row>
+      <Text ellipsizeMode="middle" numberOfLines={1} style={styled.nftToken}>
+        {nftToken}
+      </Text>
     </CopiableText>
   );
 });
 
-const ListNFTToken = React.memo((props) => {
+const ListNFTToken = React.memo(() => {
   const { list } = useSelector(nftTokenDataSelector);
   if (list.length === 0) {
     return null;
   }
   return (
     <View style={styled.list}>
-      <Text style={styled.listTitle}>List</Text>
-      <Row style={{ ...styled.nftTokenItemWrapper, marginBottom: 15 }}>
-        <Text ellipsizeMode="middle" numberOfLines={1} style={styled.nftToken}>
-          NFT ID
-        </Text>
-        <Text style={styled.amount}>Amount</Text>
-      </Row>
+      <Text style={styled.listTitle}>Your tickets</Text>
       {list.map((nft) => (
         <NFTTokenItem {...nft} key={nft?.nftToken} />
       ))}
@@ -64,23 +53,22 @@ const NFTToken = (props) => {
       dispatch(actionSetNFTTokenData());
     }, []),
   );
-  const onMintNFToken = React.useCallback(
-    () => navigation.navigate(routeNames.MintNFTToken),
-    [],
-  );
   const hookFactories = React.useMemo(
     () => [
       {
-        label: 'What is Lorem Ipsum?',
         value:
-          'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+          'Tickets play a special role on pDEX. They allow you to perform actions like placing limit orders and investing in pools. They also act as receipts for those actions. With these tickets, you are able to withdraw the liquidity you provided, or cancel your limit order before it fills.',
+      },
+      {
+        value:
+          'A ticket is freed up once an action is complete. If you wish to make multiple transactions at the same time, you will be prompted to mint more tickets. You don\'t have to keep track of them, and you can mint as many as you like.',
       },
     ],
     [],
   );
   return (
     <View style={styled.container}>
-      <Header title="NFT" />
+      <Header title="Tickets" />
       <ScrollView style={styled.scrollview}>
         {hookFactories.map((hook) => (
           <NFTTokenHook {...hook} key={hook.label} />

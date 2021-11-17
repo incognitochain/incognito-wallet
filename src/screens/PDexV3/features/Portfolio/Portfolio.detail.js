@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   btnSmall: {
     height: 28,
-    width: 89,
+    width: 125,
     marginLeft: 5,
     borderRadius: 14,
     backgroundColor: COLORS.lightGrey19
@@ -106,7 +106,7 @@ const PortfolioModal = ({ shareId, onWithdrawFeeLP }) => {
         <Row style={styles.row} centerVertical>
           <Text style={styles.title}>{`${token1.symbol} / ${token2.symbol}`}</Text>
           <BTNPrimary
-            title="Withdraw"
+            title="Remove liquidity"
             textStyle={styles.btnText}
             wrapperStyle={styles.btnSmall}
             onPress={onWithdrawPress}
@@ -118,11 +118,11 @@ const PortfolioModal = ({ shareId, onWithdrawFeeLP }) => {
             <Hook key={hook?.label} {...hook} labelStyle={styles.leftText} valueTextStyle={styles.rightText} style={styles.wrapHook} />
           ))}
         </ScrollView>
-        {!validNFT && <Text style={styles.warning}>You cant withdraw your liquidity and reward now, your current NFT amount is zero</Text>}
+        {!validNFT && <Text style={styles.warning}>You don&apos;t have any spare tickets to make this transaction. Wait for one to free up, or mint another.</Text>}
         <Row spaceBetween style={{ marginTop: 10 }}>
           {!!withdrawable && (
             <BTNBorder
-              title={withdrawing ? 'Claiming' : 'Claim'}
+              title="Withdraw rewards"
               onPress={onClaimReward}
               wrapperStyle={[{flex: 1}, !!share && { marginRight: 8 }]}
               textStyle={{color: COLORS.colorBlue}}

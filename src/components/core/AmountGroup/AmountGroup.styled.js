@@ -15,13 +15,15 @@ export default StyleSheet.create({
     fontFamily: FONT.NAME.medium,
     fontSize: FONT.SIZE.superLarge,
     lineHeight: FONT.SIZE.superLarge + 8,
-    color: COLORS.black
+    color: COLORS.black,
+    textAlign: 'center'
   },
   compareAmount: {
     fontFamily: FONT.NAME.regular,
     fontSize: FONT.SIZE.small,
     lineHeight: FONT.SIZE.small + 3,
-    color: COLORS.black1
+    color: COLORS.black1,
+    textAlign: 'center'
   },
   loading: {
     marginTop: 15

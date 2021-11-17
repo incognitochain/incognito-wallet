@@ -47,13 +47,7 @@ export const poolIdSelector = createSelector(
 export const poolSelectedDataSelector = createSelector(
   orderLimitSelector,
   getDataByPoolIdSelector,
-  ({ poolId }, getDataByPoolId) => {
-    try {
-      return getDataByPoolId(poolId);
-    } catch (error) {
-      console.log('poolSelectedDataSelector-error', error);
-    }
-  },
+  ({ poolId }, getDataByPoolId) => getDataByPoolId(poolId) || {},
 );
 
 // group inputs
@@ -490,12 +484,12 @@ export const mappingOrderHistorySelector = createSelector(
         buyStr = `${buyAmount} ${buyToken.symbol}`;
         infoStr = poolStr;
       }
-      const percent = floor(
-        new BigNumber(matched)
-          .dividedBy(new BigNumber(amount))
-          .multipliedBy(100)
-          .toNumber(),
-      );
+
+      const percentToNumber = new BigNumber(matched)
+        .dividedBy(new BigNumber(amount))
+        .multipliedBy(100)
+        .toNumber();
+      const percent = format.toFixed(percentToNumber, 2);
       const percentStr = `Filled ${percent}%`;
       const percentStr1 = `${percent}%`;
       const time = fromStorage ? requestime : requestime * 1000;

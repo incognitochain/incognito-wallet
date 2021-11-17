@@ -53,7 +53,7 @@ const StakingPortfolio = ({ handleFetchCoins }) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={(
-          <EmptyBookIcon message="Your staking coins is empty" />
+          <EmptyBookIcon message="You aren't staking any coins right now. Browse the list and find a yield you like." />
         )}
       />
     );

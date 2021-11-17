@@ -19,7 +19,7 @@ const TYPES = {
 };
 
 export const STAKING_MESSAGES = {
-  staking: 'Staking',
+  staking: 'Stake',
   stakingMore: 'Stake more',
   stakingNow: 'Stake now',
   withdraw: 'Withdraw',
@@ -31,18 +31,18 @@ export const STAKING_MESSAGES = {
   reward: 'Reward',
   histories: 'Histories',
   history: 'History',
-  portfolio: 'Your portfolio',
-  listCoins: 'List coins',
+  portfolio: 'My portfolio',
+  listCoins: 'Coins',
   stakeMore: 'Stake more',
   stakeNow: 'Stake now',
   withdrawReward: 'Withdraw reward',
-  withdrawStaking: 'Withdraw staking',
-  waitNFT: 'Waiting NFTs token...',
-  cantWithdraw: 'You cant withdraw your staking and reward now, your current NFTs amount is zero, if you have pending transactions, please wait a few minutes for your NFTs amount up to date.',
+  withdrawStaking: 'Withdraw stake',
+  waitNFT: 'Waiting tickets...',
+  cantWithdraw: 'You don\'t have any spare tickets to make this transaction. Wait for one to free up, or mint another.',
   pendingNFTs: (onPress) => (
     <Text style={coinStyled.warning}>
-      Your current NFTs amount is zero, if you have pending transactions, please wait a few minutes for your&nbsp;
-      <Text style={{textDecorationLine: 'underline' }} onPress={() => typeof onPress === 'function' && onPress()}> NFTs</Text> amount up to date.
+      You don&apos;t have any spare tickets&nbsp;
+      <Text style={{textDecorationLine: 'underline' }} onPress={() => typeof onPress === 'function' && onPress()}> NFTs</Text> to make this transaction. Wait for one to free up, or mint another.
     </Text>
   )
 };

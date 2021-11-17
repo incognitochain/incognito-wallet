@@ -62,7 +62,7 @@ const PortfolioItem = ({ shareId, isLast, onWithdrawFeeLP }) => {
   const { hookFactories } = data || {};
   return (
     <TouchableOpacity
-      style={[styled.container, isLast && { borderBottomWidth: 0 }]}
+      style={[styled.container, isLast && { borderBottomWidth: 0, marginBottom: 50 }]}
       onPress={onPress}
       key={shareId}
     >

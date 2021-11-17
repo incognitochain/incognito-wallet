@@ -1,17 +1,10 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { FlatList, RefreshControl } from '@src/components/core';
-import { Header } from '@src/components';
-import { batch, useDispatch, useSelector } from 'react-redux';
-import { actionSetNFTTokenData } from '@src/redux/actions/account';
-import { ExHandler } from '@src/services/exception';
-import { useFocusEffect } from 'react-navigation-hooks';
-import { orderHistorySelector } from './OrderLimit.selector';
+import { useDispatch, useSelector } from 'react-redux';
+import { orderHistorySelector, poolIdSelector } from './OrderLimit.selector';
 import Order from './OrderLimit.order';
-import {
-  actionFetchOrdersHistory,
-  actionFetchWithdrawOrderTxs,
-} from './OrderLimit.actions';
+import { actionFetchOrdersHistory } from './OrderLimit.actions';
 
 const styled = StyleSheet.create({
   container: {
@@ -22,32 +15,22 @@ const styled = StyleSheet.create({
   },
 });
 
-const OrderHistory = () => {
+export const useHistoryOrders = () => {
+  const poolId = useSelector(poolIdSelector);
   const dispatch = useDispatch();
-  const onRefresh = async () => {
-    try {
-      batch(() => {
-        dispatch(actionFetchOrdersHistory());
-        dispatch(actionFetchWithdrawOrderTxs());
-        dispatch(actionSetNFTTokenData());
-      });
-    } catch (error) {
-      new ExHandler(error).showErrorToast();
-    }
-  };
+  React.useEffect(() => {
+    dispatch(actionFetchOrdersHistory());
+  }, [poolId]);
+  return { poolId };
+};
+
+const OrderHistory = () => {
   const { history = [], isFetching } = useSelector(orderHistorySelector);
-  useFocusEffect(
-    React.useCallback(() => {
-      onRefresh();
-    }, []),
-  );
+  useHistoryOrders();
   return (
     <View style={styled.container}>
-      <Header title="Order history" />
       <FlatList
-        refreshControl={
-          <RefreshControl refreshing={isFetching} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={isFetching} />}
         data={history}
         keyExtractor={(item) => item?.requestTx}
         renderItem={({ item, index }) => (

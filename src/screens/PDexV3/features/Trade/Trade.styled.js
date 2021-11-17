@@ -1,3 +1,4 @@
+import { COLORS } from '@src/styles';
 import { StyleSheet } from 'react-native';
 
 export const styled = StyleSheet.create({
@@ -8,11 +9,19 @@ export const styled = StyleSheet.create({
     paddingTop: 32,
   },
   styledTabs: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomColor: COLORS.colorGrey2,
+    borderBottomWidth: 1,
   },
   btnOrderHistory: {
     marginRight: 15,
   },
   rightHeader: {
-    alignItems: 'center',
+  },
+  styledTabList: {
+    borderBottomWidth: 0,
   },
 });

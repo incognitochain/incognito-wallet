@@ -25,7 +25,7 @@ const style = StyleSheet.create({
     marginBottom: 10,
   },
   itemContainer: {
-    paddingVertical: 15,
+    paddingVertical: 10,
   },
   amountText: {
     flex: 1,
@@ -67,17 +67,17 @@ const style = StyleSheet.create({
     marginBottom: 15,
   },
   title: {
-    fontFamily: FONT.NAME.bold,
-    fontSize: FONT.SIZE.superMedium,
-    lineHeight: FONT.SIZE.superMedium + 4,
+    ...FONT.STYLE.medium,
+    fontSize: FONT.SIZE.regular,
+    lineHeight: FONT.SIZE.regular + 4,
     color: COLORS.black,
   },
   text: {
+    ...FONT.STYLE.medium,
     maxWidth: UTILS.screenWidth() / 2 - 50,
     color: COLORS.colorGreyBold,
-    fontFamily: FONT.NAME.medium,
-    fontSize: FONT.SIZE.medium,
-    lineHeight: FONT.SIZE.medium + 4,
+    fontSize: FONT.SIZE.regular,
+    lineHeight: FONT.SIZE.regular + 4,
   },
 });
 

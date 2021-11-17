@@ -10,7 +10,13 @@ import Tab from './Tabs.tab';
 import Tab1 from './Tabs.tab1';
 
 const enhance = (WrappedComp) => (props) => {
-  const { children, rootTabID, useTab1 = false, defaultTabIndex } = props;
+  const {
+    children,
+    rootTabID,
+    useTab1 = false,
+    defaultTabIndex,
+    renderTabsAtBottom = false,
+  } = props;
   const activeTab = useSelector(activedTabSelector)(rootTabID);
   const dispatch = useDispatch();
   const onClickTabItem = (tab) => {
@@ -73,17 +79,36 @@ const enhance = (WrappedComp) => (props) => {
       }
     }
   }, [defaultTabIndex]);
-  return (
-    <ErrorBoundary>
-      <WrappedComp {...{ ...props, onClickTabItem, renderTabs }} />
-      <View style={styled.tabContent}>
-        {children.map((child) => {
-          if (child.props.tabID !== activeTab) return null;
-          return child.props.children;
-        })}
-      </View>
-    </ErrorBoundary>
-  );
+  const renderComponent = () => {
+    let Comp;
+    if (renderTabsAtBottom) {
+      Comp = (
+        <>
+          <View style={styled.tabContent}>
+            {children.map((child) => {
+              if (child.props.tabID !== activeTab) return null;
+              return child.props.children;
+            })}
+          </View>
+          <WrappedComp {...{ ...props, onClickTabItem, renderTabs }} />
+        </>
+      );
+    } else {
+      Comp = (
+        <>
+          <WrappedComp {...{ ...props, onClickTabItem, renderTabs }} />
+          <View style={styled.tabContent}>
+            {children.map((child) => {
+              if (child.props.tabID !== activeTab) return null;
+              return child.props.children;
+            })}
+          </View>
+        </>
+      );
+    }
+    return Comp;
+  };
+  return <ErrorBoundary>{renderComponent()}</ErrorBoundary>;
 };
 
 export default enhance;

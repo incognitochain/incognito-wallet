@@ -1,14 +1,12 @@
 import React from 'react';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import { COLORS } from '@src/styles';
-import TabHome from '@screens/MainTabBar/features/Home';
-import TabShield from '@screens/MainTabBar/features/Shield';
+import More from '@screens/MainTabBar/features/More';
 import TabAssets from '@screens/MainTabBar/features/Assets';
 import TabTrade from '@screens/MainTabBar/features/Trade';
 import TabHomeLP from '@screens/MainTabBar/features/HomeLP';
 import {
-  HomeIcon,
-  ShieldIcon,
+  MoreIcon,
   TradeIcon,
   LiquidityIcon,
   AssetsIcon,
@@ -18,26 +16,17 @@ import { styled } from './MainTabBar.styled';
 
 const TabNavigator = createMaterialBottomTabNavigator(
   {
-    Home: {
-      screen: TabHome,
+    Assets: {
+      screen: TabAssets,
       navigationOptions: {
         tabBarIcon: ({ focused, tintColor }) => (
           <View style={styled.wrapBar}>
-            <HomeIcon active={focused} />
-            <Text style={[styled.label, { color: tintColor }]}>Home</Text>
+            <AssetsIcon active={focused} />
+            <Text style={[styled.label, { color: tintColor }]}>Portfolio</Text>
           </View>
         ),
-      },
-    },
-    Shield: {
-      screen: TabShield,
-      navigationOptions: {
-        tabBarIcon: ({ focused, tintColor }) => (
-          <View style={styled.wrapBar}>
-            <ShieldIcon active={focused} />
-            <Text style={[styled.label, { color: tintColor }]}>Shield</Text>
-          </View>
-        ),
+        activeColor: COLORS.colorBlue,
+        inactiveColor: COLORS.lightGrey34,
       },
     },
     Trade: {
@@ -59,27 +48,25 @@ const TabNavigator = createMaterialBottomTabNavigator(
         tabBarIcon: ({ focused, tintColor }) => (
           <View style={styled.wrapBar}>
             <LiquidityIcon active={focused} />
-            <Text style={[styled.label, { color: tintColor }]}>Liquidity</Text>
+            <Text style={[styled.label, { color: tintColor }]}>Earn</Text>
           </View>
         ),
       },
     },
-    Assets: {
-      screen: TabAssets,
+    More: {
+      screen: More,
       navigationOptions: {
         tabBarIcon: ({ focused, tintColor }) => (
           <View style={styled.wrapBar}>
-            <AssetsIcon active={focused} />
-            <Text style={[styled.label, { color: tintColor }]}>Assets</Text>
+            <MoreIcon active={focused} />
+            <Text style={[styled.label, { color: tintColor }]}>More</Text>
           </View>
         ),
-        activeColor: COLORS.colorBlue,
-        inactiveColor: COLORS.lightGrey34,
       },
-    },
+    }
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'Assets',
     activeColor: COLORS.colorBlue,
     inactiveColor: COLORS.lightGrey34,
     barStyle: {

@@ -5,7 +5,7 @@ import { styled } from './Tabs.styled';
 import withTabs from './Tabs.enhance';
 
 const Tabs = (props) => {
-  const { renderTabs, styledTabList, styledTabs, useTab1 } = props;
+  const { renderTabs, styledTabList, styledTabs, useTab1, rightCustom } = props;
   return (
     <View style={[styled.tabs, styledTabs]}>
       <View
@@ -17,6 +17,7 @@ const Tabs = (props) => {
       >
         {renderTabs()}
       </View>
+      {rightCustom && rightCustom}
     </View>
   );
 };

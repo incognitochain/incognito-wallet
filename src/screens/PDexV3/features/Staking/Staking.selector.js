@@ -125,6 +125,7 @@ export const stakingCoinsSelector = createSelector(
         reward,
         withdrawInvest,
         withdrawReward,
+        symbol: token.symbol
       };
     });
   }
@@ -200,6 +201,7 @@ export const stakingPoolSelector = createSelector(
       const userBalance = token.amount;
       const userBalanceStr = formatUtil.amountFull(token.amount, token.pDecimals);
       const userBalanceSymbolStr = `${userBalanceStr} ${token.symbol}`;
+      const userBalanceDisplay = formatUtil.amountVer2(token.amount, token.pDecimal);
       const poolAmountStr = formatUtil.amountFull(poolAmount, token.pDecimals);
       const isLoadingBalance = isGettingBalance.includes(tokenId);
       const disabled = isLoadingBalance || userBalance === 0;
@@ -215,7 +217,9 @@ export const stakingPoolSelector = createSelector(
         token,
         disabled,
         apy,
-        apyStr: `${apy || 0}%`
+        apyStr: `${apy || 0}%`,
+        userBalanceDisplay,
+        symbol: token.symbol
       };
     });
   },
@@ -427,7 +431,7 @@ export const withdrawCoinsSelector = createSelector(
             new BigNumber(inputValue).minus(amountCount);
         prev.push({
           fee: feeAmount,
-          unstakingAmount: unstakeAmount.toNumber(),
+          unstakingAmount: unstakeAmount.toString(),
           nftID: nftId,
           stakingTokenID: tokenId,
           stakingPoolID: tokenId,

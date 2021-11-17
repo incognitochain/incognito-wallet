@@ -14,13 +14,10 @@ export const styled = StyleSheet.create({
   },
   nftToken: {
     flex: 1,
-    marginRight: 30,
     fontFamily: FONT.NAME.medium,
     fontSize: FONT.SIZE.regular,
     lineHeight: FONT.SIZE.regular + 3,
     color: COLORS.colorGreyBold,
-    maxWidth: '50%',
-    textAlign: 'left',
   },
   amount: {
     fontFamily: FONT.NAME.medium,

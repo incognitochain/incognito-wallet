@@ -25,14 +25,14 @@ const MainCategories = [
   {
     route: routeNames.Shield,
     label: routeNames.Shield,
-    desc: 'Lorem Ipsum',
+    desc: 'Anonymize coins',
     icon: ShieldIcon,
     key: appConstant.DISABLED.SHIELD,
   },
   {
     route: routeNames.Trade,
     label: routeNames.Trade,
-    desc: 'Lorem Ipsum',
+    desc: 'Buy & sell privately',
     style: { marginLeft: 8 },
     icon: TradeIcon,
     key: appConstant.DISABLED.TRADE

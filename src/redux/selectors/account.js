@@ -131,12 +131,10 @@ export const otaKeyOfDefaultAccountSelector = createSelector(
 export const nftTokenDataSelector = createSelector(
   accountSelector,
   ({ nft }) => {
-    const { initNFTToken, nftToken, nftTokenAvailable, listNFTToken } = nft;
+    const { initNFTToken, nftToken } = nft;
     let titleStr = '';
     if (!initNFTToken) {
-      titleStr = 'Mint a nft token to access all features';
-    } else if (!nftTokenAvailable && initNFTToken && listNFTToken?.length > 0) {
-      titleStr = 'Mint more nft token';
+      titleStr = 'Welcome! Tap here to mint your access ticket';
     }
     return {
       ...nft,
@@ -192,6 +190,11 @@ export const getValidAmountNFTSelector = createSelector(
 export const isFetchingNFTSelector = createSelector(
   accountSelector,
   ({ isFetchingNFT }) => isFetchingNFT,
+);
+
+export const isToggleModalMintMoreNFTSelector = createSelector(
+  accountSelector,
+  ({ toggleModalMintMoreNFT }) => toggleModalMintMoreNFT,
 );
 
 export default {

@@ -11,16 +11,12 @@ const styled = StyleSheet.create({
 });
 
 const OpenOrders = () => {
-  const { history = [], isFetching, isFetched } = useSelector(
-    openOrdersSelector,
-  );
+  const { history = [], isFetching } = useSelector(openOrdersSelector);
   return (
     <View style={styled.container}>
       <Extra title="Open orders" />
       <FlatList
-        refreshControl={
-          <RefreshControl refreshing={!isFetched && isFetching} />
-        }
+        refreshControl={<RefreshControl refreshing={isFetching} />}
         data={history}
         keyExtractor={(item) => item?.requestTx}
         renderItem={({ item, index }) => (

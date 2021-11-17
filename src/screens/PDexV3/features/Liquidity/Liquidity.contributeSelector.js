@@ -50,22 +50,34 @@ export const feeAmountSelector = createSelector(
     ({ feeAmount, feeToken, token: getPrivacyDataByTokenID(feeToken) }),
 );
 
+export const inputAmountSelector = createSelector(
+  (state) => state,
+  sharedSelector.isGettingBalance,
+  tokenSelector,
+  feeAmountSelector,
+  getInputAmount
+);
+
 export const mappingDataSelector = createSelector(
   contributeSelector,
   getPrivacyDataByTokenIDSelector,
   tokenSelector,
   sharedSelector.isGettingBalance,
   feeAmountSelector,
+  inputAmountSelector,
   (
     { data: poolData, nftId },
     getPrivacyDataByTokenID,
     { inputToken, outputToken },
     isGettingBalance,
-    { token: feeToken, feeAmount }
+    { token: feeToken, feeAmount },
+    inputAmount,
   ) => {
     if (!poolData || !inputToken || !outputToken) return {};
     const { token1Value: token1PoolValue, token2Value: token2PoolValue } = poolData;
     const poolSize = getPoolSize(inputToken, outputToken, token1PoolValue, token2PoolValue);
+    const input = inputAmount(formConfigsContribute.formName, formConfigsContribute.inputToken);
+    const output = inputAmount(formConfigsContribute.formName, formConfigsContribute.outputToken);
     const isLoadingBalance =
       isGettingBalance.includes(inputToken?.tokenId)
       || isGettingBalance.includes(outputToken?.tokenId)
@@ -80,6 +92,14 @@ export const mappingDataSelector = createSelector(
         label: 'Pool size',
         value: poolSize,
       },
+      {
+        label: `${input.symbol} Balance`,
+        value: input.maxAmountDisplay,
+      },
+      {
+        label: `${output.symbol} Balance`,
+        value: output.maxAmountDisplay,
+      },
     ];
     return {
       ...poolData,
@@ -92,14 +112,6 @@ export const mappingDataSelector = createSelector(
       nftId,
     };
   }
-);
-
-export const inputAmountSelector = createSelector(
-  (state) => state,
-  sharedSelector.isGettingBalance,
-  tokenSelector,
-  feeAmountSelector,
-  getInputAmount
 );
 
 export const nftTokenSelector = createSelector(

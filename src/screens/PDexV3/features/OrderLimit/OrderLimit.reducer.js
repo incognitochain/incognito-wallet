@@ -21,6 +21,7 @@ import {
   ACTION_FETCH_FAIL_ORDERS_HISTORY,
   ACTION_FETCHING_ORDER_DETAIL,
   ACTION_FETCHED_ORDER_DETAIL,
+  ACTION_RESET_ORDERS_HISTORY,
 } from './OrderLimit.constant';
 
 const initialState = {
@@ -74,6 +75,12 @@ export default (state = initialState, action) => {
         fetching: false,
         order: action.payload,
       },
+    };
+  }
+  case ACTION_RESET_ORDERS_HISTORY: {
+    return {
+      ...state,
+      ordersHistory: { ...initialState.ordersHistory },
     };
   }
   case ACTION_FETCHING_ORDERS_HISTORY: {
@@ -146,7 +153,6 @@ export default (state = initialState, action) => {
       ...state,
       isFetching: false,
       isFetched: true,
-      data: { ...action.payload },
     };
   }
   case ACTION_FETCH_FAIL: {

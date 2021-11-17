@@ -158,24 +158,15 @@ export const detailsSelector = createSelector(
     const {
       volumeToAmountStr,
       poolSizeStr,
-      exchangeRateStr,
-      priceChangeToAmountStr,
-      perChange24hToStr,
-      perChange24hColor,
     } = pool;
     const factories = [
       {
-        label: 'Trading volume 24h',
+        label: 'Trading volume',
         value: volumeToAmountStr,
       },
       {
         label: 'Pool size',
         value: poolSizeStr,
-      },
-      {
-        label: 'Price change',
-        value: `${priceChangeToAmountStr} (${perChange24hToStr})`,
-        color: perChange24hColor,
       },
     ];
     return {

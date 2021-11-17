@@ -29,10 +29,9 @@ const poolReducer = (state = initialState, action) => {
     return { ...initialState };
   }
   case ACTION_FETCHING: {
-    const { isFetching } = action.payload;
     return {
       ...state,
-      isFetching,
+      isFetching: true,
     };
   }
   case ACTION_FETCHED: {

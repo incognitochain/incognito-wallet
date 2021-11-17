@@ -56,6 +56,7 @@ const RemoveDialog = (props) => {
     title,
     subTitle,
     acceptStr,
+    canStr,
   } = props;
   return (
     <Modal visible={visible} animationType="fade" transparent>
@@ -68,7 +69,7 @@ const RemoveDialog = (props) => {
           >
             <ButtonBasic
               onPress={onPressCancel}
-              title={CONTENT.cancel}
+              title={canStr || CONTENT.cancel}
               btnStyle={styles.buttonStyle}
             />
             <ButtonBasic

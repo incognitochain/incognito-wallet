@@ -5,14 +5,19 @@ import { Tabs, FlatList, ActivityIndicator } from '@src/components/core';
 import { OrderBook } from '@screens/PDexV3/features/Chart/Chart.orderBook';
 import { openOrdersSelector } from './OrderLimit.selector';
 import Order from './OrderLimit.order';
+import History, { useHistoryOrders } from './OrderLimit.orderHistory';
 import {
   TAB_OPEN_ORDER,
   TAB_ORDER_BOOK,
   ROOT_TAB_SUB_INFO,
+  TAB_HISTORY_ID,
 } from './OrderLimit.constant';
 
 const styled = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+    marginTop: 24,
+  },
   wrapper: {
     paddingVertical: 24,
   },
@@ -20,6 +25,7 @@ const styled = StyleSheet.create({
 
 const TabOpenOrder = React.memo(() => {
   const { history = [], isFetching } = useSelector(openOrdersSelector);
+  useHistoryOrders();
   return (
     <View style={styled.wrapper}>
       {isFetching && <ActivityIndicator style={{ marginBottom: 16 }} />}
@@ -57,12 +63,8 @@ const GroupSubInfo = () => {
         >
           <TabOrderBook />
         </View>
-        <View
-          tabID={TAB_OPEN_ORDER}
-          label="Open order"
-          onChangeTab={() => null}
-        >
-          <TabOpenOrder />
+        <View tabID={TAB_HISTORY_ID} label="Order" onChangeTab={() => null}>
+          <History />
         </View>
       </Tabs>
     </View>

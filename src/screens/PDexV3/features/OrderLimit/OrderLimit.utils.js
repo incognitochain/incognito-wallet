@@ -1,8 +1,5 @@
-import floor from 'lodash/floor';
-import ceil from 'lodash/ceil';
 import { PRV } from '@src/constants/common';
 import SelectedPrivacy from '@src/models/selectedPrivacy';
-import { getPairRate } from '@screens/PDexV3';
 import convert from '@src/utils/convert';
 import format from '@src/utils/format';
 import BigNumber from 'bignumber.js';
@@ -26,13 +23,57 @@ export const maxAmountValidatorForSellInput = (sellInputAmount) => {
       let text = new BigNumber(availableOriginalAmount).gt(0)
         ? `Max amount you can order is ${availableAmountText} ${symbol}`
         : `Your ${symbol} balance is insufficient.`;
-      console.log('text', text);
       return text;
     }
   } catch (error) {
     console.log('maxAmountValidatorForSellInput-error', error);
   }
+  return undefined;
+};
 
+export const maxAmountValidatorForBuyInput = ({
+  sellInputAmount,
+  customRate,
+  buyToken,
+  sellToken,
+  buyOriginalAmount,
+}) => {
+  try {
+    if (!sellInputAmount) {
+      return undefined;
+    }
+    const {
+      availableAmountNumber: availableSellAmountNumber,
+      availableOriginalAmount: availableSellOriginalAmount,
+    } = sellInputAmount;
+    let availableBuyAmountNumber = new BigNumber(
+      availableSellAmountNumber,
+    ).dividedBy(customRate);
+    const availableBuyOriginalAmount = convert.toOriginalAmount(
+      availableBuyAmountNumber,
+      buyToken?.pDecimals,
+    );
+    availableBuyAmountNumber = convert.toHumanAmount(
+      availableBuyOriginalAmount,
+      buyToken?.pDecimals,
+    );
+    const availableBuyAmountText = format.amountVer2(
+      availableBuyOriginalAmount,
+      buyToken?.pDecimals,
+    );
+    if (
+      new BigNumber(buyOriginalAmount).gt(
+        new BigNumber(availableBuyOriginalAmount),
+      )
+    ) {
+      let text = new BigNumber(availableSellOriginalAmount).gt(0)
+        ? `Max amount you can order is ${availableBuyAmountText} ${buyToken?.symbol}`
+        : `Your ${sellToken?.symbol} balance is insufficient.`;
+      return text;
+    }
+  } catch (error) {
+    console.log('maxAmountValidatorForBuyInput-error', error);
+  }
   return undefined;
 };
 
@@ -75,10 +116,11 @@ export const getInputAmount = (
         .toNumber();
     }
     if (new BigNumber(availableOriginalAmount).isGreaterThan(0)) {
-      availableAmountNumber = convert.toHumanAmount(
+      const formatAmount = format.amountVer2(
         availableOriginalAmount,
-        token.pDecimals,
+        token?.pDecimals,
       );
+      availableAmountNumber = convert.toNumber(formatAmount, true);
       availableAmountText = format.toFixed(
         availableAmountNumber,
         token.pDecimals,
@@ -111,8 +153,10 @@ export const getInputAmount = (
       loadingBalance: isGettingBalance.includes(token.tokenId),
 
       balance: token.amount,
-      balanceStr: format.amountVer2(token?.amount || 0, token.pDecimals),
-
+      balanceStr: `${format.amountVer2(token?.amount || 0, token.pDecimals)} ${
+        token?.symbol
+      }`,
+      balanceTitle: `${token?.symbol} Balance`,
       poolValue,
       poolValueStr,
     };
@@ -166,53 +210,4 @@ export const availablePayFeeByPRVValidator = ({
     console.log('availablePayFeeByPRVValidator-error', error);
   }
   return undefined;
-};
-
-export const calDefaultPairOrderLimit = ({ pool, x, y }) => {
-  let y0 = new BigNumber(0);
-  let rate = '';
-  let y0Fixed = '';
-  let rawRate = 0;
-  let rateStr = '';
-  try {
-    if (pool) {
-      const { virtualValue } = pool;
-      const x_v = new BigNumber(virtualValue[(x?.tokenId)]);
-      const x0 = x_v.dividedBy(100);
-      const y_v = new BigNumber(virtualValue[(y?.tokenId)]);
-      const L = x_v.multipliedBy(y_v);
-      y0 = y_v.minus(L.dividedBy(x_v.plus(x0)));
-      if (y0.isNaN()) {
-        y0 = 0;
-      } else {
-        let y0ToHumanAmount = new BigNumber(
-          convert.toHumanAmount(y0, y?.pDecimals),
-        );
-        const minumumY0ToHunmanAmount = new BigNumber(
-          convert.toHumanAmount(1, y?.pDecimals),
-        );
-        if (y0ToHumanAmount.lt(minumumY0ToHunmanAmount)) {
-          y0ToHumanAmount = minumumY0ToHunmanAmount;
-        }
-        y0Fixed = format.toFixed(y0ToHumanAmount.toNumber(), y?.pDecimals);
-        const x0ToHumanAmount = new BigNumber(
-          convert.toHumanAmount(x0, x?.pDecimals),
-        );
-        rawRate = y0ToHumanAmount.dividedBy(x0ToHumanAmount);
-        rawRate = rawRate.isNaN() ? 0 : rawRate.toNumber();
-        rate = format.toFixed(rawRate, y?.pDecimals);
-        const originalRate = convert.toOriginalAmount(rate, y?.pDecimals);
-        rateStr = format.amountVer2(originalRate, y?.pDecimals);
-      }
-    }
-  } catch (error) {
-    console.log('calDefaultPairOrderLimit-error', error);
-  }
-  return {
-    y0,
-    y0Fixed,
-    rate,
-    rawRate,
-    rateStr,
-  };
 };

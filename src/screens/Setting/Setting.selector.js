@@ -12,12 +12,12 @@ export const decimalDigitsSelector = createSelector(
 
 export const currencySelector = createSelector(
   settingSelector,
-  (setting) => setting?.isToggleUSD,
+  () => true // setting?.isToggleUSD,
 );
 
-export const showWalletBlanceSelector = createSelector(
+export const hideWalletBalanceSelector = createSelector(
   settingSelector,
-  (setting) => setting?.showWalletBlance,
+  (setting) => setting?.showWalletBalance,
 );
 
 export const isToggleBackupAllKeysSelector = createSelector(

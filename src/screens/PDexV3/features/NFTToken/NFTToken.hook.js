@@ -8,13 +8,6 @@ const styled = StyleSheet.create({
   hook: {
     marginBottom: 30,
   },
-  label: {
-    fontFamily: FONT.NAME.bold,
-    fontSize: FONT.SIZE.medium,
-    lineHeight: FONT.SIZE.medium + 5,
-    marginBottom: 15,
-    color: COLORS.black,
-  },
   value: {
     fontFamily: FONT.NAME.medium,
     fontSize: FONT.SIZE.regular,
@@ -24,10 +17,9 @@ const styled = StyleSheet.create({
 });
 
 const Hook = (props) => {
-  const { label, value } = props;
+  const { value } = props;
   return (
     <View style={styled.hook}>
-      <Text style={styled.label}>{label}</Text>
       <Text style={styled.value}>{value}</Text>
     </View>
   );

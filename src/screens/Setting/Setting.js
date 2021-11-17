@@ -44,8 +44,8 @@ const Setting = () => {
       icon: <NetworkIcon />,
     },
     {
-      title: 'NFT Token',
-      desc: 'Manage keychain\'s nft token',
+      title: 'Tickets',
+      desc: 'Manage your tickets',
       handlePress: () => navigation?.navigate(routeNames.NFTToken),
       icon: <SecurityIcon />,
     },

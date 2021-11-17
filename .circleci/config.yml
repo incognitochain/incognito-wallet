@@ -156,7 +156,7 @@ jobs:
       - run: bash .circleci/slack-upload.sh -f ./$APP_VERSION.apk -c '$SLACK_CHANNEL' -s $SLACK_API_KEY -n "$APP_VERSION" -x "\"$LAST_COMMIT_MESSAGE\""
   push_app_store:
     macos:
-      xcode: 11.3.0
+      xcode: 12.3.0
     steps:
       - attach_workspace:
           at: .

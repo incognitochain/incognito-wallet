@@ -60,10 +60,6 @@ const InputsGroup = () => {
   }, [outputToken.error]);
   return (
     <>
-      <Row centerVertical spaceBetween style={[styled.padding, styled.headerBox]}>
-        {(!!inputToken && !!outputToken) && (<Text style={styled.mediumText}>{`${inputToken.symbol} / ${outputToken.symbol}`}</Text>)}
-        <LPHistoryIcon />
-      </Row>
       <View style={styled.inputBox}>
         <Field
           component={TradeInputAmount}
@@ -79,12 +75,7 @@ const InputsGroup = () => {
           onChange={onChangeInput}
           onPressInfinityIcon={onMaxPress}
           label="Amount"
-          rightHeader={(
-            <Row centerVertical>
-              <Text style={styled.balanceStr}>{`Est: ${maxInputShareStr}`}</Text>
-              <MaxIcon onPress={onMaxPress} />
-            </Row>
-          )}
+          hasInfinityIcon
         />
         <AddBreakLine />
         <Field
@@ -101,20 +92,9 @@ const InputsGroup = () => {
           onChange={onChangeOutput}
           onPressInfinityIcon={onMaxPress}
           visibleHeader
-          rightHeader={(
-            <Row centerVertical>
-              <Text style={styled.balanceStr}>{`Est: ${maxOutputShareStr}`}</Text>
-            </Row>
-          )}
+          hasInfinityIcon
         />
       </View>
-      <SelectPercentAmount
-        size={4}
-        containerStyled={[styled.selectPercentAmountContainer, styled.padding, { marginTop: 24 }]}
-        percentBtnColor={COLORS.colorBlue}
-        selected={percent}
-        onPressPercent={onChangePercent}
-      />
     </>
   );
 };
@@ -135,8 +115,8 @@ const RemoveLPButton = React.memo(({ onSubmit }) => {
       poolPairID: poolId,
       shareAmount: inputAmount.withdraw,
       nftID: nftId,
-      amount1: inputAmount.originalInputAmount,
-      amount2: outputAmount.originalInputAmount
+      amount1: String(inputAmount.originalInputAmount),
+      amount2: String(outputAmount.originalInputAmount)
     };
     onSubmit(params);
   };

@@ -8,16 +8,20 @@ export const styled = StyleSheet.create({
     marginRight: 12,
   },
   btnTrade: {
-    marginBottom: 30,
+    marginBottom: 40,
+    borderRadius: 8,
+    marginTop: 24,
   },
 });
 
 export const tabsStyled = StyleSheet.create({
   tabBtn: {
     height: 32,
-    width: 62,
-    backgroundColor: COLORS.black,
-    maxWidth: 62,
+    backgroundColor: 'transparent',
+    borderRadius: 0,
+    textAlign: 'left',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
   },
   tabBtnDisabled: {
     backgroundColor: 'transparent',
@@ -25,15 +29,17 @@ export const tabsStyled = StyleSheet.create({
   },
   tabTitleStyled: {
     fontFamily: FONT.NAME.medium,
-    fontSize: FONT.SIZE.small,
-    lineHeight: FONT.SIZE.small + 3,
-    color: COLORS.white,
+    fontSize: FONT.SIZE.regular,
+    lineHeight: FONT.SIZE.regular + 3,
+    color: COLORS.black,
   },
   tabTitleDisabledStyled: {
     color: COLORS.colorGrey3,
   },
   styledTabList: {
-    maxWidth: 120,
+    maxWidth: 80,
+    backgroundColor: 'transparent',
+    borderRadius: 0,
   },
 });
 
@@ -43,10 +49,9 @@ export const inputGroupStyled = StyleSheet.create({
   },
   rightHeaderSell: {
     flex: 1,
-    marginLeft: 15,
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
   },
   balanceStr: {
     fontFamily: FONT.NAME.regular,
@@ -66,18 +71,9 @@ export const inputGroupStyled = StyleSheet.create({
     lineHeight: FONT.SIZE.superSmall + 3,
   },
   inputGroups: {
-    margin: 4,
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    borderRadius: 8,
-    backgroundColor: COLORS.white,
-    borderWidth: 1,
-    borderColor: COLORS.colorGrey4,
-    paddingVertical: 24,
-    paddingHorizontal: 16,
+    marginTop: 24,
+  },
+  toggleArrow: {
+    marginTop: 40,
   },
 });

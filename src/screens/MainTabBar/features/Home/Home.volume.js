@@ -8,15 +8,16 @@ import PropTypes from 'prop-types';
 import {homeStyled} from '@screens/MainTabBar/MainTabBar.styled';
 import {PriceDownIcon, PriceUpIcon} from '@components/Icons/icon.arrowPrice';
 import {actionChangeTab} from '@components/core/Tabs/Tabs.actions';
-import {ROOT_TAB_TRADE, TAB_LIMIT_ID} from '@screens/PDexV3/features/Trade/Trade.constant';
+import {ROOT_TAB_TRADE, TAB_LIMIT_ID, TAB_SWAP_ID} from '@screens/PDexV3/features/Trade/Trade.constant';
 import {actionInit, actionSetPoolSelected} from '@screens/PDexV3/features/OrderLimit';
 import routeNames from '@routers/routeNames';
 import {useNavigation} from 'react-navigation-hooks';
+import {actionInitSwapForm} from '@screens/PDexV3/features/Swap';
 
 const Item = React.memo(({ item, onItemPress }) => {
   const { token1, token2, priceStr, perChange24hColor, perChange24hToStr, priceChange24H, poolId } = item;
   return (
-    <TouchableOpacity style={[homeStyled.wrapMainVolume, { flex: 1 }]} onPress={() => onItemPress(poolId)}>
+    <TouchableOpacity style={[homeStyled.wrapMainVolume, { flex: 1 }]} onPress={() => onItemPress(item)}>
       <Text style={[homeStyled.mediumBlack, { fontSize: 12 }]}>{`${token1.symbol} / ${token2.symbol}`}</Text>
       <View style={{ flex: 1 }}>
         <Text style={[homeStyled.mediumBlack, { lineHeight: 24, color: perChange24hColor }]}>
@@ -47,20 +48,27 @@ const BigVolume = () => {
     return [];
   }, [pools]);
 
-  const onItemPress = (poolId) => {
-    navigation.navigate(routeNames.Trade);
+  const onItemPress = (pool) => {
+    navigation.navigate(routeNames.Trade, { tabIndex: 0 });
     setTimeout(() => {
       batch(() => {
         dispatch(
-          actionChangeTab({
-            rootTabID: ROOT_TAB_TRADE,
-            tabID: TAB_LIMIT_ID,
+          actionInitSwapForm({
+            refresh: true,
+            defaultPair: {
+              selltoken: pool?.token1?.tokenId,
+              buytoken: pool?.token2?.tokenId,
+            },
           }),
         );
-        dispatch(actionSetPoolSelected(poolId));
-        dispatch(actionInit());
+        dispatch(
+          actionChangeTab({
+            rootTabID: ROOT_TAB_TRADE,
+            tabID: TAB_SWAP_ID,
+          }),
+        );
       });
-    }, 300);
+    }, 200);
   };
 
   const renderItem = (item) => <Item item={item} key={item.poolId} onItemPress={onItemPress} />;

@@ -6,7 +6,7 @@ import ButtonBasic from './ButtonBasic';
 const styled = StyleSheet.create({
   btnStyle: {
     backgroundColor: COLORS.colorBlue,
-    height: 44,
+    height: 50,
   },
   titleStyle: {
     color: COLORS.white,

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { getBalance } from '@src/redux/actions/token';
 import { actionGetPDexV3Inst, getPDexV3Instance } from '@screens/PDexV3';
 import {
@@ -19,6 +20,7 @@ import BigNumber from 'bignumber.js';
 import floor from 'lodash/floor';
 import difference from 'lodash/difference';
 import { isUsePRVToPayFeeSelector } from '@screens/Setting';
+import { getDataByPoolIdSelector } from '@screens/PDexV3/features/Pools';
 import {
   ACTION_FETCHING,
   ACTION_FETCHED,
@@ -52,6 +54,7 @@ import {
   swapInfoSelector,
   slippagetoleranceSelector,
   swapSelector,
+  defaultPairSelector,
 } from './Swap.selector';
 import { calMintAmountExpected } from './Swap.utils';
 
@@ -283,7 +286,14 @@ export const actionInitSwapForm = ({
     const isUsePRVToPayFee = isUsePRVToPayFeeSelector(state);
     await dispatch(actionInitingSwapForm(true));
     await dispatch(reset(formConfigs.formName));
-    let pair = defaultPair;
+    const pDexV3Inst = await dispatch(actionGetPDexV3Inst());
+    let pair = defaultPair || defaultPairSelector(state);
+    if (!pair?.selltoken || !pair?.buytoken) {
+      const defaultPoolId = await pDexV3Inst.getDefaultPool();
+      const defaultPool = getDataByPoolIdSelector(state)(defaultPoolId);
+      pair.selltoken = defaultPool?.token1?.tokenId;
+      pair.buytoken = defaultPool?.token2?.tokenId;
+    }
     const pairs = await dispatch(actionFetchPairs(refresh));
     const isDefaultPairExisted =
       difference([pair?.selltoken, pair?.buytoken], pairs).length === 0;
@@ -344,7 +354,6 @@ export const actionSwapToken = () => async (dispatch, getState) => {
       }),
     );
   } catch (error) {
-    console.log('actionSwapToken-error', error);
     new ExHandler(error).showErrorToast();
   } finally {
     await dispatch(actionSetSwapingToken(false));
@@ -452,18 +461,16 @@ export const actionFetchSwap = () => async (dispatch, getState) => {
       transfer: { fee: ACCOUNT_CONSTANT.MAX_FEE_PER_TX, info: '' },
       extra: {
         tokenIDToSell,
-        sellAmount,
+        sellAmount: String(sellAmount),
         tokenIDToBuy,
         tradingFee,
         tradePath,
         feetoken,
         version: PrivacyVersion.ver2,
-        minAcceptableAmount,
+        minAcceptableAmount: String(minAcceptableAmount),
       },
     };
-    console.log('params', params);
     tx = await pDexV3.createAndSendSwapRequestTx(params);
-    console.log('tx', tx);
     if (!tx) {
       console.log('error');
     }

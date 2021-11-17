@@ -17,7 +17,7 @@ import withTransaction from '@screens/PDexV3/features/Staking/Staking.transactio
 import {NFTTokenBottomBar} from '@screens/PDexV3/features/NFTToken';
 import withFetch from '@screens/PDexV3/features/Staking/Staking.enhanceFetch';
 import {MaxIcon} from '@components/Icons';
-import {Row} from '@src/components';
+import {Row, RowSpaceText} from '@src/components';
 
 const initialFormValues = {
   input: ''
@@ -29,7 +29,7 @@ const Form = createForm(formConfigsInvest.formName, {
   enableReinitialize: true,
 });
 
-const Input = React.memo(({ onInvestMax, onSymbolPress, rightHeader }) => {
+const Input = React.memo(({ onInvestMax, onSymbolPress }) => {
   const dispatch = useDispatch();
   const { maxDepositText, token } = useSelector(stakingSelector.investInputAmount);
   const inputValidate = useSelector(stakingSelector.investInputValidate);
@@ -46,12 +46,8 @@ const Input = React.memo(({ onInvestMax, onSymbolPress, rightHeader }) => {
       editableInput
       onChange={onChangeText}
       onPressSymbol={onSymbolPress}
-      rightHeader={(
-        <Row centerVertical>
-          <Text style={coinStyled.smallGray}>{rightHeader}</Text>
-          <MaxIcon onPress={onChangeMaxInvest} />
-        </Row>
-      )}
+      hasInfinityIcon
+      onPressInfinityIcon={onChangeMaxInvest}
     />
   );
 });
@@ -69,7 +65,7 @@ const StakingMoreInput = React.memo(({ onSymbolPress, onStaking, error }) => {
     const params = {
       fee: feeAmount,
       tokenID: tokenId,
-      tokenAmount: inputValue,
+      tokenAmount: String(inputValue),
       nftID: nftStaking,
       stakingAmountStr: inputSymbolStr
     };
@@ -83,7 +79,6 @@ const StakingMoreInput = React.memo(({ onSymbolPress, onStaking, error }) => {
           <>
             <CustomInput
               onSymbolPress={onSymbolPress}
-              rightHeader={`Balance: ${pool.userBalanceSymbolStr}`}
             />
             {!!error && (<Text style={coinStyled.error}>{error}</Text>)}
             <RoundCornerButton
@@ -92,6 +87,7 @@ const StakingMoreInput = React.memo(({ onSymbolPress, onStaking, error }) => {
               disabled={disabled || !!error}
               onPress={onSubmit}
             />
+            <RowSpaceText label={`${pool.symbol} Balance`} value={pool.userBalanceDisplay} />
           </>
         )}
       </Form>

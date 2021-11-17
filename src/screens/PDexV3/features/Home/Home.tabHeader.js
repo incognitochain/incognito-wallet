@@ -6,6 +6,9 @@ import {ActivityIndicator} from '@components/core';
 
 export const styled = StyleSheet.create({
   container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   title: {
     color: COLORS.lightGrey33,
@@ -18,10 +21,11 @@ export const styled = StyleSheet.create({
     fontFamily: FONT.NAME.medium,
     fontSize: FONT.SIZE.superLarge,
     lineHeight: FONT.SIZE.superLarge + 8,
+    textAlign: 'center'
   },
   wrapLoading: {
     position: 'relative',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'center',
     height: FONT.SIZE.superLarge + 8
   }

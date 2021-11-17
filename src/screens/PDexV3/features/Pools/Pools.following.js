@@ -1,28 +1,22 @@
 import { Row } from '@src/components';
-import { TouchableOpacity, LoadingContainer } from '@src/components/core';
+import { LoadingContainer } from '@src/components/core';
 import React from 'react';
 import { View, Text } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch, useSelector } from 'react-redux';
-import routeNames from '@src/router/routeNames';
 import PropTypes from 'prop-types';
 import Pool from '@screens/PDexV3/features/Pool';
 import { isFetchingSelector, followPoolIdsSelector } from './Pools.selector';
-import { actionFetchPools, actionToggleFollowingPool } from './Pools.actions';
-import {
-  styled,
-  poolsListHeaderFollowingStyled,
-  footerStyled,
-} from './Pools.styled';
+import { actionFetchPools } from './Pools.actions';
+import { styled, poolsListHeaderFollowingStyled } from './Pools.styled';
 
 const HEADER_FACTORIES = [
   {
-    text: '#Name / Vol',
+    text: 'Name / Vol',
     styled: [poolsListHeaderFollowingStyled.wrapperFirstSection],
     textStyle: null,
   },
   {
-    text: '#APY',
+    text: 'APY',
     styled: [
       poolsListHeaderFollowingStyled.wrapperSecondSection,
       poolsListHeaderFollowingStyled.centerText,

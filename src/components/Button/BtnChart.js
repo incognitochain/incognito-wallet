@@ -1,8 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Image, StyleSheet } from 'react-native';
 import srcChartIcon from '@src/assets/images/new-icons/candle.png';
-import PropTypes from 'prop-types';
-import { COLORS } from '@src/styles';
 
 const styled = StyleSheet.create({
   container: {
@@ -12,8 +10,8 @@ const styled = StyleSheet.create({
     alignItems: 'center',
   },
   icon: {
-    width: 17.36,
-    height: 18,
+    width: 20.7,
+    height: 12,
   },
 });
 

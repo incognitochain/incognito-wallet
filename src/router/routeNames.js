@@ -40,7 +40,7 @@ export default {
   pApps: 'pApps',
   AddPin: 'AddPin',
   BackupKeys: 'BackupKeys',
-  Home: 'Home',
+  Home: 'Market',
   Community: 'Community',
   Shield: 'Shield',
   WhyShield: 'WhyShield',
@@ -198,4 +198,5 @@ export default {
   MainTabBar: 'MainTabBar',
   PoolsTab: 'PoolsTab',
   SelectTokenModal: 'SelectTokenModal',
+  More: 'More'
 };

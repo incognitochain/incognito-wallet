@@ -22,9 +22,9 @@ class PToken {
     this.currencyType = data.CurrencyType; // including ERC20, BEP1, BEP2,...
     this.priceUsd = data?.PriceUsd;
     this.pairPrv = pairPrv;
-    this.change = pairPrv ? data?.PercentChangePrv1h : data?.PercentChange1h;
+    this.change = data?.PercentChange24h || '';
     this.pricePrv = data?.PricePrv || 0;
-    
+
     if (data && data.ListChildToken instanceof Array) {
       this.listChildToken = data.ListChildToken.map((item) => {
         let newItem = new PToken(item);

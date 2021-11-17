@@ -1,28 +1,25 @@
-import React, {memo} from 'react';
-import {View, StyleSheet } from 'react-native';
-import {Divider} from 'react-native-elements';
+import React, { memo } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Divider } from 'react-native-elements';
 import PropTypes from 'prop-types';
 import { COLORS } from '@src/styles';
-import {ChainIcon} from '@components/Icons';
 
 export const styled = StyleSheet.create({
   arrowWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 30,
+    marginVertical: 16,
   },
   divider: {
     flex: 1,
     borderBottomWidth: 1,
-    borderColor: COLORS.colorGrey4,
+    borderColor: COLORS.lightGrey19,
   },
 });
 
 const AddBreakLine = ({ style }) => (
   <View style={[styled.arrowWrapper, style]}>
-    <Divider style={styled.divider} />
-    <ChainIcon />
     <Divider style={styled.divider} />
   </View>
 );

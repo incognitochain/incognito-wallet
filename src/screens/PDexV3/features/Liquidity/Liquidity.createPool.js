@@ -2,7 +2,7 @@ import React, {memo} from 'react';
 import {RefreshControl, ScrollView, Text, View} from 'react-native';
 import PropTypes from 'prop-types';
 import {styled as mainStyle} from '@screens/PDexV3/PDexV3.styled';
-import {Header, Row, RowSpaceText, SuccessModal} from '@src/components';
+import {Header, RowSpaceText, SuccessModal} from '@src/components';
 import {
   LIQUIDITY_MESSAGES,
   formConfigsCreatePool,
@@ -19,8 +19,6 @@ import {ButtonTrade} from '@components/Button';
 import {compose} from 'recompose';
 import withTransaction from '@screens/PDexV3/features/Liquidity/Liquidity.enhanceTransaction';
 import {NFTTokenBottomBar} from '@screens/PDexV3/features/NFTToken';
-import LPHistoryIcon from '@screens/PDexV3/features/Liquidity/Liquidity.iconHistory';
-import {MaxIcon} from '@components/Icons';
 import {useNavigation} from 'react-navigation-hooks';
 import routeNames from '@routers/routeNames';
 
@@ -92,86 +90,65 @@ const InputsGroup = () => {
   ]);
 
   return (
-    <>
-      <Row centerVertical spaceBetween style={[styled.padding, styled.headerBox]}>
-        {
-          (!!inputToken.symbol && !!outputToken.symbol)
-          && (<Text style={styled.mediumText}>{`${inputToken.symbol} / ${outputToken.symbol}`}</Text>)
-        }
-        <LPHistoryIcon />
-      </Row>
-      <View style={styled.inputBox}>
-        <Field
-          component={TradeInputAmount}
-          name={formConfigsCreatePool.inputToken}
-          canSelectSymbol
-          visibleHeader
-          label="Amount"
-          symbol={inputToken && inputToken?.symbol}
-          validate={[
-            _validateInput,
-            ...validator.combinedAmount,
-          ]}
-          srcIcon={inputToken && inputToken?.iconUrl}
-          onFocus={(e) => onFocusToken(e, formConfigsCreatePool.inputToken)}
-          onChange={onChangeText}
-          editableInput={!inputToken.loadingBalance}
-          loadingBalance={loading.input}
-          onPressSymbol={() => {
-            if (loading.input) return;
-            onSelectSymbol(((token) => {
-              setTimeout(() =>
-                dispatch(liquidityActions.actionUpdateCreatePoolInputToken(token.tokenId)),
-              300);
-            }), inputTokens);
-          }}
-          rightHeader={(!!outputToken && !!outputToken?.balanceStr) && (
-            <Row centerVertical>
-              <Text style={styled.balanceStr}>{`Balance: ${inputToken?.balanceStr}`}</Text>
-              <MaxIcon onPress={() => {
-                dispatch(change(formConfigsCreatePool.formName, formConfigsCreatePool.inputToken, inputToken.maxOriginalAmountText));
-              }}
-              />
-            </Row>
-          )}
-        />
-        <AddBreakLine />
-        <Field
-          component={TradeInputAmount}
-          name={formConfigsCreatePool.outputToken}
-          canSelectSymbol
-          visibleHeader
-          label="Amount"
-          symbol={outputToken && outputToken?.symbol}
-          validate={[
-            _validateOutput,
-            ...validator.combinedAmount,
-          ]}
-          srcIcon={outputToken && outputToken?.iconUrl}
-          onChange={onChangeText}
-          editableInput={!outputToken.loadingBalance}
-          loadingBalance={loading.output}
-          onPressSymbol={() => {
-            if (loading.output) return;
-            onSelectSymbol(((token) => {
-              setTimeout(() =>
-                dispatch(liquidityActions.actionUpdateCreatePoolOutputToken(token.tokenId)),
-              300);
-            }), outputTokens);
-          }}
-          onFocus={(e) => onFocusToken(e, formConfigsCreatePool.outputToken)}
-          rightHeader={(!!outputToken && !!outputToken?.balanceStr) && (
-            <Row centerVertical>
-              <Text style={styled.balanceStr}>{`Balance: ${outputToken?.balanceStr}`}</Text>
-              <MaxIcon onPress={() => (
-                dispatch(change(formConfigsCreatePool.formName, formConfigsCreatePool.outputToken, outputToken.maxOriginalAmountText))
-              )}
-              />
-            </Row>
-          )}
-        />
-      </View>
-    </>
+    <View style={styled.inputBox}>
+      <Field
+        component={TradeInputAmount}
+        name={formConfigsCreatePool.inputToken}
+        canSelectSymbol
+        visibleHeader
+        label="Amount"
+        symbol={inputToken && inputToken?.symbol}
+        validate={[
+          _validateInput,
+          ...validator.combinedAmount,
+        ]}
+        onFocus={(e) => onFocusToken(e, formConfigsCreatePool.inputToken)}
+        onChange={onChangeText}
+        editableInput={!inputToken.loadingBalance}
+        loadingBalance={loading.input}
+        hasInfinityIcon={!!inputToken && !!inputToken?.balanceStr}
+        onPressInfinityIcon={() => {
+          dispatch(change(formConfigsCreatePool.formName, formConfigsCreatePool.inputToken, inputToken.maxOriginalAmountText));
+        }}
+        onPressSymbol={() => {
+          if (loading.input) return;
+          onSelectSymbol(((token) => {
+            setTimeout(() =>
+              dispatch(liquidityActions.actionUpdateCreatePoolInputToken(token.tokenId)),
+            300);
+          }), inputTokens);
+        }}
+      />
+      <AddBreakLine />
+      <Field
+        component={TradeInputAmount}
+        name={formConfigsCreatePool.outputToken}
+        canSelectSymbol
+        visibleHeader
+        label="Amount"
+        symbol={outputToken && outputToken?.symbol}
+        hasInfinityIcon={!!outputToken && !!outputToken?.balanceStr}
+        validate={[
+          _validateOutput,
+          ...validator.combinedAmount,
+        ]}
+        onChange={onChangeText}
+        editableInput={!outputToken.loadingBalance}
+        loadingBalance={loading.output}
+        onPressSymbol={() => {
+          if (loading.output) return;
+          onSelectSymbol(((token) => {
+            setTimeout(() =>
+              dispatch(liquidityActions.actionUpdateCreatePoolOutputToken(token.tokenId)),
+            300);
+          }), outputTokens);
+        }}
+        onFocus={(e) => onFocusToken(e, formConfigsCreatePool.outputToken)}
+        onPressInfinityIcon={() => {
+          dispatch(change(formConfigsCreatePool.formName, formConfigsCreatePool.outputToken, outputToken.maxOriginalAmountText));
+        }}
+      />
+    </View>
   );
 };
 
@@ -201,8 +178,8 @@ const ButtonCreatePool = React.memo(({ onSubmit }) => {
       fee: feeAmount / 2,
       tokenId1: inputAmount.tokenId,
       tokenId2: outputAmount.tokenId,
-      amount1: inputAmount.originalInputAmount,
-      amount2: outputAmount.originalInputAmount,
+      amount1: String(inputAmount.originalInputAmount),
+      amount2: String(outputAmount.originalInputAmount),
       amp,
     };
     onSubmit(params);
@@ -261,7 +238,7 @@ const CreatePool = ({
   return (
     <>
       <View style={styled.container}>
-        <Header style={styled.padding} title={LIQUIDITY_MESSAGES.createPool} />
+        <Header style={styled.padding} />
         <ScrollView
           refreshControl={(<RefreshControl refreshing={isFetching} onRefresh={onInitCreatePool} />)}
           showsVerticalScrollIndicator={false}

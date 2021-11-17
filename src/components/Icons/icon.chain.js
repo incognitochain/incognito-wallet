@@ -5,8 +5,8 @@ import {COLORS} from '@src/styles';
 
 const SVGComponent = (props) => (
   <Svg
-    width={20}
-    height={10}
+    width={15}
+    height={15}
     viewBox="0 0 20 10"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -29,8 +29,8 @@ const SVGComponent = (props) => (
 
 const styled = StyleSheet.create({
   wrapper: {
-    width: 50,
-    height: 50,
+    width: 30,
+    height: 30,
     borderRadius: 25,
     borderWidth: 1,
     borderColor: COLORS.colorGrey4,

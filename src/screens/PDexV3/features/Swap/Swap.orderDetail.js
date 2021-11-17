@@ -11,6 +11,7 @@ import ClipboardService from '@src/services/clipboard';
 import { CONSTANT_CONFIGS } from '@src/constants';
 import TradeOrderDetail, {
   styled as orderDetailStyled,
+  OrderDetailValue,
 } from '@screens/PDexV3/features/Trade/Trade.orderDetail';
 import { Row } from '@src/components';
 import { orderDetailSelector } from './Swap.selector';
@@ -60,7 +61,7 @@ const SwapOrderDetail = () => {
       },
       {
         label: 'Rate',
-        customValue: (
+        customValue: order?.rateStr && (
           <Row style={orderDetailStyled.rowValue}>
             <Text style={orderDetailStyled.value}>{order?.rateStr}</Text>
           </Row>
@@ -77,26 +78,35 @@ const SwapOrderDetail = () => {
         value: order?.networkfeeAmountStr,
       });
     }
-    if (order?.responseTxs?.length > 0) {
+    if (order?.respondTxs?.length > 0) {
       ft.push({
         label: 'Response Tx',
         customValue: (
-          <View style={{ flex: 1 }}>
-            {order?.responseTxs.map((responseTx) => (
-              <Text
-                style={{ ...orderDetailStyled.value, marginBottom: 15 }}
-                ellipsizeMode="middle"
-                numberOfLines={1}
-              >
-                {responseTx}
-              </Text>
+          <Row
+            style={{
+              ...orderDetailStyled.rowValue,
+              marginLeft: 0,
+              flexDirection: 'column',
+            }}
+          >
+            {order?.respondTxs.map((responseTx) => (
+              <OrderDetailValue
+                copiable
+                openUrl
+                handleOpenUrl={() =>
+                  LinkingService.openUrl(
+                    `${CONSTANT_CONFIGS.EXPLORER_CONSTANT_CHAIN_URL}/tx/${responseTx}`,
+                  )
+                }
+                value={`#${responseTx}`}
+              />
             ))}
-          </View>
+          </Row>
         ),
         hookStyled: {
           alignItems: 'flex-start',
         },
-        value: order?.responseTxs.map((responseTx) => `\n${responseTx}`).join(),
+        value: order?.respondTxs.map((responseTx) => `\n${responseTx}`).join(),
       });
     }
     return ft.filter(

@@ -18,7 +18,6 @@ import { getPrivacyDataByTokenID } from '@src/redux/selectors/selectedPrivacy';
 import { PRV } from '@src/constants/common';
 import format from '@src/utils/format';
 import convert from '@src/utils/convert';
-import { ButtonTrade } from '@src/components/Button';
 import {
   feetokenDataSelector,
   feeTypesSelector,
@@ -35,23 +34,15 @@ import {
   calMintAmountExpected,
 } from './Swap.utils';
 import { useTabFactories } from './Swap.simpleTab';
-import SwapInputsGroup from './Swap.inputsGroup';
 
 const styled = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 24,
-  },
-  extraWrapper: {
-    marginTop: 40,
-  },
-  btnTrade: {
-    marginTop: 24,
-    height: 50,
+    marginTop: 16,
   },
 });
 
-const TabPro = React.memo(({ handleConfirm }) => {
+const TabPro = React.memo(() => {
   const swapInfo = useSelector(swapInfoSelector);
   const { maxGet } = swapInfo;
   const feeTypes = useSelector(feeTypesSelector);
@@ -61,7 +52,6 @@ const TabPro = React.memo(({ handleConfirm }) => {
   const sellinputAmount = inputAmount(formConfigs.selltoken);
   const buyInputAmount = inputAmount(formConfigs.buytoken);
   const prv: SelectedPrivacy = useSelector(getPrivacyDataByTokenID)(PRV.id);
-  const { hooksFactories } = useTabFactories();
   const dispatch = useDispatch();
   const onChangeTypeFee = async (type) => {
     const { tokenId } = type;
@@ -154,28 +144,14 @@ const TabPro = React.memo(({ handleConfirm }) => {
           editableInput={!!swapInfo?.editableInput}
         />
       ),
-    },
-    {
-      title: 'Trade details',
-      hooks: hooksFactories
-        .filter((hook) => !isEmpty(hook))
-        .map((hook) => <Hook {...hook} key={hook.label} />),
+      containerStyle: { marginBottom: 0 },
     },
   ];
   return (
     <View style={styled.container}>
-      <SwapInputsGroup />
-      <ButtonTrade
-        btnStyle={styled.btnTrade}
-        onPress={handleConfirm}
-        title={swapInfo?.btnSwapText || ''}
-        disabled={!!swapInfo?.disabledBtnSwap}
-      />
-      <View style={styled.extraWrapper}>
-        {extraFactories.map((extra) => (
-          <Extra {...extra} key={extra.label} />
-        ))}
-      </View>
+      {extraFactories.map((extra) => (
+        <Extra {...extra} key={extra.label} />
+      ))}
     </View>
   );
 });

@@ -429,3 +429,8 @@ export const actionFetchedNFT = (payload) => ({
   type: type.ACTION_FETCHED_NFT,
   payload,
 });
+
+export const actionToggleModalMintMoreNFT = (payload) => ({
+  type: type.ACTION_TOGGLE_MODAL_MINT_MORE_NFT,
+  payload,
+});
