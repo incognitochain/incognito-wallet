@@ -246,7 +246,7 @@ workflows:
             filters:
               branches:
                 only:
-                  - improve/perf-app
+                  - inc-next
         - generate_data:
             requires:
               - checkout_code
