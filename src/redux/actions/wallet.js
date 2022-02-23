@@ -113,20 +113,9 @@ export const reloadWallet =
             dispatch(setAccount(defaultAccount));
             dispatch(setDefaultAccount(defaultAccount));
             dispatch(getPTokenList());
-            // dispatch(actionReloadFollowingToken());
-            // dispatch(actionConditionConsolidate());
-            // dispatch(actionSetSignPublicKeyEncode());
-            // dispatch(actionSyncAccountMasterKey());
-            // dispatch(actionSetNFTTokenData());
           });
           setTimeout(() => {
             batch(() => {
-              // dispatch(setWallet(wallet));
-              // dispatch(setListAccount(listAccount));
-              // dispatch(setAccount(defaultAccount));
-              // dispatch(setDefaultAccount(defaultAccount));
-              // dispatch(actionReloadFollowingToken());
-              // dispatch(actionConditionConsolidate());
               dispatch(FollowAction.actionLoadFollowBalance());
               dispatch(actionSetSignPublicKeyEncode());
               dispatch(actionSyncAccountMasterKey());

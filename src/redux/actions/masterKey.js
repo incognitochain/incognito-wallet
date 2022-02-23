@@ -23,13 +23,14 @@ import {
   masterlessKeyChainSelector,
   noMasterLessSelector,
 } from '@src/redux/selectors/masterKey';
-import _ from 'lodash';
+import remove from 'lodash/remove';
 import { clearWalletCaches } from '@services/cache';
 import uniqBy from 'lodash/uniqBy';
 import { accountServices } from '@src/services/wallet';
 import { batch } from 'react-redux';
 import { ExHandler } from '@src/services/exception';
-import accountService from '@services/wallet/accountService';
+import { actionToggleTestReimportWallet, toggleReimportWalletSelector } from '@screens/Dev';
+import { actionLogEvent } from '@screens/Performance';
 
 const DEFAULT_MASTER_KEY = new MasterKeyModel({
   name: 'Wallet',
@@ -119,18 +120,27 @@ const loadAllMasterKeysSuccess = (data) => ({
   payload: data,
 });
 
-export const loadAllMasterKeys = () => async (dispatch) => {
+export const loadAllMasterKeys = () => async (dispatch, getState) => {
   try {
+    const state = getState();
+    const isTestReimportWallet = toggleReimportWalletSelector(state);
     await updateNetwork();
-    let masterKeyList = _.uniqBy(
+    let masterKeyList = uniqBy(
       await LocalDatabase.getMasterKeyList(),
       (item) => item.name,
     ).map((item) => new MasterKeyModel(item));
+    const callback = async (backupKeys) => {
+      await dispatch(actionToggleTestReimportWallet());
+      dispatch(actionLogEvent({ desc: JSON.stringify(backupKeys || []) }));
+    };
     for (let masterKey of masterKeyList) {
       try {
-        await masterKey.loadWallet();
+        await masterKey.loadWallet({
+          callback,
+          isTestReimportWallet
+        });
       } catch (error) {
-        console.log('LOAD WALLET ERROR', masterKey?.name);
+        console.log('LOAD WALLET ERROR', error, masterKey?.name);
       }
     }
     await dispatch(loadAllMasterKeysSuccess(masterKeyList));
@@ -150,7 +160,7 @@ export const switchhingMasterKey = (payload) => ({
   payload,
 });
 
-export const switchMasterKey = (masterKeyName, accountName) => async (
+export const switchMasterKey = (masterKeyName, accountName, ignoreReloadWallet = false) => async (
   dispatch,
 ) => {
   try {
@@ -161,6 +171,7 @@ export const switchMasterKey = (masterKeyName, accountName) => async (
     clearWalletCaches();
     dispatch(switchhingMasterKey(true));
     dispatch(switchMasterKeySuccess(masterKeyName));
+    if (ignoreReloadWallet) return;
     await dispatch(reloadWallet(accountName));
   } catch (error) {
     throw error;
@@ -279,7 +290,29 @@ const syncUnlinkWithNewMasterKey = (newMasterKey) => async (
   await dispatch(updateMasterKey(masterless));
 };
 
-export const importMasterKey = (data) => async (dispatch) => {
+export const getWalletInstanceByImportMasterKey = async (data) => {
+  let wallet;
+  let newMasterKey;
+  try {
+    newMasterKey = new MasterKeyModel({
+      ...data,
+    });
+    wallet = await importWallet(
+      data.mnemonic,
+      newMasterKey.getStorageName(),
+    );
+    await syncServerAccounts(wallet);
+    newMasterKey.wallet = wallet;
+    newMasterKey.mnemonic = wallet.Mnemonic;
+    wallet.RootName = newMasterKey.name;
+    await saveWallet(wallet);
+  } catch (error) {
+    console.log('getWalletInstanceByImportMasterKey', error);
+  }
+  return { wallet, newMasterKey };
+};
+
+export const importMasterKey = (data, ignoreReloadWallet = false) => async (dispatch) => {
   console.time('TOTAL_TIME_IMPORT_MASTER_KEY');
   try {
     const newMasterKey = new MasterKeyModel({
@@ -297,7 +330,7 @@ export const importMasterKey = (data) => async (dispatch) => {
     batch(async () => {
       await dispatch(importMasterKeySuccess(newMasterKey));
       await dispatch(switchMasterKeySuccess(data.name));
-      dispatch(reloadWallet());
+      !!ignoreReloadWallet && dispatch(reloadWallet());
       dispatch(actionSubmitOTAKeyForListAccount(wallet));
       dispatch(actionRequestAirdropNFTForListAccount(wallet));
       dispatch(syncUnlinkWithNewMasterKey(newMasterKey));
@@ -327,7 +360,7 @@ export const removeMasterKey = (name) => async (dispatch, getState) => {
   try {
     const state = getState();
     const list = masterKeysSelector(state);
-    const newList = _.remove([...list], (item) => item.name !== name);
+    const newList = remove([...list], (item) => item.name !== name);
     const activeItem = newList.find((item) => item.isActive);
     if (!activeItem) {
       const firstItem = newList.filter(

@@ -1,9 +1,13 @@
-import { Wallet } from 'incognito-chain-web-js/build/wallet';
+import { Wallet, loadBackupKey, parseStorageBackup } from 'incognito-chain-web-js/build/wallet';
 import { initWallet, loadWallet } from '@services/wallet/WalletService';
 import storage from '@services/storage';
 import { getPassphrase } from '@services/wallet/passwordService';
 import toLower from 'lodash/toLower';
 import isEqual from 'lodash/isEqual';
+import Server from '@services/wallet/Server';
+// eslint-disable-next-line import/no-cycle
+import { getWalletInstanceByImportMasterKey } from '@src/redux/actions/masterKey';
+import trim from 'lodash/trim';
 
 class MasterKeyModel {
   static network = 'mainnet';
@@ -26,11 +30,24 @@ class MasterKeyModel {
     return MasterKeyModel.getStorageName(this.name);
   }
 
+  async getBackupMasterKeys() {
+    const [network, passphrase] = await Promise.all([
+      Server.getNetwork(),
+      getPassphrase(),
+    ]);
+    const storageKey = loadBackupKey(network);
+    const backupStr = (await storage.getItem(storageKey)) || '';
+    return parseStorageBackup({ passphrase, backupStr }) || [];
+  }
+
   /**
    * Load wallet from storage
    * @returns {Promise<Wallet>}
    */
-  async loadWallet() {
+  async loadWallet({
+    callback,
+    isTestReimportWallet = false
+  }) {
     console.time('TIME_LOAD_WALLET_FROM_STORAGE');
     const rootName = this.name;
     const storageName = this.getStorageName();
@@ -40,6 +57,27 @@ class MasterKeyModel {
     if (rawData) {
       wallet = await loadWallet(passphrase, storageName, rootName);
     }
+    const backupMasterKeys = await this.getBackupMasterKeys();
+
+    /** foundMasterKey = { name, mnemonic, isMasterless }
+     * handle cant load wallet
+     * load list backup in wallet and reimport again
+     **/
+    const foundMasterKey = backupMasterKeys.find(({ name }) => name === rootName);
+    if (
+      (!wallet || !!isTestReimportWallet)
+      && foundMasterKey
+      && !foundMasterKey.isMasterless
+    ) {
+      const mnemonic = 'hint protect episode topple shop fade receive pave wage ridge now face';
+      wallet = (await getWalletInstanceByImportMasterKey({
+        name: trim(foundMasterKey.name),
+        // mnemonic: trim(foundMasterKey.mnemonic),
+        mnemonic
+      }))?.wallet;
+      typeof callback === 'function' && callback(backupMasterKeys);
+    }
+    /** Cant load wallet -> create new wallet */
     if (!wallet) {
       wallet = await initWallet(storageName, rootName);
     }

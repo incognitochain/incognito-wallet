@@ -306,4 +306,10 @@ export default class Server {
     const strData = JSON.stringify(cachedList);
     return storage.setItem(KEY.SERVER, strData);
   }
+
+  static async getNetwork() {
+    const server = await Server.getDefault();
+    return server?.id;
+  }
+
 }

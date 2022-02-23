@@ -5,6 +5,7 @@ import {
   ACTION_DEV_TEST_TOGGLE_HISTORY_DETAIL,
   ACTION_TOGGLE_LOG_APP,
   ACTION_DEV_TEST_TOGGLE_TRADE,
+  ACTION_DEV_TEST_TOGGLE_REIMPORT_WALLET
 } from './Dev.constant';
 
 export const actionToggleTestModeCentralized = () => ({
@@ -29,4 +30,8 @@ export const actionToggleTradeDebug = () => ({
 
 export const actionToggleLogApp = () => ({
   type: ACTION_TOGGLE_LOG_APP,
+});
+
+export const actionToggleTestReimportWallet = () => ({
+  type: ACTION_DEV_TEST_TOGGLE_REIMPORT_WALLET,
 });

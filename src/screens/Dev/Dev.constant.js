@@ -8,3 +8,5 @@ export const ACTION_DEV_TEST_TOGGLE_HISTORY_DETAIL =
 export const ACTION_DEV_TEST_TOGGLE_TRADE =
   '[dev] Toggle trade';
 export const ACTION_TOGGLE_LOG_APP = '[dev] Toggle log app';
+export const ACTION_DEV_TEST_TOGGLE_REIMPORT_WALLET =
+  '[dev] Toggle reimport wallet';

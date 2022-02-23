@@ -9,6 +9,7 @@ import {
   ACTION_DEV_TEST_TOGGLE_HISTORY_DETAIL,
   ACTION_TOGGLE_LOG_APP,
   ACTION_DEV_TEST_TOGGLE_TRADE,
+  ACTION_DEV_TEST_TOGGLE_REIMPORT_WALLET,
 } from './Dev.constant';
 
 const initialState = {
@@ -18,6 +19,7 @@ const initialState = {
     [CONSTANT_KEYS.TOGGLE_UTXOS]: false,
     [CONSTANT_KEYS.DEV_TEST_TOGGLE_HISTORY_DETAIL]: false,
     [CONSTANT_KEYS.DEV_TEST_TOGGLE_LOG_APP]: false,
+    [CONSTANT_KEYS.DEV_TEST_TOGGlE_REIMPORT_WALLET]: false,
   },
 };
 
@@ -80,6 +82,17 @@ const devReducer = (state = initialState, action) => {
   }
   case ACTION_DEV_TEST_TOGGLE_TRADE: {
     const keySave = CONSTANT_KEYS.DEV_TEST_TOGGLE_TRADE;
+    const value = state?.storage[keySave];
+    return {
+      ...state,
+      storage: {
+        ...state?.storage,
+        [keySave]: !value,
+      },
+    };
+  }
+  case ACTION_DEV_TEST_TOGGLE_REIMPORT_WALLET: {
+    const keySave = CONSTANT_KEYS.DEV_TEST_TOGGlE_REIMPORT_WALLET;
     const value = state?.storage[keySave];
     return {
       ...state,
