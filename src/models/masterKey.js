@@ -1,4 +1,5 @@
 import { Wallet, loadBackupKey, parseStorageBackup } from 'incognito-chain-web-js/build/wallet';
+// eslint-disable-next-line import/no-cycle
 import { initWallet, loadWallet } from '@services/wallet/WalletService';
 import storage from '@services/storage';
 import { getPassphrase } from '@services/wallet/passwordService';
@@ -8,6 +9,24 @@ import Server from '@services/wallet/Server';
 // eslint-disable-next-line import/no-cycle
 import { getWalletInstanceByImportMasterKey } from '@src/redux/actions/masterKey';
 import trim from 'lodash/trim';
+// eslint-disable-next-line import/no-cycle
+import formatUtil from '@utils/format';
+import reverse from 'lodash/reverse';
+
+const getKeyStorageError = () => {
+  return '$STORAGE_ERROR_LOAD_WALLET';
+};
+
+export const getStorageLoadWalletError = async () => {
+  const key = getKeyStorageError();
+  const result = (await storage.getItem(key)) || '[]';
+  return JSON.parse(result);
+};
+
+export const setStorageLoadWalletError = async (data) => {
+  const key = getKeyStorageError();
+  await storage.setItem(key, JSON.stringify(data));
+};
 
 class MasterKeyModel {
   static network = 'mainnet';
@@ -46,37 +65,44 @@ class MasterKeyModel {
    */
   async loadWallet({
     callback,
-    isTestReimportWallet = false
   }) {
     console.time('TIME_LOAD_WALLET_FROM_STORAGE');
     const rootName = this.name;
     const storageName = this.getStorageName();
     const rawData = await storage.getItem(storageName);
     const passphrase = await getPassphrase();
+    let backupMasterKeys = [];
     let wallet;
     if (rawData) {
       wallet = await loadWallet(passphrase, storageName, rootName);
     }
-    const backupMasterKeys = await this.getBackupMasterKeys();
+    if (!wallet) {
+      backupMasterKeys = reverse((await this.getBackupMasterKeys()) || []);
 
-    /** foundMasterKey = { name, mnemonic, isMasterless }
-     * handle cant load wallet
-     * load list backup in wallet and reimport again
-     **/
-    const foundMasterKey = backupMasterKeys.find(({ name }) => name === rootName);
-    if (
-      (!wallet || !!isTestReimportWallet)
-      && foundMasterKey
-      && !foundMasterKey.isMasterless
-    ) {
-      const mnemonic = 'hint protect episode topple shop fade receive pave wage ridge now face';
-      wallet = (await getWalletInstanceByImportMasterKey({
-        name: trim(foundMasterKey.name),
-        // mnemonic: trim(foundMasterKey.mnemonic),
-        mnemonic
-      }))?.wallet;
-      typeof callback === 'function' && callback(backupMasterKeys);
+      /** foundMasterKey = { name, mnemonic, isMasterless }
+       * handle cant load wallet
+       * load list backup in wallet and reimport again
+       **/
+      const foundMasterKey = backupMasterKeys.find(({ name }) => name === rootName);
+      if (foundMasterKey && !foundMasterKey?.isMasterless) {
+        const name = trim(foundMasterKey.name);
+        const mnemonic = trim(foundMasterKey.mnemonic);
+        wallet = (await getWalletInstanceByImportMasterKey({ name, mnemonic }))?.wallet;
+        const errors = await getStorageLoadWalletError();
+        errors.push({
+          time: formatUtil.formatDateTime(new Date().getTime()),
+          name,
+          storageName,
+          rootName,
+          rawData: !!rawData,
+          wallet: !!wallet,
+          function: 'LOAD_WALLET_MASTER_KEY'
+        });
+        await setStorageLoadWalletError(errors);
+        typeof callback === 'function' && callback(backupMasterKeys);
+      }
     }
+
     /** Cant load wallet -> create new wallet */
     if (!wallet) {
       wallet = await initWallet(storageName, rootName);
