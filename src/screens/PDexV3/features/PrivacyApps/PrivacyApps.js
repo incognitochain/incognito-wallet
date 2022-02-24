@@ -67,7 +67,7 @@ const PrivacyApps = () => {
       },
       {
         privacyAppId: KEYS_PLATFORMS_SUPPORTED.uni,
-        icon: <UniIcon />,
+        // icon: <UniIcon />,
         headerTitle: 'pUniswap',
         headerSub: 'Private Uniswap',
         groupActions: [
