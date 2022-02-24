@@ -18,7 +18,7 @@ import { withLayout_2 } from '@src/components/Layout';
 import clipboard from '@src/services/clipboard';
 import uniqBy from 'lodash/uniqBy';
 import isEqual from 'lodash/isEqual';
-import { getStorageLoadWalletError } from '@models/masterKey';
+import { getStorageLoadWalletError } from '@models/storageError';
 
 const styled = StyleSheet.create({
   scrollview: {

@@ -9,24 +9,9 @@ import Server from '@services/wallet/Server';
 // eslint-disable-next-line import/no-cycle
 import { getWalletInstanceByImportMasterKey } from '@src/redux/actions/masterKey';
 import trim from 'lodash/trim';
-// eslint-disable-next-line import/no-cycle
 import formatUtil from '@utils/format';
 import reverse from 'lodash/reverse';
-
-const getKeyStorageError = () => {
-  return '$STORAGE_ERROR_LOAD_WALLET';
-};
-
-export const getStorageLoadWalletError = async () => {
-  const key = getKeyStorageError();
-  const result = (await storage.getItem(key)) || '[]';
-  return JSON.parse(result);
-};
-
-export const setStorageLoadWalletError = async (data) => {
-  const key = getKeyStorageError();
-  await storage.setItem(key, JSON.stringify(data));
-};
+import { getStorageLoadWalletError, setStorageLoadWalletError } from '@models/storageError';
 
 class MasterKeyModel {
   static network = 'mainnet';
