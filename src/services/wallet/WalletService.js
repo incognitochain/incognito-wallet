@@ -15,6 +15,8 @@ import { DEX } from '@utils/dex';
 import accountService from '@services/wallet/accountService';
 import { updateWalletAccounts } from '@services/api/masterKey';
 import { getToken } from '@src/services/auth';
+import formatUtil from '@utils/format';
+import { getStorageLoadWalletError, setStorageLoadWalletError } from '@models/storageError';
 import { getPassphrase } from './passwordService';
 import Server from './Server';
 
@@ -61,6 +63,15 @@ export async function loadWallet(passphrase, name = 'Wallet', rootName = '') {
     wallet = await wallet.loadWallet(passphrase);
     return wallet?.Name ? wallet : false;
   } catch (error) {
+    const errors = await getStorageLoadWalletError();
+    errors.push({
+      time: formatUtil.formatDateTime(new Date().getTime()),
+      name,
+      rootName,
+      error: JSON.stringify(error),
+      function: 'LOAD_WALLET_WALLET_SERVICE'
+    });
+    await setStorageLoadWalletError(errors);
     console.log('ERROR WHEN LOAD WALLET', error);
   }
 }

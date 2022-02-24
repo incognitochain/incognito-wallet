@@ -1,7 +1,6 @@
 import React from 'react';
 import { Text, TouchableOpacity, Switch, Toast } from '@components/core/index';
 import Section, { sectionStyle } from '@screens/Setting/features/Section';
-import LocalDatabase from '@utils/LocalDatabase';
 import RNRestart from 'react-native-restart';
 import { AsyncStorage, Clipboard } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
@@ -14,7 +13,7 @@ import {
   actionToggleUTXOs,
   actionToggleHistoryDetail,
   actionToggleLogApp,
-  actionToggleTradeDebug, actionToggleTestReimportWallet,
+  actionToggleTradeDebug,
 } from '@src/screens/Dev';
 import { CONSTANT_KEYS } from '@src/constants';
 import { accountSelector } from '@src/redux/selectors';
@@ -46,9 +45,6 @@ const DevSection = () => {
 
   const onToggleTestModeCentralized = () =>
     dispatch(actionToggleTestModeCentralized());
-
-  const onToggleTestReimportWallet = () =>
-    dispatch(actionToggleTestReimportWallet());
 
   const onToggleUTXOs = () => dispatch(actionToggleUTXOs());
 
@@ -194,18 +190,6 @@ const DevSection = () => {
       id: 'master-keys-remove',
       desc: 'Remove current master key',
       onPress: onRemoveCurrentMasterKey,
-    },
-    {
-      id: 'reimport-wallet',
-      desc: 'Toggle reimport wallet',
-      onPress: null,
-      toggleSwitch: true,
-      switchComponent: (
-        <Switch
-          onValueChange={onToggleTestReimportWallet}
-          value={dev[CONSTANT_KEYS.DEV_TEST_TOGGlE_REIMPORT_WALLET]}
-        />
-      ),
     },
   ];
 

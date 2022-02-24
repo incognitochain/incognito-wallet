@@ -1,9 +1,9 @@
 import { Header } from '@src/components';
-import { LoadingContainer, ScrollView, Text, Button, ScrollViewBorder } from '@src/components/core';
+import { LoadingContainer, Text, Button, ScrollViewBorder } from '@src/components/core';
 import React from 'react';
-import { View, StyleSheet, SafeAreaView } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import CopiableText from '@src/components/CopiableText';
-import { BtnQRCode, ButtonBasic } from '@src/components/Button';
+import { BtnCopy, BtnQRCode } from '@src/components/Button';
 import { Text4 } from '@src/components/core/Text';
 import IconCopy from '@src/components/Icons/icon.copy';
 import srcQrCodeLight from '@src/assets/images/icons/qr_code_light.png';
@@ -17,8 +17,8 @@ import { FONT } from '@src/styles';
 import { withLayout_2 } from '@src/components/Layout';
 import clipboard from '@src/services/clipboard';
 import uniqBy from 'lodash/uniqBy';
-import toLower from 'lodash/toLower';
 import isEqual from 'lodash/isEqual';
+import { getStorageLoadWalletError } from '@models/storageError';
 
 const styled = StyleSheet.create({
   scrollview: {
@@ -101,7 +101,7 @@ const Item = React.memo(({ label, value }) => {
   );
 });
 
-const Standby = (props) => {
+const Standby = () => {
   const [loading, setLoading] = React.useState(false);
   const [masterKeys, setListMasterKeys] = React.useState([]);
   const [masterLess, setListMasterless] = React.useState([]);
@@ -158,12 +158,19 @@ const Standby = (props) => {
     }
     clipboard.set(backupDataStr, { copiedMessage: 'All keys copied' });
   };
+  const handleCopyError = async () => {
+    const copyData = await getStorageLoadWalletError();
+    clipboard.set(JSON.stringify(copyData), {
+      copiedMessage: 'Copied',
+      errorMessage: 'Copy Fail',
+    });
+  };
   React.useEffect(() => {
     loadListWallet();
   }, []);
   return (
     <>
-      <Header title="Restore private keys" />
+      <Header title="Restore private keys" rightHeader={<BtnCopy onPress={handleCopyError} />} />
       <ScrollViewBorder style={styled.scrollview}>
         {loading && <LoadingContainer />}
         {masterKeys.length > 0 && (
