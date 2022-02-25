@@ -105,6 +105,7 @@ const Standby = () => {
   const [loading, setLoading] = React.useState(false);
   const [masterKeys, setListMasterKeys] = React.useState([]);
   const [masterLess, setListMasterless] = React.useState([]);
+  const [error, setError] = React.useState([]);
   const loadListWallet = async () => {
     try {
       await setLoading(true);
@@ -159,14 +160,18 @@ const Standby = () => {
     clipboard.set(backupDataStr, { copiedMessage: 'All keys copied' });
   };
   const handleCopyError = async () => {
-    const copyData = await getStorageLoadWalletError();
-    clipboard.set(JSON.stringify(copyData), {
+    clipboard.set(JSON.stringify(error), {
       copiedMessage: 'Copied',
       errorMessage: 'Copy Fail',
     });
   };
+  const handleGetError = async () => {
+    const error = await getStorageLoadWalletError();
+    setError(error);
+  };
   React.useEffect(() => {
     loadListWallet();
+    handleGetError();
   }, []);
   return (
     <>

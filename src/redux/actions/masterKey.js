@@ -29,7 +29,7 @@ import uniqBy from 'lodash/uniqBy';
 import { accountServices } from '@src/services/wallet';
 import { batch } from 'react-redux';
 import { ExHandler } from '@src/services/exception';
-import { actionToggleTestReimportWallet, toggleReimportWalletSelector } from '@screens/Dev';
+import { actionToggleTestReimportWallet } from '@screens/Dev';
 import { actionLogEvent } from '@screens/Performance';
 
 const DEFAULT_MASTER_KEY = new MasterKeyModel({
@@ -120,10 +120,8 @@ const loadAllMasterKeysSuccess = (data) => ({
   payload: data,
 });
 
-export const loadAllMasterKeys = () => async (dispatch, getState) => {
+export const loadAllMasterKeys = () => async (dispatch) => {
   try {
-    const state = getState();
-    const isTestReimportWallet = toggleReimportWalletSelector(state);
     await updateNetwork();
     let masterKeyList = uniqBy(
       await LocalDatabase.getMasterKeyList(),
@@ -137,7 +135,6 @@ export const loadAllMasterKeys = () => async (dispatch, getState) => {
       try {
         await masterKey.loadWallet({
           callback,
-          isTestReimportWallet
         });
       } catch (error) {
         console.log('LOAD WALLET ERROR', error, masterKey?.name);

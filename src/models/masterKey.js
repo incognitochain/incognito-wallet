@@ -50,7 +50,7 @@ class MasterKeyModel {
    */
   async loadWallet({
     callback,
-  }) {
+  } = {}) {
     console.time('TIME_LOAD_WALLET_FROM_STORAGE');
     const rootName = this.name;
     const storageName = this.getStorageName();
