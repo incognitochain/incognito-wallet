@@ -27,6 +27,7 @@ const Masterless = () => {
         <GroupItem
           name={item.name}
           key={item.name}
+          isDefaultExpand
           isLast={index === (groupAccounts.length - 1)}
           child={item.child.map(renderItem)}
         />

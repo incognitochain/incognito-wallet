@@ -11,10 +11,12 @@ import AccountItem from '@screens/SelectAccount/SelectAccount.item';
 import { loadAllMasterKeyAccounts } from '@src/redux/actions/masterKey';
 import { useNavigationParam } from 'react-navigation-hooks';
 import useDebounceSelector from '@src/shared/hooks/debounceSelector';
+import { defaultAccount } from '@src/redux/selectors/account';
 
 const MasterKeys = () => {
   const groupAccounts = useDebounceSelector(groupMasterKeys);
   const loading = useDebounceSelector(isLoadingAllMasterKeyAccountSelector);
+  const account = useDebounceSelector(defaultAccount);
   const handleSelectedAccount = useNavigationParam('handleSelectedAccount');
   const dispatch = useDispatch();
   const handleLoadAllMasterKeyAccounts = React.useCallback(() =>
@@ -30,6 +32,21 @@ const MasterKeys = () => {
     />
   ), []);
 
+  const renderGroupAccounts = React.useCallback((item, index) => {
+    const isDefaultExpand = (item.child || []).some(({ OTAKey }) => {
+      return OTAKey === account.OTAKey;
+    });
+    return (
+      <GroupItem
+        name={item.name}
+        key={item.name}
+        isDefaultExpand={isDefaultExpand}
+        isLast={index === groupAccounts.length - 1}
+        child={item.child.map(renderItem)}
+      />
+    );
+  }, [account.OTAKey]);
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -41,14 +58,7 @@ const MasterKeys = () => {
       )}
       contentContainerStyle={{ paddingHorizontal: 25 }}
     >
-      {groupAccounts.map((item, index) => (
-        <GroupItem
-          name={item.name}
-          key={item.name}
-          isLast={index === groupAccounts.length - 1}
-          child={item.child.map(renderItem)}
-        />
-      ))}
+      {groupAccounts.map(renderGroupAccounts)}
     </ScrollView>
   );
 };

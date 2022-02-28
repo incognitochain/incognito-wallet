@@ -5,6 +5,7 @@ import { defaultAccountSelector } from '@src/redux/selectors/account';
 import { MAX_NO_INPUT_DEFRAGMENT } from '@screens/Streamline/Streamline.constant';
 import BigNumber from 'bignumber.js';
 import isEmpty from 'lodash/isEmpty';
+import uniqBy from 'lodash/uniqBy';
 
 export const streamlineSelector = createSelector(
   (state) => state.streamline,
@@ -27,7 +28,7 @@ export const streamlineConsolidateSelector = createSelector(
   streamlineSelector,
   (account, UTXOS, { isFetchingUTXOS }) => {
     const address = account.PaymentAddress;
-    const UTXOSFiltered = UTXOS.filter(item => item?.address === address) || [];
+    const UTXOSFiltered = uniqBy(UTXOS.filter(item => item?.address === address) || [], 'tokenID');
     const hasExceededMaxInputPRV = UTXOSFiltered.some(({ unspentCoins }) => unspentCoins.length > MAX_NO_INPUT_DEFRAGMENT);
     return {
       hasExceededMaxInputPRV,

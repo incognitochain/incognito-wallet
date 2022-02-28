@@ -7,7 +7,7 @@ import Masterless from '@screens/SelectAccount/SelectAccount.masterless';
 import BtnInfo from '@screens/Setting/features/Keychain/BtnInfo';
 import { View2 } from '@components/core/View';
 import globalStyled from '@src/theme/theme.styled';
-
+import withLazy from '@components/LazyHoc/LazyHoc';
 
 const SelectAccount = () => {
   return (
@@ -29,4 +29,4 @@ const SelectAccount = () => {
   );
 };
 
-export default memo(SelectAccount);
+export default withLazy(memo(SelectAccount));

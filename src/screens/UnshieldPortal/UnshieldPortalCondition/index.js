@@ -26,7 +26,7 @@ export const UnshieldPortalCondition = (props) => {
     }
   ];
   return (
-    <View2>
+    <View2 fullFlex>
       <Header title="Unshielding options" onGoBack={onGoBack} />
       <ScrollViewBorder style={styled.scrollview}>
         <Text style={[styled.text, { marginBottom: 22 }]}>

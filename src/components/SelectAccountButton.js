@@ -2,17 +2,20 @@ import React from 'react';
 import toLower from 'lodash/toLower';
 import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { accountSelector } from '@src/redux/selectors';
 import { useNavigation } from 'react-navigation-hooks';
 import routeNames from '@src/router/routeNames';
-import { listAllMasterKeyAccounts } from '@src/redux/selectors/masterKey';
+import { currentMasterKeySelector, listAllMasterKeyAccounts } from '@src/redux/selectors/masterKey';
 import { switchMasterKey } from '@src/redux/actions/masterKey';
 import accountService from '@services/wallet/accountService';
 import styled from 'styled-components/native';
 import { colorsSelector } from '@src/theme';
 import { FONT } from '@src/styles';
 import { isIOS } from '@utils/platform';
+import { actionChangeTab } from '@components/core/Tabs';
+import { TABS } from '@screens/SelectAccount/SelectAccount.constant';
+import useDebounceSelector from '@src/shared/hooks/debounceSelector';
 import { TouchableOpacity, Text } from './core';
 
 const styles = StyleSheet.create({
@@ -41,16 +44,25 @@ const SelectAccountButton = ({
   disabled,
   handleSelectedAccount,
 }) => {
-  const colors = useSelector(colorsSelector);
-  const account = useSelector(accountSelector.defaultAccountSelector);
-  const defaultAccountName = useSelector(
+  const colors = useDebounceSelector(colorsSelector);
+  const account = useDebounceSelector(accountSelector.defaultAccountSelector);
+  const masterkey = useDebounceSelector(currentMasterKeySelector);
+  const defaultAccountName = useDebounceSelector(
     accountSelector.defaultAccountNameSelector,
   );
-  const accounts = useSelector(listAllMasterKeyAccounts);
+  const accounts = useDebounceSelector(listAllMasterKeyAccounts);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const onChangDefaultTab = React.useCallback(() => {
+    const isMasterless = masterkey.isMasterless;
+    dispatch(actionChangeTab({
+      rootTabID: TABS.TAB_SELECT_ACCOUNT_ID,
+      tabID: isMasterless ? TABS.TAB_SELECT_ACCOUNT_MASTER_LESS_ID : TABS.TAB_SELECT_ACCOUNT_MASTER_KEY_ID
+    }));
+  }, [masterkey]);
   const onNavSelectAccount = () => {
     if (disabled) return;
+    onChangDefaultTab();
     navigation.navigate(routeNames.SelectAccount, {
       ignoredAccounts,
       handleSelectedAccount,

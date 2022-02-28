@@ -29,6 +29,7 @@ export const styled = StyleSheet.create({
   },
   button: {
     marginTop: 30,
+    marginBottom: 200
   },
   warning: {
     paddingHorizontal: 15,
@@ -40,11 +41,11 @@ export const styled = StyleSheet.create({
     color: COLORS.orange,
   },
   labelText: {
-    marginRight: 20, 
-    color: COLORS.colorGreyBold 
+    marginRight: 20,
+    color: COLORS.colorGreyBold
   },
   labelTextActive: {
-    marginRight: 20, 
+    marginRight: 20,
     color: COLORS.black
   },
 });

@@ -36,8 +36,8 @@ const CustomRow = styled(Row)`
   padding-right: 16px;
 `;
 
-const GroupItem = ({ name, child, isLast }) => {
-  const [expand, setExpand] = useState(true);
+const GroupItem = ({ name, child, isLast, isDefaultExpand }) => {
+  const [expand, setExpand] = useState(isDefaultExpand);
 
   const toggleExpand = () => {
     setExpand(!expand);
@@ -65,7 +65,8 @@ const GroupItem = ({ name, child, isLast }) => {
 GroupItem.propTypes = {
   name: PropTypes.string.isRequired,
   child: PropTypes.any.isRequired,
-  isLast: PropTypes.bool.isRequired
+  isLast: PropTypes.bool.isRequired,
+  isDefaultExpand: PropTypes.bool.isRequired,
 };
 
 export default GroupItem;

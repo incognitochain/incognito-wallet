@@ -22,7 +22,12 @@ const getTokenListNoCache = () => {
 export const getTokensInfo = (tokenIDs = []) => {
   return http1
     .post('coins/tokeninfo', { TokenIDs: tokenIDs })
-    .then((res) => res.map((token) => new PToken(token, res)));};
+    .then((res) => res?.map((token) => new PToken(token, res)))
+    .catch((error) => {
+      console.log('error', error);
+      return [];
+    });
+};
 
 export const getTokenList = ({ expiredTime = EXPIRED_TIME } = {}) => {
   return cachePromise(KEYS.P_TOKEN, getTokenListNoCache, expiredTime);

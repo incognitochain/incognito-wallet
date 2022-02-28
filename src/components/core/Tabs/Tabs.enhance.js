@@ -13,6 +13,7 @@ import Tab1 from './Tabs.tab1';
 const enhance = (WrappedComp) => (props) => {
   const { children, rootTabID, useTab1 = false, defaultTabIndex = 0, borderTop = true } = props;
   const activeTab = useSelector(activedTabSelector)(rootTabID);
+  console.log('SANG TEST::: ', activeTab, rootTabID);
   const dispatch = useDispatch();
   const onClickTabItem = async (tab) => {
     try {
@@ -64,7 +65,10 @@ const enhance = (WrappedComp) => (props) => {
   React.useEffect(() => {
     try {
       if (children) {
-        const { tabID, onChangeTab } = children[defaultTabIndex]?.props;
+        let { tabID, onChangeTab } = children[defaultTabIndex]?.props;
+        if (activeTab) {
+          tabID = activeTab;
+        }
         dispatch(
           actionChangeTab({
             rootTabID,

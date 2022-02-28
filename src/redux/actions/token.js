@@ -171,7 +171,7 @@ export const getPTokenList = ({ expiredTime = EXPIRED_TIME } = {}) => async (
       await getTokensInfo(coinsIndex),
       await getTokenList({ expiredTime })
     ]);
-    const tokens = uniqBy([...coinIndexTokens, ...pTokens], 'tokenId');
+    const tokens = uniqBy([...(coinIndexTokens || []), ...pTokens], 'tokenId');
     await dispatch(setListPToken(tokens));
     return tokens;
   } catch (e) {

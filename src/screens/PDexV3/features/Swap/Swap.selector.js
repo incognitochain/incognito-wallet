@@ -412,6 +412,7 @@ export const feetokenDataSelector = createSelector(
       const {
         fee: feeToken,
         sellAmount: sellAmountToken,
+        buyAmount: buyAmountToken,
         poolDetails: poolDetailsToken,
         route: tradePathToken,
         maxGet: maxGetToken,
@@ -520,7 +521,7 @@ export const feetokenDataSelector = createSelector(
       maxGet = payFeeByPRV ? maxGetPRV : maxGetToken;
       const sellOriginalAmount = payFeeByPRV ? sellAmountPRV : sellAmountToken;
       const buyOriginalAmount = calMintAmountExpected({
-        maxGet,
+        maxGet: buyAmountToken,
         slippagetolerance,
       });
       const rateStr = getExchangeRate(
@@ -803,7 +804,7 @@ export const mappingOrderHistorySelector = createSelector(
         fee,
         feeToken: feeTokenId,
         fromStorage,
-        price,
+        amountOut,
         statusCode,
       } = order;
       let statusStr = capitalize(status);
@@ -823,17 +824,17 @@ export const mappingOrderHistorySelector = createSelector(
       const buyToken: SelectedPrivacy = getPrivacyDataByTokenID(buyTokenId);
       const feeToken: SelectedPrivacy = getPrivacyDataByTokenID(feeTokenId);
       const amountStr = format.amountVer2(amount, sellToken.pDecimals);
-      const priceStr = format.amountVer2(price, buyToken.pDecimals);
+      const buyAmountStr = format.amountVer2(amountOut, buyToken.pDecimals);
       const sellStr = `${amountStr} ${sellToken.symbol}`;
-      const buyStr = `${priceStr} ${buyToken.symbol}`;
+      const buyStr = `${buyAmountStr} ${buyToken.symbol}`;
       const timeStr = format.formatDateTime(requestime, 'DD MMM HH:mm');
       const rate = getPairRate({
         token1Value: amount,
-        token2Value: price,
+        token2Value: amountOut,
         token1: sellToken,
         token2: buyToken,
       });
-      const rateStr = getExchangeRate(sellToken, buyToken, amount, price);
+      const rateStr = getExchangeRate(sellToken, buyToken, amount, amountOut);
       let totalFee = fee;
       let networkFee = ACCOUNT_CONSTANT.MAX_FEE_PER_TX;
       if (feeToken.isMainCrypto) {
@@ -844,7 +845,7 @@ export const mappingOrderHistorySelector = createSelector(
         feeToken.pDecimals,
         false,
       )} ${feeToken.symbol}`;
-      const swapStr = price ? `${sellStr} = ${buyStr}` : '';
+      const swapStr = amountOut ? `${sellStr} = ${buyStr}` : '';
       const result = {
         ...order,
         sellStr,
@@ -859,7 +860,6 @@ export const mappingOrderHistorySelector = createSelector(
         statusStr,
         swapStr,
         tradingFeeByPRV: feeToken.isMainCrypto,
-        price,
       };
       return result;
     } catch (error) {
