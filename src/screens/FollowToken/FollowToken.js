@@ -151,7 +151,6 @@ const FollowTokenList = React.memo((props) => {
           styledCheckBox={globalStyled.defaultPaddingHorizontal}
           isShowUnVerifiedTokens={showUnVerifiedTokens}
           setShowUnVerifiedTokens={onSetShowUnVerifiedTokens}
-          verifiedTokens={verifiedTokens}
           renderItem={({ item }) => (
             <TokenFollow
               item={item}

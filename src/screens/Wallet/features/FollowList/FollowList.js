@@ -1,29 +1,28 @@
-import React, { memo } from 'react';
-import withFollowList from '@screens/Wallet/features/FollowList/FollowList.enhance';
-import { compose } from 'recompose';
-import { batch, useDispatch } from 'react-redux';
-import { followTokensWalletSelector, isFetchingSelector } from '@screens/Wallet/features/FollowList/FollowList.selector';
-import Token from '@screens/Wallet/features/Home/Wallet.token';
-import { FlatList } from '@components/core/FlatList';
 import { Toast, View } from '@components/core';
-import Extra from '@screens/Wallet/features/Home/Wallet.extra';
-import { setSelectedPrivacy } from '@src/redux/actions/selectedPrivacy';
 import routeNames from '@routers/routeNames';
-import { actionRemoveFollowToken, setToken } from '@src/redux/actions/token';
-import { useNavigation } from 'react-navigation-hooks';
-import { RefreshControl } from 'react-native';
-import PropTypes from 'prop-types';
-import useDebounceSelector from '@src/shared/hooks/debounceSelector';
-import { selectedPrivacyTokenID } from '@src/redux/selectors/selectedPrivacy';
-import { actionFreeHistory } from '@src/redux/actions/history';
 import withRetry from '@screens/MainTabBar/features/Assets/Assets.withRetry';
+import withFollowList from '@screens/Wallet/features/FollowList/FollowList.enhance';
+import { followTokensWalletSelector, isFetchingSelector } from '@screens/Wallet/features/FollowList/FollowList.selector';
+import Extra from '@screens/Wallet/features/Home/Wallet.extra';
+import Token from '@screens/Wallet/features/Home/Wallet.token';
+import { actionFreeHistory } from '@src/redux/actions/history';
+import { setSelectedPrivacy } from '@src/redux/actions/selectedPrivacy';
+import { actionRemoveFollowToken, setToken } from '@src/redux/actions/token';
+import { selectedPrivacyTokenID } from '@src/redux/selectors/selectedPrivacy';
+import useDebounceSelector from '@src/shared/hooks/debounceSelector';
+import PropTypes from 'prop-types';
+import React, { memo } from 'react';
+import { RefreshControl } from 'react-native';
+import BigList from 'react-native-big-list';
+import { useNavigation } from 'react-navigation-hooks';
+import { batch, useDispatch } from 'react-redux';
+import { compose } from 'recompose';
 
 const FollowList = ({ loadBalance, onRetrySubmitWithdraw }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const data = useDebounceSelector(followTokensWalletSelector);
   const isRefreshing = useDebounceSelector(isFetchingSelector);
-  const renderKeyExtractor = React.useCallback((item) => item.tokenID, []);
   const selectPrivacyTokenID = useDebounceSelector(selectedPrivacyTokenID);
 
   const handleSelectToken = async (tokenId, balance) => {
@@ -72,17 +71,18 @@ const FollowList = ({ loadBalance, onRetrySubmitWithdraw }) => {
   return (
     <View fullFlex borderTop>
       <Extra />
-      <FlatList
+      <BigList
         data={data}
-        refreshControl={(
+        renderItem={renderItem}
+        refreshControl={
           <RefreshControl
             tintColor="white"
             refreshing={isRefreshing}
             onRefresh={onRefresh}
           />
-        )}
-        renderItem={renderItem}
-        keyExtractor={renderKeyExtractor}
+        }
+        itemHeight={75}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );

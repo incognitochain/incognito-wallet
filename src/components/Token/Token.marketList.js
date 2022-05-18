@@ -1,100 +1,158 @@
-import React, {memo} from 'react';
-import { StyleSheet } from 'react-native';
-import PropTypes from 'prop-types';
-import { ListView } from '@components/Token/index';
-import { BtnChecked } from '@components/Button';
-import { FONT } from '@src/styles';
-import { useDispatch } from 'react-redux';
+import { View } from '@components/core';
+import { useFuse } from '@components/Hoc/useFuse';
+import { ListAllToken2, ListView } from '@components/Token/index';
+import { MarketTabs } from '@screens/MainTabBar/features/Market/Market.header';
+import { marketTabSelector } from '@screens/Setting';
 import { getPTokenList } from '@src/redux/actions/token';
-import { RefreshControl, ScrollView, Text } from '@components/core';
+import { marketTokens as marketTokensSelector } from '@src/redux/selectors/shared';
+import routeNames from '@src/router/routeNames';
+import useDebounceSelector from '@src/shared/hooks/debounceSelector';
 import globalStyled from '@src/theme/theme.styled';
-
-const styled = StyleSheet.create({
-  hook: {
-    ...globalStyled.defaultPaddingHorizontal,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 35,
-  },
-  hookText: {
-    fontFamily: FONT.NAME.medium,
-    fontSize: FONT.SIZE.small,
-    lineHeight: FONT.SIZE.small + 5,
-    marginLeft: 5,
-  },
-  scrollView: {
-    paddingLeft: 0,
-    paddingRight: 0
-  }
-});
+import { PRVIDSTR } from 'incognito-chain-web-js/build/wallet';
+import { isEmpty } from 'lodash';
+import orderBy from 'lodash/orderBy';
+import PropTypes from 'prop-types';
+import React, { memo, useState } from 'react';
+import { useNavigation } from 'react-navigation-hooks';
+import { useDispatch } from 'react-redux';
 
 const MarketList = (props) => {
-  const {
-    tokensFactories,
-    onToggleUnVerifiedTokens,
-    toggleUnVerified,
-    renderItem,
-    keySearch,
-  } = props;
+  const { renderItem, keySearch, filterField, orderField } = props;
+
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const currentRouteName = navigation?.state?.routeName;
+
+  const availableTokens =
+    props?.availableTokens || useDebounceSelector(marketTokensSelector);
+
+  const activeTab = useDebounceSelector(marketTabSelector);
+
+  // Get list verifiedToken list unVerifiedTokens from list all token
+  const _verifiedTokens = availableTokens?.filter((token) => token?.isVerified);
+  const _unVerifiedTokens = availableTokens?.filter(
+    (token) => !token.isVerified,
+  );
+
+  const [showUnVerifiedTokens, setShowUnVerifiedTokens] = useState(false);
+  const onSetShowUnVerifiedTokens = () => {
+    setShowUnVerifiedTokens(!showUnVerifiedTokens);
+  };
+
+  const [verifiedTokens, onSearchVerifiedTokens] = useFuse(_verifiedTokens, {
+    keys: ['displayName', 'name', 'symbol', 'pSymbol'],
+    matchAllOnEmptyQuery: true,
+    isCaseSensitive: false,
+    findAllMatches: true,
+    includeMatches: false,
+    includeScore: true,
+    useExtendedSearch: false,
+    threshold: 0,
+    location: 0,
+    distance: 2,
+    maxPatternLength: 32,
+  });
+
+  const [unVerifiedTokens, onSearchUnVerifiedTokens] = useFuse(
+    _unVerifiedTokens,
+    {
+      keys: ['displayName', 'name', 'symbol', 'pSymbol'],
+      matchAllOnEmptyQuery: true,
+      isCaseSensitive: false,
+      findAllMatches: true,
+      includeMatches: false,
+      includeScore: true,
+      useExtendedSearch: false,
+      threshold: 0,
+      location: 0,
+      distance: 2,
+      maxPatternLength: 32,
+    },
+  );
+
+  const getMarketTokens = () => {
+    let marketTokens = [];
+    if (
+      activeTab === MarketTabs.ALL ||
+      currentRouteName === routeNames.MarketSearchCoins
+    ) {
+      marketTokens = _verifiedTokens
+        .concat(_unVerifiedTokens.filter((item) => item.isFollowed))
+        .filter((token) => !!token.defaultPoolPair);
+    } else {
+      marketTokens = _verifiedTokens
+        .filter((item) => item.isFollowed || item.tokenId === PRVIDSTR)
+        .concat(_unVerifiedTokens.filter((item) => item.isFollowed))
+        .filter((token) => !!token.defaultPoolPair);
+    }
+    marketTokens = orderBy(
+      marketTokens,
+      (item) => Number(item[filterField] || '0'),
+      [orderField],
+    );
+    return marketTokens;
+  };
+
+  const marketTokens = getMarketTokens();
+
+  let tokens = [verifiedTokens];
+  if (showUnVerifiedTokens) {
+    tokens = [verifiedTokens, unVerifiedTokens];
+  }
 
   const [loading, setLoading] = React.useState(false);
 
-  const onRefresh = async () => {
+  const onRefresh = () => {
     try {
       setLoading(true);
-      await dispatch(getPTokenList());
+      dispatch(getPTokenList());
       setLoading(false);
     } catch (e) {
-      console.log('MarketList: error', );
+      console.log('MarketList: error');
       setLoading(false);
     }
   };
 
-  const AlList = React.useMemo(() => {
+  const allList = () => {
     return (
-      <>
-        <ListView {...tokensFactories[0]} renderItem={renderItem} />
-        <BtnChecked
-          btnStyle={[
-            styled.hook,
-            tokensFactories[1]?.visible ? null : { marginBottom: 50 },
-          ]}
-          onPress={onToggleUnVerifiedTokens}
-          checked={toggleUnVerified}
-          hook={<Text style={styled.hookText}>Show unverified coins</Text>}
-        />
-        <ListView {...tokensFactories[1]} renderItem={renderItem} />
-      </>
+      <ListAllToken2
+        tokensFactories={tokens}
+        styledCheckBox={globalStyled.defaultPaddingHorizontal}
+        isShowUnVerifiedTokens={showUnVerifiedTokens}
+        setShowUnVerifiedTokens={onSetShowUnVerifiedTokens}
+        renderItem={renderItem}
+      />
     );
-  }, [toggleUnVerified, tokensFactories]);
+  };
 
   const isLoading = React.useMemo(() => {
-    return loading
-      || !tokensFactories
-      || tokensFactories[0]?.data.length === 0;
-  }, [loading, tokensFactories]);
+    return loading;
+  }, [loading]);
+
+  React.useEffect(() => {
+    onSearchVerifiedTokens(keySearch);
+    onSearchUnVerifiedTokens(keySearch);
+  }, [keySearch]);
 
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      style={styled.scrollView}
-      refreshControl={
-        <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
-      }
-    >
-      {!keySearch && (
-        <ListView {...tokensFactories[2]} renderItem={renderItem} />
+    <View style={{ flex: 1 }}>
+      {isEmpty(keySearch) ? (
+        <ListView
+          data={marketTokens}
+          isRefreshing={isLoading}
+          onRefresh={onRefresh}
+          visible
+          renderItem={renderItem}
+        />
+      ) : (
+        allList()
       )}
-      {!!keySearch && (
-        AlList
-      )}
-    </ScrollView>
+    </View>
   );
 };
 
 MarketList.defaultProps = {
-  keySearch: ''
+  keySearch: '',
 };
 
 MarketList.propTypes = {
