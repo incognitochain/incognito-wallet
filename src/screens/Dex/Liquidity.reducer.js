@@ -4,8 +4,8 @@ import { PRV } from '@src/constants/common';
 import convertUtil from '@utils/convert';
 
 const initialResetState = {
-  tabName: HEADER_TABS.Add,
-  historyTabName: HEADER_TABS.Add,
+  tabName: HEADER_TABS.Remove,
+  historyTabName: HEADER_TABS.Remove,
   isLoading: false,
   isFiltering: false,
 };

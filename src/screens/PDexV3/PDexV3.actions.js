@@ -15,6 +15,7 @@ export const getPDexV3Instance = async ({ account = {} } = {}) => {
     }
     pDexV3Inst.setAuthToken(authToken);
     pDexV3Inst.setRPCTradeService(server.tradeServices);
+    pDexV3Inst.setRPCCoinServices(server.coinServices);
     pDexV3Inst.setStorageServices(storage);
     pDexV3Inst.setRPCTxServices(server.pubsubServices);
     pDexV3Inst.setRPCApiServices(server.apiServices);

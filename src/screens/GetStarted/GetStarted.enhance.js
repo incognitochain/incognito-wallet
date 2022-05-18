@@ -93,8 +93,6 @@ const enhance = (WrappedComp) => (props) => {
     if (!hasError) {
       setTimeout(() => {
         setLoading(false);
-        // navigation.navigate(routeNames.Send);
-        // dispatch(setSelectedPrivacy('880ea0787f6c1555e59e3958a595086b7802fc7a38276bcd80d4525606557fbc'));
         navigation.navigate(routeNames.MainTabBar);
       }, 2000);
     } else {

@@ -1,9 +1,9 @@
-import React, {useCallback} from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
 import { Header } from '@src/components';
 import { compose } from 'recompose';
 import Tabs from '@screens/Dex/components/Tabs';
-import { RefreshControl, RoundCornerButton } from '@components/core';
+import { RefreshControl, RoundCornerButton, ScrollView } from '@components/core';
 import witEnhance from '@screens/Dex/Liquidity.enhance';
 import withData from '@screens/Dex/Liquidity.enhanceData';
 import AddPool from '@screens/Dex/components/AddPool';
@@ -14,9 +14,11 @@ import RemovePool from '@screens/Dex/components/RemovePool';
 import WithdrawTradingFees from '@screens/Dex/components/WithdrawTradingFees';
 import styles from '@screens/DexV2/components/Trade/style';
 import { useSelector } from 'react-redux';
-import { disableButton, hasHistories } from '@screens/Dex/Liquidity.selector';
-import { ArrowRightGreyIcon } from '@components/Icons';
+import { disableButton } from '@screens/Dex/Liquidity.selector';
+// import { ArrowRightGreyIcon } from '@components/Icons';
 import { styled } from '@screens/Dex/style';
+import { withLayout_2 } from '@components/Layout';
+import globalStyled from '@src/theme/theme.styled';
 
 const Liquidity = React.memo((props) => {
   const {
@@ -28,19 +30,16 @@ const Liquidity = React.memo((props) => {
     tabName,
     pair,
     onNextPress,
-    onHistoriesPress,
+    // onHistoriesPress,
     outputToken,
   } = props;
 
   const disabled = useSelector(disableButton);
-  const showHistories = useSelector(hasHistories);
+  // const showHistories = useSelector(hasHistories);
 
   const renderHeader = () => {
     return (
-      <>
-        <Header title="Liquidity" accountSelectable />
-        <Tabs disable={isLoading || isFiltering} selected={tabName} />
-      </>
+      <Header title="Liquidity" accountSelectable />
     );
   };
   const renderContent = () => {
@@ -77,28 +76,30 @@ const Liquidity = React.memo((props) => {
       : tabName === HEADER_TABS.Remove ? LIQUIDITY_TITLES.REMOVE_POOL : LIQUIDITY_TITLES.WITHDRAW_FEE;
   }, [tabName, pair]);
 
-  const renderBottomView = useCallback(() => {
-    if (!showHistories) return null;
-    return (
-      <View style={styles.bottomBar}>
-        <TouchableOpacity
-          onPress={onHistoriesPress}
-          style={styles.bottomFloatBtn}
-        >
-          <Text style={styles.bottomText}>Order history</Text>
-          <ArrowRightGreyIcon style={{ marginLeft: 10 }} />
-        </TouchableOpacity>
-      </View>
-    );
-  }, [showHistories]);
+  // const renderBottomView = useCallback(() => {
+  //   if (!showHistories) return null;
+  //   return (
+  //     <View style={styles.bottomBar}>
+  //       <TouchableOpacity
+  //         onPress={onHistoriesPress}
+  //         style={styles.bottomFloatBtn}
+  //       >
+  //         <Text style={styles.bottomText}>Order history</Text>
+  //         <ArrowRightGreyIcon style={{ marginLeft: 10 }} />
+  //       </TouchableOpacity>
+  //     </View>
+  //   );
+  // }, [showHistories]);
 
   return (
-    <View style={{ flex: 1, marginHorizontal: 25 }}>
+    <>
       {renderHeader()}
       <ScrollView
+        style={globalStyled.defaultBorderSection}
         refreshControl={(<RefreshControl refreshing={isLoading} onRefresh={onLoadData} />)}
         showsVerticalScrollIndicator={false}
       >
+        <Tabs disable={isLoading || isFiltering} selected={tabName} />
         <View style={{ paddingTop: 50 }}>
           <InputView inputError={inputError} outputError={outputError} />
           <RoundCornerButton
@@ -118,8 +119,7 @@ const Liquidity = React.memo((props) => {
         </View>
         <View style={{ height: 70 }} />
       </ScrollView>
-      {renderBottomView()}
-    </View>
+    </>
   );
 });
 
@@ -137,11 +137,11 @@ Liquidity.propTypes = {
 
   onLoadData: PropTypes.func.isRequired,
   onNextPress: PropTypes.func.isRequired,
-  onHistoriesPress: PropTypes.func.isRequired,
   outputToken: PropTypes.object,
 };
 
 export default compose(
   withData,
   witEnhance,
+  withLayout_2,
 )(Liquidity);

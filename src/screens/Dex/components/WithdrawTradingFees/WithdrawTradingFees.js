@@ -1,64 +1,64 @@
 import React, { memo } from 'react';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
-import Shares from '@screens/Dex/components/Shares';
-import Balance from '@screens/DexV2/components/Balance';
-import ExchangeRate from '@screens/Dex/components/ExchangeRate';
-import PoolSize from '@screens/Dex/components/PoolSize';
+// import Shares from '@screens/Dex/components/Shares';
+// import Balance from '@screens/DexV2/components/Balance';
+// import ExchangeRate from '@screens/Dex/components/ExchangeRate';
+// import PoolSize from '@screens/Dex/components/PoolSize';
 import withDrawFeeEnhance from '@screens/Dex/components/WithdrawTradingFees/WithdrawTradingFees.enhance';
 import { compose } from 'recompose';
 import NetworkFee from '@screens/Dex/components/NetworkFee';
-import {useSelector} from 'react-redux';
-import {shareSelectorWithToken} from '@screens/Dex/Liquidity.selector';
+// import {useSelector} from 'react-redux';
+// import {shareSelectorWithToken} from '@screens/Dex/Liquidity.selector';
 
 const WithdrawTradingFees = (props) => {
   const {
-    inputToken,
-    inputValue,
-    outputToken,
-    outputValue,
-    pair,
-    inputBalance,
+    // inputToken,
+    // inputValue,
+    // outputToken,
+    // outputValue,
+    // pair,
+    // inputBalance,
+    // outputBalance,
     fee,
-    outputBalance,
   } = props;
 
-  const { share, totalShare } = useSelector(shareSelectorWithToken)(inputToken, outputToken);
+  // const { share, totalShare } = useSelector(shareSelectorWithToken)(inputToken, outputToken);
 
   return (
     <View>
-      <Shares totalShare={totalShare} share={share} showPercent={false} />
-      {!!inputToken && (
-        <Balance
-          title={`${inputToken.symbol} Balance`}
-          token={inputToken}
-          balance={inputBalance}
-          hideRightSymbol
-        />
-      )}
-      {!!outputToken && (
-        <Balance
-          title={`${outputToken.symbol} Balance`}
-          token={outputToken}
-          balance={outputBalance}
-          hideRightSymbol
-        />
-      )}
-      {!!inputToken && !!outputToken && (
-      <>
-        <ExchangeRate
-          inputToken={inputToken}
-          inputValue={inputValue}
-          outputToken={outputToken}
-          outputValue={outputValue}
-        />
-        <PoolSize
-          inputToken={inputToken}
-          pair={pair}
-          outputToken={outputToken}
-        />
-      </>
-      )}
+      {/*<Shares totalShare={totalShare} share={share} showPercent={false} />*/}
+      {/*{!!inputToken && (*/}
+      {/*  <Balance*/}
+      {/*    title={`${inputToken.symbol} Balance`}*/}
+      {/*    token={inputToken}*/}
+      {/*    balance={inputBalance}*/}
+      {/*    hideRightSymbol*/}
+      {/*  />*/}
+      {/*)}*/}
+      {/*{!!outputToken && (*/}
+      {/*  <Balance*/}
+      {/*    title={`${outputToken.symbol} Balance`}*/}
+      {/*    token={outputToken}*/}
+      {/*    balance={outputBalance}*/}
+      {/*    hideRightSymbol*/}
+      {/*  />*/}
+      {/*)}*/}
+      {/*{!!inputToken && !!outputToken && (*/}
+      {/*<>*/}
+      {/*  <ExchangeRate*/}
+      {/*    inputToken={inputToken}*/}
+      {/*    inputValue={inputValue}*/}
+      {/*    outputToken={outputToken}*/}
+      {/*    outputValue={outputValue}*/}
+      {/*  />*/}
+      {/*  <PoolSize*/}
+      {/*    inputToken={inputToken}*/}
+      {/*    pair={pair}*/}
+      {/*    outputToken={outputToken}*/}
+      {/*  />*/}
+      {/*</>*/}
+      {/*)}*/}
       <NetworkFee fee={fee} />
     </View>
   );

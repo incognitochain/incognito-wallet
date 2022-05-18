@@ -35,7 +35,7 @@ const Tabs = React.memo(({ selected, disable, isHistory }) => {
 
   return (
     <View style={headerTabStyle.wrapper}>
-      {Object.keys(HEADER_TABS).map(renderItem)}
+      {Object.keys(HEADER_TABS).filter(item => item !== 'Add').map(renderItem)}
     </View>
   );
 });

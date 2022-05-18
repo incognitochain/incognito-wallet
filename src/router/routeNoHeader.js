@@ -151,6 +151,7 @@ import {
 import MarketSearchCoins from '@screens/MainTabBar/features/Market/Market.searchCoins';
 import HomeLP from '@screens/MainTabBar/features/HomeLP';
 import Tutorial from '@screens/Turotial/Tutorial';
+import LiquidityVer1 from '@screens/Dex/Liquidity';
 
 const masterKeyRoutes = [
   {
@@ -736,6 +737,10 @@ const routes = [
   {
     screen: Tutorial,
     name: routeNames.Tutorial,
+  },
+  {
+    screen: LiquidityVer1,
+    name: routeNames.LiquidityVer1,
   },
   ...masterKeyRoutes,
   ...devRoutes,
