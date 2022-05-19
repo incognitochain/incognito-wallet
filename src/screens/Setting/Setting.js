@@ -16,6 +16,7 @@ import codePush from 'react-native-code-push';
 import HideBalance from '@screens/Setting/features/HideBalance';
 import { compose } from 'recompose';
 import { withLayout_2 } from '@components/Layout';
+import RemoveOldPool from '@screens/Setting/features/RemoveOldPool';
 import PINSection from './features/PINSection';
 import SeparatorSection from './features/SeparatorSection';
 import DevSection from './features/DevSection';
@@ -99,6 +100,7 @@ const Setting = () => {
           <RemoveStorage />
           <RemoveBalanceCached />
           <HideBalance />
+          <RemoveOldPool />
           {global.isDebug() && <DevSection />}
         </View>
         <View>

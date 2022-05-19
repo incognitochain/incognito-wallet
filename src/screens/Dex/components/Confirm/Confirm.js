@@ -9,16 +9,13 @@ import styles from '@screens/DexV2/components/TradeConfirm/style';
 import Shares from '@screens/Dex/components/Shares';
 import { HEADER_TABS } from '@screens/Dex/Liquidity.constants';
 import withAccount from '@screens/DexV2/components/account.enhance';
-import ExtraInfo from '@screens/DexV2/components/ExtraInfo';
 import NetworkFee from '@screens/Dex/components/NetworkFee';
 import formatUtil from '@utils/format';
-import Balance from '@screens/DexV2/components/Balance';
-import ExchangeRate from '@screens/Dex/components/ExchangeRate';
-import PoolSize from '@screens/Dex/components/PoolSize';
 import withSuccess from '@screens/Dex/components/Confirm/Confirm.enhanceSuccess';
 import withTransaction from '@screens/Dex/components/Confirm/Confirm.enhanceTransaction';
 import {useSelector} from 'react-redux';
 import {shareSelectorWithToken} from '@screens/Dex/Liquidity.selector';
+import { withLayout_2 } from '@components/Layout';
 
 const Confirm = (props) => {
   const {
@@ -27,13 +24,9 @@ const Confirm = (props) => {
     tabName,
     inputValue,
     outputValue,
-    pair,
     inputToken,
     outputToken,
     fee,
-    account,
-    inputBalance,
-    outputBalance,
     loading,
     error,
     onConfirmPress,
@@ -48,7 +41,7 @@ const Confirm = (props) => {
   };
   const { share, totalShare } = useSelector(shareSelectorWithToken)(inputToken, outputToken);
   return (
-    <FlexView style={{ marginHorizontal: 25 }}>
+    <FlexView>
       <Header title={title} />
       <ScrollView paddingBottom>
         <View style={styles.mainInfo}>
@@ -62,35 +55,35 @@ const Confirm = (props) => {
             token={inputToken}
           />
         )}
-        <Balance
-          title={`${inputToken.symbol} Balance`}
-          token={inputToken}
-          balance={inputBalance}
-          hideRightSymbol
-        />
-        {!!outputToken &&(
-          <Balance
-            title={`${outputToken ? outputToken.symbol : ''} Balance`}
-            token={outputToken}
-            balance={outputBalance}
-            hideRightSymbol
-          />
-        )}
-        <ExtraInfo
-          left="Destination"
-          right={account.name}
-        />
-        <ExchangeRate
-          inputToken={inputToken}
-          inputValue={inputValue}
-          outputToken={outputToken}
-          outputValue={outputValue}
-        />
-        <PoolSize
-          inputToken={inputToken}
-          pair={pair}
-          outputToken={outputToken}
-        />
+        {/*<Balance*/}
+        {/*  title={`${inputToken.symbol} Balance`}*/}
+        {/*  token={inputToken}*/}
+        {/*  balance={inputBalance}*/}
+        {/*  hideRightSymbol*/}
+        {/*/>*/}
+        {/*{!!outputToken &&(*/}
+        {/*  <Balance*/}
+        {/*    title={`${outputToken ? outputToken.symbol : ''} Balance`}*/}
+        {/*    token={outputToken}*/}
+        {/*    balance={outputBalance}*/}
+        {/*    hideRightSymbol*/}
+        {/*  />*/}
+        {/*)}*/}
+        {/*<ExtraInfo*/}
+        {/*  left="Destination"*/}
+        {/*  right={account.name}*/}
+        {/*/>*/}
+        {/*<ExchangeRate*/}
+        {/*  inputToken={inputToken}*/}
+        {/*  inputValue={inputValue}*/}
+        {/*  outputToken={outputToken}*/}
+        {/*  outputValue={outputValue}*/}
+        {/*/>*/}
+        {/*<PoolSize*/}
+        {/*  inputToken={inputToken}*/}
+        {/*  pair={pair}*/}
+        {/*  outputToken={outputToken}*/}
+        {/*/>*/}
         <NetworkFee title="Fee" fee={fee} />
         {!!error && <Text style={styles.error}>{error}</Text>}
         <RoundCornerButton
@@ -133,4 +126,5 @@ export default compose(
   withConfirmData,
   withSuccess,
   withTransaction,
+  withLayout_2
 )(memo(Confirm));

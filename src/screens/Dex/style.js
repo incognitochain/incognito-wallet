@@ -476,42 +476,29 @@ export const tokenStyle = StyleSheet.create({
 
 export const headerTabStyle = StyleSheet.create({
   wrapper: {
-    marginTop: 34,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: COLORS.lightGrey30,
-    padding: 3,
     borderRadius: 25
   },
   wrapItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    height: 44,
+    height: 40,
     borderRadius: 22,
+    paddingHorizontal: 12
   },
   itemSelected: {
-    backgroundColor: COLORS.white,
-    shadowColor: COLORS.black,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-    elevation: 3,
+    backgroundColor: '#303030'
   },
   textSelected: {
-    color: COLORS.black,
-    fontSize: 18,
+    color: 'white',
+    fontSize: 16,
     ...FONT.STYLE.medium,
   },
   textUnSelected: {
-    color: COLORS.lightGrey17,
-    fontSize: 18,
+    color: '#8C8C8C',
+    fontSize: 16,
     ...FONT.STYLE.medium,
   }
 });

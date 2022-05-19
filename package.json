@@ -87,7 +87,7 @@
     "fuse.js": "^6.6.2",
     "https-browserify": "0.0.1",
     "immutability-helper": "^3.0.1",
-    "incognito-chain-web-js": "https://github.com/incognitochain/incognito-chain-web-js#4.4.1.17",
+    "incognito-chain-web-js": "https://github.com/incognitochain/incognito-chain-web-js#4.4.1.23",
     "intl": "^1.2.5",
     "jetifier": "^1.6.5",
     "json-2-csv": "^3.10.2",

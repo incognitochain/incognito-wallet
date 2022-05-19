@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { Header } from '@src/components';
+import { Header, Row } from '@src/components';
 import { compose } from 'recompose';
 import Tabs from '@screens/Dex/components/Tabs';
 import { RefreshControl, RoundCornerButton, ScrollView } from '@components/core';
@@ -15,10 +15,13 @@ import WithdrawTradingFees from '@screens/Dex/components/WithdrawTradingFees';
 import styles from '@screens/DexV2/components/Trade/style';
 import { useSelector } from 'react-redux';
 import { disableButton } from '@screens/Dex/Liquidity.selector';
-// import { ArrowRightGreyIcon } from '@components/Icons';
 import { styled } from '@screens/Dex/style';
 import { withLayout_2 } from '@components/Layout';
 import globalStyled from '@src/theme/theme.styled';
+import { BtnCircleBack } from '@components/Button';
+import { useNavigation } from 'react-navigation-hooks';
+import debounce from 'lodash/debounce';
+import SelectAccountButton from '@components/SelectAccountButton';
 
 const Liquidity = React.memo((props) => {
   const {
@@ -33,13 +36,15 @@ const Liquidity = React.memo((props) => {
     // onHistoriesPress,
     outputToken,
   } = props;
-
+  const { goBack } = useNavigation();
+  const handleGoBack = () => goBack();
+  const _handleGoBack = debounce(handleGoBack, 100);
   const disabled = useSelector(disableButton);
   // const showHistories = useSelector(hasHistories);
 
   const renderHeader = () => {
     return (
-      <Header title="Liquidity" accountSelectable />
+      <Header accountSelectable />
     );
   };
   const renderContent = () => {
@@ -93,13 +98,18 @@ const Liquidity = React.memo((props) => {
 
   return (
     <>
-      {renderHeader()}
+      <Row style={[globalStyled.defaultPaddingHorizontal, { paddingTop: 10, paddingBottom: 15 }]} centerVertical spaceBetween>
+        <Row centerVertical>
+          <BtnCircleBack onPress={_handleGoBack} />
+          <Tabs disable={isLoading || isFiltering} selected={tabName} />
+        </Row>
+        <SelectAccountButton />
+      </Row>
       <ScrollView
         style={globalStyled.defaultBorderSection}
         refreshControl={(<RefreshControl refreshing={isLoading} onRefresh={onLoadData} />)}
         showsVerticalScrollIndicator={false}
       >
-        <Tabs disable={isLoading || isFiltering} selected={tabName} />
         <View style={{ paddingTop: 50 }}>
           <InputView inputError={inputError} outputError={outputError} />
           <RoundCornerButton

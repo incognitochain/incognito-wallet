@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { View, TouchableOpacity, BaseTextInput } from '@components/core';
+import { View, TouchableOpacity, BaseTextInput, Text } from '@components/core';
 import { compose } from 'recompose';
 import BackButton from '@components/BackButtonV2';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 import { withLayout_2 } from '@components/Layout/index';
-import {Text, VirtualizedList} from 'react-native';
+import { VirtualizedList } from 'react-native';
 import styled from 'styled-components/native';
 import globalStyled from '@src/theme/theme.styled';
 import TokenItem from './TokenItem';
@@ -48,11 +48,11 @@ const TokenSelect = ({
         <TokenItem
           symbol={token.symbol || token.displaySymbol}
           id={token.id}
-          verified={token.verified || token.isVerified}
+          // verified={token.verified || token.isVerified}
           name={token.name}
         />
         {rightField !== '' && (
-          <View style={{ marginLeft: 10 }}>
+          <View style={{ marginLeft: 10, paddingRight: 26 }}>
             <Text style={styles.tokenName} numberOfLines={2}>{rightValue}</Text>
           </View>
         )}
@@ -70,7 +70,7 @@ const TokenSelect = ({
           style={styles.input}
         />
       </View>
-      <View borderTop style={[styles.container]}>
+      <View borderTop style={styles.container}>
         <VirtualizedList
           data={tokens}
           renderItem={renderTokenItem}
