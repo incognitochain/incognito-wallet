@@ -15,7 +15,7 @@ const RemoveOldPool = () => {
       <Section
         data={{
           title: 'Withdraw liquidity',
-          desc: 'Withdraw liquidity prior to pDex v.3',
+          desc: 'Withdraw liquidity added before pDEX v3',
           handlePress: onPressItem,
           icon: <ConvertIcon />
         }}
