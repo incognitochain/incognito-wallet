@@ -2,7 +2,7 @@ import { PRV } from '@src/constants/common';
 import uniq from 'lodash/uniq';
 import { sharedSelector } from '@src/redux/selectors';
 import { ACCOUNT_CONSTANT } from 'incognito-chain-web-js/build/wallet';
-import { getPrivacyDataByTokenID as getPrivacyDataByTokenIDSelector } from '@src/redux/selectors/selectedPrivacy';
+import { getPrivacyDataByTokenID as getPrivacyDataByTokenIDSelector, getPrivacyPRVInfo } from '@src/redux/selectors/selectedPrivacy';
 import { COLORS } from '@src/styles';
 import convert from '@src/utils/convert';
 import format from '@src/utils/format';
@@ -239,6 +239,7 @@ export const orderLimitDataSelector = createSelector(
   rateDataSelector,
   poolSelectedDataSelector,
   nftTokenDataSelector,
+  getPrivacyPRVInfo,
   (
     state,
     { networkfee, isFetching, percent, ordering },
@@ -248,6 +249,8 @@ export const orderLimitDataSelector = createSelector(
     feeTokenData,
     rateData,
     pool,
+    nftInfo,
+    privacyPRVInfo
   ) => {
     const { customRate } = rateData;
     const sellInputAmount = getInputAmount(formConfigs.selltoken);
@@ -268,8 +271,10 @@ export const orderLimitDataSelector = createSelector(
       totalAmountToken = {};
     const calculating = isFetching;
     let disabledBtn = calculating || !isValid(formConfigs.formName)(state);
+    let hideNetworkFee = false;
     switch (activedTab) {
     case TAB_BUY_LIMIT_ID: {
+      hideNetworkFee = false;
       mainColor = buyColor;
       btnActionTitle = 'Place buy order';
       reviewOrderTitle = `Buy ${buyInputAmount?.amountText} ${buyInputAmount?.symbol}`;
@@ -301,6 +306,7 @@ export const orderLimitDataSelector = createSelector(
       break;
     }
     case TAB_SELL_LIMIT_ID: {
+      hideNetworkFee = false;
       mainColor = sellColor;
       btnActionTitle = 'Place sell order';
       reviewOrderTitle = `Sell ${sellInputAmount?.amountText} ${sellInputAmount?.symbol}`;
@@ -371,6 +377,8 @@ export const orderLimitDataSelector = createSelector(
     if (priceChange24h < 0) {
       colorPriceChange24h = COLORS.red;
     }
+
+    const errorNetworkFee = new BigNumber(privacyPRVInfo.prvBalanceOriginal || 0).lt(new BigNumber(networkfee || 0));
     return {
       mainColor,
       buyColor,
@@ -405,6 +413,8 @@ export const orderLimitDataSelector = createSelector(
       calculating,
       totalAmountData,
       accountBalance: prv?.amount || 0,
+      hideNetworkFee,
+      errorNetworkFee
     };
   },
 );
@@ -417,11 +427,11 @@ export const mappingOrderHistorySelector = createSelector(
   nftTokenDataSelector,
   getPrivacyDataByTokenIDSelector,
   (
-    { withdrawingOrderTxs, withdrawOrderTxs },
-    getDataByPoolId,
-    { nftTokenAvailable, list },
-    getPrivacyDataByTokenID,
-  ) =>
+      { withdrawingOrderTxs, withdrawOrderTxs },
+      getDataByPoolId,
+      { nftTokenAvailable, list },
+      getPrivacyDataByTokenID,
+    ) =>
     (order) => {
       try {
         if (!order) {

@@ -28,7 +28,7 @@ import { actionAddFollowTokenAfterMint } from '@src/redux/actions/token';
 import { ExHandler } from '@src/services/exception';
 import ROUTES_NAME from '@routers/routeNames';
 import { accountServices } from '@services/wallet';
-import { MAX_FEE_PER_TX } from '@components/EstimateFee/EstimateFee.utils';
+import { INIT_PTOKEN_FEE } from '@components/EstimateFee/EstimateFee.utils';
 import styleSheet from './style';
 
 const formName = 'addInternalToken';
@@ -135,7 +135,7 @@ class AddInternalToken extends Component {
       const res = await accountServices.createSendInitPToken({
         wallet,
         account,
-        fee: MAX_FEE_PER_TX,
+        fee: INIT_PTOKEN_FEE,
         info: description,
         tokenName: name,
         tokenSymbol: symbol,
@@ -214,7 +214,7 @@ class AddInternalToken extends Component {
   render() {
     const { isCreatingOrSending } = this.state;
     const { account } = this.props;
-    const isNotEnoughFee = account?.value < MAX_FEE_PER_TX;
+    const isNotEnoughFee = account?.value < INIT_PTOKEN_FEE;
     const isCanSubmit = !isNotEnoughFee;
     const disabled = !isCanSubmit;
     return (
@@ -324,7 +324,7 @@ class AddInternalToken extends Component {
                 <Text style={[styleSheet.issuanceFee, isNotEnoughFee && styleSheet.error]}>
                   Issuance fee:{' '}
                   {formatUtil.amountFull(
-                    MAX_FEE_PER_TX,
+                    INIT_PTOKEN_FEE,
                     CONSTANT_COMMONS.DECIMALS.MAIN_CRYPTO_CURRENCY,
                   )}{' '}
                   {CONSTANT_COMMONS.CRYPTO_SYMBOL.PRV}

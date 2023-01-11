@@ -2,6 +2,7 @@ import http from '@src/services/http';
 import http1 from '@services/http1';
 import { CONSTANT_COMMONS } from '@src/constants';
 import convert from '@src/utils/convert';
+import http4 from '@src/services/http4';
 
 export const genCentralizedWithdrawAddress = ({
   originalAmount,
@@ -290,4 +291,135 @@ export const estimateUserFees = (data) => {
   }
 
   return http.post('eta/estimate-fees', payload);
+};
+
+export const estimateFeeDecentralized = (data) => {
+  const {
+    tokenId,
+    originalAmount,
+    tokenContractID,
+    currencyType,
+    isErc20Token,
+    isBep20Token,
+    isPolygonErc20Token,
+    isFantomErc20Token,
+    isAvaxErc20Token,
+    isAuroraErc20Token,
+    isNearToken,
+  } = data;
+  if (
+    (isBep20Token ||
+      isErc20Token ||
+      isPolygonErc20Token ||
+      isFantomErc20Token ||
+      isAvaxErc20Token ||
+      isAuroraErc20Token ||
+      isNearToken) &&
+    !tokenContractID
+  ) {
+    throw new Error('Missing tokenContractID');
+  }
+  if (!tokenId) throw new Error('Missing token id');
+  const parseOriginalAmount = Number(originalAmount);
+  if (!Number.isFinite(parseOriginalAmount) || parseOriginalAmount === 0) {
+    throw new Error('Invalid amount');
+  }
+
+  let network = '';
+  let amount = originalAmount || 0;
+  let tokenid = tokenId;
+
+  // Ethereum ERC20 Token
+  if (
+    isErc20Token ||
+    currencyType === CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.ETH
+  ) {
+    network = 'eth';
+  }
+
+  // Binance Smart Chain Token
+  if (
+    isBep20Token ||
+    currencyType === CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.BSC_BNB
+  ) {
+    network = 'bsc';
+  }
+
+  // Polygon Token
+  if (
+    isPolygonErc20Token ||
+    currencyType === CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.MATIC
+  ) {
+    network = 'plg';
+  }
+
+  // Fantom Token
+  if (
+    isFantomErc20Token ||
+    currencyType === CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.FTM
+  ) {
+    network = 'ftm';
+  }
+
+  // Avax Token
+  if (
+    isAvaxErc20Token ||
+    currencyType === CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.AVAX
+  ) {
+    network = 'avax';
+  }
+
+  // Aurora Token
+  if (
+    isAuroraErc20Token ||
+    currencyType === CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.AURORA_ETH
+  ) {
+    network = 'aurora';
+  }
+
+  // Near Token
+  if (
+    isNearToken ||
+    currencyType === CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.NEAR
+  ) {
+    network = 'near';
+  }
+
+  // return http.post('eta/estimate-fees', payload);
+
+  // using new Estimate Fee from Lam
+  // Ex....
+  // network  => bsc
+  // amount   => 10000  (amount * pDecimal)
+  // tokenid  => 000000000004
+
+  // console.log('[estimateFeeDecentralized] API payload: ', {
+  //   network,
+  //   amount,
+  //   tokenid,
+  // });
+
+  let url = `unshield/estimatefee?network=${network}&amount=${amount}&tokenid=${tokenid}`;
+  return http4.get(url);
+};
+
+export const submitUnShieldTx = async (data) => {
+  const { rawTx, feeRefundOTA } = data;
+  if (!rawTx) throw new Error('Missing rawTx');
+  if (!feeRefundOTA) throw new Error('Missing feeRefundOTA');
+  try {
+    const params = {
+      TxRaw: rawTx,
+      FeeRefundOTA: feeRefundOTA,
+    };
+    console.log('[submitUnShieldTx]  params ', params);
+    const data = await http4.post('unshield/submittx', params);
+    console.log('[submitUnShieldTx]  response ', data);
+    return data;
+  } catch (error) {
+    console.log('[submitUnShieldTx]  error ', {
+      error,
+    });
+    throw error;
+  }
 };

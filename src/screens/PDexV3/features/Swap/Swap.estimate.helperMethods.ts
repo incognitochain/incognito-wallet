@@ -1,5 +1,7 @@
 import { PRV_ID } from '@src/constants/common';
+import SelectedPrivacy from '@src/models/selectedPrivacy';
 
+import BigNumber from 'bignumber.js';
 import {
   NETWORK_NAME_SUPPORTED,
   KEYS_PLATFORMS_SUPPORTED,
@@ -12,7 +14,7 @@ import {
   KeysPlatformSupported,
   MAIN_NETWORK,
   NETWORK_IDS_MAPPING,
-  EXCHANGES_NETWROK_ID,
+  EXCHANGES_NETWROK_ID, InterSwapData,
 } from './Swap.types';
 
 const parseExchangeSupport = (
@@ -34,6 +36,7 @@ const parseExchangeSupport = (
           networkName,
           NETWORK_IDS_MAPPING[networkName],
           incTokenId,
+          sellToken
         );
       });
     }
@@ -69,8 +72,10 @@ const parseExchangeDataModelResponse = (
   networkID: EXCHANGES_NETWROK_ID,
   // Child buy tokenId
   incTokenID: string,
+
+  sellToken: SelectedPrivacy
 ): ExchangeData => {
-  const exchangeData: ExchangeData = {
+  let exchangeData: ExchangeData = {
     amountIn: parseFloat(data.AmountIn) || 0,
     amountInRaw: parseFloat(data.AmountInRaw) || 0,
     amountOut: parseFloat(data.AmountOut) || 0,
@@ -98,7 +103,80 @@ const parseExchangeDataModelResponse = (
     redepositReward: parseFloat(data.RedepositReward) || 0,
     rate: parseFloat(data.Rate) || 0,
     rateStr: data.Rate || '0',
+    interSwapData: undefined,
   };
+
+  // format
+  const isInterSwap = exchangeData?.appName === KEYS_PLATFORMS_SUPPORTED.interswap;
+  if (isInterSwap) {
+    let path: any = [];
+    const respDetails = data?.Details;
+    if (respDetails && !!respDetails.length) {
+      const firstBatch = respDetails[0];
+      const secondBatch = respDetails[1];
+      const callContract = firstBatch?.CallContract;
+      const callData = firstBatch?.Calldata;
+      const fistBatchIsPDex = firstBatch.AppName.toLowerCase() === 'pdex';
+
+      respDetails.forEach((trade) => {
+        if (trade.Paths) {
+          const logoIcon = '';
+          path.push({
+            logoIcon,
+            tradePath: trade.Paths,
+          });
+        }
+      });
+
+      let pAppName = fistBatchIsPDex ? secondBatch?.AppName : firstBatch.AppName;
+      let pAppNetwork = fistBatchIsPDex ? secondBatch?.PAppNetwork : firstBatch.PAppNetwork;
+
+      let incTokenID = sellToken?.tokenId;
+      let networkID = NETWORK_IDS_MAPPING[firstBatch.PAppNetwork]
+          ? NETWORK_IDS_MAPPING[firstBatch.PAppNetwork]
+          : sellToken?.networkId || 0;
+      if (sellToken?.isPUnifiedToken && !fistBatchIsPDex) {
+        const childToken: SelectedPrivacy = (sellToken?.listUnifiedToken || sellToken?.listChildToken)?.find(
+            (token: SelectedPrivacy) => token?.networkId === networkID
+        );
+        if (childToken?.networkId && childToken?.tokenId) {
+          networkID = childToken.networkId;
+          incTokenID = childToken?.tokenId;
+        }
+      }
+
+      let poolPairs, feeAddress;
+      if (fistBatchIsPDex) {
+        poolPairs = firstBatch.PoolPairs;
+      } else {
+        feeAddress = firstBatch?.FeeAddress;
+      }
+
+      const interSwapData: InterSwapData = {
+        midOTA: data?.MidOTA,
+        midToken: data?.MidToken,
+        fistBatchIsPDex,
+        pdexMinAcceptableAmount: new BigNumber(firstBatch?.AmountOutRaw || 0).toString(),
+        pAppName,
+        pAppNetwork,
+        path,
+      };
+
+      exchangeData = {
+        ...exchangeData,
+        callData,
+        callContract,
+
+        poolPairs,
+        feeAddress,
+
+        networkID,
+        incTokenID,
+
+        interSwapData,
+      };
+    }
+  }
   return exchangeData;
 };
 
@@ -125,6 +203,8 @@ const convertAppNameToPlatformSupported = (
       return 'joe';
     case 'trisolaris':
       return 'trisolaris';
+    case 'interswap':
+      return 'interswap';
     default:
       console.log(
         `[convertAppNameToPlatformSupported] appName NOT FOUND, appName = ${appName}. Return default: incognito `,
@@ -174,14 +254,14 @@ export const filterExchangeSupportWithDefaultExchange = (
 };
 
 const parseEstimateDataOnEachNetwork = (
-  estimdateRawData,
+  estimateRawData,
   sellToken,
 ): ExchangeData[] => {
   const exchangeSupports = Object.values(NETWORK_NAME_SUPPORTED).reduce(
     (results, networkName) => {
       results = [
         ...results,
-        ...parseExchangeSupport(estimdateRawData, sellToken, networkName),
+        ...parseExchangeSupport(estimateRawData, sellToken, networkName),
       ];
       return results;
     },
@@ -191,7 +271,7 @@ const parseEstimateDataOnEachNetwork = (
 };
 
 export const extractEstimateData = async (
-  estimdateRawData: EstimateRawData,
+  estimateRawData: EstimateRawData,
   sellToken,
   defaultExchange,
 ): Promise<{
@@ -199,7 +279,7 @@ export const extractEstimateData = async (
   exchangeSupports: ExchangeData[];
 }> => {
   let exchangeSupports: ExchangeData[] = parseEstimateDataOnEachNetwork(
-    estimdateRawData,
+    estimateRawData,
     sellToken,
   );
 
@@ -224,7 +304,7 @@ export const extractEstimateData = async (
   );
 
   console.log('extractEstimateData : ', { bestRateExchange, exchangeSupports });
-
+  console.log('LOGS: extractEstimateData', { exchangeSupports, bestRateExchange, estimateRawData });
   return { bestRateExchange, exchangeSupports };
 };
 

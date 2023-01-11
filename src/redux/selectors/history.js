@@ -1,4 +1,5 @@
 import orderBy from 'lodash/orderBy';
+import { capitalize } from 'lodash';
 import {
   Validator,
   ACCOUNT_CONSTANT,
@@ -21,7 +22,7 @@ import {
 import { PRV } from '@src/constants/common';
 import { CONSTANT_CONFIGS, CONSTANT_COMMONS } from '@src/constants';
 import BigNumber from 'bignumber.js';
-import { selectedPrivacy } from './selectedPrivacy';
+import { selectedPrivacy, getPrivacyDataByTokenID } from './selectedPrivacy';
 import { burnerAddressSelector } from './account';
 
 export const renderNoClipAmount = (params) => {
@@ -292,15 +293,90 @@ export const historyPortalSelector = createSelector(
     history.txsPortal.map((txp) => mappingTxPortal(txp)),
 );
 
+export const mappingTxUnShieldSelector = createSelector(
+  selectedPrivacy,
+  decimalDigitsSelector,
+  ({ pDecimals, symbol }, decimalDigits) => (txUnshield) => {
+    // console.log('==> txUnshield ', txUnshield);
+    const {
+      amount,
+      fee,
+      time,
+      color,
+      status,
+      statusStr,
+      txHash,
+      txId,
+      outchain_tx,
+      totalFees,
+      isUsedPRVFee,
+      network,
+      tokenId,
+      requestedAmount,
+      outChainLink,
+      paymentAddress
+    } = txUnshield;
+
+    const statusColor = color;
+    const statusDetail = status || statusStr;
+    const outchainFee = totalFees;
+    const isUnShieldByPToken = !isUsedPRVFee;
+    let inchainTxId = txHash || txId;
+
+    const inChainTx = inchainTxId ? `${CONSTANT_CONFIGS.EXPLORER_CONSTANT_CHAIN_URL}/tx/${inchainTxId}` : '';
+    const outChainTx = outchain_tx ? outChainLink + outchain_tx : '';
+
+    // console.log('outChainTx ', outChainTx);
+    let result = {
+      ...txUnshield,
+      statusStr: capitalize(statusStr || ''),
+      timeStr: formatUtil.formatDateTime(time),
+      amountStr: requestedAmount || renderAmount({
+        amount,
+        pDecimals,
+        decimalDigits: false,
+      }),
+      symbol,
+      statusColor,
+      statusDetail,
+      inChainTx: inChainTx,
+      outChainTx: outChainTx,
+      inchainFeeStr: renderAmount({
+        amount: fee,
+        pDecimals: PRV.pDecimals,
+        decimalDigits: false,
+      }),
+      outchainFee,
+      outchainFeeStr: renderAmount({
+        amount: outchainFee,
+        pDecimals,
+        decimalDigits: false,
+      }),
+      isUnShieldByPToken,
+      network: CONSTANT_COMMONS.NETWORK_MAP_FULL_NAME[network] || '',
+      userPaymentAddress: paymentAddress || ''
+    };
+    return result;
+  },
+);
+
+export const historyUnShieldSelector = createSelector(
+  historySelector,
+  mappingTxUnShieldSelector,
+  (history, mappingTxUnShield) =>
+    history.txsUnshield.map((txt) => mappingTxUnShield(txt)),
+);
+
 export const historyTxsSelector = createSelector(
   historySelector,
   historyTransactorSelector,
   historyReceiverSelector,
   historyPTokenSelector,
   historyPortalSelector,
-  (history, txsTransactor, txsReceiver, txsPToken, txsPortal) => {
+  historyUnShieldSelector,
+  (history, txsTransactor, txsReceiver, txsPToken, txsPortal, txsUnshield) => {
     const { isFetching, isFetched } = history;
-    const histories = [...txsTransactor, ...txsReceiver, ...txsPToken, ...txsPortal] || [];
+    const histories = [...txsTransactor, ...txsReceiver, ...txsPToken, ...txsPortal, ...txsUnshield] || [];
     const sort = orderBy(histories, 'time', 'desc');
     return {
       ...history,

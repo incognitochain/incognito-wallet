@@ -48,6 +48,7 @@ import {
   ACTION_RESET_EXCHANGE_SUPPORTED,
   ACTION_SAVE_UNIFIED_ALERT_STATE_BY_ID,
   ACTION_ESTIMATE_COUNT,
+  ACTION_NAVIGATE_TO_SELECT_TOKENS
 } from './Swap.constant';
 
 const initialState = {
@@ -102,6 +103,12 @@ const initialState = {
       feeToken: {},
       error: null,
     },
+    [KEYS_PLATFORMS_SUPPORTED.interswap]: {
+      // trisolaris
+      feePrv: {},
+      feeToken: {},
+      error: null,
+    },
   },
   buytoken: '',
   selltoken: '',
@@ -129,6 +136,7 @@ const initialState = {
   pancakeTokens: [],
   uniTokens: [],
   curveTokens: [],
+  interswapTokens: [],
   platforms: [...PLATFORMS_SUPPORTED],
   field: '',
   useMax: false,
@@ -146,6 +154,7 @@ const initialState = {
   isNavigateFromMarketTab: false,
   unifiedInforAlertHash: {},
   estimateCount: 1,
+  isNavigateToSelection: false
 };
 
 const reducer = (state = initialState, action) => {
@@ -309,6 +318,7 @@ const reducer = (state = initialState, action) => {
         spookyTokens,
         joeTokens,
         trisolarisTokens,
+        interswapTokens,
       } = action.payload;
       return {
         ...state,
@@ -320,6 +330,7 @@ const reducer = (state = initialState, action) => {
         spookyTokens,
         joeTokens,
         trisolarisTokens,
+        interswapTokens,
       };
     }
     case ACTION_FETCH_SWAP: {
@@ -461,6 +472,13 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         isNavigateFromMarketTab: action.payload,
+      };
+    }
+
+    case ACTION_NAVIGATE_TO_SELECT_TOKENS: {
+      return {
+        ...state,
+        isNavigateToSelection: action.payload,
       };
     }
 

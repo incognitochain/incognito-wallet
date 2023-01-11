@@ -22,6 +22,7 @@ import { styledForm as styled } from './Form.styled';
 import withSendForm from './Form.enhance';
 import { formName } from './Form.enhanceInit';
 import { UnshieldPortalCondition } from '../UnshieldPortalCondition';
+import NetworkFeeError from './Form.networkFeeError';
 
 const initialFormValues = {
   amount: '',
@@ -131,6 +132,7 @@ const SendForm = (props) => {
                   </View>
                 )}
               />
+              <NetworkFeeError />
               <TextInput
                 label="Bitcoin network (est.)"
                 canEditable={false}

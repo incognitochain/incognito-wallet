@@ -46,7 +46,7 @@ const Review = () => {
 
   return (
     <ReviewOrder
-      extra={
+      extra={(
         <View>
           <Text style={extraStyled.specialTitle}>
             Buy at least {swapInfo?.buyInputAmountStr || ''}
@@ -55,7 +55,7 @@ const Review = () => {
             <Hook key={hook.label} {...hook} />
           ))}
         </View>
-      }
+      )}
       handleConfirm={handleConfirm}
     />
   );

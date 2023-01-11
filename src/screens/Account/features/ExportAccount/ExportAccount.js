@@ -28,13 +28,14 @@ const ExportItem = ({ label, data, onPress, onPressQRCode }) => (
   </View>
 );
 
-const ExportAccount = ({ account, token, title }) => {
-  const navigation = useNavigation();
-  const parseShard = (bytes) => {
+export const parseShard = (bytes) => {
     const arr = bytes.split(',');
     const lastByte = arr[arr.length - 1];
     return (lastByte % 8).toString();
-  };
+};
+
+const ExportAccount = ({ account, token, title }) => {
+  const navigation = useNavigation();
   const renderItem = (label, value) =>
     value ? (
       <ExportItem

@@ -23,6 +23,7 @@ import { tabReducer as tabs } from '@src/components/core/Tabs';
 import { pDexV3Reducer as pDexV3 } from '@screens/PDexV3';
 import followList from '@screens/Wallet/features/FollowList/FollowList.reducer';
 import convertToUnifiedToken from '@src/screens/ConvertToUnifiedToken/state';
+import refillPRVReducer from '@src/screens/RefillPRV/RefillPRV.reducer';
 import theme from '../../theme/theme.reducer';
 import wallet from './wallet';
 import account from './account';
@@ -78,6 +79,7 @@ const rootReducer = reduceReducers(
     theme,
     followWallet: followList,
     convertToUnifiedToken,
+    refillPRVReducer
   }),
   globalReducer,
 );

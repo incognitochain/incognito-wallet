@@ -63,12 +63,12 @@ const Swap = (props) => {
     <>
       <KeyboardAwareScrollView
         style={[styled.scrollview]}
-        refreshControl={
+        refreshControl={(
           <RefreshControl
             refreshing={swapInfo?.refreshing}
             onRefresh={initSwapForm}
           />
-        }
+        )}
         onScroll={({ nativeEvent }) => {
           if (
             isCloseToBottom(nativeEvent) &&

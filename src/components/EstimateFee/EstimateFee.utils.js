@@ -2,14 +2,15 @@ import convert from '@src/utils/convert';
 import { CONSTANT_COMMONS } from '@src/constants';
 import format from '@src/utils/format';
 import floor from 'lodash/floor';
+import { ACCOUNT_CONSTANT } from 'incognito-chain-web-js/build/wallet';
 
-export const DEFAULT_FEE_PER_KB_HUMAN_AMOUNT = 0.000000001; // in nano
+export const DEFAULT_FEE_PER_KB_HUMAN_AMOUNT = 0.1; // in nano
 export const DEFAULT_FEE_PER_KB = DEFAULT_FEE_PER_KB_HUMAN_AMOUNT * 1e9; // in nano
 export const MAX_TX_SIZE = 10;
 // export const MAX_FEE_PER_TX = DEFAULT_FEE_PER_KB * MAX_TX_SIZE;
-export const MAX_FEE_PER_TX = 100;
-// export const MAX_DEX_FEE = MAX_FEE_PER_TX * MAX_PDEX_TRADE_STEPS;
-export const MAX_DEX_FEE = 100;
+export const MAX_FEE_PER_TX = ACCOUNT_CONSTANT.MAX_FEE_PER_TX;
+export const INIT_PTOKEN_FEE = 10 * 1e9;
+export const MAX_DEX_FEE = ACCOUNT_CONSTANT.MAX_FEE_PER_TX; // Not use...
 
 export const getMaxAmount = ({ selectedPrivacy, isUseTokenFee, totalFee }) => {
   const { amount, isMainCrypto, pDecimals } = selectedPrivacy;
@@ -58,6 +59,7 @@ export const getFeeData = (estimateFee, selectedPrivacyData, childSelectedPrivac
     fast2x,
     feePrvText,
     feePTokenText,
+    totalFees,
   } = estimateFee;
   const { amount } = selectedPrivacyData;
   const isUseTokenFee = actived !== CONSTANT_COMMONS.PRV.id;
@@ -142,6 +144,7 @@ export const getFeeData = (estimateFee, selectedPrivacyData, childSelectedPrivac
     isBTC,
     hasMultiLevel: userFees?.hasMultiLevel,
     editableInput,
+    totalFees
   };
 };
 

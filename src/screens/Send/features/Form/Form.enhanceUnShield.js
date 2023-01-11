@@ -1,21 +1,30 @@
 /* eslint-disable no-unreachable */
 /* eslint-disable import/no-cycle */
 import {
-  actionAddStorageDataCentralized, actionAddStorageDataDecentralized, actionRemoveStorageDataCentralized, actionRemoveStorageDataDecentralized
+  actionAddStorageDataCentralized,
+  actionAddStorageDataDecentralized,
+  actionRemoveStorageDataCentralized,
+  actionRemoveStorageDataDecentralized,
 } from '@screens/UnShield';
 import accountService from '@services/wallet/accountService';
 import { Toast } from '@src/components/core';
 import ErrorBoundary from '@src/components/ErrorBoundary';
 import { feeDataSelector } from '@src/components/EstimateFee/EstimateFee.selector';
-import { CONSTANT_COMMONS, CONSTANT_KEYS, MESSAGES } from '@src/constants';
+import { CONSTANT_COMMONS, CONSTANT_KEYS, MESSAGES, CONSTANT_CONFIGS } from '@src/constants';
 import {
-  accountSelector, childSelectedPrivacySelector, selectedPrivacySelector
+  accountSelector,
+  childSelectedPrivacySelector,
+  selectedPrivacySelector,
 } from '@src/redux/selectors';
 import { defaultAccountSelector } from '@src/redux/selectors/account';
 import { walletSelector } from '@src/redux/selectors/wallet';
 import routeNames from '@src/router/routeNames';
 import { devSelector } from '@src/screens/Dev';
-import { updatePTokenFee, withdraw } from '@src/services/api/withdraw';
+import {
+  updatePTokenFee,
+  withdraw,
+  submitUnShieldTx,
+} from '@src/services/api/withdraw';
 import { ExHandler } from '@src/services/exception';
 import convert from '@src/utils/convert';
 import format from '@src/utils/format';
@@ -40,6 +49,41 @@ import { useDispatch, useSelector } from 'react-redux';
 import { reset } from 'redux-form';
 import { formName } from './Form.enhance';
 
+export const getTxOutChainLinkByTokenInfo = (tokenInfo) => {
+  if (
+    tokenInfo?.isErc20Token ||
+    tokenInfo?.isETH ||
+    tokenInfo?.currencyType ===
+      CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.ERC20
+  ) {
+    return `${CONSTANT_CONFIGS.ETHERSCAN_URL}/tx/`;
+  }
+  if (
+    tokenInfo?.isBep2Token ||
+    tokenInfo?.isBSC ||
+    tokenInfo?.currencyType ===
+      CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.BSC_BEP20
+  ) {
+    return `${CONSTANT_CONFIGS.BSCSCAN_URL}/tx/`;
+  }
+  if (tokenInfo?.isPolygonErc20Token || tokenInfo?.isMATIC) {
+    return `${CONSTANT_CONFIGS.POLYGONSCAN_URL}/tx/`;
+  }
+  if (tokenInfo?.isFantomErc20Token || tokenInfo?.isFTM) {
+    return `${CONSTANT_CONFIGS.FANTOMSCAN_URL}/tx/`;
+  }
+  if (tokenInfo?.isAvaxErc20Token || tokenInfo?.isAVAX) {
+    return `${CONSTANT_CONFIGS.AVAXSCAN_URL}/tx/`;
+  }
+  if (tokenInfo?.isAuroraErc20Token || tokenInfo?.isAURORA_ETH) {
+    return `${CONSTANT_CONFIGS.AURORASCAN_URL}/tx/`;
+  }
+  if (tokenInfo?.isNearToken || tokenInfo?.isNEAR) {
+    return `${CONSTANT_CONFIGS.NEARSCAN_URL}/tx/`;
+  }
+  return '';
+};
+
 export const enhanceUnshield = (WrappedComp) => (props) => {
   const {
     isETH,
@@ -54,6 +98,7 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
     totalFeeText,
     isUnShield,
     isUseTokenFee,
+    totalFees,
   } = useSelector(feeDataSelector);
   const dev = useSelector(devSelector);
   const { isUnshieldPegPRV, isUnshieldPUnifiedToken } = props;
@@ -105,7 +150,7 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
   const dispatch = useDispatch();
   const account = useSelector(defaultAccountSelector);
   const wallet = useSelector(walletSelector);
-  const handleBurningToken = async (payload = {}, txHashHandler) => {
+  const handleBurningToken = async (payload = {}, txHashHandler, txHandler) => {
     try {
       const {
         originalAmount,
@@ -116,7 +161,7 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
         isFantom,
         isAvax,
         isAurora,
-        isNear
+        isNear,
       } = payload;
       const { FeeAddress: masterAddress } = userFeesData;
 
@@ -131,10 +176,12 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
       if (isNear) burningRequestMeta = BurningNearRequestMeta;
 
       /**--> Get payment info <--*/
-      const paymentInfo = [{
-        paymentAddress: masterAddress,
-        amount: userFee,
-      }];
+      const paymentInfo = [
+        {
+          paymentAddress: masterAddress,
+          amount: userFee,
+        },
+      ];
       let prvPayments = [];
       let tokenPayments = [];
       if (isUseTokenFee) {
@@ -155,6 +202,7 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
         info,
         remoteAddress: paymentAddress,
         txHashHandler,
+        txHandler,
         burningType: burningRequestMeta,
         version: PrivacyVersion.ver2,
       });
@@ -168,7 +216,11 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
     }
   };
 
-  const handleBurningPegPRV = async (payload = {}, txHashHandler) => {
+  const handleBurningPegPRV = async (
+    payload = {},
+    txHashHandler,
+    txHandler,
+  ) => {
     try {
       const { originalAmount, feeForBurn, paymentAddress, isBSC } = payload;
       const { FeeAddress: masterAddress } = userFeesData;
@@ -187,6 +239,7 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
         info,
         remoteAddress: paymentAddress,
         txHashHandler,
+        txHandler,
         burningType: isBSC
           ? BurningPRVBEP20RequestMeta
           : BurningPRVERC20RequestMeta,
@@ -202,7 +255,11 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
     }
   };
 
-  const handleBurningUnifiedToken = async (payload = {}, txHashHandler) => {
+  const handleBurningUnifiedToken = async (
+    payload = {},
+    txHashHandler,
+    txHandler,
+  ) => {
     try {
       const { feeForBurn, paymentAddress } = payload;
       const { FeeAddress: masterAddress } = userFeesData;
@@ -251,6 +308,7 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
         txHashHandler,
         burningInfos,
         version: PrivacyVersion.ver2,
+        txHandler,
       });
       if (res.txId) {
         return { ...res, burningTxId: res?.txId };
@@ -266,7 +324,10 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
     try {
       const { amount, originalAmount, paymentAddress } = payload;
       const amountToNumber = convert.toNumber(amount, true);
-      const requestedAmount = format.toFixed(amountToNumber, selectedPrivacy?.pDecimals);
+      const requestedAmount = format.toFixed(
+        amountToNumber,
+        selectedPrivacy?.pDecimals,
+      );
       let data = {
         requestedAmount,
         originalAmount,
@@ -291,25 +352,60 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
         isUsedPRVFee,
         userFeesData,
         fast2x,
+        totalFees
       };
-      if (!userFeesData?.ID) throw new Error('Missing id withdraw session');
+      // if (!userFeesData?.ID) throw new Error('Missing id withdraw session');
+      if (!userFeesData?.FeeAddressShardID)
+        throw new Error('Missing FeeAddressShardID');
+
       let _tx;
       const txHashHandler = async ({ txId }) => {
         _tx = { ...data, burningTxId: txId };
-        await dispatch(
-          actionAddStorageDataDecentralized({
-            keySave,
-            tx: _tx,
-          }),
-        );
+        // TO DO (New Unshield flow)
+        // await dispatch(
+        //   actionAddStorageDataDecentralized({
+        //     keySave,
+        //     tx: _tx,
+        //   }),
+        // );
       };
+
+      const txHandler = async (dataCallback) => {
+        const { rawTx = '', txId = '' } = dataCallback;
+        const OTA = await accountService.getOTAReceive({
+          wallet,
+          account,
+          senderShardID: userFeesData?.FeeAddressShardID || 0,
+        });
+        // console.log('[txHandler] OTA =>  ', OTA);
+        await submitUnShieldTx({ rawTx, txId, feeRefundOTA: OTA });
+
+        let dataSaveLocal = {
+          requestedAmount: data.requestedAmount,
+          originalAmount: data.originalAmount,
+          paymentAddress: data.paymentAddress,
+          tokenContractID: data.tokenContractID,
+          tokenId: data.tokenId,
+          burningTxId: data.burningTxId,
+          isUsedPRVFee: data.isUsedPRVFee,
+          userFeesData: data.userFeesData,
+          totalFees: data.totalFees,
+          txHash: txId,
+          outChainLink: getTxOutChainLinkByTokenInfo(childSelectedPrivacy)
+        };
+        // console.log('DATA Tx Burn Save Local: ', dataSaveLocal);
+        //Save Tx data to Local Storage
+        const tx = { ...dataSaveLocal };
+        await accountService.saveTxUnShieldEVMStorage({ wallet, account, tx });
+      };
+
       let tx;
       if (isUnshieldPegPRV) {
-        tx = await handleBurningPegPRV(payload, txHashHandler);
+        tx = await handleBurningPegPRV(payload, txHashHandler, txHandler);
       } else if (isUnshieldPUnifiedToken) {
-        tx = await handleBurningUnifiedToken(payload, txHashHandler);
+        tx = await handleBurningUnifiedToken(payload, txHashHandler, txHandler);
       } else {
-        tx = await handleBurningToken(payload, txHashHandler);
+        tx = await handleBurningToken(payload, txHashHandler, txHandler);
       }
       if (toggleDecentralized) {
         await setState({
@@ -318,7 +414,7 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
         });
         await Utils.delay(15);
       } else {
-        await withdraw({ ..._tx, signPublicKeyEncode });
+        // await withdraw({ ..._tx, signPublicKeyEncode });
         await dispatch(
           actionRemoveStorageDataDecentralized({
             keySave,
@@ -393,7 +489,7 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
         {
           PaymentAddress: masterAddress,
           Amount: String(userFee),
-        }
+        },
       ];
 
       let prvPayments = [
@@ -411,15 +507,9 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
       ];
 
       if (isUseTokenFee) {
-        tokenPayments = [
-          ...tokenPayments,
-          ...paymentInfo
-        ];
+        tokenPayments = [...tokenPayments, ...paymentInfo];
       } else {
-        prvPayments = [
-          ...prvPayments,
-          ...paymentInfo
-        ];
+        prvPayments = [...prvPayments, ...paymentInfo];
       }
       /**---------------------------*/
       const res = await accountService.createAndSendPrivacyToken({

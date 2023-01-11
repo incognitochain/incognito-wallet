@@ -112,6 +112,7 @@ export const maxAmountValidatorForSellInput = (
   buyInputAmount,
   feetokenData,
   navigation,
+  swapInfo,
 ) => {
   try {
     if (!sellInputAmount || !buyInputAmount) {
@@ -127,6 +128,11 @@ export const maxAmountValidatorForSellInput = (
       tokenId,
       pDecimals,
     } = sellInputAmount || {};
+
+    const { networkfee = 0 } = swapInfo;
+    const { prvBalance } = feetokenData;
+    const sellTokenIsPRV = tokenId === PRV.id;
+
     const onMessagePress = () => {
       navigation.navigate(routeNames.ChooseNetworkForShield, {
         tokenSelected: tokenData,
@@ -144,6 +150,15 @@ export const maxAmountValidatorForSellInput = (
       return 'Insufficient balance.';
     }
 
+    if (sellTokenIsPRV) {
+      if (new BigNumber(networkfee).gt(new BigNumber(prvBalance))) {
+        return (
+          <Text onPress={onMessagePress}>
+            {`Your ${PRV.symbol} balance is insufficient.`}
+          </Text>
+        );
+      }
+    }
     if (!buyInputAmount.amountText || buyInputAmount.amountText.length < 1) {
       if (
         new BigNumber(originalAmount).gt(new BigNumber(availableOriginalAmount))

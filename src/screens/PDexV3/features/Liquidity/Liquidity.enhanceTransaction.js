@@ -58,6 +58,7 @@ const withTransaction = (WrappedComp) => (props) => {
       }, 300);
       onShowSuccess();
     } catch (error) {
+      console.log('[onCreateContributes] ERROR: ', error);
       setError(new ExHandler(error).getMessage(error?.message));
     } finally {
       setLoading(false);
@@ -71,6 +72,15 @@ const withTransaction = (WrappedComp) => (props) => {
     amount2,
     amp,
   }) => {
+
+    // console.log('[onCreateNewPool] ', {
+    //   fee,
+    //   tokenId1,
+    //   tokenId2,
+    //   amount1,
+    //   amount2,
+    //   amp,
+    // });
     if (loading) return;
     try {
       setLoading(true);
@@ -96,6 +106,7 @@ const withTransaction = (WrappedComp) => (props) => {
       }, 300);
       onShowSuccess();
     } catch (error) {
+      console.log('[onCreateNewPool] ERROR: ', error);
       setError(new ExHandler(error).getMessage(error?.message));
     } finally {
       setLoading(false);
@@ -146,6 +157,7 @@ const withTransaction = (WrappedComp) => (props) => {
       }, 300);
       onShowSuccess();
     } catch (error) {
+      console.log('[onRemoveContribute] ERROR: ', error);
       setError(new ExHandler(error).getMessage(error?.message));
     } finally {
       setLoading(false);
@@ -181,6 +193,7 @@ const withTransaction = (WrappedComp) => (props) => {
       });
       endWithdrawFee();
     } catch (error) {
+      console.log('[onCreateWithdrawFeeLP] ERROR: ', error);
       Toast.showError(error.message || (typeof error === 'string' && error));
       setError(new ExHandler(error).getMessage(error?.message));
     } finally {

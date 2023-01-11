@@ -16,6 +16,7 @@ const initialState = {
   txsReceiver: [],
   txsPToken: [],
   txsPortal: [],
+  txsUnshield: [],
   detail: {
     fetching: false,
     tx: null,
@@ -31,7 +32,7 @@ export default (state = initialState, action) => {
     };
   }
   case ACTION_FETCHED: {
-    const { txsTransactor, txsReceiver, txsPToken, txsPortal } = action.payload;
+    const { txsTransactor, txsReceiver, txsPToken, txsPortal, txsUnshield } = action.payload;
     return {
       ...state,
       isFetching: false,
@@ -40,6 +41,7 @@ export default (state = initialState, action) => {
       txsReceiver: [...txsReceiver],
       txsPToken: [...txsPToken], 
       txsPortal: [...txsPortal], 
+      txsUnshield: [...txsUnshield],
     };
   }
   case ACTION_FETCH_FAIL: {
@@ -87,6 +89,7 @@ export default (state = initialState, action) => {
       txsReceiver: [],
       txsPToken: [],
       txsPortal: [],
+      txsUnshield: [],
     };
   }
   default:

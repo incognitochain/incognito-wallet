@@ -19,12 +19,20 @@ import WalletConnectProvider from '@walletconnect/react-native-dapp';
 import React from 'react';
 import { useNavigationParam } from 'react-navigation-hooks';
 import { batch, useDispatch } from 'react-redux';
+import SelectedPrivacy from '@models/selectedPrivacy';
 
 const enhance = (WrappedComp) => (props) => {
   const dispatch = useDispatch();
   const account = useDebounceSelector(defaultAccountSelector);
   const accountWallet = useDebounceSelector(getDefaultAccountWalletSelector);
-  const tokenShield = useNavigationParam('tokenShield') || {};
+  const token =  useNavigationParam('tokenShield') || {};
+  const tokenShield = token?.isSelectedPrivacyModal ? token : new SelectedPrivacy(
+    account,
+    {},
+      token,
+      token.tokenId,
+  );
+
   const parentTokenShield = useNavigationParam('parentTokenShield') || {};
   const tokenSymbol = tokenShield?.externalSymbol || tokenShield?.symbol;
   const { tokenId } = tokenShield;

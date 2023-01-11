@@ -66,7 +66,7 @@ const OrderDetail = ({
   valueStyle,
   valueContainerStyle
 }) => {
-  if (!value) return null;
+  if (!value || value === 'undefined' || value === 'null') return null;
   return (
     <Row style={{ ...styled.row, ...hookStyled }}>
       <Text

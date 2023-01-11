@@ -1,18 +1,16 @@
 import React from 'react';
 import { View, Text } from '@src/components/core';
 import { StyleSheet } from 'react-native';
-import Extra, { styled as extraStyled } from '@screens/PDexV3/features/Extra';
+import Extra, { Hook, styled as extraStyled } from '@screens/PDexV3/features/Extra';
 import { useDispatch, useSelector } from 'react-redux';
 import { change, Field } from 'redux-form';
 import {
   RFBaseInput,
-  RFSelectFeeInput,
   validator,
 } from '@src/components/core/reduxForm';
 import SelectedPrivacy from '@src/models/selectedPrivacy';
 import { getPrivacyDataByTokenID } from '@src/redux/selectors/selectedPrivacy';
 import { PRV } from '@src/constants/common';
-import format from '@src/utils/format';
 import convert from '@src/utils/convert';
 import { FONT } from '@src/styles';
 import {
@@ -20,9 +18,9 @@ import {
   SelectOptionModal,
 } from '@src/components/SelectOption';
 import { actionToggleModal } from '@src/components/Modal';
+import { getInterSwapTradePath } from '@screens/PDexV3/features/Swap/Swap.simpleTab';
 import {
   feetokenDataSelector,
-  feeTypesSelector,
   inputAmountSelector,
   slippagetoleranceSelector,
   swapInfoSelector,
@@ -44,7 +42,6 @@ import { formConfigs, KEYS_PLATFORMS_SUPPORTED } from './Swap.constant';
 import {
   minFeeValidator,
   maxAmountValidatorForSlippageTolerance,
-  calMintAmountExpected,
   maxFeeValidator,
 } from './Swap.utils';
 
@@ -64,16 +61,15 @@ const TabPro = React.memo(() => {
   const { networkfee } = useSelector(swapSelector);
   const swapInfo = useSelector(swapInfoSelector);
   const { toggleProTab, isFetching } = swapInfo;
-  const feeTypes = useSelector(feeTypesSelector);
   const slippagetolerance = useSelector(slippagetoleranceSelector);
   const feetokenData = useSelector(feetokenDataSelector);
   const inputAmount = useSelector(inputAmountSelector);
   const sellinputAmount = inputAmount(formConfigs.selltoken);
-  const buyInputAmount = inputAmount(formConfigs.buytoken);
   const prv: SelectedPrivacy = useSelector(getPrivacyDataByTokenID)(PRV.id);
   const platformId = useSelector(platformIdSelectedSelector);
   const isPrivacyApp = useSelector(isPrivacyAppSelector);
   const dispatch = useDispatch();
+  const { hooks: hooksFactory } = getInterSwapTradePath(feetokenData);
   const onChangeTypeFee = async (type) => {
     const { tokenId } = type;
     await dispatch(actionSetFeeToken(tokenId));
@@ -170,7 +166,7 @@ const TabPro = React.memo(() => {
     [platforms],
   );
   const platformSelected = options.find((option) => !!option?.isSelected);
-  let extraFactories = [
+  const extraFactories = [
     {
       title: 'Slippage tolerance',
       titleStyle: {
@@ -239,8 +235,9 @@ const TabPro = React.memo(() => {
     //   containerStyle: { marginBottom: 0 },
     // },
   ];
+  const switchFactory = [];
   if (!isPrivacyApp) {
-    extraFactories.unshift({
+      switchFactory.push({
       title: 'Switch exchanges',
       onPressQuestionIcon: () => null,
       titleStyle: {
@@ -272,6 +269,14 @@ const TabPro = React.memo(() => {
         ...styled.container,
       }}
     >
+      {switchFactory.map((extra) => (
+        <Extra {...extra} key={extra.label} />
+      ))}
+      {!!hooksFactory && hooksFactory.length > 0 && (
+      <View style={{ marginBottom: 16 }}>
+        {hooksFactory.map((item) => (<Hook {...item} key={item.label} />))}
+      </View>
+      )}
       {extraFactories.map((extra) => (
         <Extra {...extra} key={extra.label} />
       ))}

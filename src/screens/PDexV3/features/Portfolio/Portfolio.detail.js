@@ -15,7 +15,7 @@ import { Text } from '@components/core';
 import { colorsSelector } from '@src/theme';
 import TwoTokenImage from '@screens/PDexV3/features/Portfolio/Portfolio.image';
 import { requestUpdateMetrics } from '@src/redux/actions/app';
-import { ANALYTICS } from '@src/constants';
+import { ANALYTICS, MESSAGES } from '@src/constants';
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -65,6 +65,11 @@ const styles = StyleSheet.create({
   wrapHook: {
     marginTop: 8,
   },
+  errorMessage: {
+    color: COLORS.red,
+    fontSize: 14,
+    marginTop: 15,
+  },
 });
 
 const PortfolioModal = ({ shareId, onWithdrawFeeLP, showRemove = true }) => {
@@ -107,7 +112,7 @@ const PortfolioModal = ({ shareId, onWithdrawFeeLP, showRemove = true }) => {
   };
   if (!data) return null;
   const { withdrawable, withdrawing, validNFT, disableBtn, share, } = data;
-  const { hookFactoriesDetail, token1, token2 } = data || {};
+  const { hookFactoriesDetail, token1, token2, isEnoughNetworkFeeDefault } = data || {};
   return (
     <View style={styles.wrapper}>
       <View style={styles.content}>
@@ -133,7 +138,7 @@ const PortfolioModal = ({ shareId, onWithdrawFeeLP, showRemove = true }) => {
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
         >
-          {hookFactoriesDetail.map((hook) => (
+          {hookFactoriesDetail.filter(hook => !!hook).map((hook) => (
             <Hook
               key={hook?.label}
               {...hook}
@@ -142,6 +147,11 @@ const PortfolioModal = ({ shareId, onWithdrawFeeLP, showRemove = true }) => {
               style={styles.wrapHook}
             />
           ))}
+          {!isEnoughNetworkFeeDefault && (
+            <Text style={[styles.errorMessage, { marginLeft: 0 }]}>
+              {MESSAGES.PRV_NOT_ENOUGHT}
+            </Text>
+          )}
         </ScrollView>
         {!validNFT && (
           <Text style={styles.warning}>

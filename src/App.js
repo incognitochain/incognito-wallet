@@ -18,6 +18,7 @@ import Performance from '@screens/Performance';
 import {devSelector} from '@screens/Dev';
 import {CONSTANT_KEYS} from '@src/constants';
 import { ThemeProvider } from '@src/theme/theme';
+import { actionNavigateToSelectToken, actionNavigateFormMarketTab } from '@src/screens/PDexV3/features/Swap/Swap.actions';
 import {MAIN_WEBSITE} from './constants/config';
 import LocalDatabase from './utils/LocalDatabase';
 import ModalConnection from './components/Modal/ModalConnection';
@@ -68,6 +69,11 @@ const App = (props) => {
           const currentScreen = getActiveRouteName(currentState);
           setCurrentScreen(currentScreen);
           dispatch(actionSetCurrentScreen(currentScreen));
+
+          if (currentScreen !== 'SelectTokenScreen' && currentScreen !== 'Trade') {
+            dispatch(actionNavigateFormMarketTab(false));
+            dispatch(actionNavigateToSelectToken(false));
+          }
           if (currentScreen !== prevScreen) {
             dispatch(actionSetPrevScreen(prevScreen));
             console.debug('CurrentScreen', currentScreen);

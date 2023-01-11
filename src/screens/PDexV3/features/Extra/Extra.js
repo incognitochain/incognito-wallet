@@ -29,7 +29,7 @@ export const styled = StyleSheet.create({
   },
   labelContainer: {
     flex: 1,
-    maxWidth: '40%',
+    maxWidth: '35%',
     alignItems: 'center',
     marginRight: 5,
   },

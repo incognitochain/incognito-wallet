@@ -38,7 +38,8 @@ export type KeysPlatformSupported =
   | 'curve'
   | 'spooky'
   | 'joe'
-  | 'trisolaris';
+  | 'trisolaris'
+  | 'interswap';
 
 type NETWORK_IDS_MAPPING_TYPE = {
   [key: string]: EXCHANGES_NETWROK_ID;
@@ -56,6 +57,19 @@ export const NETWORK_IDS_MAPPING: NETWORK_IDS_MAPPING_TYPE = {
 
 export interface IGroupNetwork {
   [key: string]: number[];
+}
+
+export type InterSwapData = {
+  midOTA: string;
+  midToken: string;
+  fistBatchIsPDex: boolean;
+  pdexMinAcceptableAmount: string;
+  pAppName: string;
+  pAppNetwork: string;
+  path: {
+    logoIcon: string;
+    tradePath: string | string[];
+  }[];
 }
 
 export type ExchangeData = {
@@ -87,6 +101,9 @@ export type ExchangeData = {
   networkName: string;
   feeAddressShardID: number;
   platformNameSupported: KeysPlatformSupported;
+
+  // Just support inter swap
+  interSwapData: InterSwapData | undefined;
 };
 
 export type ExchangeRawDetail = {
@@ -111,6 +128,11 @@ export type ExchangeRawDetail = {
   PoolPairs?: string;
   ImpactAmount: string;
   RouteDebug: string[];
+
+  PAppNetwork: string;
+  Details: ExchangeRawDetail[];
+  MidOTA: string;
+  MidToken: string;
 };
 
 export type EstimateRawData = {

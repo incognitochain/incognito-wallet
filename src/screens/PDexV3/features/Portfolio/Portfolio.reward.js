@@ -15,6 +15,8 @@ import withTransaction from '@screens/PDexV3/features/Liquidity/Liquidity.enhanc
 import { ACCOUNT_CONSTANT } from 'incognito-chain-web-js/build/wallet';
 import uniq from 'lodash/uniq';
 import PropTypes from 'prop-types';
+import { validatePRVBalanceSelector } from '@src/redux/selectors/selectedPrivacy';
+import { actionRefillPRVModalVisible } from '@src/screens/RefillPRV/RefillPRV.actions';
 
 const PortfolioReward = ({ onCreateWithdrawFeeLP }) => {
   const dispatch = useDispatch();
@@ -24,6 +26,11 @@ const PortfolioReward = ({ onCreateWithdrawFeeLP }) => {
     return orderBy(data, 'totalRewardAmount', 'desc').filter(item => item.withdrawable);
   }, [data]);
   const getDataShare = useSelector(getDataByShareIdSelector);
+  const {
+    isEnoughtPRVNeededAfterBurn,
+    isCurrentPRVBalanceExhausted,
+  } = useSelector(validatePRVBalanceSelector)(ACCOUNT_CONSTANT.MAX_FEE_PER_TX);
+
   const onWithdrawFeeLP = ({ poolId, shareId }) => {
     const dataShare = getDataShare(shareId);
     if (!dataShare && typeof onCreateWithdrawFeeLP !== 'function') return;
@@ -38,6 +45,11 @@ const PortfolioReward = ({ onCreateWithdrawFeeLP }) => {
       amount1: String(0),
       amount2: String(0)
     };
+
+    if (!isEnoughtPRVNeededAfterBurn) {
+      dispatch(actionRefillPRVModalVisible(true));
+      return;
+    }
     onCreateWithdrawFeeLP(params);
   };
   return (

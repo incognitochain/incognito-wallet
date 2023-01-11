@@ -26,12 +26,18 @@ export const PoolItem = React.memo((props) => {
     poolTitle,
     apyStr,
     token1,
-    token2
+    token2,
+    networkPairStr,
+    isPRVUSDTPair
   } = data || {};
 
   const dispatch = useDispatch();
   const handleToggleFollowingPool = () =>
     dispatch(actionToggleFollowingPool(poolId));
+
+  const iconUrl1 = isPRVUSDTPair ? token2.iconUrl : token1.iconUrl;
+  const iconUrl2 = isPRVUSDTPair ? token1.iconUrl : token2.iconUrl;
+
   return (
     <TouchableOpacity
       onPress={() => typeof onPressPool === 'function' && onPressPool(poolId)}
@@ -39,7 +45,7 @@ export const PoolItem = React.memo((props) => {
     >
       <Row centerVertical>
         <View style={{ marginTop: -12 }}>
-          <TwoTokenImage iconUrl1={token1.iconUrl} iconUrl2={token2.iconUrl} />
+          <TwoTokenImage iconUrl1={iconUrl1} iconUrl2={iconUrl2} />
         </View>
         <View fullFlex>
           <Row spaceBetween>
@@ -52,7 +58,7 @@ export const PoolItem = React.memo((props) => {
             </Row>
           </Row>
           <Row spaceBetween style={{ marginTop: 4 }}>
-            <Text style={[styled.network, { color: colors.text3 }]}>{`${token1.network} / ${token2.network}`}</Text>
+            <Text style={[styled.network, { color: colors.text3 }]}>{networkPairStr}</Text>
             <Text style={styled.earnBtn}>Earn now</Text>
           </Row>
         </View>

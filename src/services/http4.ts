@@ -36,21 +36,18 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (res) => {
-    // logger('RESPONSE: ', {
-    //   res,
-    // });
-
     const result = res?.data?.Result;
     const error = res?.data?.Error;
     if (error) {
       return Promise.reject(camelCaseKeys(error));
     }
+    logger('RESPONSE: ', result);
     return Promise.resolve(result);
   },
   (errorData) => {
-    // logger('ERROR RESPONSE: ', {
-    //   errorData,
-    // });
+    logger('ERROR RESPONSE: ', {
+      errorData,
+    });
     const errResponse = errorData?.response;
 
     // can not get response, alert to user

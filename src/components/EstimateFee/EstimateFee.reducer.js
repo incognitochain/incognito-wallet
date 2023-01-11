@@ -69,6 +69,8 @@ const initialState = {
   totalFeePToken: null,     /** Min unshield amount */
   totalFeePTokenText: '',
 
+  totalFees: 0,
+
   init: false,
   screen: '',
   types: [..._initFeeType],

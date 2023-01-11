@@ -97,6 +97,20 @@ export const listPoolsSelector = createSelector(
         );
         const priceStr = format.amountVer2(originalPrice, token2?.pDecimals);
         const poolStr = `${token1?.symbol || ''} / ${token2?.symbol || ''}`;
+
+        let networkPairStr = '';
+        let poolTitle =  '';
+        let isPRVUSDTPair = false;
+        if ((token1?.symbol === 'PRV' && token2?.symbol === 'USDT')) {
+            poolTitle =  `${token2?.symbol} / ${token1?.symbol}`;
+            networkPairStr =  `${token2?.network} / ${token1?.network}`;
+            isPRVUSDTPair =  true;
+        } else {
+            poolTitle =  `${token1?.symbol} / ${token2?.symbol}`;
+            networkPairStr =  `${token1?.network} / ${token2?.network}`;
+            isPRVUSDTPair = false;
+        }
+
         return {
           ...pool,
           token1,
@@ -108,7 +122,7 @@ export const listPoolsSelector = createSelector(
           perChange24hBGColor,
           isFollowed:
             followIds?.findIndex((_poolId) => poolId === _poolId) > -1 || false,
-          poolTitle: `${token1?.symbol} / ${token2?.symbol}`,
+          poolTitle,
           poolSizeStr,
           exchangeRateStr: getExchangeRate(
             token1,
@@ -128,6 +142,8 @@ export const listPoolsSelector = createSelector(
           },
           priceStr,
           poolStr,
+          networkPairStr,
+          isPRVUSDTPair
         };
       });
     } catch (error) {

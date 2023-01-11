@@ -67,6 +67,42 @@ const styled = StyleSheet.create({
   },
 });
 
+export const mapperIcon = ({ id }) => {
+    let icon = null;
+    // id = 'uniswap'
+    if (id && id.includes(KEYS_PLATFORMS_SUPPORTED.uni)) {
+        return <UniIcon style={styled.icon} />;
+    }
+    switch (id) {
+        case KEYS_PLATFORMS_SUPPORTED.incognito:
+        case KEYS_PLATFORMS_SUPPORTED.interswap:
+            icon = <AppIcon style={styled.icon} />;
+            break;
+        case KEYS_PLATFORMS_SUPPORTED.pancake:
+            icon = <PancakeIcon style={styled.icon} />;
+            break;
+        case KEYS_PLATFORMS_SUPPORTED.uni:
+        case KEYS_PLATFORMS_SUPPORTED.uniEther:
+            icon = <UniIcon style={styled.icon} />;
+            break;
+        case KEYS_PLATFORMS_SUPPORTED.curve:
+            icon = <CurveIcon style={styled.icon} />;
+            break;
+        case KEYS_PLATFORMS_SUPPORTED.spooky:
+            icon = <SpoonkyIcon style={styled.icon} />;
+            break;
+        case KEYS_PLATFORMS_SUPPORTED.joe:
+            icon = <JoeIcon style={styled.icon} />;
+            break;
+        case KEYS_PLATFORMS_SUPPORTED.trisolaris:
+            icon = <TrisolarisIcon style={styled.icon} />;
+            break;
+        default:
+            break;
+    }
+    return icon;
+};
+
 export const SelectItem = React.memo(
   ({
     id,
@@ -79,35 +115,7 @@ export const SelectItem = React.memo(
     firstChild = false,
   }) => {
     const colors = useSelector(colorsSelector);
-    let icon = null;
-    switch (id) {
-      case KEYS_PLATFORMS_SUPPORTED.incognito:
-        icon = <AppIcon style={styled.icon} />;
-        break;
-      case KEYS_PLATFORMS_SUPPORTED.pancake:
-        icon = <PancakeIcon style={styled.icon} />;
-        break;
-      case KEYS_PLATFORMS_SUPPORTED.uni:
-        icon = <UniIcon style={styled.icon} />;
-        break;
-      case KEYS_PLATFORMS_SUPPORTED.uniEther:
-        icon = <UniIcon style={styled.icon} />;
-        break;
-      case KEYS_PLATFORMS_SUPPORTED.curve:
-        icon = <CurveIcon style={styled.icon} />;
-        break;
-      case KEYS_PLATFORMS_SUPPORTED.spooky:
-        icon = <SpoonkyIcon style={styled.icon} />;
-        break;
-      case KEYS_PLATFORMS_SUPPORTED.joe:
-        icon = <JoeIcon style={styled.icon} />;
-        break;
-      case KEYS_PLATFORMS_SUPPORTED.trisolaris:
-        icon = <TrisolarisIcon style={styled.icon} />;
-        break;
-      default:
-        break;
-    }
+    let icon = mapperIcon({ id });
     return (
       <TouchableOpacity
         onPress={() => {
@@ -184,7 +192,7 @@ const SelectOptionModal = ({ options }) => {
         paddingHorizontal: 0,
         paddingVertical: 0,
       }}
-      customContent={
+      customContent={(
         <ScrollView style={styled.scrollview}>
           {options.map((option, index, arr) => (
             <SelectItem
@@ -197,7 +205,7 @@ const SelectOptionModal = ({ options }) => {
             />
           ))}
         </ScrollView>
-      }
+      )}
     />
   );
 };

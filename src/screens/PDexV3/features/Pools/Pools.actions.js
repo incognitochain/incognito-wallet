@@ -5,6 +5,7 @@ import uniq from 'lodash/uniq';
 import BigNumber from 'bignumber.js';
 import orderBy from 'lodash/orderBy';
 import { batch } from 'react-redux';
+import {uniqBy} from 'lodash';
 import {
   ACTION_FETCHING,
   ACTION_FETCHED,
@@ -75,13 +76,35 @@ export const actionFetchListPools = () => async (dispatch, getState) => {
     let poolsIDs = pools.map((pool) => pool?.poolId) || [];
     poolsIDs = [...followIds, ...poolsIDs];
     poolsIDs = uniq(poolsIDs);
+    const priority = {
+      // PRV-USDT
+      '0000000000000000000000000000000000000000000000000000000000000004-076a4423fa20922526bd50b0d7b0dc1c593ce16e15ba141ede5fb5a28aa3f229-33a8ceae6db677d9860a6731de1a01de7e1ca7930404d7ec9ef5028f226f1633': 4,
+      // PRV-BTC
+      '0000000000000000000000000000000000000000000000000000000000000004-b832e5d3b1f01a4f0623f7fe91d6673461e1f5d37d91fe78c5c2e6183ff39696-b2769c3d130a565027f05f74345760653bfc71200c3df9829e0e931a34f76cb4': 3,
+      // PRV-ETH
+      '0000000000000000000000000000000000000000000000000000000000000004-3ee31eba6376fc16cadb52c8765f20b6ebff92c0b1c5ab5fc78c8c25703bb19e-407b251bb4a262391cad3fda612f9b0fd5c282ed0624815450a0cfa53410c6ec': 2,
+      // PRV-XMR
+      '0000000000000000000000000000000000000000000000000000000000000004-c01e7dc1d1aba995c19b257412340b057f8ad1482ccb6a9bb0adce61afbf05d4-dab0cd71061e9dcc3135139e0e982845063933e3bc907b4e179e09f0f25d19e6': 1,
+    };
+    // sort PRV Pools to the top
     const payload =
       poolsIDs
-        .map((poolId) => pools.find((pool) => pool?.poolId === poolId))
+        .map((poolId) => {
+          const pool = pools.find((pool) => pool?.poolId === poolId);
+          const _priority = priority[pool?.poolId] || 0;
+          return {
+            ...pool,
+            priority: _priority
+          };
+        })
         .filter((pool) => !!pool)
         .filter((pool) => !!pool?.isVerify) || [];
+    let topPools = payload.filter((pool) => Object.keys(priority).includes(pool.poolId));
+    topPools = orderBy(topPools, 'apy', 'desc');
+    const bottomPools = orderBy(payload, 'apy', 'desc');
+    const newPools = uniqBy([...topPools, ...bottomPools], 'poolId');
     batch(() => {
-      dispatch(actionFetchedListPools(orderBy(payload, 'apy', 'desc')));
+      dispatch(actionFetchedListPools(newPools));
       dispatch(actionFetchedTradingVolume24h(originalVolume));
       dispatch(actionFetched());
     });

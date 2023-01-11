@@ -12,6 +12,10 @@ import { orderLimitDataSelector } from './OrderLimit.selector';
 import withOrderLimit from './OrderLimit.enhance';
 import OrderLimitInputsGroup from './OrderLimit.inputsGroup';
 import OrderDetails from './OrderLimit.details';
+// import {
+//   feeDataSelector,
+//   validatePRVNetworkFee,
+// } from '@src/components/EstimateFee/EstimateFee.selector';
 
 const initialFormValues = {
   selltoken: '',
@@ -27,9 +31,8 @@ const Form = createForm(formConfigs.formName, {
 });
 
 const OrderLimit = (props) => {
-  const { mainColor, btnActionTitle, ordering, calculating } = useDebounceSelector(
-    orderLimitDataSelector,
-  );
+  const { mainColor, btnActionTitle, ordering, calculating } =
+    useDebounceSelector(orderLimitDataSelector);
   const { handleConfirm, onRefresh } = props;
   React.useEffect(() => {
     onRefresh();

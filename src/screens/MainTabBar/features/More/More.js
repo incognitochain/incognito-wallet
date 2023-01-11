@@ -106,12 +106,12 @@ const Categories = [
           url: CONSTANT_CONFIGS.EXPLORER_CONSTANT_CHAIN_URL,
         },
       },
-      {
-        route: routeNames.WebView,
-        label: 'Faucet',
-        icon: FaucetIcon,
-        key: appConstant.DISABLED.FAUCET,
-      },
+      // {
+      //   route: routeNames.WebView,
+      //   label: 'Faucet',
+      //   icon: FaucetIcon,
+      //   key: appConstant.DISABLED.FAUCET,
+      // },
       {
         route: routeNames.WebView,
         label: 'Support',

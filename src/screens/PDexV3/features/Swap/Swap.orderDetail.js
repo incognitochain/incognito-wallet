@@ -56,13 +56,33 @@ const SwapOrderDetail = () => {
     ft = ft.concat([
       {
         label: 'Request Tx',
-        value: `#${order?.requestBurnTxInc}`,
+        value: `${order?.requestBurnTxInc}`,
         copiable: true,
         openUrl: true,
         handleOpenUrl: () =>
           LinkingService.openUrlInSide(
             `${CONSTANT_CONFIGS.EXPLORER_CONSTANT_CHAIN_URL}/tx/${order?.requestBurnTxInc}`,
           ),
+      },
+      {
+        label: 'PApp Tx',
+        value: `${order?.pAppTxID}`,
+        copiable: true,
+        openUrl: true,
+        handleOpenUrl: () =>
+            LinkingService.openUrlInSide(
+                `${CONSTANT_CONFIGS.EXPLORER_CONSTANT_CHAIN_URL}/tx/${order?.pAppTxID}`,
+            ),
+      },
+      {
+        label: 'PDex Tx',
+        value: `${order?.pDexTxID}`,
+        copiable: true,
+        openUrl: true,
+        handleOpenUrl: () =>
+            LinkingService.openUrlInSide(
+                `${CONSTANT_CONFIGS.EXPLORER_CONSTANT_CHAIN_URL}/tx/${order?.pDexTxID}`,
+            ),
       },
       {
         label: 'Time',
@@ -84,6 +104,30 @@ const SwapOrderDetail = () => {
       {
         label: 'Rate',
         value: order?.rateStr,
+      },
+      {
+        label: 'Refund Tx',
+        value: `${order?.refundTxID}`,
+        copiable: true,
+        openUrl: true,
+        handleOpenUrl: () =>
+            LinkingService.openUrlInSide(
+                `${CONSTANT_CONFIGS.EXPLORER_CONSTANT_CHAIN_URL}/tx/${order?.refundTxID}`,
+            ),
+      },
+      {
+        label: 'Refund Amount',
+        value: `${order?.refundAmountStr}`,
+      },
+      {
+        label: 'Response Tx',
+        value: `${order?.responseTx}`,
+        copiable: true,
+        openUrl: true,
+        handleOpenUrl: () =>
+            LinkingService.openUrlInSide(
+                `${CONSTANT_CONFIGS.EXPLORER_CONSTANT_CHAIN_URL}/tx/${order?.responseTx}`,
+            ),
       },
     ]);
     if (order?.respondTxs?.length > 0) {

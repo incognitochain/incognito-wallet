@@ -26,6 +26,7 @@ import { compose } from 'recompose';
 import { debounce, orderBy } from 'lodash';
 import { RULE_SORT } from '@screens/PDexV3/features/Swap/Swap.constant';
 import { searchToken } from '@services/api/token';
+import LoadingContainer from '@src/components/LoadingContainer';
 import { styled } from './FollowToken.styled';
 
 const AddManually = () => {
@@ -66,6 +67,7 @@ const FollowTokenList = React.memo((props) => {
   const dispatch = useDispatch();
   const availableTokensOriginal = useSelector(availableTokensSelector);
 
+  const [isLoading, setLoading] = useState(false);
   const [availableTokens, setAvailableTokens] = useState(
     availableTokensOriginal,
   );
@@ -85,7 +87,9 @@ const FollowTokenList = React.memo((props) => {
     if (!nextValue || nextValue.length < 1) {
       setAvailableTokens(availableTokensOriginal);
     } else {
+      setLoading(true);
       let result = (await searchToken(nextValue)) || [];
+      setLoading(false);
       if (result && result.length < 1) {
         setAvailableTokens([]);
       } else {
@@ -96,6 +100,7 @@ const FollowTokenList = React.memo((props) => {
       }
       setAvailableTokens(orderBy(result, RULE_SORT.key, RULE_SORT.value));
     }
+    setLoading(false);
   }, 500);
 
   const [verifiedTokens, unVerifiedTokens] = useMemo(() => {
@@ -120,8 +125,9 @@ const FollowTokenList = React.memo((props) => {
     setShowUnVerifiedTokens(!showUnVerifiedTokens);
   };
   let tokens = [];
-
-  if (!verifiedTokens && !unVerifiedTokens) {
+  if (availableTokens && availableTokens.length < 1) {
+    tokens = [];
+  } else if (!verifiedTokens && !unVerifiedTokens) {
     tokens = [];
   } else if (verifiedTokens && verifiedTokens.length < 1) {
     tokens = [unVerifiedTokens];
@@ -170,19 +176,23 @@ const FollowTokenList = React.memo((props) => {
         }}
       />
       <View borderTop style={[{ flex: 1 }]}>
-        <ListAllToken2
-          tokensFactories={tokens}
-          styledCheckBox={globalStyled.defaultPaddingHorizontal}
-          isShowUnVerifiedTokens={showUnVerifiedTokens}
-          setShowUnVerifiedTokens={onSetShowUnVerifiedTokens}
-          renderItem={({ item }) => (
-            <TokenFollow
-              item={item}
-              handleToggleFollowToken={handleToggleFollowToken}
-              onPress={() => handleToggleFollowToken(item)}
-            />
-          )}
-        />
+        {isLoading ? (
+          <LoadingContainer />
+        ) : (
+          <ListAllToken2
+            tokensFactories={tokens}
+            styledCheckBox={globalStyled.defaultPaddingHorizontal}
+            isShowUnVerifiedTokens={showUnVerifiedTokens}
+            setShowUnVerifiedTokens={onSetShowUnVerifiedTokens}
+            renderItem={({ item }) => (
+              <TokenFollow
+                item={item}
+                handleToggleFollowToken={handleToggleFollowToken}
+                onPress={() => handleToggleFollowToken(item)}
+              />
+            )}
+          />
+        )}
       </View>
       <AddManually />
     </View2>

@@ -16,7 +16,7 @@ const ImageFastWrapper = (props) => {
 
   return (
     <FastImage
-      style={style}
+      style={[style, { borderRadius: 50 }]}
       source={{
         uri: uri,
       }}

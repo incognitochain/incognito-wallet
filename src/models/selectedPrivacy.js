@@ -3,6 +3,7 @@ import { CONSTANT_COMMONS, CONSTANT_CONFIGS } from '@src/constants';
 import { BIG_COINS } from '@src/screens/DexV2/constants';
 import { PRV_ID } from '@screens/Dex/constants';
 import { detectToken } from '@src/utils/misc';
+import {PRV} from '@src/constants/common';
 import PToken from './pToken';
 
 function getNetworkName() {
@@ -173,6 +174,10 @@ function getIconUrl(chainTokenImageUri) {
     return 'https://statics.incognito.org/wallet/cryptocurrency-icons/32@2x/color/prv@2x.png';
   }
 
+  if (this.symbol === PRV.symbol) {
+    return null;
+  }
+
   if (this.isMainCrypto || this.isPToken) {
     let formatedSymbol = String(
       this.symbol || this.externalSymbol,
@@ -190,6 +195,8 @@ class SelectedPrivacy {
     const tokenId = pTokenData?.tokenId || token?.id;
     const isUnknown = _tokenID !== PRV_ID && !tokenId;
     const unknownText = 'Incognito Token';
+
+    this.isSelectedPrivacyModal = true;
 
     this.currencyType = pTokenData.currencyType;
     this.isToken = tokenId !== CONSTANT_COMMONS.PRV_TOKEN_ID && !!tokenId; // all kind of tokens (private tokens, incognito tokens)

@@ -122,6 +122,17 @@ const NETWORK_NAME = {
   AURORA: 'Aurora',
 };
 
+const NETWORK_MAP_FULL_NAME = {
+  prv: 'Privacy',
+  eth: 'Ethereum',
+  bsc: 'Binance Smart Chain',
+  plg: 'Polygon',
+  ftm: 'Fantom',
+  near: 'Near',
+  avax: 'Avax',
+  aurora: 'Aurora',
+};
+
 export const PRV = {
   id: '0000000000000000000000000000000000000000000000000000000000000004',
   name: 'Privacy',
@@ -360,4 +371,5 @@ export default {
   ],
   RESPONSE_PRV_TYPES,
   MAIN_NETWORK_NAME,
+  NETWORK_MAP_FULL_NAME
 };

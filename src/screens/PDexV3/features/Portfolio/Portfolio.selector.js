@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { getPrivacyDataByTokenID as getPrivacyDataByTokenIDSelector } from '@src/redux/selectors/selectedPrivacy';
+import { getPrivacyDataByTokenID as getPrivacyDataByTokenIDSelector , getPrivacyPRVInfo } from '@src/redux/selectors/selectedPrivacy';
 import BigNumber from 'bignumber.js';
 import {
   getExchangeRate,
@@ -9,6 +9,7 @@ import {
 import format from '@src/utils/format';
 import convert from '@utils/convert';
 import {getValidRealAmountNFTSelector, isFetchingNFTSelector} from '@src/redux/selectors/account';
+
 
 export const portfolioSelector = createSelector(
   (state) => state.pDexV3,
@@ -56,7 +57,8 @@ export const listShareSelector = createSelector(
   getPrivacyDataByTokenIDSelector,
   getValidRealAmountNFTSelector,
   isFetchingNFTSelector,
-  (portfolio, shareDetails, getPrivacyDataByTokenID, getValidRealAmountNFT, isFetchingNFT) => {
+  getPrivacyPRVInfo,
+  (portfolio, shareDetails, getPrivacyDataByTokenID, getValidRealAmountNFT, isFetchingNFT, prvBalanceInfo) => {
     const { data } = portfolio;
     return data.map((item) => {
       const {
@@ -92,12 +94,15 @@ export const listShareSelector = createSelector(
           token2PoolValue,
         }
       });
+
+      const { isEnoughNetworkFeeDefault, feeAndSymbol } = prvBalanceInfo;
       const principalUSDHuman = new BigNumber(principal.token1USDHuman).plus(principal.token2USDHuman).toNumber();
       const principalUSD = format.amountVer2(Math.ceil(new BigNumber(principalUSDHuman).multipliedBy(Math.pow(10, 9)).toNumber()), 9);
 
       const shareStr = getShareStr(share, totalShare);
       const validNFT = !!getValidRealAmountNFT(nftId);
-      const disableBtn = isFetchingNFT || !validNFT;
+      
+      const disableBtn = isFetchingNFT || !validNFT || !isEnoughNetworkFeeDefault;
       const mapLPRewards = mapRewardToUSD({
         rewards: rewards || {},
         getPrivacyDataByTokenID
@@ -158,6 +163,10 @@ export const listShareSelector = createSelector(
         },
         ...hookLPRewards,
         ...hookOrderRewards,
+        !isEnoughNetworkFeeDefault ? {
+          label: 'Network Fee',
+          valueText: `${feeAndSymbol}`,
+        } : undefined,
       ];
 
       return {
@@ -190,6 +199,7 @@ export const listShareSelector = createSelector(
         token1USDHuman: principal.token1USDHuman,
         token2USDHuman: principal.token2USDHuman,
         principalUSD,
+        isEnoughNetworkFeeDefault
       };
     });
   },

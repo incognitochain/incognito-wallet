@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { liquiditySelector } from '@screens/PDexV3/features/Liquidity/Liquidity.selector';
-import { getPrivacyDataByTokenID as getPrivacyDataByTokenIDSelector } from '@src/redux/selectors/selectedPrivacy';
+import { getPrivacyDataByTokenID as getPrivacyDataByTokenIDSelector, getPrivacyPRVInfo, validatePRVBalanceSelector } from '@src/redux/selectors/selectedPrivacy';
 import { getDataByShareIdSelector } from '@screens/PDexV3/features/Portfolio/Portfolio.selector';
 import { sharedSelector } from '@src/redux/selectors';
 import { getInputShareAmount } from '@screens/PDexV3/features/Liquidity/Liquidity.utils';
@@ -9,6 +9,7 @@ import format from '@utils/format';
 import convert from '@utils/convert';
 import { formConfigsRemovePool } from '@screens/PDexV3/features/Liquidity/Liquidity.constant';
 import { getValidRealAmountNFTSelector } from '@src/redux/selectors/account';
+import { minPRVNeededSelector } from '@src/screens/RefillPRV/RefillPRV.selector';
 
 const removePoolSelector = createSelector(
   liquiditySelector,
@@ -204,6 +205,81 @@ export const disableRemovePool = createSelector(
   },
 );
 
+export const hookFactoriesSelector = createSelector(
+  tokenSelector,
+  sharedSelector.isGettingBalance,
+  feeAmountSelector,
+  getPrivacyPRVInfo,
+  ({ inputToken, outputToken }, isGettingBalance, { token: feeToken, feeAmountStr }, prvBalanceInfo) => {
+    if (!inputToken || !outputToken || !feeToken) return [];
+    const { symbol } = prvBalanceInfo;
+    return [
+      {
+        label: 'Network Fee',
+        value: `${feeAmountStr} ${symbol}`,
+      }
+    ];
+  }
+);
+
+
+export const validateTotalBurnPRVSelector = createSelector(
+  getPrivacyPRVInfo,
+  feeAmountSelector,
+  minPRVNeededSelector,
+  inputAmountSelector,
+  validatePRVBalanceSelector,
+  (prvBalanceInfo, feeAmountData, minPRVNeeded, inputAmount, validatePRVBalanceFn) => {
+    try {
+      const { prvBalanceOriginal, PRV_ID, feePerTx } = prvBalanceInfo;
+      const { feeAmount } = feeAmountData;
+  
+      // const input = inputAmount(formConfigsRemovePool.formName, formConfigsRemovePool.inputToken);
+      // const output = inputAmount(formConfigsRemovePool.formName, formConfigsRemovePool.outputToken);
+  
+      // const { tokenId: token1Id, originalInputAmount: originalInputAmount1 } = input;
+      // const { tokenId: token2Id, originalInputAmount: originalInputAmount2 } = output;
+  
+      // console.log('LD-RemovePool [validateTotalBurnPRVSelector] ', {
+      //   input,
+      //   output,
+      //   feeAmountData,
+      //   prvBalanceInfo
+      // } );
+  
+      let totalBurningPRV = 0;
+    
+      // // SellToken = PRV
+      // if (token1Id === PRV_ID) {
+      //   totalBurningPRV = totalBurningPRV + originalInputAmount1;
+      // } 
+  
+      // if (token2Id === PRV_ID) {
+      //   totalBurningPRV = totalBurningPRV + originalInputAmount2;
+      // } 
+
+      totalBurningPRV = totalBurningPRV + feeAmount;
+  
+      if (!totalBurningPRV || totalBurningPRV == 0) {
+        totalBurningPRV = feePerTx;
+      }
+  
+      // console.log('LD-RemovePool [validateTotalBurnPRVSelector] ==>> ', {
+      //   prvBalanceOriginal,
+      //   totalBurningPRV,
+      //   minPRVNeeded
+      // });
+  
+  
+      return validatePRVBalanceFn(totalBurningPRV);
+  
+    } catch (error) {
+      console.log('LD-RemovePool [validateTotalBurnPRVSelector]  ERROR : ', error);
+    }
+  }
+);
+
+
 export default {
   isFetchingSelector,
   feeAmountSelector,
@@ -214,4 +290,6 @@ export default {
   maxShareAmountSelector,
   disableRemovePool,
   nftTokenSelector,
+  hookFactoriesSelector,
+  validateTotalBurnPRVSelector
 };

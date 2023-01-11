@@ -3,12 +3,13 @@ import createLogger from '@utils/logger';
 
 const logger = createLogger('API');
 
-type GetEstiamteTradingFeePayload = {
+type GetEstimateTradingFeePayload = {
   amount: string;
   fromToken: string;
   network?: string;
   slippage: string;
   toToken: string;
+  shardID: string;
 };
 
 /**
@@ -20,19 +21,19 @@ type GetEstiamteTradingFeePayload = {
  * @toToken {string}
  */
 
-const getEstiamteTradingFee = async (payload: GetEstiamteTradingFeePayload) => {
+const getEstimateTradingFee = async (payload: GetEstimateTradingFeePayload) => {
   try {
     const params = {
       ...payload,
-      network: payload.network ?? 'inc', //Default network = inc
+      network: payload.network ?? 'inc', // Default network = inc
     };
-    logger('[getEstiamteTradingFee]  params ', params);
+    logger('[getEstimateTradingFee]  params ', params);
     const data: any = await http4.post('papps/estimateswapfee', params);
-    logger('[getEstiamteTradingFee]  response ', data);
+    logger('[getEstimateTradingFee]  response ', data);
     const exchangeSupports = data?.Networks;
     return exchangeSupports;
   } catch (error) {
-    // logger('[getEstiamteTradingFee]  error ', {
+    // logger('[getEstimateTradingFee]  error ', {
     //   error,
     // });
     throw error;
@@ -65,7 +66,7 @@ const dexSwapMonitor = async (payload: DexSwapMonitorPayload) => {
 };
 
 const SwapService = {
-  getEstiamteTradingFee,
+  getEstimateTradingFee,
   dexSwapMonitor,
 };
 

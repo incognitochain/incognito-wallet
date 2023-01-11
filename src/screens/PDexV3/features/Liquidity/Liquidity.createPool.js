@@ -26,6 +26,8 @@ import {actionToggleModal} from '@components/Modal';
 import { withLayout_2 } from '@components/Layout';
 import useSendSelf from '@screens/PDexV3/features/Liquidity/Liquidity.useSendSelf';
 import withLazy from '@components/LazyHoc/LazyHoc';
+import NetworkFeeError from '@screens/PDexV3/features/Liquidity/Liquidity.networkFeeError';
+import { actionRefillPRVModalVisible } from '@src/screens/RefillPRV/RefillPRV.actions';
 
 const initialFormValues = {
   inputToken: '',
@@ -153,7 +155,7 @@ const InputsGroup = () => {
 export const Extra = React.memo(() => {
   const hooks = useSelector(createPoolSelector.hookFactoriesSelector);
   const renderHooks = () => {
-    return hooks.map(item => <RowSpaceText {...item} key={item?.label} />);
+    return hooks.filter(item => !!item).map(item => <RowSpaceText {...item} key={item?.label} />);
   };
   return(
     <View style={{ marginTop: 20 }}>
@@ -233,10 +235,21 @@ const CreatePool = ({
   setError,
   error,
 }) => {
+  const dispatch = useDispatch();
   const isFetching = useSelector(createPoolSelector.isFetchingSelector);
+  const { isEnoughNetworkFee } = useSelector(createPoolSelector.validateNetworkFeeSelector);
   const _error = useSendSelf({ error, setLoading, setError });
+  const {
+    isEnoughtPRVNeededAfterBurn,
+    isCurrentPRVBalanceExhausted,
+  } =  useSelector(createPoolSelector.validateTotalBurnPRVSelector);
   const onSubmit = (params) => {
-    typeof onCreateNewPool === 'function' && onCreateNewPool(params);
+    // console.log('isEnoughtTotalPRVAfterBurned ', isEnoughtTotalPRVAfterBurned);
+    if (!isEnoughtPRVNeededAfterBurn) {
+      dispatch(actionRefillPRVModalVisible(true));
+    } else {
+      typeof onCreateNewPool === 'function' && onCreateNewPool(params);
+    }
   };
 
   const onClose = () => {
@@ -251,6 +264,7 @@ const CreatePool = ({
         {!!_error && <Text style={styled.warning}>{_error}</Text>}
         <ButtonCreatePool onSubmit={onSubmit} />
         <Extra />
+        {!isEnoughNetworkFee && <NetworkFeeError />}
       </View>
     </>
   );

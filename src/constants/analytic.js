@@ -25,6 +25,8 @@ const ANALYTIC_DATA_TYPE = {
   TRADE_JOE: 21,
   TRISOLARIS: 22,
   TRADE_TRISOLARIS: 23,
+  INTER_SWAP: 24,
+  TRADE_INTER_SWAP: 25
 };
 
 export default {

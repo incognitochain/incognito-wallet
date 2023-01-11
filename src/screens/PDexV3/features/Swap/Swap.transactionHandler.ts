@@ -1,6 +1,18 @@
 const PRIVACY_VERSION = 2;
 const REMOTE_ADDRESS = '0x0000000000000000000000000000000000000000';
 
+type InterSwapPayload = {
+    midOTA: string;
+    sellTokenID: string;
+    buyTokenID: string;
+    midToken: string;
+    amountOutRaw: string;
+    slippage: string;
+    pAppNetwork: string;
+    pAppName: string;
+    inputAddress: string;
+}
+
 export type CreateTransactionPAppsPayload = {
   pDexV3Instance: any;
   sellTokenID: string;
@@ -23,6 +35,7 @@ export type CreateTransactionPAppsPayload = {
   buyTokenID: string;
   sellAmountText: string;
   buyAmountText: string;
+  interSwapData: InterSwapPayload;
 };
 
 export type CreateTransactionPDexPayload = {
@@ -43,6 +56,7 @@ export type CreateTransactionPDexPayload = {
       version: number;
       sellAmountText: string;
       buyAmountText: string;
+      interSwapData: InterSwapPayload;
     };
   };
 };
@@ -72,6 +86,7 @@ const createTransactionPApps = async (
       buyTokenID,
       sellAmountText,
       buyAmountText,
+      interSwapData
     } = params;
 
     console.log('[createTransactionPApps] params ', params);
@@ -99,6 +114,7 @@ const createTransactionPApps = async (
         buyTokenID,
         sellAmountText,
         buyAmountText,
+        interSwapData
       },
     });
     console.log('[createTransactionPApps] tx ', tx);

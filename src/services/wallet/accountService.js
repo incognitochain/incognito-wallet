@@ -1010,6 +1010,7 @@ export default class Account {
     txHashHandler,
     burningType,
     version = PrivacyVersion.ver2,
+    txHandler,
   } = {}) {
     new Validator('account', account).required();
     new Validator('wallet', wallet).required();
@@ -1023,6 +1024,23 @@ export default class Account {
     new Validator('burningType', burningType).required().number();
 
     const accountWallet = getAccountWallet(account, wallet);
+    console.log('[createBurningRequest] ', {
+      transfer: {
+        fee,
+        tokenID: tokenId,
+        prvPayments,
+        tokenPayments,
+        info,
+      },
+      extra: {
+        remoteAddress,
+        burnAmount,
+        txHashHandler,
+        burningType,
+        version,
+        txHandler,
+      },
+    });
     return accountWallet.createAndSendBurningRequestTx({
       transfer: {
         fee,
@@ -1037,6 +1055,7 @@ export default class Account {
         txHashHandler,
         burningType,
         version,
+        txHandler,
       },
     });
   }
@@ -1052,6 +1071,7 @@ export default class Account {
     txHashHandler,
     burningInfos,
     version = PrivacyVersion.ver2,
+    txHandler,
   } = {}) {
     new Validator('account', account).required();
     new Validator('wallet', wallet).required();
@@ -1063,6 +1083,22 @@ export default class Account {
     new Validator('burningInfos', burningInfos).required().array();
 
     const accountWallet = getAccountWallet(account, wallet);
+
+    console.log('[createBurningRequestForUnifiedToken] params: ', {
+      transfer: {
+        fee,
+        tokenID: tokenId,
+        prvPayments,
+        tokenPayments,
+        info,
+      },
+      extra: {
+        burningInfos,
+        txHashHandler,
+        version,
+      },
+    });
+
     return accountWallet.createAndSendBurnUnifiedTokenRequestTx({
       transfer: {
         fee,
@@ -1075,6 +1111,7 @@ export default class Account {
         burningInfos,
         txHashHandler,
         version,
+        txHandler,
       },
     });
   }
@@ -1132,6 +1169,7 @@ export default class Account {
     txHashHandler,
     burningType,
     version = PrivacyVersion.ver2,
+    txHandler,
   } = {}) {
     new Validator('account', account).required();
     new Validator('wallet', wallet).required();
@@ -1144,6 +1182,24 @@ export default class Account {
     new Validator('burningType', burningType).required().number();
 
     const accountWallet = getAccountWallet(account, wallet);
+
+    console.log('[createBurningPegPRVRequest] payload  ', {
+      transfer: {
+        fee,
+        tokenID: tokenId,
+        prvPayments,
+        info,
+      },
+      extra: {
+        remoteAddress,
+        burnAmount,
+        txHashHandler,
+        burningType,
+        version,
+        txHandler,
+      },
+    });
+
     return accountWallet.createAndSendBurningPegPRVRequestTx({
       transfer: {
         fee,
@@ -1157,6 +1213,7 @@ export default class Account {
         txHashHandler,
         burningType,
         version,
+        txHandler,
       },
     });
   }
@@ -1515,5 +1572,25 @@ export default class Account {
     new Validator('removeTxHistoryByTxIDs-offset', version).required().number();
     const accountWallet = getAccountWallet(account, wallet);
     return accountWallet.removeTxHistoryByTxIDs({ txIDs, tokenIDs, version });
+  }
+
+  static async getOTAReceive({ account, wallet, senderShardID } = {}) {
+    new Validator('getOTAReceive-senderShardID', senderShardID).required();
+    new Validator('getOTAReceive-account', account).required();
+    new Validator('getOTAReceive-wallet', wallet).required();
+    const accountWallet = getAccountWallet(account, wallet);
+    const OTA = await accountWallet.getOTAReceiveWithCfg({
+      senderShardID,
+    });
+    return OTA;
+  }
+
+  static async saveTxUnShieldEVMStorage({ wallet, account, tx }) {
+    new Validator('saveTxUnShieldEVMStorage-account', account).required();
+    new Validator('saveTxUnShieldEVMStorage-wallet', wallet).required();
+    new Validator('saveTxUnShieldEVMStorage-tx', tx).required();
+    const accountWallet = getAccountWallet(account, wallet);
+    await accountWallet.saveTxUnShieldEVMToStorage(tx);
+    return;
   }
 }

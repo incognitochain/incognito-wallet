@@ -16,7 +16,10 @@ import accountService from '@services/wallet/accountService';
 import { updateWalletAccounts } from '@services/api/masterKey';
 import { getToken } from '@src/services/auth';
 import formatUtil from '@utils/format';
-import { getStorageLoadWalletError, setStorageLoadWalletError } from '@models/storageError';
+import {
+  getStorageLoadWalletError,
+  setStorageLoadWalletError
+} from '@models/storageError';
 import { getPassphrase } from './passwordService';
 import Server from './Server';
 
@@ -98,6 +101,7 @@ export async function configsWallet(wallet) {
     wallet.RpcApiService = server?.apiServices;
     wallet.PortalService = server?.portalServices;
     wallet.Network = server?.id;
+    wallet.WebAppService = server?.webAppService;
     if (typeof setShardNumber === 'function') {
       await setShardNumber(server?.shardNumber);
     }

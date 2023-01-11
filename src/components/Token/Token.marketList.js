@@ -47,11 +47,30 @@ const MarketList = (props) => {
         .concat(_unVerifiedTokens.filter((item) => item.isFollowed))
         .filter((token) => !!token.defaultPoolPair);
     }
-    marketTokens = orderBy(
-      marketTokens,
-      (item) => Number(item[filterField] || '0'),
-      [orderField],
-    );
+    if (orderField === 'desc') {
+      marketTokens = orderBy(
+          marketTokens,
+          (item) => Number(item[filterField] || '0'),
+          [orderField],
+      );
+      marketTokens = orderBy(
+          marketTokens,
+          (item) => [
+            item.isPRV,
+            item.symbol === 'BTC' || item.externalSymbol === 'BTC',
+            item.symbol === 'XMR' || item.externalSymbol === 'XMR',
+            item.symbol === 'ETH' || item.externalSymbol === 'ETH',
+            (item.symbol === 'BNB' || item.externalSymbol === 'BNB') && item.currencyType === 7], //BNB network BSC
+          ['desc', orderField],
+      );
+    } else {
+      marketTokens = orderBy(
+          marketTokens,
+          (item) => Number(item[filterField] || '0'),
+          [orderField],
+      );
+    }
+
     return marketTokens;
   };
 

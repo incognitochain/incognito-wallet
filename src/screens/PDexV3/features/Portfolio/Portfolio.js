@@ -9,6 +9,8 @@ import {RefreshControl} from '@components/core';
 import {actionFetch} from '@screens/PDexV3/features/Portfolio/Portfolio.actions';
 import {EmptyBookIcon} from '@components/Icons';
 import uniq from 'lodash/uniq';
+import { validatePRVBalanceSelector } from '@src/redux/selectors/selectedPrivacy';
+import { actionRefillPRVModalVisible } from '@src/screens/RefillPRV/RefillPRV.actions';
 import {
   getDataByShareIdSelector,
   listShareIDsSelector,
@@ -20,6 +22,11 @@ const PortfolioList = withTransaction(React.memo(({ onCreateWithdrawFeeLP }) => 
   const dispatch = useDispatch();
   const data = useSelector(listShareIDsSelector);
   const getDataShare = useSelector(getDataByShareIdSelector);
+  const {
+    isEnoughtPRVNeededAfterBurn,
+    isCurrentPRVBalanceExhausted,
+  } = useSelector(validatePRVBalanceSelector)(ACCOUNT_CONSTANT.MAX_FEE_PER_TX);
+
   const onWithdrawFeeLP = ({ poolId, shareId }) => {
     const dataShare = getDataShare(shareId);
     if (!dataShare && typeof onCreateWithdrawFeeLP !== 'function') return;
@@ -34,6 +41,10 @@ const PortfolioList = withTransaction(React.memo(({ onCreateWithdrawFeeLP }) => 
       amount1: String(0),
       amount2: String(0)
     };
+    if (!isEnoughtPRVNeededAfterBurn) {
+      dispatch(actionRefillPRVModalVisible(true));
+      return;
+    }
     onCreateWithdrawFeeLP(params);
   };
   return (

@@ -1,6 +1,8 @@
 import routeNames from '@src/router/routeNames';
 import { CONSTANT_CONFIGS } from '@src/constants';
 
+export const ACTION_NAVIGATE_TO_SELECT_TOKENS =
+  '[pDexV3][swap] Navigate to Select Token';
 export const ACTION_NAVIGATE_FROM_MARKET =
   '[pDexV3][swap] Navigate form Market Tab';
 export const ACTION_RESET_EXCHANGE_SUPPORTED =
@@ -107,12 +109,14 @@ export const formConfigs = {
 export const KEYS_PLATFORMS_SUPPORTED = {
   incognito: 'incognito',
   pancake: 'pancake',
+  uniswap: 'uniswap',
   uni: 'uni',
   curve: 'curve',
   spooky: 'spooky',
   uniEther: 'uniEther',
   joe: 'joe',
   trisolaris: 'trisolaris',
+  interswap: 'interswap',
 };
 
 export const KEYS_PLATFORMS_SUPPORTED_NETWORKS = {
@@ -131,12 +135,7 @@ export const NETWORK_NAME_SUPPORTED = {
   AURORA: 'aurora',
   AVALANCHE: 'avax',
   NEAR: 'near',
-};
-
-export const SwapExchange = {
-  PANCAKE_SWAP: 'pancake',
-  UNISWAP: 'uniswap',
-  CURVE: 'curve',
+  INTER_SWAP: 'interswap'
 };
 
 export const PLATFORMS_SUPPORTED = [
@@ -198,6 +197,13 @@ export const PLATFORMS_SUPPORTED = [
     visible: true,
     isSelected: false,
   },
+  {
+    id: KEYS_PLATFORMS_SUPPORTED.interswap,
+    title: 'Inter-liquidity pools',
+    desc: '',
+    visible: true,
+    isSelected: true,
+  },
 ];
 
 const isMainnet = global.isMainnet;
@@ -230,31 +236,56 @@ export const CALL_CONTRACT = {
     : '0xA17b90be4A5F79076c770384332515359D2F6A88',
 };
 
-export const getExchangeDataWithCallContract = ({ callContract }) => {
+export const getExchangeDataWithCallContract = ({ callContract, pAppNetwork }) => {
   let name = 'Incognito';
   let exchangeScan = CONSTANT_CONFIGS.EXPLORER_CONSTANT_CHAIN_URL;
-  if (CALL_CONTRACT.UNI_ETH.includes(callContract)) {
-    name = 'Uniswap (ETH)';
-    exchangeScan = CONSTANT_CONFIGS.ETHERSCAN_URL;
-  } else if (CALL_CONTRACT.PANCAKE_BSC.includes(callContract)) {
-    name = 'Pancake';
-    exchangeScan = CONSTANT_CONFIGS.BSCSCAN_URL;
-  } else if (CALL_CONTRACT.UNI_PLG.includes(callContract)) {
-    name = 'Uniswap (PLG)';
-    exchangeScan = CONSTANT_CONFIGS.POLYGONSCAN_URL;
-  } else if (CALL_CONTRACT.SPOOKY_FTM.includes(callContract)) {
-    name = 'Spooky';
-    exchangeScan = CONSTANT_CONFIGS.FANTOMSCAN_URL;
-  } else if (CALL_CONTRACT.CURVE_PLG.includes(callContract)) {
-    name = 'Curve';
-    exchangeScan = CONSTANT_CONFIGS.POLYGONSCAN_URL;
-  } else if (CALL_CONTRACT.JOE_AVAX.includes(callContract)) {
-    name = 'Joe';
-    exchangeScan = CONSTANT_CONFIGS.AVAXSCAN_URL;
-  } else if (CALL_CONTRACT.TRISOLARIS_AURORA.includes(callContract)) {
-    name = 'Trisolaris';
-    exchangeScan = CONSTANT_CONFIGS.AURORASCAN_URL;
+  if (pAppNetwork) {
+    name = 'Inter-liquidity pools';
+    switch (pAppNetwork) {
+      case NETWORK_NAME_SUPPORTED.ETHEREUM:
+        exchangeScan = CONSTANT_CONFIGS.ETHERSCAN_URL;
+        break;
+      case NETWORK_NAME_SUPPORTED.BINANCE_SMART_CHAIN:
+        exchangeScan = CONSTANT_CONFIGS.BSCSCAN_URL;
+        break;
+      case NETWORK_NAME_SUPPORTED.POLYGON:
+        exchangeScan = CONSTANT_CONFIGS.POLYGONSCAN_URL;
+        break;
+      case NETWORK_NAME_SUPPORTED.FANTOM:
+        exchangeScan = CONSTANT_CONFIGS.FANTOMSCAN_URL;
+        break;
+      case NETWORK_NAME_SUPPORTED.AVALANCHE:
+        exchangeScan = CONSTANT_CONFIGS.AVAXSCAN_URL;
+        break;
+      case NETWORK_NAME_SUPPORTED.AURORA:
+        exchangeScan = CONSTANT_CONFIGS.AURORASCAN_URL;
+        break;
+    }
+  } else {
+    if (CALL_CONTRACT.UNI_ETH.includes(callContract)) {
+      name = 'Uniswap (ETH)';
+      exchangeScan = CONSTANT_CONFIGS.ETHERSCAN_URL;
+    } else if (CALL_CONTRACT.PANCAKE_BSC.includes(callContract)) {
+      name = 'Pancake';
+      exchangeScan = CONSTANT_CONFIGS.BSCSCAN_URL;
+    } else if (CALL_CONTRACT.UNI_PLG.includes(callContract)) {
+      name = 'Uniswap (PLG)';
+      exchangeScan = CONSTANT_CONFIGS.POLYGONSCAN_URL;
+    } else if (CALL_CONTRACT.SPOOKY_FTM.includes(callContract)) {
+      name = 'Spooky';
+      exchangeScan = CONSTANT_CONFIGS.FANTOMSCAN_URL;
+    } else if (CALL_CONTRACT.CURVE_PLG.includes(callContract)) {
+      name = 'Curve';
+      exchangeScan = CONSTANT_CONFIGS.POLYGONSCAN_URL;
+    } else if (CALL_CONTRACT.JOE_AVAX.includes(callContract)) {
+      name = 'Joe';
+      exchangeScan = CONSTANT_CONFIGS.AVAXSCAN_URL;
+    } else if (CALL_CONTRACT.TRISOLARIS_AURORA.includes(callContract)) {
+      name = 'Trisolaris';
+      exchangeScan = CONSTANT_CONFIGS.AURORASCAN_URL;
+    }
   }
+
   return { name, exchangeScan };
 };
 
@@ -269,3 +300,10 @@ export const ONE_DAY = 24 * 60 * 60 * 1000; // 1 day
 // export const ONE_DAY = 1 * 60 * 1000; //1 minute
 
 export const ESTIMATE_COUNT_MAX = 2;
+
+export const SWAP_DEFAULT_FAIR = {
+  selltoken: '076a4423fa20922526bd50b0d7b0dc1c593ce16e15ba141ede5fb5a28aa3f229', // USDT_UNIFIED
+  buytoken: '0000000000000000000000000000000000000000000000000000000000000004', // PRV
+  // selltoken: '26df4d1bca9fd1a8871a24b9b84fc97f3dd62ca8809975c6d971d1b79d1d9f31', // MATIC_UNIFIED
+  // buytoken: 'c01e7dc1d1aba995c19b257412340b057f8ad1482ccb6a9bb0adce61afbf05d4', // XMR
+};

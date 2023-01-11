@@ -153,10 +153,9 @@ const HistoryList = (props) => {
     [onLoadmoreHistory]);
 
   const _onEndReached = debounce(onEndReached, 1000);
-
   const historyDisplay = React.useMemo(() => {
     return histories.slice(0, page);
-  }, [page, histories.length]);
+  }, [page, histories.length, histories]);
 
   const renderKey = React.useCallback((item) => item?.txId || item?.id, []);
   return (

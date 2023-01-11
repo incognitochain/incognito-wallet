@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { actionGetPDexV3Inst } from '@screens/PDexV3';
 import { withLayout_2 } from '@src/components/Layout';
 import { Header } from '@src/components';
@@ -18,6 +18,8 @@ import { PRV } from '@src/constants/common';
 import { ExHandler } from '@src/services/exception';
 import globalStyled from '@src/theme/theme.styled';
 import { Hook } from '@screens/PDexV3/features/Extra';
+import { defaultAccountWalletSelector } from '@src/redux/selectors/account';
+import { getPrivacyDataByTokenID } from '@src/redux/selectors/selectedPrivacy';
 import NFTTokenHook from './NFTToken.hook';
 
 const styled = StyleSheet.create({
@@ -57,24 +59,39 @@ const Form = createForm(formConfigs.formName, {
 export const FormMint = React.memo(() => {
   const dispatch = useDispatch();
   const [minting, setMinting] = React.useState(false);
+  const [mintAmount, setMintAmount] = React.useState(0);
+  const accountSender = useSelector(defaultAccountWalletSelector);
+  const prvBalance = useSelector(getPrivacyDataByTokenID)(PRV.id);
   const navigation = useNavigation();
   const hookFactories = React.useMemo(
     () =>
       [
         {
+          label: 'Balance',
+          value: `${format.amountFull(
+            prvBalance.amount,
+            PRV.pDecimals,
+            false,
+          )} PRV`,
+        },
+        {
           label: 'Amount',
-          value: 'Fee',
+          value: mintAmount === 0 ? 'loading...' : `${format.amountFull(
+            mintAmount,
+            PRV.pDecimals,
+            false,
+          )} PRV`,
         },
         {
           label: 'Network fee',
-          value: format.amountFull(
+          value: `${format.amountFull(
             ACCOUNT_CONSTANT.MAX_FEE_PER_TX,
             PRV.pDecimals,
             false,
-          ),
+          )} PRV`,
         },
       ].map((hook) => <Hook {...hook} key={hook.label} />),
-    [],
+    [mintAmount, prvBalance.amount],
   );
   const onMint = async () => {
     try {
@@ -91,6 +108,17 @@ export const FormMint = React.memo(() => {
       navigation.goBack();
     }
   };
+
+  const getBurnAmount = async () => {
+    const pdexState = await accountSender.rpcCoinService.apiGetPDeState();
+    const amount = pdexState?.Params?.MintNftRequireAmount;
+    setMintAmount(amount);
+  };
+
+  React.useEffect(() => {
+    getBurnAmount().then();
+  }, []);
+
   return (
     <View style={styled.form}>
       <Form>
@@ -99,7 +127,7 @@ export const FormMint = React.memo(() => {
             {hookFactories}
             <Button
               title={`Mint${minting ? '...' : ''}`}
-              disabled={minting}
+              disabled={minting || !mintAmount}
               onPress={onMint}
               buttonStyle={{ marginTop: 24 }}
             />

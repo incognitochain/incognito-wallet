@@ -508,15 +508,16 @@ const actionChangePercentRemovePool =
         removePoolSelector.tokenSelector(state);
       const { maxInputHuman, maxOutputHuman } = maxShareData;
 
+      const percentNum = 100;
       const inputHuman = new BigNumber(maxInputHuman)
         .multipliedBy(percent)
-        .dividedBy(100)
+        .dividedBy(percent)
         .toNumber();
       const inputStr = format.toFixed(inputHuman, inputToken.pDecimals);
 
       const outputHuman = new BigNumber(maxOutputHuman)
         .multipliedBy(percent)
-        .dividedBy(100)
+        .dividedBy(percent)
         .toNumber();
       const outputStr = format.toFixed(outputHuman, outputToken.pDecimals);
       batch(() => {

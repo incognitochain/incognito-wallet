@@ -5,12 +5,14 @@ import { FONT, COLORS } from '@src/styles';
 import { useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import SelectedPrivacy from '@src/models/selectedPrivacy';
-// import { Text } from '@src/components/core';
+import { Text } from '@src/components/core';
+import { mapperIcon } from '@components/SelectOption/SelectOption.modalSelectItem';
+import { KEYS_PLATFORMS_SUPPORTED } from '@screens/PDexV3/features/Swap/Swap.constant';
 import {
   feetokenDataSelector,
   swapInfoSelector,
   selltokenSelector,
-  getExchangeDataEstimateTradeSelector,
+  getExchangeDataEstimateTradeSelector, buytokenSelector,
 } from './Swap.selector';
 // import { KEYS_PLATFORMS_SUPPORTED, platformIdSelectedSelector } from '.';
 
@@ -41,7 +43,93 @@ const styled = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  dot: {
+    width: 5,
+    height: 5,
+    borderRadius: 5 / 2,
+    backgroundColor: 'white',
+  },
+  containerMsg: {
+    // backgroundColor: '#404040',
+    // paddingHorizontal: 16,
+    // paddingVertical: 12,
+    borderRadius: 8,
+    marginTop: 32
+  },
+  interMsg: {
+    fontSize: 13, lineHeight: 20
+  }
 });
+
+export const getInterSwapTradePath = (data) => {
+  let icon1, icon2, path1Str, path2Str, customElm1, customElm2, pAppName1, pAppName2, hooks;
+  const { interPath } = data;
+  if (interPath && interPath.pAppName) {
+    const { tradePath1, tradePath2, fistBatchIsPDex, pAppName } = interPath;
+    if (tradePath1 && tradePath2) {
+      icon1 = mapperIcon({ id: fistBatchIsPDex
+            ? KEYS_PLATFORMS_SUPPORTED.incognito
+            : pAppName
+      });
+      const formatPAppName = pAppName.charAt(0).toUpperCase() + pAppName.slice(1);
+      pAppName1 = fistBatchIsPDex ? 'Incognito Exchange' : formatPAppName;
+      pAppName2 = !fistBatchIsPDex ? 'Incognito Exchange' : formatPAppName;
+      path1Str = tradePath1;
+      customElm1 = (
+        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', flex: 1 }}>
+          {icon1 && icon1}
+          <Text style={{ color: 'white', fontWeight: '500', marginLeft: 12 }}>{tradePath1}</Text>
+        </View>
+      );
+      icon2 = mapperIcon({ id: fistBatchIsPDex
+            ? pAppName
+            : KEYS_PLATFORMS_SUPPORTED.incognito
+      });
+      path2Str = tradePath2;
+      customElm2 = (
+        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', flex: 1 }}>
+          {icon2 && icon2}
+          <Text style={{ color: 'white', fontWeight: '500', marginLeft: 12 }}>{tradePath2}</Text>
+        </View>
+      );
+       hooks = [
+        {
+          label: 'Trade path',
+          customStyledLabel: { color: 'white' },
+          value: path1Str,
+          customValue: customElm1,
+        },
+        {
+          label: '',
+          value: path2Str,
+          customValue: customElm2,
+          customStyledLabel: { color: 'white' },
+        }
+      ];
+    }
+  } else if (data?.tradePathStr) {
+    hooks = [
+      {
+        label: 'Trade path',
+        value: data?.tradePathStr,
+        valueNumberOfLine: 10,
+        customValue: null,
+        customStyledLabel: { color: 'white' },
+      },
+    ];
+  }
+  return {
+    icon1,
+    icon2,
+    path1Str,
+    path2Str,
+    customElm1,
+    customElm2,
+    pAppName1,
+    pAppName2,
+    hooks
+  };
+};
 
 export const useTabFactories = () => {
   const swapInfo = useSelector(swapInfoSelector);
@@ -71,24 +159,18 @@ export const useTabFactories = () => {
         label: 'Rate',
         value: feeTokenData?.rateStr,
       },
-      {
-        label: 'Trade path',
-        value: feeTokenData?.tradePathStr,
-        valueNumberOfLine: 10,
-        // customValue:
-        //   platformId === KEYS_PLATFORMS_SUPPORTED.uni
-        //     ? renderTradePath()
-        //     : null,
-        customValue: null,
-      },
-      {
+    ];
+
+    const { impactAmountStr } = feeTokenData;
+    if (impactAmountStr && impactAmountStr !== '0') {
+      result.push({
         label: 'Price impact',
         value: `${feeTokenData?.impactAmountStr}%`,
         customStyledValue: {
           color: priceImpactDecorator(parseFloat(feeTokenData.impactAmount)),
         },
-      },
-    ];
+      });
+    }
     if (feeTokenData.isMainCrypto) {
       result.push({
         label: 'Fee',
@@ -98,6 +180,10 @@ export const useTabFactories = () => {
       result.push({
         label: 'Fee',
         value: feeTokenData?.feeAmountText ?? '',
+      });
+      result.push({
+        label: 'Network Fee',
+        value: swapInfo?.networkfeeAmountStr || 0,
       });
     }
     return result.filter((hook) => !isEmpty(hook) && !!hook?.value);
@@ -114,6 +200,19 @@ const TabSimple = React.memo(() => {
       {hooksFactories.map((item) => (
         <Hook {...item} key={item.label} />
       ))}
+    </View>
+  );
+});
+
+export const InterSwapMsg = React.memo(() => {
+  const feeTokenData = useSelector(feetokenDataSelector);
+  const interPath = getInterSwapTradePath(feeTokenData);
+  if (!interPath || !interPath.path1Str || !interPath.path2Str) return null;
+  return (
+    <View style={styled.containerMsg}>
+      <Text style={styled.interMsg}>
+        The swap is performed among liquidity pools ({interPath.path1Str} with {interPath.pAppName1} then {interPath.path2Str} with {interPath.pAppName2}). USDT will be returned to your wallet if the swap fails for any reason.
+      </Text>
     </View>
   );
 });

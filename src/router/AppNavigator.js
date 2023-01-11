@@ -14,6 +14,7 @@ import { AppState } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { currentScreenSelector } from '@screens/Navigation';
+import RefillPRVModal from '@src/screens/RefillPRV/RefillPRV.Modal';
 import ROUTE_NAMES from './routeNames';
 import { getRoutesNoHeader } from './routeNoHeader';
 
@@ -102,10 +103,13 @@ const MainNavigator = (props) => {
    if (loading) {
      return <LoadingContainer />;
    }
-
-  return <AppNavigator navigation={navigation} />;
+  return (
+    <>
+      <AppNavigator navigation={navigation} />
+      <RefillPRVModal />
+    </>
+);
 };
 
 MainNavigator.router = AppNavigator.router;
-
 export default MainNavigator;

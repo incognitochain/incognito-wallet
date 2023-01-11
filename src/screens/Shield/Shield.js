@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import React, { useMemo, useState } from 'react';
 import { compose } from 'recompose';
 import { RULE_SORT } from '@screens/PDexV3/features/Swap/Swap.constant';
+import LoadingContainer from '@src/components/LoadingContainer';
 import withShield from './Shield.enhance';
 import { styled } from './Shield.styled';
 
@@ -20,6 +21,7 @@ const Shield = (props) => {
 
   const [tokenList, setTokenList] = useState(availableTokens);
   const [showUnVerifiedTokens, setShowUnVerifiedTokens] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   const [verifiedTokens, unVerifiedTokens] = useMemo(() => {
     const resultFiltered = tokenList.reduce(
@@ -46,8 +48,9 @@ const Shield = (props) => {
   };
 
   let tokens = [];
-
-  if (!verifiedTokens && !unVerifiedTokens) {
+  if (tokenList && tokenList.length < 1) {
+    tokens = [];
+  } else if (!verifiedTokens && !unVerifiedTokens) {
     tokens = [];
   } else if (verifiedTokens && verifiedTokens.length < 1) {
     tokens = [unVerifiedTokens];
@@ -64,13 +67,17 @@ const Shield = (props) => {
     if (!nextValue || nextValue.length < 1) {
       setTokenList(availableTokens);
     } else {
+      setLoading(true);
       const result = (await searchToken(nextValue)) || [];
+      setLoading(false);
       if (result && result.length < 1) {
         setTokenList([]);
-      } else setTokenList(orderBy(result, RULE_SORT.key, RULE_SORT.value));
+      } else {
+        setTokenList(orderBy(result, RULE_SORT.key, RULE_SORT.value));
+      }
     }
+    setLoading(false);
   }, 500);
-
   return (
     <>
       <Header
@@ -91,21 +98,25 @@ const Shield = (props) => {
         }
       />
       <View borderTop style={styled.container}>
-        <ListAllToken2
-          tokensFactories={tokens}
-          styledCheckBox={globalStyled.defaultPaddingHorizontal}
-          setShowUnVerifiedTokens={onSetShowUnVerifiedTokens}
-          isShowUnVerifiedTokens={showUnVerifiedTokens}
-          renderItem={({ item }) => (
-            <TokenFollow
-              item={item}
-              key={item.tokenId}
-              hideStar
-              externalSymbol
-              onPress={() => handleShield(item)}
-            />
-          )}
-        />
+        {isLoading ? (
+          <LoadingContainer />
+        ) : (
+          <ListAllToken2
+            tokensFactories={tokens}
+            styledCheckBox={globalStyled.defaultPaddingHorizontal}
+            setShowUnVerifiedTokens={onSetShowUnVerifiedTokens}
+            isShowUnVerifiedTokens={showUnVerifiedTokens}
+            renderItem={({ item }) => (
+              <TokenFollow
+                item={item}
+                key={item.tokenId}
+                hideStar
+                externalSymbol
+                onPress={() => handleShield(item)}
+              />
+            )}
+          />
+        )}
       </View>
     </>
   );

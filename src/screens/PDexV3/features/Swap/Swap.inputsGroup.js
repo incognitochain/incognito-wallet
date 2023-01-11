@@ -12,6 +12,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { change, Field } from 'redux-form';
 import { throttle } from 'lodash';
+import {InterSwapMsg} from '@screens/PDexV3/features/Swap/Swap.simpleTab';
 import { formConfigs } from './Swap.constant';
 import SwapDetails from './Swap.details';
 import { maxAmountValidatorForSellInput } from './Swap.utils';
@@ -34,6 +35,7 @@ import {
   actionSetFocusToken,
   actionSwapToken,
   actionToggleProTab,
+  actionNavigateToSelectToken,
 } from './Swap.actions';
 import SwapProTab from './Swap.proTab';
 import { inputGroupStyled as styled } from './Swap.styled';
@@ -56,6 +58,7 @@ const SwapInputsGroup = React.memo(() => {
   };
 
   const onSelectSellToken = () => {
+    dispatch(actionNavigateToSelectToken(true));
     navigation.navigate(routeNames.SelectTokenScreen, {
       data: {
         from: 'sellToken',
@@ -66,6 +69,7 @@ const SwapInputsGroup = React.memo(() => {
   };
 
   const onSelectBuyToken = () => {
+    dispatch(actionNavigateToSelectToken(true));
     navigation.navigate(routeNames.SelectTokenScreen, {
       data: {
         from: 'buyToken',
@@ -93,6 +97,7 @@ const SwapInputsGroup = React.memo(() => {
         buyInputAmount,
         feetokenData,
         navigation,
+        swapInfo,
       ),
     [
       sellInputAmount?.originalAmount,
@@ -190,6 +195,7 @@ const SwapInputsGroup = React.memo(() => {
         visibleHeader={false}
         onChange={(value) => onChange(formConfigs.buytoken, value)}
       />
+      <InterSwapMsg />
       <ToggleArrow
         label="Advanced"
         toggle={swapInfo?.toggleProTab}

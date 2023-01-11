@@ -62,6 +62,7 @@ const useSendSelf = ({ error, setLoading, setError }) => {
       }
       setLoading(false);
     } catch (e) {
+      console.log('[handleSendMainCrypto] ERROR: ', e);
       setError(new ExHandler(error).getMessage(error?.message));
       setLoading(false);
     }

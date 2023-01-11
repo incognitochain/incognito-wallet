@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { RefreshControl, ScrollView, Text } from 'react-native';
 import PropTypes from 'prop-types';
 import { styled as mainStyle } from '@screens/PDexV3/PDexV3.styled';
-import { Header, SuccessModal } from '@src/components';
+import { Header, SuccessModal, RowSpaceText } from '@src/components';
 import {
   formConfigsRemovePool,
   LIQUIDITY_MESSAGES,
@@ -28,6 +28,7 @@ import withTransaction from '@screens/PDexV3/features/Liquidity/Liquidity.enhanc
 import { useNavigation } from 'react-navigation-hooks';
 import NetworkFee from '@src/components/NetworkFee';
 import { withLayout_2 } from '@components/Layout';
+import { actionRefillPRVModalVisible } from '@src/screens/RefillPRV/RefillPRV.actions';
 
 const initialFormValues = {
   inputToken: '',
@@ -105,6 +106,7 @@ const InputsGroup = () => {
 };
 
 const RemoveLPButton = React.memo(({ onSubmit }) => {
+  const dispatch = useDispatch();
   const { disabled } = useSelector(removePoolSelector.disableRemovePool);
   const amountSelector = useSelector(removePoolSelector.inputAmountSelector);
   const { feeAmount } = useSelector(removePoolSelector.feeAmountSelector);
@@ -118,19 +120,29 @@ const RemoveLPButton = React.memo(({ onSubmit }) => {
     formConfigsRemovePool.formName,
     formConfigsRemovePool.outputToken,
   );
+  const {
+    isEnoughtPRVNeededAfterBurn,
+    isCurrentPRVBalanceExhausted,
+  } =  useSelector(removePoolSelector.validateTotalBurnPRVSelector);
+
   const handleSubmit = () => {
     // console.log('[handleSubmit] disabled ', disabled);
     if (disabled) return;
-    const params = {
-      fee: feeAmount,
-      poolTokenIDs: [inputAmount.tokenId, outputAmount.tokenId],
-      poolPairID: poolId,
-      shareAmount: inputAmount.withdraw,
-      nftID: nftId,
-      amount1: String(inputAmount.originalInputAmount),
-      amount2: String(outputAmount.originalInputAmount),
-    };
-    onSubmit(params);
+    // console.log('isEnoughtTotalPRVAfterBurned ', isEnoughtTotalPRVAfterBurned);
+    if (!isEnoughtPRVNeededAfterBurn) {
+       dispatch(actionRefillPRVModalVisible(true));
+    } else {
+      const params = {
+        fee: feeAmount,
+        poolTokenIDs: [inputAmount.tokenId, outputAmount.tokenId],
+        poolPairID: poolId,
+        shareAmount: inputAmount.withdraw,
+        nftID: nftId,
+        amount1: String(inputAmount.originalInputAmount),
+        amount2: String(outputAmount.originalInputAmount),
+      };
+      onSubmit(params);
+    }
   };
 
   return (
@@ -139,6 +151,18 @@ const RemoveLPButton = React.memo(({ onSubmit }) => {
       title={LIQUIDITY_MESSAGES.removePool}
       onPress={handleSubmit}
     />
+  );
+});
+
+export const Extra = React.memo(() => {
+  const hooks = useSelector(removePoolSelector.hookFactoriesSelector);
+  const renderHooks = () => {
+    return hooks.filter(item => !!item).map(item => <RowSpaceText {...item} key={item?.label} />);
+  };
+  return(
+    <View style={{ marginTop: 20 }}>
+      {renderHooks()}
+    </View>
   );
 });
 
@@ -171,6 +195,7 @@ const RemovePool = ({
       <View style={styled.padding}>
         {!!error && <Text style={styled.warning}>{error}</Text>}
         <RemoveLPButton onSubmit={onSubmit} />
+        <Extra />
         {showFaucet && <NetworkFee feeStr={feeAmountStr} />}
       </View>
     </>
@@ -184,12 +209,12 @@ const RemovePool = ({
       <Header style={styled.padding} />
       <View borderTop style={styled.container}>
         <ScrollView
-          refreshControl={
+          refreshControl={(
             <RefreshControl
               refreshing={isFetching}
               onRefresh={onInitRemovePool}
             />
-          }
+          )}
           showsVerticalScrollIndicator={false}
         >
           <Form>{renderContent()}</Form>

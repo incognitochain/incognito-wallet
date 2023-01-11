@@ -30,4 +30,6 @@ export default {
   MAKE_UPDATE_FIRMWARE_NODE: 'Make sure your firmware is up to date and that everything is working properly. This may take a few minutes. Your screen will update when the process is complete.',
   UPDATE_FIRMWARE_NODE_DONE: 'All done! Your Node is as good as new.',
   UPDATE_FIRMWARE_NODE_FAIL: 'Please power cycle your Node to continue.',
+
+  PRV_NOT_ENOUGHT: 'Your PRV balance is insufficient to cover network fees.',
 };

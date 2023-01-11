@@ -18,7 +18,7 @@ const ImageCached = (props) => {
   return (
     <>
       <FastImage
-        style={style}
+        style={[style, { borderRadius: 50 }]}
         source={{
           uri: uri,
           priority: FastImage.priority.high,

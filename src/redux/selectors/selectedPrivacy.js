@@ -6,6 +6,13 @@ import { ExHandler } from '@src/services/exception';
 import { BIG_COINS, PRIORITY_LIST } from '@src/screens/Dex/constants';
 import toLower from 'lodash/toLower';
 import { followTokensWalletSelector } from '@screens/Wallet/features/FollowList/FollowList.selector';
+import {
+  ACCOUNT_CONSTANT,
+  PRVIDSTR as PRV_ID,
+} from 'incognito-chain-web-js/build/wallet';
+import convert from '@src/utils/convert';
+import BigNumber from 'bignumber.js';
+import { minPRVNeededSelector } from '@src/screens/RefillPRV/RefillPRV.selector';
 import { defaultAccount } from './account';
 import token, {
   tokensFollowedSelector,
@@ -190,6 +197,104 @@ export const getPrivacyDataFilterSelector = createSelector(
   },
 );
 
+export const getPrivacyPRVInfo = createSelector(
+  getPrivacyDataByTokenID,
+  (getFn) => {
+    const prvBalance = getFn(PRV_ID);
+
+    const {
+      amount = 0,
+      priceUsd,
+      decimals,
+      pDecimals,
+      tokenId,
+      symbol,
+      externalSymbol,
+    } = prvBalance;
+
+    //
+    const feePerTx = ACCOUNT_CONSTANT.MAX_FEE_PER_TX || 0;
+    const feePerTxToHuman = convert.toHumanAmount(
+      new BigNumber(feePerTx),
+      pDecimals,
+    );
+    const feePerTxToHumanStr =  feePerTxToHuman.toString();
+    const feeAndSymbol =  `${feePerTxToHumanStr} ${symbol || externalSymbol} `;
+    //
+    const prvBalanceOriginal = convert.toNumber(amount) || 0;
+    const prvbalanceToHuman = convert.toHumanAmount(
+      new BigNumber(prvBalanceOriginal),
+      pDecimals,
+    );
+    const prvbalanceToHumanStr = prvbalanceToHuman.toString();
+    const isEnoughNetworkFeeDefault = new BigNumber(prvBalanceOriginal).gt(
+      new BigNumber(feePerTx),
+    );
+    const result = {
+      priceUsd,
+      decimals,
+      tokenId,
+      pDecimals,
+      symbol,
+      externalSymbol,
+      PRV_ID,
+      feePerTx,
+      feePerTxToHuman,
+      feePerTxToHumanStr,
+      feeAndSymbol,
+      
+      prvBalanceOriginal,
+      prvbalanceToHuman,
+      prvbalanceToHumanStr,
+      isEnoughNetworkFeeDefault,
+    };
+
+    // console.log('[getPrivacyPRVInfo] RESULT: ', result);
+
+    return result;
+  },
+);
+
+export const validatePRVBalanceSelector = createSelector(
+  getPrivacyPRVInfo,
+  minPRVNeededSelector,
+  (prvBalanceInfor, minPRVNeeded) => (totalPRVBurn) => {
+    
+    let result = {
+      isEnoughtPRVNeededAfterBurn: true,
+      isCurrentPRVBalanceExhausted: false,
+    };
+
+    try {
+      const { prvBalanceOriginal, feePerTx } = prvBalanceInfor;
+      const totalPRVBurnBN =  new BigNumber(totalPRVBurn || feePerTx); //If totalPRVBurn = 0, get default burn 0.1PRV / Transaction
+      const prvBalanceOriginalBN =  new BigNumber(prvBalanceOriginal || 0);
+      const minPRVNeededBN =  new BigNumber(minPRVNeeded || feePerTx);
+
+      // console.log('[validatePRVBalanceSelector]  ', {
+      //   prvBalanceOriginal,
+      //   totalPRVBurn,
+      //   minPRVNeeded
+      // });
+
+      // if current PRV Balance < minPRVNeededBN 
+      // (isCurrentPRVBalanceExhausted = true, otherwise isCurrentPRVBalanceExhausted = false )
+      // User can not perform any action 
+      result.isCurrentPRVBalanceExhausted = prvBalanceOriginalBN.lt(minPRVNeededBN);
+
+      // if [current PRV Balance] - [total PRV Burn] > minPRVNeededBN 
+      // (isEnoughtPRVNeededAfterBurn = true, otherwise isEnoughtPRVNeededAfterBurn = false )
+      // User can perform any action after create transaction!
+      result.isEnoughtPRVNeededAfterBurn = prvBalanceOriginalBN.minus(totalPRVBurnBN).gt(minPRVNeededBN); 
+
+    } catch (error) {
+      console.log('[validatePRVBalanceSelector] error ', error);
+    } finally {
+      // console.log('[validatePRVBalanceSelector] RESULT  ', result);
+    }
+    return result;
+  });
+
 export default {
   getPrivacyDataByTokenID,
   selectedPrivacyTokenID,
@@ -199,4 +304,6 @@ export default {
   findTokenFollowedByIdSelector,
   getAllPrivacyDataSelector,
   getPrivacyDataFilterSelector,
+  getPrivacyPRVInfo,
+  validatePRVBalanceSelector
 };

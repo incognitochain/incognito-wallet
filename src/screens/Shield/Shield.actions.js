@@ -56,9 +56,6 @@ export const actionGetAddressToShield = async ({
 }) => {
   try {
     let generateResult = {};
-    if (!selectedPrivacy?.isPToken) {
-      return null;
-    }
     if (
       selectedPrivacy?.currencyType ===
       CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.ETH
