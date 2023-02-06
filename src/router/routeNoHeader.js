@@ -161,6 +161,8 @@ import HomeLP from '@screens/MainTabBar/features/HomeLP';
 import Tutorial from '@screens/Turotial/Tutorial';
 import LiquidityVer1 from '@screens/Dex/Liquidity';
 import SelectionTokenScreen from '@src/screens/PDexV3/features/Swap/SelectToken';
+import ScanQrCode2 from '@src/screens/ScanQrCode/index';
+import StakeConfirm from '@src/screens/StakeConfirm/index';
 
 const masterKeyRoutes = [
   {
@@ -782,6 +784,14 @@ const routes = [
   {
     screen: SelectionTokenScreen,
     name: routeNames.SelectTokenScreen,
+  },
+  {
+    screen: ScanQrCode2,
+    name: routeNames.ScanQrCode2,
+  },
+  {
+    screen: StakeConfirm,
+    name: routeNames.StakeConfirm,
   },
   ...masterKeyRoutes,
   ...devRoutes,

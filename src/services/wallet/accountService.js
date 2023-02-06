@@ -801,6 +801,8 @@ export default class Account {
     wallet,
     fee,
     version = PrivacyVersion.ver2,
+    stakeAmount,
+    stakingType,
   } = {}) {
     try {
       new Validator('createAndSendStakingTx-account', account).required();
@@ -811,8 +813,8 @@ export default class Account {
         .number();
       const accountWallet = this.getAccount(account, wallet);
       return accountWallet.createAndSendStakingTx({
-        transfer: { fee },
-        extra: { version },
+        transfer: { fee, stakeAmount },
+        extra: { version, stakingType },
       });
     } catch (error) {
       throw error;

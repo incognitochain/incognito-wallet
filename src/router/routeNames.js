@@ -217,4 +217,6 @@ export default {
   LiquidityVer1: 'LiquidityVer1',
   ShieldRefund: 'ShieldRefund',
   SelectTokenScreen: 'SelectTokenScreen',
+  ScanQrCode2: 'ScanQrCode2',
+  StakeConfirm: 'StakeConfirm',
 };

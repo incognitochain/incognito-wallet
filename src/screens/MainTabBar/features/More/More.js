@@ -93,6 +93,15 @@ const Categories = [
         },
       },
       {
+        route: routeNames.ScanQrCode2,
+        label: 'Scan QR',
+        icon: ConsolidateIcon,
+        // key: appConstant.DISABLED.CONSOLIDATE,
+        // params: {
+        //   showHeader: true,
+        // },
+      },
+      {
         route: routeNames.Tutorial,
         label: 'Tutorial',
         icon: UTubeIcon,
