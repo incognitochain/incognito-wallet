@@ -1,22 +1,25 @@
-import React from 'react';
-import More from '@screens/MainTabBar/features/More';
-import TabAssets from '@screens/MainTabBar/features/Assets';
-import TabTrade from '@screens/MainTabBar/features/Trade';
-import TabPrivacyApps from '@screens/MainTabBar/features/PrivacyApps';
 import {
+  AssetsIcon,
+  LiquidityIcon,
+  MarketIcon,
   MoreIcon,
   TradeIcon,
-  AssetsIcon,
-  PrivacyAppsIcon,
-  MarketIcon,
-  LiquidityIcon,
 } from '@components/Icons';
-import { Text } from 'react-native';
-import Market from '@screens/MainTabBar/features/Market';
+import TabAssets from '@screens/MainTabBar/features/Assets';
 import HomeLP from '@screens/MainTabBar/features/HomeLP';
-import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
+import Market from '@screens/MainTabBar/features/Market';
+import More from '@screens/MainTabBar/features/More';
+import TabTrade from '@screens/MainTabBar/features/Trade';
 import colors from '@src/styles/colors';
+import { isIOS } from '@src/utils/platform';
+import React from 'react';
+import { Dimensions, Text } from 'react-native';
+import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import { styled } from './MainTabBar.styled';
+
+const { height } = Dimensions.get('window');
+
+const isIPhoneHasDynamicIsland = isIOS && (height === 852 || height === 932);
 
 const TabNavigator = createMaterialBottomTabNavigator(
   {
@@ -74,6 +77,7 @@ const TabNavigator = createMaterialBottomTabNavigator(
       borderTopWidth: 0,
       backgroundColor: '#1A1A1A',
       justifyContent: 'center',
+      paddingBottom: isIPhoneHasDynamicIsland ? 34 : 0,
     },
   },
 );
