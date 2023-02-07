@@ -18,8 +18,9 @@ export const feeDataSelector = createSelector(
   estimateFeeSelector,
   selectedPrivacySelector.selectedPrivacy,
   childSelectedPrivacySelector.childSelectedPrivacy,
-  (estimateFee, selectedPrivacy, childSelectedPrivacy) =>
-    getFeeData(estimateFee, selectedPrivacy, childSelectedPrivacy),
+  getPrivacyPRVInfo,
+  (estimateFee, selectedPrivacy, childSelectedPrivacy, prvBalanceInfo) =>
+    getFeeData(estimateFee, selectedPrivacy, childSelectedPrivacy, prvBalanceInfo),
 );
 
 export const networksSelector = createSelector(

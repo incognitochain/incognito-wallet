@@ -13,7 +13,11 @@ import { focus } from 'redux-form';
 import { actionSetDefaultPair } from '@screens/PDexV3/features/Swap';
 import { actionRefillPRVModalVisible } from '@src/screens/RefillPRV/RefillPRV.actions';
 import { PRV } from '@src/constants/common';
-
+import { actionFaucetPRV } from '@src/redux/actions/token';
+import { MESSAGES } from '@src/constants';
+import { ExHandler } from '@src/services/exception';
+import FaucetPRVModal, { useFaucet } from '@src/components/Modal/features/FaucetPRVModal';
+import { getPrivacyPRVInfo } from '@src/redux/selectors/selectedPrivacy';
 import enhanceUnifiedAlert from './Swap.enhanceUnifiedAlert';
 import {
   formConfigs,
@@ -41,15 +45,21 @@ import {
   feeErorSelector,
   getIsNavigateToSelectToken,
   validateTotalBurningPRVSelector,
+  sellInputTokenSelector
 } from './Swap.selector';
+
 
 const enhance = (WrappedComp) => (props) => {
   const dispatch = useDispatch();
   const swapInfo = useDebounceSelector(swapInfoSelector);
   const formErrors = useDebounceSelector(swapFormErrorSelector);
   const buyInputToken = useDebounceSelector(buyInputTokenSeletor);
+  const sellInputToken = useDebounceSelector(sellInputTokenSelector);
   const feeTokenData = useDebounceSelector(feetokenDataSelector);
   const estimateTradeError = useSelector(getEsimateTradeError);
+  const { isNeedFaucet } = useSelector(getPrivacyPRVInfo);
+  const [navigateFaucet] = useFaucet();
+
   const {
     isEnoughtPRVNeededAfterBurn,
     isCurrentPRVBalanceExhausted,
@@ -62,6 +72,7 @@ const enhance = (WrappedComp) => (props) => {
 
   const [visibleSignificant, setVisibleSignificant] = useState(false);
   const [ordering, setOrdering] = useState(false);
+  const [errorMessage, setErrorMessage] = React.useState(undefined);
   const navigation = useNavigation();
   const {
     isPrivacyApp = false,
@@ -73,44 +84,81 @@ const enhance = (WrappedComp) => (props) => {
     dispatch(actionReset());
   };
 
+  const navigateToFaucetWeb = async () => {
+    navigateFaucet();
+  };
+  
   const initSwapForm = (refresh = false) =>
     dispatch(
       actionInitSwapForm({
-        defaultPair: swapInfo?.defaultPair,
+        defaultPair: SWAP_DEFAULT_FAIR,
         refresh,
         shouldFetchHistory: true,
       }),
     );
 
   const handleCreateSwapOrder = async () => {
-    const tx = await dispatch(actionFetchSwap());
-
-    if (tx) {
-      setTimeout(() => {
-        dispatch(
-          actionToggleModal({
-            data: (
-              <TradeSuccessModal
-                title="Swap initiated!"
-                desc={`You placed an order to sell\n${
-                  swapInfo?.sellInputAmountStr || ''
-                } for ${swapInfo?.buyInputAmountStr || ''}.`}
-                handleTradeSucesss={() => initSwapForm()}
-                sub="Your balance will update in a couple of minutes after the swap is finalized."
-              />
-            ),
-            visible: true,
-          }),
-        );
-      }, 500);
+    try {
+      const tx = await dispatch(actionFetchSwap());
+      if (tx) {
+        setTimeout(() => {
+          dispatch(
+            actionToggleModal({
+              data: (
+                <TradeSuccessModal
+                  title="Swap initiated!"
+                  desc={`You placed an order to sell\n${
+                    swapInfo?.sellInputAmountStr || ''
+                  } for ${swapInfo?.buyInputAmountStr || ''}.`}
+                  handleTradeSucesss={() => initSwapForm()}
+                  sub="Your balance will update in a couple of minutes after the swap is finalized."
+                />
+              ),
+              visible: true,
+            }),
+          );
+        }, 500);
+      }
+    } catch (e) {
+      if (typeof e === 'string') {
+        setErrorMessage(e);
+      }
+      if (typeof e === 'object') {
+        const jsonObj = JSON.stringify(e);
+        const info = e.code || e.name;
+        const message = e.detail || e.message;
+        const errorMessage = `[${info}]: ${message}`;
+        // console.log(jsonObj);
+        if (jsonObj.includes('-3001') || jsonObj.includes('UTXO')) {
+          setErrorMessage(MESSAGES.MAXIMUM_UTXO_ERROR);
+        } else {
+          setErrorMessage(errorMessage);
+        }
+      } else {
+      new ExHandler(e).showErrorToast();
+      }
     }
   };
+
   const handleConfirm = async () => {
     try {
+
       if (ordering) {
         return;
       }
+
+      if (isNeedFaucet) {
+        navigateToFaucetWeb();
+        return;
+      }
+      // if (!sellInputToken.isMainCrypto && isCurrentPRVBalanceExhausted) {
+      //   await dispatch(actionFaucetPRV(<FaucetPRVModal />));
+      //   return;
+      // }
+
       await setOrdering(true);
+      await setErrorMessage(true);
+    
       const fields = [formConfigs.selltoken, formConfigs.buytoken];
       for (let index = 0; index < fields.length; index++) {
         const field = fields[index];
@@ -118,7 +166,8 @@ const enhance = (WrappedComp) => (props) => {
           return dispatch(focus(formConfigs.formName, field));
         }
       }
-      if (estimateTradeError || prvFeeError || isCurrentPRVBalanceExhausted) {
+
+      if (estimateTradeError || prvFeeError) {
         return;
       }
 
@@ -139,21 +188,12 @@ const enhance = (WrappedComp) => (props) => {
         dispatch(actionToggleProTab(true));
         return;
       }
-      // if (!sellInputToken.isMainCrypto) {
-      //   const needFaucet = await dispatch(
-      //     actionCheckNeedFaucetPRV(
-      //       <FaucetPRVModal />,
-      //       swapInfo?.accountBalance,
-      //     ),
-      //   );
-      //   if (needFaucet) {
-      //     return;
-      //   }
-      // }
       const { isSignificant } = feeTokenData;
       if (isSignificant) {
         return setVisibleSignificant(true);
       }
+
+      
       await handleCreateSwapOrder();
     } catch {
       //
@@ -197,6 +237,7 @@ const enhance = (WrappedComp) => (props) => {
     React.useCallback(() => {
       const setDefaultPair = async () => {
         dispatch(actionSetDefaultPair(SWAP_DEFAULT_FAIR));
+        initSwapForm();
       };
 
       if (isNavigateFromMarketTab || navigateToSelectToken) {
@@ -209,7 +250,7 @@ const enhance = (WrappedComp) => (props) => {
 
   return (
     <ErrorBoundary>
-      <WrappedComp {...{ ...props, handleConfirm, initSwapForm }} />
+      <WrappedComp {...{ ...props, handleConfirm, initSwapForm, errorMessage, setErrorMessage}} />
       <RemoveSuccessDialog
         visible={visibleSignificant}
         onPressCancel={() => setVisibleSignificant(false)}

@@ -29,7 +29,7 @@ export const enhance = (WrappedComp) => (props) => {
   const isFormEstimateFeeValid = useDebounceSelector((state) =>
     isValid(formEstimateFee)(state),
   );
-  const { handleSendAnonymously, handleUnShieldCrypto } = props;
+  const { handleSendAnonymously, handleUnShieldCrypto, setErrorMessage } = props;
   const navigation = useNavigation();
   const {
     fee,
@@ -128,6 +128,8 @@ export const enhance = (WrappedComp) => (props) => {
         return;
       }
       await setIsSending(true);
+      await setErrorMessage(undefined);
+
       if (isSend) {
         dispatch(requestUpdateMetrics(ANALYTICS.ANALYTIC_DATA_TYPE.SEND));
         await handleSendAnonymously(payload);

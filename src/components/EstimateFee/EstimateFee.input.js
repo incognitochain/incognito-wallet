@@ -10,12 +10,15 @@ import convert from '@src/utils/convert';
 import { BtnFast } from '@src/components/Button';
 import { COLORS } from '@src/styles';
 import PropTypes from 'prop-types';
-import { CONSTANT_COMMONS } from '@src/constants';
+import { CONSTANT_COMMONS , MESSAGES } from '@src/constants';
 import {
   selectedPrivacySelector,
   childSelectedPrivacySelector,
 } from '@src/redux/selectors';
 import { Text } from '@components/core';
+import {
+  PRVIDSTR as PRV_ID,
+} from 'incognito-chain-web-js/build/wallet';
 import { styled } from './EstimateFee.styled';
 import withEstimateFee from './EstimateFee.enhance';
 import { estimateFeeSelector, feeDataSelector } from './EstimateFee.selector';
@@ -43,7 +46,7 @@ const Form = createForm(formName, {
 });
 
 const EstimateFeeInput = (props) => {
-  const { types, isFetched } = useSelector(estimateFeeSelector);
+  const { types, isFetched, actived } = useSelector(estimateFeeSelector);
   const {
     feeUnit,
     minFee,
@@ -80,12 +83,13 @@ const EstimateFeeInput = (props) => {
       const _maxFee = convert.toNumber(maxFee, true);
       const _fee = convert.toNumber(totalFee, true);
       const _minFee = convert.toNumber(minFee, true);
+      const messageError =  actived === PRV_ID ? MESSAGES.PRV_NOT_ENOUGHT : 'Insufficient balance.';
       try {
         maxFeeValidator = validator.maxValue(_maxFee, {
           message:
             _maxFee > _fee
               ? `Must be less than ${maxFee} ${feeUnit}`
-              : 'Insufficient balance.',
+              : messageError,
         });
         minFeeValidator = validator.minValue(_minFee, {
           message: `Must be at least ${minFee} ${feeUnit}`,

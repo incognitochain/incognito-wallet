@@ -17,6 +17,8 @@ import uniq from 'lodash/uniq';
 import PropTypes from 'prop-types';
 import { validatePRVBalanceSelector } from '@src/redux/selectors/selectedPrivacy';
 import { actionRefillPRVModalVisible } from '@src/screens/RefillPRV/RefillPRV.actions';
+import { actionFaucetPRV } from '@src/redux/actions/token';
+import FaucetPRVModal from '@src/components/Modal/features/FaucetPRVModal';
 
 const PortfolioReward = ({ onCreateWithdrawFeeLP }) => {
   const dispatch = useDispatch();
@@ -45,6 +47,11 @@ const PortfolioReward = ({ onCreateWithdrawFeeLP }) => {
       amount1: String(0),
       amount2: String(0)
     };
+
+    if (isCurrentPRVBalanceExhausted) {
+      dispatch(actionFaucetPRV(<FaucetPRVModal />));
+      return;
+    }
 
     if (!isEnoughtPRVNeededAfterBurn) {
       dispatch(actionRefillPRVModalVisible(true));

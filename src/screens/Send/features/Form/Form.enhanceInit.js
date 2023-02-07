@@ -23,6 +23,8 @@ import { formName } from './Form.enhance';
 export const enhanceInit = (WrappedComp) => (props) => {
   const dispatch = useDispatch();
   const [init, setInit] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState(undefined);
+
   const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const accountBalance = useSelector(
     accountSelector.defaultAccountBalanceSelector,
@@ -92,7 +94,12 @@ export const enhanceInit = (WrappedComp) => (props) => {
   }
   return (
     <ErrorBoundary>
-      <WrappedComp {...props} isPortalToken={isPortalToken} />
+      <WrappedComp
+        {...props}
+        isPortalToken={isPortalToken}
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+      />
     </ErrorBoundary>
   );
 };

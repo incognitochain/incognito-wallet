@@ -30,7 +30,7 @@ export const getMaxAmount = ({ selectedPrivacy, isUseTokenFee, totalFee }) => {
   };
 };
 
-export const getFeeData = (estimateFee, selectedPrivacyData, childSelectedPrivacyData) => {
+export const getFeeData = (estimateFee, selectedPrivacyData, childSelectedPrivacyData, prvBalanceInfo) => {
   const {
     actived,
     minFeePTokenText,
@@ -62,6 +62,7 @@ export const getFeeData = (estimateFee, selectedPrivacyData, childSelectedPrivac
     totalFees,
   } = estimateFee;
   const { amount } = selectedPrivacyData;
+  const { isNeedFaucet } = prvBalanceInfo;
   const isUseTokenFee = actived !== CONSTANT_COMMONS.PRV.id;
   const feeUnit = isUseTokenFee
     ? selectedPrivacyData?.externalSymbol || selectedPrivacyData.symbol
@@ -84,7 +85,9 @@ export const getFeeData = (estimateFee, selectedPrivacyData, childSelectedPrivac
     totalFee,
   });
   let titleBtnSubmit = 'Send';
-  if (isFetching) {
+  if (isNeedFaucet) {
+    titleBtnSubmit = 'Faucet';
+  } else if (isFetching) {
     titleBtnSubmit = 'Calculating fee...';
   }
   const feeText = format.toFixed(

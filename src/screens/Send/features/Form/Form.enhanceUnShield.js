@@ -85,6 +85,7 @@ export const getTxOutChainLinkByTokenInfo = (tokenInfo) => {
 };
 
 export const enhanceUnshield = (WrappedComp) => (props) => {
+  const { setErrorMessage } = props;
   const {
     isETH,
     fee,
@@ -322,7 +323,7 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
 
   const handleDecentralizedWithdraw = async (payload) => {
     try {
-      const { amount, originalAmount, paymentAddress } = payload;
+      const { amount, originalAmount, paymentAddress, isNear } = payload;
       const amountToNumber = convert.toNumber(amount, true);
       const requestedAmount = format.toFixed(
         amountToNumber,
@@ -354,23 +355,29 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
         fast2x,
         totalFees
       };
-      // if (!userFeesData?.ID) throw new Error('Missing id withdraw session');
-      if (!userFeesData?.FeeAddressShardID)
-        throw new Error('Missing FeeAddressShardID');
 
+      if (isNear) {
+        if (!userFeesData?.ID) throw new Error('Missing id withdraw session');
+      } else if (!userFeesData?.FeeAddressShardID) {
+        throw new Error('Missing FeeAddressShardID');
+      }
+    
       let _tx;
       const txHashHandler = async ({ txId }) => {
         _tx = { ...data, burningTxId: txId };
-        // TO DO (New Unshield flow)
-        // await dispatch(
-        //   actionAddStorageDataDecentralized({
-        //     keySave,
-        //     tx: _tx,
-        //   }),
-        // );
+        if (isNear) {
+          // (Old Unshield flow)
+          await dispatch(
+            actionAddStorageDataDecentralized({
+              keySave,
+              tx: _tx,
+            }),
+          );
+        }
       };
 
       const txHandler = async (dataCallback) => {
+        // (New Unshield flow)
         const { rawTx = '', txId = '' } = dataCallback;
         const OTA = await accountService.getOTAReceive({
           wallet,
@@ -405,8 +412,13 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
       } else if (isUnshieldPUnifiedToken) {
         tx = await handleBurningUnifiedToken(payload, txHashHandler, txHandler);
       } else {
-        tx = await handleBurningToken(payload, txHashHandler, txHandler);
+        if (isNear) {
+          tx = await handleBurningToken(payload, txHashHandler);
+        } else {
+          tx = await handleBurningToken(payload, txHashHandler, txHandler);
+        }
       }
+
       if (toggleDecentralized) {
         await setState({
           ...state,
@@ -414,7 +426,15 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
         });
         await Utils.delay(15);
       } else {
-        // await withdraw({ ..._tx, signPublicKeyEncode });
+
+
+        //Token Near is Decentralized but not belong to EVM yet!!!
+        if (isNear) {
+
+          // (Old Unshield flow)
+          await withdraw({ ..._tx, signPublicKeyEncode });
+        }
+              
         await dispatch(
           actionRemoveStorageDataDecentralized({
             keySave,
@@ -601,13 +621,30 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
         await dispatch(reset(formName));
       }
     } catch (e) {
+      // console.log('EEEE ', { e });
       if (e.message === MESSAGES.NOT_ENOUGH_NETWORK_FEE) {
         Toast.showError(e.message);
       } else {
-        new ExHandler(
-          e,
-          'Something went wrong. Please try again.',
-        ).showErrorToast(true);
+        // new ExHandler(
+        //   e,
+        //   'Something went wrong. Please try again.',
+        // ).showErrorToast(true);
+
+        if (typeof e === 'string') {
+          setErrorMessage(e);
+        }
+        if (typeof e === 'object') {
+          const jsonObj = JSON.stringify(e);
+          const info = e.code || e.name;
+          const message = e.detail || e.message;
+          const errorMessage = `[${info}]: ${message}`;
+          // console.log(jsonObj);
+          if (jsonObj.includes('-3001') || jsonObj.includes('UTXO')) {
+            setErrorMessage(MESSAGES.MAXIMUM_UTXO_ERROR);
+          } else {
+            setErrorMessage(errorMessage);
+          }
+        }
       }
     }
   };

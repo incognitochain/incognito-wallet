@@ -11,6 +11,12 @@ export const styledForm = StyleSheet.create({
   submitBtn: {
     marginVertical: 50,
   },
+  faucetStyle: {
+    // ovnerride if needed
+    //(example)
+    // backgroundColor: 'black',
+    // color: 'white',
+  },
   submitBtnUnShield: {
     backgroundColor: COLORS.orange,
   },

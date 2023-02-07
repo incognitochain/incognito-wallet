@@ -107,6 +107,101 @@ export const availablePayFeeByPRVValidator = ({
   return undefined;
 };
 
+export const maxAmountValidatorForPRVSellInput = (
+  sellInputAmount,
+  buyInputAmount,
+  feetokenData,
+  navigation,
+  swapInfo,
+  inputValue,
+  privacyPRVInfo,
+  totalFeePRV
+) => {
+  // console.log('[LOG]', {
+  //   sellInputAmount,
+  //   buyInputAmount,
+  //   feetokenData,
+  //   navigation,
+  //   swapInfo,
+  //   inputValue,
+  //   privacyPRVInfo,
+  //   totalFeePRV
+  // });
+
+  if (!sellInputAmount || !buyInputAmount) {
+    return undefined;
+  }
+
+  const {
+    originalAmount,
+    symbol,
+    tokenData,
+    tokenId,
+    pDecimals,
+  } = sellInputAmount || {};
+
+  const sellTokenIsPRV = tokenId === PRV.id;
+
+  if (!sellTokenIsPRV) return undefined;
+
+  const { prvBalanceOriginal, feePerTx } = privacyPRVInfo;
+
+  // Repare value for comparation
+  const totalFeePRVBN = new BigNumber(totalFeePRV);
+  const prvBalanceOriginalBN = new BigNumber(prvBalanceOriginal);
+  const originalAmountBN = new BigNumber(originalAmount);
+  const feePerTxBN = new BigNumber(feePerTx);
+
+  const onMessagePress = () => {
+    navigation.navigate(routeNames.ChooseNetworkForShield, {
+      tokenSelected: tokenData,
+    });
+  };
+
+  // Input > Balance
+  if (originalAmountBN.isGreaterThanOrEqualTo(prvBalanceOriginalBN)) {
+    return (
+      <Text onPress={onMessagePress}>
+        {`Your ${PRV.symbol} balance is insufficient.`}
+      </Text>
+    );
+  }
+
+  // Balance < TotalFee 
+  if (prvBalanceOriginalBN.lt(totalFeePRVBN)) {
+    return (
+      <Text onPress={onMessagePress}>
+        {`Your ${PRV.symbol} balance is insufficient.`}
+      </Text>
+    );
+  }
+
+  // Balance < Network Fee + 0.1 = 0.2
+  if (prvBalanceOriginalBN.lt(2*feePerTxBN)) {
+    //By Pass, we have to go show popup-rerill-prv after
+    return undefined;
+  }
+
+  // Input < Balance
+  if (originalAmountBN.plus(totalFeePRVBN).gt(prvBalanceOriginalBN)) {
+    const newInputValue = new BigNumber(prvBalanceOriginalBN - totalFeePRVBN).abs();
+    const newInputValueNumber = convert.toHumanAmount(
+      newInputValue,
+      pDecimals,
+    );
+    const newInputValueText = format.toFixed(
+      newInputValueNumber,
+      pDecimals,
+    );
+    return (
+      <Text onPress={onMessagePress}>
+        {`Max amount you can convert is ${newInputValueText} ${symbol}.`}
+      </Text>
+    );
+  }
+  return undefined;
+};
+
 export const maxAmountValidatorForSellInput = (
   sellInputAmount,
   buyInputAmount,

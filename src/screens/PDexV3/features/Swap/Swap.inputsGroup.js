@@ -13,9 +13,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { change, Field } from 'redux-form';
 import { throttle } from 'lodash';
 import {InterSwapMsg} from '@screens/PDexV3/features/Swap/Swap.simpleTab';
+import { getPrivacyPRVInfo } from '@src/redux/selectors/selectedPrivacy';
 import { formConfigs } from './Swap.constant';
 import SwapDetails from './Swap.details';
-import { maxAmountValidatorForSellInput } from './Swap.utils';
+import { maxAmountValidatorForSellInput, maxAmountValidatorForPRVSellInput } from './Swap.utils';
 import FeeError from './Swap.feeError';
 
 import {
@@ -26,6 +27,7 @@ import {
   swapInfoSelector,
   platformSelectedSelector,
   feetokenDataSelector,
+  getTotalFeePRVSelector
 } from './Swap.selector';
 import {
   actionEstimateTrade,
@@ -48,6 +50,9 @@ const SwapInputsGroup = React.memo(() => {
   const selltoken: SelectedPrivacy = useSelector(selltokenSelector);
   const buytoken: SelectedPrivacy = useSelector(buytokenSelector);
   const feetokenData: SelectedPrivacy = useSelector(feetokenDataSelector);
+  const privacyPRVInfo: SelectedPrivacy = useSelector(getPrivacyPRVInfo);
+  const totalFeePRV: SelectedPrivacy = useSelector(getTotalFeePRVSelector);
+
   const platform = useSelector(platformSelectedSelector);
   const inputAmount = useSelector(inputAmountSelector);
   const sellInputAmount = inputAmount(formConfigs.selltoken);
@@ -91,13 +96,15 @@ const SwapInputsGroup = React.memo(() => {
   };
 
   let _maxAmountValidatorForSellInput = React.useCallback(
-    () =>
+    (inputValue) =>
       maxAmountValidatorForSellInput(
         sellInputAmount,
         buyInputAmount,
         feetokenData,
         navigation,
         swapInfo,
+        inputValue,
+        privacyPRVInfo
       ),
     [
       sellInputAmount?.originalAmount,
@@ -109,6 +116,7 @@ const SwapInputsGroup = React.memo(() => {
       navigation,
       buyInputAmount?.originalAmount,
       buyInputAmount?.availableOriginalAmount,
+      privacyPRVInfo
     ],
   );
 
@@ -144,6 +152,34 @@ const SwapInputsGroup = React.memo(() => {
     ),
     [],
   );
+
+  let _maxAmountValidatorForPRVSellInput = React.useCallback(
+    (inputValue) =>
+      maxAmountValidatorForPRVSellInput(
+        sellInputAmount,
+        buyInputAmount,
+        feetokenData,
+        navigation,
+        swapInfo,
+        inputValue,
+        privacyPRVInfo,
+        totalFeePRV
+      ),
+    [
+      sellInputAmount?.originalAmount,
+      sellInputAmount?.availableOriginalAmount,
+      sellInputAmount?.availableAmountText,
+      sellInputAmount?.symbol,
+      feetokenData?.minFeeOriginalToken,
+      feetokenData?.minFeeOriginal,
+      navigation,
+      buyInputAmount?.originalAmount,
+      buyInputAmount?.availableOriginalAmount,
+      privacyPRVInfo,
+      totalFeePRV
+    ],
+  );
+
   const onChange = (field, value) => {
     dispatch(change(formConfigs.formName, field, value));
     switch (field) {
@@ -174,6 +210,7 @@ const SwapInputsGroup = React.memo(() => {
           ...(selltoken.isIncognitoToken
             ? validator.combinedNanoAmount
             : validator.combinedAmount),
+          _maxAmountValidatorForPRVSellInput,
           _maxAmountValidatorForSellInput,
         ]}
         loadingBalance={!!sellInputAmount?.loadingBalance}

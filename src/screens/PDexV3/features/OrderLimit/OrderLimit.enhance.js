@@ -7,7 +7,7 @@ import { actionToggleModal } from '@src/components/Modal';
 import { TradeSuccessModal, ROOT_TAB_TRADE, TAB_SWAP_ID } from '@screens/PDexV3/features/Trade';
 import { NFTTokenModal } from '@screens/PDexV3/features/NFTToken';
 import { LoadingContainer } from '@src/components/core';
-import { actionCheckNeedFaucetPRV } from '@src/redux/actions/token';
+import { actionFaucetPRV } from '@src/redux/actions/token';
 import { nftTokenDataSelector } from '@src/redux/selectors/account';
 import FaucetPRVModal from '@src/components/Modal/features/FaucetPRVModal';
 import withLazy from '@src/components/LazyHoc/LazyHoc';
@@ -76,14 +76,11 @@ const enhance = (WrappedComp) => (props) => {
           return dispatch(focus(formConfigs.formName, field));
         }
       }
-      // if (!sellInputAmount.isMainCrypto) {
-      //   const needFaucet = await dispatch(
-      //     actionCheckNeedFaucetPRV(<FaucetPRVModal />, accountBalance),
-      //   );
-      //   if (needFaucet) {
-      //     return;
-      //   }
-      // }
+      if (!sellInputAmount.isMainCrypto && isCurrentPRVBalanceExhausted) {
+        await dispatch(actionFaucetPRV(<FaucetPRVModal />));
+        return;
+      }
+
       if (!nftTokenAvailable) {
         return dispatch(
           actionToggleModal({

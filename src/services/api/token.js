@@ -486,3 +486,16 @@ export const searchToken = (keySearch) => {
       return [];
     });
 };
+
+export const searchTokenOnSwap = (keySearch) => {
+  return http4
+    .get(`/searchtoken?token=${keySearch}`)
+    .then((res) => {
+      // console.log('[searchTokenOnSwap] response: ', res);
+      return res || [];
+    })
+    .catch((e) => {
+      console.log('[searchTokenOnSwap] Token ERROR: ', e);
+      return [];
+    });
+};

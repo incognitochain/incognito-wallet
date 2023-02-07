@@ -4,6 +4,7 @@ const n = genNamspace('TOKEN');
 
 // define types here
 const TYPES = {
+  ADD_PTOKEN: n('ADD_PTOKEN'),
   SET: n('SET'),
   SET_BULK: n('SET_BULK'),
   GET_BALANCE: n('GET_BALANCE'),

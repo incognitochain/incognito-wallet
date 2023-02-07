@@ -28,6 +28,9 @@ import useSendSelf from '@screens/PDexV3/features/Liquidity/Liquidity.useSendSel
 import withLazy from '@components/LazyHoc/LazyHoc';
 import NetworkFeeError from '@screens/PDexV3/features/Liquidity/Liquidity.networkFeeError';
 import { actionRefillPRVModalVisible } from '@src/screens/RefillPRV/RefillPRV.actions';
+import { actionFaucetPRV } from '@src/redux/actions/token';
+import FaucetPRVModal from '@src/components/Modal/features/FaucetPRVModal';
+
 
 const initialFormValues = {
   inputToken: '',
@@ -243,8 +246,14 @@ const CreatePool = ({
     isEnoughtPRVNeededAfterBurn,
     isCurrentPRVBalanceExhausted,
   } =  useSelector(createPoolSelector.validateTotalBurnPRVSelector);
-  const onSubmit = (params) => {
+  const onSubmit = async (params) => {
     // console.log('isEnoughtTotalPRVAfterBurned ', isEnoughtTotalPRVAfterBurned);
+
+    if (isCurrentPRVBalanceExhausted) {
+      await dispatch(actionFaucetPRV(<FaucetPRVModal />));
+      return;
+    }
+
     if (!isEnoughtPRVNeededAfterBurn) {
       dispatch(actionRefillPRVModalVisible(true));
     } else {

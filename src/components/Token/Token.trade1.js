@@ -108,4 +108,4 @@ TokenTrade.propTypes = {
   tokenId: PropTypes.string.isRequired,
 };
 
-export default withToken1(TokenTrade);
+export default withToken1(React.memo(TokenTrade));

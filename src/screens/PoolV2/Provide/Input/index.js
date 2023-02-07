@@ -24,8 +24,12 @@ import convertUtil from '@utils/convert';
 import formatUtil from '@utils/format';
 import globalStyled from '@src/theme/theme.styled';
 import { RatioIcon } from '@components/Icons';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { colorsSelector } from '@src/theme';
+import { validatePRVBalanceSelector } from '@src/redux/selectors/selectedPrivacy';
+import { actionFaucetPRV } from '@src/redux/actions/token';
+import FaucetPRVModal from '@src/components/Modal/features/FaucetPRVModal';
+
 import styles from './style';
 
 export const Line = React.memo(() => {
@@ -48,7 +52,10 @@ const Provide = ({
   initIndex,
 }) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const colors = useSelector(colorsSelector);
+  const { isCurrentPRVBalanceExhausted } = useSelector(validatePRVBalanceSelector)();
+
   const [i, setI] = React.useState(initIndex);
   const [selectedTerm, setSelectedTerm] = React.useState(
     coin.locked && coin.terms
@@ -149,8 +156,15 @@ const Provide = ({
         <RoundCornerButton
           title="Provide"
           style={[mainStyle.button, styles.button]}
-          onPress={handleProvide}
-          disabled={!!error || !inputText}
+          onPress={async () => {
+            if (isCurrentPRVBalanceExhausted) {
+              dispatch(actionFaucetPRV(<FaucetPRVModal />));
+              return;
+            }
+            if (!!error || !inputText) return;
+            handleProvide();
+          }}
+          // disabled={!!error || !inputText}
         />
         <ExtraInfo
           left="Balance"

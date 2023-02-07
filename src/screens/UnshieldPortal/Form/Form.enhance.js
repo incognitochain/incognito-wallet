@@ -25,12 +25,12 @@ export const enhance = (WrappedComp) => (props) => {
   const {
     isEnoughtPRVNeededAfterBurn,
     isCurrentPRVBalanceExhausted,
-  } = useSelector(validatePRVBalanceSelector)(feePerTx);
+  } = useSelector(validatePRVBalanceSelector)(feePerTx, false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const isFormValid = useSelector((state) => isValid(formName)(state));
   const syncErrors = useSelector((state) => getFormSyncErrors(formName)(state));
-  const disabledForm = Object.keys(syncErrors).length !== 0 || !isFormValid || !isEnoughNetworkFeeDefault;
+  const disabledForm = Object.keys(syncErrors).length !== 0 || !isFormValid;
   const { portalData } = props;
   const { incNetworkFee } = portalData;
   const onPressMax = async () => {

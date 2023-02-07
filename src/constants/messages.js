@@ -32,4 +32,5 @@ export default {
   UPDATE_FIRMWARE_NODE_FAIL: 'Please power cycle your Node to continue.',
 
   PRV_NOT_ENOUGHT: 'Your PRV balance is insufficient to cover network fees.',
+  MAXIMUM_UTXO_ERROR: 'The number of UTXO is exceeded, please consolidate them in More > Consolidate then try',
 };

@@ -26,7 +26,7 @@ import orderBy from 'lodash/orderBy';
 import { ANALYTICS } from '@src/constants';
 import { requestUpdateMetrics } from '@src/redux/actions/app';
 import SwapService from '@src/services/api/swap';
-
+import { minPRVNeededSelector } from '@src/screens/RefillPRV/RefillPRV.selector';
 import {
   getPrivacyDataFilterSelector,
   getPrivacyDataByTokenID,
@@ -986,6 +986,7 @@ export const actionEstimateTrade =
     const estimateCount = getEsimateCountSelector(state);
     const formErrors = swapFormErrorSelector(state);
     const { networkfee } = swapInfoSelector(state);
+    const minPRVNeeded = minPRVNeededSelector(state);
 
     let feeData = feetokenDataSelector(state);
     const prvData: SelectedPrivacy = getPrivacyDataByTokenID(state)(PRV.id);
@@ -1096,6 +1097,7 @@ export const actionEstimateTrade =
           buyInputToken,
           prvData,
           networkfee,
+          minPRVNeeded
         );
         return;
       }
@@ -1306,6 +1308,7 @@ const checkReEstimate = async (
   buyInputToken,
   prvData,
   networkfee = 0,
+  minPRVNeeded = 0,
 ) => {
   // console.log('checkReEstimate ====>>> ');
   // console.log({
@@ -1331,7 +1334,16 @@ const checkReEstimate = async (
         // CASE 1:
         // SellToken: PRV
         // Fee: PRV
-        const totalFee = feeAmount + networkfee;
+
+        let bufferFee = 0;
+
+        if (prvBalanceObj.gt(2 * minPRVNeeded)) {
+          bufferFee = minPRVNeeded;
+        } else {
+          bufferFee = 0;
+        }
+
+        const totalFee = feeAmount + networkfee + bufferFee;
         // console.log('feeAmount ', feeAmount);
         // console.log('networkfee ', networkfee);
         // console.log('totalFee ', totalFee);
@@ -1992,7 +2004,7 @@ export const actionFetchSwap = () => async (dispatch, getState) => {
         break;
     }
   } catch (error) {
-    new ExHandler(error).showErrorToast();
+    throw error;
   } finally {
     batch(() => {
       dispatch(actionFetchingSwap(false));

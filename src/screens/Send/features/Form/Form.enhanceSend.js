@@ -24,6 +24,7 @@ import { selectedPrivacySelector } from '@src/redux/selectors';
 import { formName } from './Form.enhance';
 
 export const enhanceSend = (WrappedComp) => (props) => {
+  const { setErrorMessage } = props;
   const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -128,13 +129,31 @@ export const enhanceSend = (WrappedComp) => (props) => {
         await dispatch(reset(formName));
       }
     } catch (e) {
+      // console.log('EEEE ', { e });
       if (e.message === MESSAGES.NOT_ENOUGH_NETWORK_FEE) {
         Toast.showError(e.message);
       } else {
-        new ExHandler(
-          e,
-          'Something went wrong. Just tap the Send button again.',
-        ).showErrorToast(true);
+        // new ExHandler(
+        //   e,
+        //   'Something went wrong. Just tap the Send button again.',
+        // ).showErrorToast(true);
+
+        if (typeof e === 'string') {
+          setErrorMessage(e);
+        }
+        if (typeof e === 'object') {
+          const jsonObj = JSON.stringify(e);
+          const info = e.code || e.name;
+          const message = e.detail || e.message;
+          const errorMessage = `[${info}]: ${message}`;
+          // console.log(jsonObj);
+          if (jsonObj.includes('-3001') || jsonObj.includes('UTXO')) {
+            setErrorMessage(MESSAGES.MAXIMUM_UTXO_ERROR);
+          } else {
+            setErrorMessage(errorMessage);
+          }
+        }
+
       }
     }
   };

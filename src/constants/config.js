@@ -126,6 +126,8 @@ const URL_SERVICE_UPDATE_FIRMWARE = `https://${
 }api-service.incognito.org/pool/check-lan-setup`;
 
 const FAUCET_URL = 'https://faucet.incognito.org/';
+// const FAUCET_URL = 'http://127.0.0.1:3000/'; //Test - Local Host Web-Faucet
+
 export default {
   isMainnet,
   CRYPTO_ICON_URL,

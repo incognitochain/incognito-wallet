@@ -21,9 +21,9 @@ const styled = StyleSheet.create({
   },
 });
 
-const NetworkFeeError = () => {
-  const { isEnoughNetworkFeeDefault } = useSelector(getPrivacyPRVInfo);
-  if (isEnoughNetworkFeeDefault) return null;
+const ErrorMessageView = () => {
+  const { isNeedFaucet } = useSelector(getPrivacyPRVInfo);
+  if (!isNeedFaucet) return null;
   return (
     <View style={styled.container}>
       <Text style={styled.text}>{MESSAGES.PRV_NOT_ENOUGHT}</Text>
@@ -31,7 +31,7 @@ const NetworkFeeError = () => {
   );
 };
 
-NetworkFeeError.propTypes = {};
+ErrorMessageView.propTypes = {};
 
-export default NetworkFeeError;
+export default ErrorMessageView;
 

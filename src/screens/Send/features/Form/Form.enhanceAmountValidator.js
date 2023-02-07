@@ -6,12 +6,14 @@ import convert from '@src/utils/convert';
 import { feeDataSelector } from '@src/components/EstimateFee/EstimateFee.selector';
 import { childSelectedPrivacySelector, selectedPrivacySelector } from '@src/redux/selectors';
 import { detectToken } from '@src/utils/misc';
+import { getPrivacyPRVInfo } from '@src/redux/selectors/selectedPrivacy';
+import {amountValidatorForPRV} from './Form.utils';
 
 export const enhanceAmountValidation = (WrappedComp) => (props) => {
   const feeData = useSelector(feeDataSelector);
   const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const childSelectedPrivacy = useSelector(childSelectedPrivacySelector.childSelectedPrivacy);
-
+  const privacyPRVInfo = useSelector(getPrivacyPRVInfo);
   const { fee, feeUnitByTokenId, minAmount, maxAmount } = feeData;
   const initialState = {
     maxAmountValidator: undefined,
@@ -70,7 +72,30 @@ export const enhanceAmountValidation = (WrappedComp) => (props) => {
     setFormValidator();
   }, [selectedPrivacy?.tokenId, childSelectedPrivacy?.tokenId, fee, feeUnitByTokenId, maxAmount, minAmount]);
 
-  const validateAmount = getAmountValidator();
+  React.useEffect(() => {
+    setFormValidator();
+  }, [selectedPrivacy?.tokenId, childSelectedPrivacy?.tokenId, fee, feeUnitByTokenId, maxAmount, minAmount]);
+
+
+  let _maxAmountValidatorForPRVSellInput = React.useCallback(
+    (inputValue) =>
+        amountValidatorForPRV({ inputValue, selectedPrivacy, childSelectedPrivacy, feeUnitByTokenId, privacyPRVInfo, feeData}),
+    [
+      selectedPrivacy?.tokenId, 
+      childSelectedPrivacy?.tokenId, 
+      feeUnitByTokenId, 
+      maxAmount, 
+      minAmount,
+      privacyPRVInfo,
+      feeData
+    ],
+  );
+
+  const getPRVValidator = () => {
+    return [...validator.combinedAmount, _maxAmountValidatorForPRVSellInput];
+  };
+
+  const validateAmount = selectedPrivacy?.isMainCrypto ? getPRVValidator() : getAmountValidator();
 
   return (
     <WrappedComp

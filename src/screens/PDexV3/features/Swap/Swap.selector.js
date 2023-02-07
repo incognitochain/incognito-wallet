@@ -834,6 +834,7 @@ export const swapInfoSelector = createSelector(
   inputAmountSelector,
   (state) => state,
   getPrivacyDataByTokenIDSelector,
+  getPrivacyPRVInfo,
   (
     {
       data,
@@ -851,10 +852,12 @@ export const swapInfoSelector = createSelector(
     getInputAmount,
     state,
     getPrivacyDataByTokenID,
+    prvInfo
   ) => {
     try {
       const sellInputAmount = getInputAmount(formConfigs.selltoken);
       const buyInputAmount = getInputAmount(formConfigs.buytoken);
+      const { isNeedFaucet } = prvInfo;
       const networkfeeAmount = format.toFixed(
         convert.toHumanAmount(networkfee, PRV.pDecimals),
         PRV.pDecimals,
@@ -868,8 +871,12 @@ export const swapInfoSelector = createSelector(
         calculating ||
         (!isFetched && !isFetching) ||
         !isValid(formConfigs.formName)(state);
-      if (calculating) {
-        btnSwapText = 'Calculating...';
+      if (isNeedFaucet) {
+        btnSwapText = 'Faucet';
+      } else {
+        if (calculating) {
+          btnSwapText = 'Calculating...';
+        }
       }
       const tradingFeeStr = `${feeTokenData?.feeAmountText} ${feeTokenData?.symbol}`;
       const sellInputBalanceStr = `${sellInputAmount?.balanceStr || '0'} ${
@@ -1165,12 +1172,13 @@ export const validateTotalBurningPRVSelector = createSelector(
       const { payFeeByPRV, minFeeOriginalPRV } = feeTokenData;
       const { networkfee } = swapInfo;
       const { PRV_ID, feePerTx } = prvBalanceInfo;
-  
+      
       let totalBurningPRV = 0;
+      let isPRVBurn = sellTokenId === PRV_ID;
 
   
       // SellToken = PRV
-      if (sellTokenId === PRV_ID) {
+      if (isPRVBurn) {
         totalBurningPRV = sellOriginalAmount;
       } else {
         totalBurningPRV = 0;
@@ -1178,22 +1186,67 @@ export const validateTotalBurningPRVSelector = createSelector(
   
       // PayFee = PRV
       if (payFeeByPRV) {
-        totalBurningPRV = totalBurningPRV + minFeeOriginalPRV + networkfee;
-      } else {
-        totalBurningPRV = totalBurningPRV + networkfee;
-      }
+        totalBurningPRV = totalBurningPRV + minFeeOriginalPRV;
+      } 
+
+      // Plus (+) network fee default
+      totalBurningPRV = totalBurningPRV + networkfee;
+
+      // console.log('[LOG][validateTotalBurningPRVSelector] totalBurningPRV ', totalBurningPRV);
 
       if (!totalBurningPRV || totalBurningPRV == 0) {
         totalBurningPRV = feePerTx;
       }
 
-      return validatePRVBalanceFn(totalBurningPRV);
+      return validatePRVBalanceFn(totalBurningPRV, isPRVBurn);
 
     } catch (error) {
-      console.log('[validateTotalBurningPRVSelector] ERROR ', error);
+      console.log('[LOG][validateTotalBurningPRVSelector] ERROR ', error);
     }
   }
 );
+
+
+export const getTotalFeePRVSelector = createSelector(
+  swapInfoSelector,
+  feetokenDataSelector,
+  selltokenSelector,
+  inputAmountSelector,
+  minPRVNeededSelector,
+  getPrivacyPRVInfo,
+  (swapInfo, feeTokenData, selltoken, inputAmount, minPRVNeeded, prvBalanceInfo) => {
+    try {
+
+      const sellinputAmount = inputAmount(formConfigs.selltoken);
+      const { tokenId: sellTokenId } = selltoken;
+      const { originalAmount: sellOriginalAmount } = sellinputAmount;
+      const { payFeeByPRV, minFeeOriginalPRV } = feeTokenData;
+      const { networkfee } = swapInfo;
+      const { PRV_ID, feePerTx } = prvBalanceInfo;
+      
+      let totalFeePRV = 0;
+
+      // PayFee = PRV
+      if (payFeeByPRV) {
+        totalFeePRV = totalFeePRV + minFeeOriginalPRV;
+      } 
+
+      // Plus (+) network fee default
+      totalFeePRV = totalFeePRV + networkfee;
+
+      if (!totalFeePRV || totalFeePRV == 0) {
+        totalFeePRV = feePerTx;
+      }
+      // console.log('[getTotalFeePRVSelector] totalFeePRV ', totalFeePRV);
+
+      return totalFeePRV;
+
+    } catch (error) {
+      console.log('[getTotalFeePRVSelector] ERROR ', error);
+    }
+  }
+);
+
 
 export const getIsNavigateFromMarketTab = createSelector(
   swapSelector,
@@ -1245,6 +1298,46 @@ export const getSearchTokenListByField = createSelector(
       return tokensFilter;
     }),
 );
+
+export const filterSwapableToken = createSelector(
+  [selltokenSelector, buytokenSelector],
+  (selltoken, buytoken) => (currentField, tokenList) => {
+
+      let tokensFiltered = [];
+      let baseToken;
+
+      // console.log('buytoken ', buytoken);
+      // console.log('selltoken ', selltoken);
+      // console.log('currentField ', currentField);
+
+      if (currentField === 'sellToken') {
+        baseToken = buytoken;
+      } else {
+        baseToken = selltoken;
+      }
+
+      const childNetworks = baseToken.isPUnifiedToken
+
+      ? baseToken.listUnifiedToken.map((child) => child.groupNetworkName)
+      : [baseToken.groupNetworkName];
+
+      tokensFiltered = tokenList.filter((token: SelectedPrivacy) => {
+        if (token?.tokenId === buytoken?.tokenId) return false;
+        if (token?.movedUnifiedToken) return false; // not supported moved unified token
+        if (!!baseToken?.defaultPoolPair || !!token.defaultPoolPair) return true; //Swappable on pDex
+
+        const tokenChildNetworks = token.isPUnifiedToken
+          ? token.listUnifiedToken.map((child) => child.groupNetworkName)
+          : [token.groupNetworkName];
+
+        return childNetworks.some(
+          (networkName) =>
+            networkName && tokenChildNetworks.includes(networkName),
+        );
+      }) || [];
+     
+      return tokensFiltered;
+});
 
 export const feeErorSelector = createSelector(
   [feetokenDataSelector, inputAmountSelector, getPrivacyDataByTokenIDSelector],

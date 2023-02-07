@@ -28,7 +28,7 @@ import { uniqBy } from 'lodash';
 import { receiveHistorySelector } from '@src/redux/selectors/token';
 import { MAX_LIMIT_RECEIVE_HISTORY_ITEM } from '@src/redux/reducers/token';
 import { PRV_ID } from '@screens/DexV2/constants';
-import { Validator, PrivacyVersion } from 'incognito-chain-web-js/build/wallet';
+import { Validator, PrivacyVersion ,ACCOUNT_CONSTANT} from 'incognito-chain-web-js/build/wallet';
 import { EXPIRED_TIME } from '@services/cache';
 import Util from '@utils/Util';
 import BigNumber from 'bignumber.js';
@@ -40,6 +40,13 @@ import {
 import { batch } from 'react-redux';
 import orderBy from 'lodash/orderBy';
 import uniq from 'lodash/uniq';
+
+export const addPToken = (
+  pToken = throw new Error('pToken object is required'),
+) => ({
+  type: type.ADD_PTOKEN,
+  data: pToken,
+});
 
 export const setToken = (
   token = throw new Error('Token object is required'),
@@ -590,3 +597,18 @@ export const actionCheckNeedFaucetPRV =
     }
     return needFaucet;
   };
+
+export const actionFaucetPRV = (data) =>
+  async (dispatch) => {
+    try {
+        await dispatch(
+          actionToggleModal({
+            shouldCloseModalWhenTapOverlay: true,
+            visible: true,
+            data,
+          }),
+        );
+    } catch (error) {
+      throw error;
+    }
+};

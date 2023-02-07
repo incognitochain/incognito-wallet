@@ -8,7 +8,7 @@ import { colorsSelector } from '@src/theme';
 export const TokenContext = React.createContext();
 
 const enhance = (WrappedComp) => (props) => {
-  const { tokenId } = props;
+  const { tokenId, item } = props;
   const colors = useSelector(colorsSelector);
   const token = useSelector(selectedPrivacySelector.getPrivacyDataByTokenID)(
     tokenId,
@@ -18,11 +18,11 @@ const enhance = (WrappedComp) => (props) => {
   const tokenProps = {
     ...props,
     ...token,
+    ...item,
     isGettingBalance,
-    symbol: token?.externalSymbol || token?.symbol || '',
     colors,
   };
-  if (!token || !tokenId) {
+  if (!item || !tokenId) {
     return null;
   }
   return (

@@ -29,6 +29,8 @@ import { useNavigation } from 'react-navigation-hooks';
 import NetworkFee from '@src/components/NetworkFee';
 import { withLayout_2 } from '@components/Layout';
 import { actionRefillPRVModalVisible } from '@src/screens/RefillPRV/RefillPRV.actions';
+import { actionFaucetPRV } from '@src/redux/actions/token';
+import FaucetPRVModal from '@src/components/Modal/features/FaucetPRVModal';
 
 const initialFormValues = {
   inputToken: '',
@@ -125,10 +127,16 @@ const RemoveLPButton = React.memo(({ onSubmit }) => {
     isCurrentPRVBalanceExhausted,
   } =  useSelector(removePoolSelector.validateTotalBurnPRVSelector);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // console.log('[handleSubmit] disabled ', disabled);
     if (disabled) return;
     // console.log('isEnoughtTotalPRVAfterBurned ', isEnoughtTotalPRVAfterBurned);
+
+    if (isCurrentPRVBalanceExhausted) {
+      await dispatch(actionFaucetPRV(<FaucetPRVModal />));
+      return;
+    }
+    
     if (!isEnoughtPRVNeededAfterBurn) {
        dispatch(actionRefillPRVModalVisible(true));
     } else {

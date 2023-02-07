@@ -17,6 +17,7 @@ import {
   genCentralizedWithdrawAddress,
 } from '@src/services/api/withdraw';
 import { PRVIDSTR } from 'incognito-chain-web-js/build/wallet';
+import { minPRVNeededSelector } from '@src/screens/RefillPRV/RefillPRV.selector';
 import {
   ACTION_FETCHING_FEE,
   ACTION_FETCHED_FEE,
@@ -390,11 +391,32 @@ export const actionChangeFee = (payload) => ({
 export const actionFetchFeeByMax = () => async (dispatch, getState) => {
   const state = getState();
   const parentSelectedPrivacy = selectedPrivacySelector.selectedPrivacy(state);
+  const { isCurrentBalanceGreaterPerTx } = selectedPrivacySelector.getPrivacyPRVInfo(state);
+  const minPRVNeeded = minPRVNeededSelector(state);
+  
   const { isUseTokenFee, isFetched, totalFee, isFetching } =
     feeDataSelector(state);
-  const { amount, isMainCrypto } = parentSelectedPrivacy;
+  const { amount, isMainCrypto, tokenId } = parentSelectedPrivacy;
+
   const feeEst = MAX_FEE_PER_TX;
-  let _amount = Math.max(isMainCrypto ? amount - feeEst : amount, 0);
+  let feeBuffer = 0;
+  if (isMainCrypto) {
+    if (isCurrentBalanceGreaterPerTx) {
+      // feeBuffer = minPRVNeeded + feeEst;
+      feeBuffer = feeEst;
+    }
+  }
+
+  let newAmount = 0;
+
+  if (isMainCrypto) {
+    newAmount = amount - feeBuffer;
+  } else {
+    newAmount = amount;
+  }
+
+  let _amount = Math.max(newAmount, 0);
+
   let maxAmount = floor(_amount, parentSelectedPrivacy.pDecimals);
   let maxAmountText = format.toFixed(
     convert.toHumanAmount(maxAmount, parentSelectedPrivacy.pDecimals),
@@ -620,7 +642,7 @@ export const actionFetchUserFees = (payload) => async (dispatch, getState) => {
             Level1: userFeeDataNew.feeAmount || 0,
           };
         }
-        console.log('[actionFetchUserFees] userFeesData ', userFeesData);
+        // console.log('[actionFetchUserFees] userFeesData ', userFeesData);
       }
     } else {
       const payload = {

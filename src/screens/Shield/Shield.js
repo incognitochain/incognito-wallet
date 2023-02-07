@@ -89,13 +89,13 @@ const Shield = (props) => {
         }}
         titleStyled={FONT.TEXT.incognitoH4}
         hideBackButton={hideBackButton}
-        rightHeader={
+        rightHeader={(
           <BtnQuestionDefault
             style={{ marginLeft: 8 }}
             onPress={handleWhyShield}
             customStyle={styled.rightItem}
           />
-        }
+        )}
       />
       <View borderTop style={styled.container}>
         {isLoading ? (

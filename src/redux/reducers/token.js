@@ -95,6 +95,12 @@ const reducer = (state = initialState, action) => {
   let newList = [];
 
   switch (action.type) {
+    case type.ADD_PTOKEN:
+      newList = [...state.pTokens, action.data];
+      return {
+        ...state,
+        pTokens: newList,
+      };
   case type.SET:
     newList = setToken(state.followed, action.data);
     return {

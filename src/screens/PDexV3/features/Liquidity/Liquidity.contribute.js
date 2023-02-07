@@ -32,6 +32,8 @@ import { withLayout_2 } from '@components/Layout';
 import useSendSelf from '@screens/PDexV3/features/Liquidity/Liquidity.useSendSelf';
 import NetworkFeeError from '@screens/PDexV3/features/Liquidity/Liquidity.networkFeeError';
 import { actionRefillPRVModalVisible } from '@src/screens/RefillPRV/RefillPRV.actions';
+import { actionFaucetPRV } from '@src/redux/actions/token';
+import FaucetPRVModal from '@src/components/Modal/features/FaucetPRVModal';
 
 const initialFormValues = {
   inputToken: '',
@@ -204,11 +206,17 @@ const Contribute = ({
   } = useSelector(contributeSelector.validateTotalBurnPRVSelector);
   
   const _error = useSendSelf({ error, setLoading, setError });
-  const onSubmit = (params) => {
+  const onSubmit = async (params) => {
     // console.log('isEnoughtTotalPRVAfterBurned ', isEnoughtTotalPRVAfterBurned);
+
+    if (isCurrentPRVBalanceExhausted) {
+      await dispatch(actionFaucetPRV(<FaucetPRVModal />));
+      return;
+    }
+
     if (!isEnoughtPRVNeededAfterBurn) {
       dispatch(actionRefillPRVModalVisible(true));
-      
+      return;
     } else {
       typeof onCreateContributes === 'function' && onCreateContributes(params);
     }

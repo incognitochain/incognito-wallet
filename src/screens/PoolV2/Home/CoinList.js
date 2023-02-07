@@ -85,12 +85,12 @@ const CoinList = ({
     return (
       <>
         <ScrollView
-          refreshControl={
+          refreshControl={(
             <RefreshControl
               refreshing={loading}
               onRefresh={() => onLoad(account)}
             />
-          }
+          )}
           style={[styles.scrollView, { paddingHorizontal: 0 }]}
         >
           {groupedCoins.map((item, i) => {
@@ -270,17 +270,17 @@ const CoinList = ({
   const renderUserData = () => {
     return (
       <ScrollView
-        refreshControl={
+        refreshControl={(
           <RefreshControl
             refreshing={loading}
             onRefresh={() => onLoad(account)}
           />
-        }
+        )}
         style={[styles.scrollView, { paddingHorizontal: 0 }]}
       >
         {groupedUserData.map((item, i) => {
           const mapCoin = item.coin;
-          console.log('item: ', item);
+          // console.log('item: ', item);
           if (!mapCoin) return null;
           const { iconUrl } = getPrivacyDataByTokenID(item.id);
           return (

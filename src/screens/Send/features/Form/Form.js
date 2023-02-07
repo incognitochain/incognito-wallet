@@ -40,9 +40,12 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Field, formValueSelector } from 'redux-form';
 import { actionRefillPRVModalVisible } from '@src/screens/RefillPRV/RefillPRV.actions';
+import { actionFaucetPRV } from '@src/redux/actions/token';
+import FaucetPRVModal, { useFaucet } from '@src/components/Modal/features/FaucetPRVModal';
+import { getPrivacyPRVInfo } from '@src/redux/selectors/selectedPrivacy';
 import withSendForm, { formName } from './Form.enhance';
 import { styledForm as styled } from './Form.styled';
-import NetworkFee from './Form.networkFee';
+import ErrorMessageView from './Form.errorMesageView';
 
 const initialFormValues = {
   amount: '',
@@ -91,12 +94,16 @@ const SendForm = (props) => {
     validateMemo,
     navigation,
     isPortalToken,
+    errorMessage
   } = props;
   const dispatch = useDispatch();
+  const [navigateFaucet] = useFaucet();
+
   const { titleBtnSubmit, isUnShield, editableInput } =
     useSelector(feeDataSelector);
   // const networkFeeValid = useSelector(validatePRVNetworkFee);
   const { isEnoughtPRVNeededAfterBurn, isCurrentPRVBalanceExhausted } = useSelector(validateTotalPRVBurningSelector);
+  const { isNeedFaucet } = useSelector(getPrivacyPRVInfo);
   const selectedPrivacy = useSelector(selectedPrivacySelector.selectedPrivacy);
   const childSelectedPrivacy = useSelector(
     childSelectedPrivacySelector.childSelectedPrivacy,
@@ -121,13 +128,31 @@ const SendForm = (props) => {
       ? onCentralizedPress
       : onDecentralizedPress
     : handleSend;
-  // const submitHandler = handlePressSend;
+
   const showRefillPRVAlert = () =>{
     dispatch(actionRefillPRVModalVisible(true));
   };
 
-  const submitHandler = isEnoughtPRVNeededAfterBurn ? handlePressSend : showRefillPRVAlert;
+  const showPopupFaucetPRV = async () => {
+    await dispatch(actionFaucetPRV(<FaucetPRVModal />));
+  };
 
+  const navigateToFaucetWeb = async () => {
+    navigateFaucet();
+  };
+
+  const submitHandler = handlePressSend;
+
+  const sendOnPress = (data) => {
+    if (
+      disabledForm ||
+      isDisabled ||
+      !childSelectedPrivacy
+    ) {
+      return;
+    }
+    submitHandler(data);
+};
 
   const getNetworks = () => {
     let networks = useSelector(networksSelector);
@@ -324,20 +349,22 @@ const SendForm = (props) => {
                 }}
               />
               {renderMemo()}
-              <NetworkFee onChangeField={onChangeField} isCurrentPRVBalanceExhausted={isCurrentPRVBalanceExhausted} />
+              <ErrorMessageView onChangeField={onChangeField} isCurrentPRVBalanceExhausted={isNeedFaucet} />
               <Button
                 title={titleBtnSubmit}
                 btnStyle={[
                   styled.submitBtn,
                   isUnShield ? styled.submitBtnUnShield : null,
                 ]}
-                style={{ marginTop: 24 }}
-                disabled={
-                  disabledForm ||
-                  isDisabled ||
-                  !childSelectedPrivacy
-                }
-                onPress={handleSubmit(submitHandler)}
+                style={[{ marginTop: 24 }, styled.faucetStyle]}
+                onPress={() => {
+                  if (isNeedFaucet) {
+                    // showPopupFaucetPRV();
+                    navigateToFaucetWeb();
+                    return;
+                  }
+                  handleSubmit(sendOnPress)();
+                }}
                 {...generateTestId(SEND.SUBMIT_BUTTON)}
               />
             </>

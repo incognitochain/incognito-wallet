@@ -13,6 +13,7 @@ import { swapInfoSelector } from './Swap.selector';
 import SwapInputsGroup from './Swap.inputsGroup';
 import GroupSubInfo from './Swap.groupSubInfo';
 import EstimateTradeError from './Swap.estimateTradeError';
+import ErrorMessage from './Swap.errorMessage';
 
 const initialFormValues = {
   selltoken: '',
@@ -36,7 +37,7 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
 };
 
 const Swap = (props) => {
-  const { initSwapForm, handleConfirm } = props;
+  const { initSwapForm, handleConfirm, errorMessage} = props;
   const swapInfo = useDebounceSelector(swapInfoSelector);
 
   const [page, setPage] = React.useState(0);
@@ -84,6 +85,7 @@ const Swap = (props) => {
             <>
               <SwapInputsGroup />
               <EstimateTradeError />
+              <ErrorMessage errorMessage={errorMessage} />
               <ButtonTrade
                 btnStyle={styled.btnTrade}
                 onPress={handleConfirm}
