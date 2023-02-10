@@ -115,7 +115,7 @@
     "react-native-big-list": "^1.5.4",
     "react-native-bluetooth-serial": "https://github.com/Takt29/react-native-bluetooth-serial-array.git",
     "react-native-camera": "3.8.0",
-    "react-native-code-push": "^6.0.0",
+    "react-native-code-push": "^7.0.4",
     "react-native-console-time-polyfill": "^1.2.1",
     "react-native-crypto": "^2.1.2",
     "react-native-device-info": "^5.0.1",
