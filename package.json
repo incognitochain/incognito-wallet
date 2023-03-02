@@ -149,7 +149,7 @@
     "react-native-qrcode-svg": "^5.1.2",
     "react-native-randombytes": "^3.5.2",
     "react-native-raw-bottom-sheet": "^2.0.2",
-    "react-native-reanimated": "1.2.0",
+    "react-native-reanimated": "2.10.0",
     "react-native-render-html": "^4.2.3",
     "react-native-restart": "^0.0.13",
     "react-native-root-toast": "^3.0.2",
