@@ -198,6 +198,7 @@ jobs:
       - run: cp android/app/build/outputs/apk/release/app-release.apk ./$APP_VERSION.apk
       - run: bash .circleci/slack-upload.sh -f ./$APP_VERSION.apk -c '$SLACK_CHANNEL' -s $SLACK_API_KEY -n "$APP_VERSION" -x "\"$LAST_COMMIT_MESSAGE\""
   push_app_store:
+#    resource_class: "large"
     macos:
       xcode: 13.1.0
     steps:
@@ -324,7 +325,7 @@ workflows:
           filters:
             branches:
               only:
-                - features/interswap
+                - fix/unshield-pegging
       - generate_data:
           requires:
             - checkout_code
@@ -340,7 +341,7 @@ workflows:
           filters:
             branches:
               only:
-                - inc-store
+                - inc-build-store
       - generate_data:
           requires:
             - checkout_code

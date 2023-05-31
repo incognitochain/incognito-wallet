@@ -360,6 +360,8 @@ PODS:
     - React
   - react-native-settings (0.2.3):
     - React
+  - react-native-splash-screen (3.2.0):
+    - React
   - react-native-webview (9.4.0):
     - React
   - React-RCTActionSheet (0.61.2):
@@ -528,6 +530,7 @@ DEPENDENCIES:
   - react-native-network-info (from `../node_modules/react-native-network-info`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-settings (from `../node_modules/react-native-settings`)
+  - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -691,6 +694,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-randombytes"
   react-native-settings:
     :path: "../node_modules/react-native-settings"
+  react-native-splash-screen:
+    :path: "../node_modules/react-native-splash-screen"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
   React-RCTActionSheet:
@@ -845,6 +850,7 @@ SPEC CHECKSUMS:
   react-native-network-info: d1290ffc0bd0709e11436f5b8d7f605dcc5c4530
   react-native-randombytes: 3638d24759d67c68f6ccba60c52a7a8a8faa6a23
   react-native-settings: 67977214c0f7d6062ad25581107c16a7a27af2a8
+  react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-webview: cf5527893252b3b036eea024a1da6996f7344c74
   React-RCTActionSheet: 89b037c0fb7d2671607cb645760164e7e0c013f6
   React-RCTAnimation: e3cefa93c38c004c318f7ec04b883eb14b8b8235
@@ -891,6 +897,6 @@ SPEC CHECKSUMS:
   UMTaskManagerInterface: 203c11259d2699b5b3a4eda4adbc466f5cb5c561
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f
 
-PODFILE CHECKSUM: 929328304093a46bd8246ff6cdc85ae5412091f2
+PODFILE CHECKSUM: 1d8ae708b1e86c0bea999cb95b1cbba42adcb75f
 
 COCOAPODS: 1.11.3

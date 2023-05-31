@@ -25,7 +25,6 @@ import {
   withdraw,
   submitUnShieldTx,
 } from '@src/services/api/withdraw';
-import { ExHandler } from '@src/services/exception';
 import convert from '@src/utils/convert';
 import format from '@src/utils/format';
 import Utils from '@src/utils/Util';
@@ -37,7 +36,7 @@ import {
   BurningPBSCRequestMeta,
   BurningPLGRequestMeta,
   BurningPRVBEP20RequestMeta,
-  BurningPRVERC20RequestMeta,
+  BurningPRVERC20RequestMeta_V2,
   BurningRequestMeta,
   BurningNearRequestMeta,
   PrivacyVersion,
@@ -243,7 +242,7 @@ export const enhanceUnshield = (WrappedComp) => (props) => {
         txHandler,
         burningType: isBSC
           ? BurningPRVBEP20RequestMeta
-          : BurningPRVERC20RequestMeta,
+          : BurningPRVERC20RequestMeta_V2,
         version: PrivacyVersion.ver2,
       });
       if (res.txId) {

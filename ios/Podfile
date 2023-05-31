@@ -103,7 +103,8 @@ target 'Incognito' do
   pod 'RNShare', :path => '../node_modules/react-native-share'
 
   pod 'RNFastImage', :path => '../node_modules/react-native-fast-image'
-
+  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+  
   pre_install do |installer|
     puts("Image fix for ios14: remove this when upgradeing to >= 0.63.3")
     find = "_currentFrame.CGImage;"

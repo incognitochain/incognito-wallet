@@ -7,6 +7,8 @@ import { validation } from '@zilliqa-js/util';
 import convert from '@utils/convert';
 import { CONSTANT_COMMONS } from '@src/constants';
 
+const BurningAddress2 = '12RxahVABnAVCGP3LGwCn8jkQxgw7z1x14wztHzn455TTVpi1wBq9YGwkRMQg3J4e657AbAnCvYCJSdA9czBUNuCKwGSRQt55Xwz8WA';
+
 const isSafeInteger = (number) => {
   const n = Number(n);
   return Math.abs(number) <= Number.MAX_SAFE_INTEGER;
@@ -118,6 +120,26 @@ const incognitoAddress =
     if (value && accountService.checkOldPaymentAddress(value)) {
       return 'Require an Incognito address V2';
     }
+    return undefined;
+  };
+
+const incognitoExcludeV2Address =
+  (value, { message } = {}) =>
+  (value) => {
+    if (
+      (value && value?.length < 15) ||
+      (value && !accountService.checkPaymentAddress(value))
+    ) {
+      return 'Invalid address';
+    }
+    if (value && accountService.checkOldPaymentAddress(value)) {
+     if (value === BurningAddress2) {
+        return undefined; // BY PASS Burning Address V2
+     } else {
+      return 'Require an Incognito address V2';
+     }
+    }
+
     return undefined;
   };
 
@@ -356,6 +378,7 @@ const combinedNumber = [required(), number(), minValue(0)];
 const combinedNanoNumber = [required(), number(), minValue(0), isInteger()];
 
 const combinedIncognitoAddress = [required(), incognitoAddress()];
+const combinedIncognitoExcludeV2Address = [required(), incognitoExcludeV2Address()];
 const combinedETHAddress = [required(), ethAddress()];
 const combinedTOMOAddress = [required(), tomoAddress()];
 const combinedBTCAddress = [required(), btcAddress()];
@@ -452,6 +475,7 @@ export default {
   combinedAmount,
   combinedNanoAmount,
   combinedIncognitoAddress,
+  combinedIncognitoExcludeV2Address,
   combinedUnknownAddress,
   combinedNearAddress,
   combinedBNBAddress,
@@ -503,4 +527,5 @@ export default {
   invalidAddress,
   combinedNumber,
   combinedNanoNumber,
+  BurningAddress2
 };

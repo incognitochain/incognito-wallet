@@ -15,6 +15,7 @@ import { loadWallet as loadWallet } from '@src/services/wallet/WalletService';
 import { CONSTANT_CONFIGS } from '@src/constants';
 import { useDispatch } from 'react-redux';
 import { setNewUserTutorial } from '@src/redux/actions/settings';
+import SplashScreen from 'react-native-splash-screen';
 
 const styles = StyleSheet.create({
   flex: {
@@ -46,6 +47,10 @@ const Welcome = () => {
     setTimeout(() => {
       setLoadingWallet(false);
     }, 100);
+  }, []);
+
+  React.useEffect(() => {
+    SplashScreen.hide();
   }, []);
 
   const handleShowBackUp = useCallback(() => {

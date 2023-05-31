@@ -3,11 +3,17 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { ButtonBasic } from '@src/components/Button';
 import { View2 } from '@components/core/View';
+import SplashScreen from 'react-native-splash-screen';
 import withGetStarted from './GetStarted.enhance';
 import style from './style';
 
 const GetStarted = React.memo((props) => {
   const { loading, errorMsg = '', onRetry } = props;
+
+  React.useEffect(() => {
+    SplashScreen.hide();
+  }, []);
+
   return (
     <View2 style={[style.container, { paddingHorizontal: 24 }]}>
       {loading && (

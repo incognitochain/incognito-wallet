@@ -16,6 +16,8 @@
 #import <UMCore/UMModuleRegistry.h>
 #import <UMReactNativeAdapter/UMNativeModulesProxy.h>
 #import <UMReactNativeAdapter/UMModuleRegistryAdapter.h>
+#import "RNSplashScreen.h"  // here
+
 @import Firebase;
 
 NSString *const kGCMMessageIDKey = @"gcm.message_id";
@@ -78,6 +80,9 @@ NSString *const kGCMMessageIDKey = @"gcm.message_id";
    
   [FIRMessaging messaging].autoInitEnabled = YES;
   [super application:application didFinishLaunchingWithOptions:launchOptions];
+
+  [RNSplashScreen show];  // here
+
   return YES;
 }
 

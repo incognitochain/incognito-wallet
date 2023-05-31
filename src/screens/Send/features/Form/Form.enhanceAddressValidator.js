@@ -183,12 +183,22 @@ export const enhanceAddressValidation = (WrappedComp) => (props) => {
     if (
       currencyTypeName == CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.INCOGNITO
     ) {
-      return validator.combinedIncognitoAddress;
+      return validator.combinedIncognitoExcludeV2Address;
     }
     return getExternalAddressValidator();
   };
 
   const getWarningAddress = () => {
+
+    if (
+      currencyTypeName == CONSTANT_COMMONS.PRIVATE_TOKEN_CURRENCY_TYPE.INCOGNITO
+    ) {
+      if (accountService.checkOldPaymentAddress(toAddress) && toAddress === validator.BurningAddress2) {
+        // return 'Require an Incognito address V2';
+        return 'You are sending fund to burning address';
+      }
+    }
+
     if (
       isExternalAddress &&
       (isDecentralized ||
